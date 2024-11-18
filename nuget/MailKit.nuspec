@@ -33,7 +33,7 @@ Features include:
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net462 net47 net48 net6.0 netstandard netstandard2.0 netstandard2.1</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net462 net47 net48 net8.0 netstandard netstandard2.0 netstandard2.1</tags>
     <readme>docs\README.md</readme>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.2" />
@@ -67,10 +67,6 @@ Features include:
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKit" version="4.8.0" />
-      </group>
-      <group targetFramework="net6.0">
-        <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="MimeKit" version="4.8.0" />
       </group>
       <group targetFramework="net8.0">
@@ -113,10 +109,6 @@ Features include:
     <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
     <file src="..\MailKit\bin\Release\net48\MailKit.dll.config" target="lib\net48\MailKit.dll.config" />
-    <file src="..\MailKit\bin\Release\net6.0\MailKit.dll" target="lib\net6.0\MailKit.dll" />
-    <file src="..\MailKit\bin\Release\net6.0\MailKit.pdb" target="lib\net6.0\MailKit.pdb" />
-    <file src="..\MailKit\bin\Release\net6.0\MailKit.xml" target="lib\net6.0\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\net6.0\MailKit.dll.config" target="lib\net6.0\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net8.0\MailKit.dll" target="lib\net8.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net8.0\MailKit.pdb" target="lib\net8.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net8.0\MailKit.xml" target="lib\net8.0\MailKit.xml" />

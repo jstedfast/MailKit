@@ -6,12 +6,12 @@
     <VersionPrefix>4.8.0</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
     <LangVersion>10</LangVersion>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net8.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKitLite</AssemblyName>
     <PackageId>MailKitLite</PackageId>
-    <PackageTags>smtp;pop3;imap;mime;security;dkim;smime;s/mime;openpgp;pgp;mbox;mail;email;parser;tnef;net462;net47;net48;net6.0;net8.0;netstandard;netstandard2.0;netstandard2.1</PackageTags>
+    <PackageTags>smtp;pop3;imap;mime;security;dkim;smime;s/mime;openpgp;pgp;mbox;mail;email;parser;tnef;net462;net47;net48;net8.0;netstandard;netstandard2.0;netstandard2.1</PackageTags>
     <PackageProjectUrl>https://github.com/jstedfast/MailKit</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/jstedfast/MailKit/blob/master/License.md</PackageLicenseUrl>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
