@@ -50,6 +50,10 @@
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+  </PropertyGroup>
+
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="System.Formats.Asn1" Version="8.0.1" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
