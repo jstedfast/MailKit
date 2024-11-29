@@ -1696,20 +1696,25 @@ namespace MailKit.Net.Imap {
 				if (engine.QuirksMode == ImapQuirksMode.GMail && token.Type != ImapTokenType.Literal) {
 					// Note: GMail's IMAP server implementation breaks when it encounters nested multiparts with the same
 					// boundary and returns a BODYSTRUCTURE like the example in https://github.com/jstedfast/MailKit/issues/205
-					// or like the example in https://github.com/jstedfast/MailKit/issues/777:
+					// or like the example in https://github.com/jstedfast/MailKit/issues/777. There's also an issue with BODY
+					// responses like the one in https://github.com/jstedfast/MailKit/issues/1841.
 					//
 					// ("ALTERNATIVE" ("BOUNDARY" "==alternative_xad5934455aeex") NIL NIL)
 					// or
 					// ("RELATED" NIL ("ATTACHMENT" NIL) NIL)
+					// or
+					// ("ALTERNATIVE")
 					//
-					// Check if the next token is either a '(' or NIL. If it is '(', then that would indicate the start of
-					// the Content-Type parameter list. If it is NIL, then it would signify that the Content-Type has no
-					// parameters.
+					// Check if the next token is either a '(', ')' or NIL.
+					//
+					// If it is '(', then that would indicate the start of the Content-Type parameter list.
+					// If it is ')', then that would indicate a BODY response without a Content-Type parameter list.
+					// If it is NIL, then it would signify that the Content-Type has no parameters.
 
 					// Peek at the next token to see what we've got. If we get a '(' or NIL, then treat this as a multipart.
 					nextToken = engine.PeekToken (cancellationToken);
 
-					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.Nil) {
+					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.CloseParen || nextToken.Type == ImapTokenType.Nil) {
 						// Unget the multipart subtype.
 						engine.Stream.UngetToken (token);
 
@@ -1778,20 +1783,25 @@ namespace MailKit.Net.Imap {
 				if (engine.QuirksMode == ImapQuirksMode.GMail && token.Type != ImapTokenType.Literal) {
 					// Note: GMail's IMAP server implementation breaks when it encounters nested multiparts with the same
 					// boundary and returns a BODYSTRUCTURE like the example in https://github.com/jstedfast/MailKit/issues/205
-					// or like the example in https://github.com/jstedfast/MailKit/issues/777:
+					// or like the example in https://github.com/jstedfast/MailKit/issues/777. There's also an issue with BODY
+					// responses like the one in https://github.com/jstedfast/MailKit/issues/1841.
 					//
 					// ("ALTERNATIVE" ("BOUNDARY" "==alternative_xad5934455aeex") NIL NIL)
 					// or
 					// ("RELATED" NIL ("ATTACHMENT" NIL) NIL)
+					// or
+					// ("ALTERNATIVE")
 					//
-					// Check if the next token is either a '(' or NIL. If it is '(', then that would indicate the start of
-					// the Content-Type parameter list. If it is NIL, then it would signify that the Content-Type has no
-					// parameters.
+					// Check if the next token is either a '(', ')' or NIL.
+					//
+					// If it is '(', then that would indicate the start of the Content-Type parameter list.
+					// If it is ')', then that would indicate a BODY response without a Content-Type parameter list.
+					// If it is NIL, then it would signify that the Content-Type has no parameters.
 
 					// Peek at the next token to see what we've got. If we get a '(' or NIL, then treat this as a multipart.
 					nextToken = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
-					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.Nil) {
+					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.CloseParen || nextToken.Type == ImapTokenType.Nil) {
 						// Unget the multipart subtype.
 						engine.Stream.UngetToken (token);
 
