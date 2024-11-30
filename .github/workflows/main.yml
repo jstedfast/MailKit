@@ -1,4 +1,4 @@
-name: MailKit CI/CD Pipeline
+name: Build
 
 on: [push, pull_request, workflow_dispatch]
 
