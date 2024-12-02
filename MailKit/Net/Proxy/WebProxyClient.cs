@@ -78,6 +78,9 @@ namespace MailKit.Net.Proxy
 
 		static NetworkCredential GetNetworkCredential (ICredentials credentials, Uri uri)
 		{
+			if (credentials == null)
+				return null;
+
 			if (credentials is NetworkCredential network)
 				return network;
 
@@ -88,11 +91,19 @@ namespace MailKit.Net.Proxy
 		{
 			var credential = GetNetworkCredential (credentials, proxyUri);
 
-			if (proxyUri.Scheme.Equals ("https", StringComparison.OrdinalIgnoreCase))
-				return new HttpsProxyClient (proxyUri.Host, proxyUri.Port, credential);
+			if (proxyUri.Scheme.Equals ("https", StringComparison.OrdinalIgnoreCase)) {
+				if (credential != null)
+					return new HttpsProxyClient (proxyUri.Host, proxyUri.Port, credential);
 
-			if (proxyUri.Scheme.Equals ("http", StringComparison.OrdinalIgnoreCase))
-				return new HttpProxyClient (proxyUri.Host, proxyUri.Port, credential);
+				return new HttpsProxyClient (proxyUri.Host, proxyUri.Port);
+			}
+
+			if (proxyUri.Scheme.Equals ("http", StringComparison.OrdinalIgnoreCase)) {
+				if (credential != null)
+					return new HttpProxyClient (proxyUri.Host, proxyUri.Port, credential);
+
+				return new HttpProxyClient (proxyUri.Host, proxyUri.Port);
+			}
 
 			throw new NotImplementedException ($"The default system proxy does not support {proxyUri.Scheme}.");
 		}
@@ -132,7 +143,7 @@ namespace MailKit.Net.Proxy
 			var targetUri = GetTargetUri (host, port);
 			var proxyUri = proxy.GetProxy (targetUri);
 
-			if (proxyUri is null) {
+			if (proxyUri is null || proxy.IsBypassed (targetUri)) {
 				// Note: if the proxy URI is null, then it means that the proxy should be bypassed.
 				var socket = SocketUtils.Connect (host, port, LocalEndPoint, cancellationToken);
 				return new NetworkStream (socket, true);
