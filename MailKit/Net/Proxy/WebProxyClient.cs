@@ -140,7 +140,7 @@ namespace MailKit.Net.Proxy
 			var targetUri = GetTargetUri (host, port);
 			var proxyUri = proxy.GetProxy (targetUri);
 
-			if (proxyUri is null) {
+			if (proxyUri is null || proxy.IsBypassed (targetUri)) {
 				// Note: if the proxy URI is null, then it means that the proxy should be bypassed.
 				var socket = SocketUtils.Connect (host, port, LocalEndPoint, cancellationToken);
 				return new NetworkStream (socket, true);
@@ -186,7 +186,7 @@ namespace MailKit.Net.Proxy
 			var targetUri = GetTargetUri (host, port);
 			var proxyUri = proxy.GetProxy (targetUri);
 
-			if (proxyUri is null) {
+			if (proxyUri is null || proxy.IsBypassed (targetUri)) {
 				// Note: if the proxy URI is null, then it means that the proxy should be bypassed.
 				var socket = await SocketUtils.ConnectAsync (host, port, LocalEndPoint, cancellationToken).ConfigureAwait (false);
 				return new NetworkStream (socket, true);
