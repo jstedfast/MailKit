@@ -86,6 +86,14 @@ namespace MailKit.Net.Proxy
 
 		static ProxyClient GetProxyClient (Uri proxyUri, ICredentials credentials)
 		{
+			if (credentials == null) {
+				if (proxyUri.Scheme.Equals ("https", StringComparison.OrdinalIgnoreCase))
+					return new HttpsProxyClient (proxyUri.Host, proxyUri.Port);
+
+				if (proxyUri.Scheme.Equals ("http", StringComparison.OrdinalIgnoreCase))
+					return new HttpProxyClient (proxyUri.Host, proxyUri.Port);
+			}
+			
 			var credential = GetNetworkCredential (credentials, proxyUri);
 
 			if (proxyUri.Scheme.Equals ("https", StringComparison.OrdinalIgnoreCase))
