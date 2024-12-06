@@ -6,7 +6,8 @@
 * [Configuring the Correct API Permissions for Your Application](#configuring-the-correct-api-permissions-for-your-application)
 * Desktop and Mobile Applications
   * [Authenticating a Desktop or Mobile Application with OAuth2](#authenticating-a-desktop-or-mobile-application-with-oauth2)
-* [Web App](#web-app)
+* Web Applications
+  * [Authenticating a Web Application with OAuth2](#authenticating-a-web-application-with-oauth2)
 * Web Services
   * [Registering Service Principals for Your Web Service](#registering-service-principals-for-your-web-service)
   * [Granting Permissions for Your Web Service](#granting-permissions-for-your-web-service)
