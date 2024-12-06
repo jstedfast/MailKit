@@ -6,6 +6,8 @@
 * [Configuring the Correct API Permissions for Your Application](#configuring-the-correct-api-permissions-for-your-application)
 * Desktop and Mobile Applications
   * [Authenticating a Desktop or Mobile Application with OAuth2](#authenticating-a-desktop-or-mobile-application-with-oauth2)
+* Web Applications
+  * [Authenticating a Web Application with OAuth2](#authenticating-a-web-application-with-oauth2)
 * Web Services
   * [Registering Service Principals for Your Web Service](#registering-service-principals-for-your-web-service)
   * [Granting Permissions for Your Web Service](#granting-permissions-for-your-web-service)
@@ -124,6 +126,130 @@ var result = await publicClientApplication.AcquireTokenSilent(scopes, account).E
 
 Note: for information on caching tokens, see Microsoft's documentation about how to implement a
 [cross-platform token cache](https://github.com/AzureAD/microsoft-authentication-extensions-for-dotnet/wiki/Cross-platform-Token-Cache).
+
+## Web Applications
+
+### Authenticating a Web Application with OAuth2
+
+Use this if you want to send/receive mail on behalf of a user.
+
+```csharp
+// Common Code
+using Microsoft.Graph;
+using Microsoft.Identity.Client;
+using Microsoft.Kiota.Abstractions.Authentication;
+
+public static class OAuthMicrosoft
+{
+    public static readonly string[] RegistrationScopes = new string[] {
+        "offline_access",
+        "User.Read",
+        "Mail.Send",
+        "https://outlook.office.com/SMTP.Send",
+        "https://outlook.office.com/IMAP.AccessAsUser.All",
+    };
+
+    public static readonly string[] SmtpScopes = new string[] {
+        "email",
+        "offline_access",
+        "https://outlook.office.com/SMTP.Send"
+    };
+
+    public static readonly string[] ImapScopes = new string[] {
+        "email",
+        "offline_access",
+        "https://outlook.office.com/IMAP.AccessAsUser.All",
+    };
+
+    public static IConfidentialClientApplication CreateConfidentialClient ()
+    {
+        var clientId = "Application (client) ID";
+        var tenantId = "common"; // common = anybody with microsoft account personal or organization; other options see https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols#endpoints
+        var clientSecret = "client secret";
+
+        var redirectURL = "https://example.com/oauth/microsoft/callback";
+
+        var confidentialClientApplication = ConfidentialClientApplicationBuilder.Create (clientId)
+            .WithAuthority ($"https://login.microsoftonline.com/{tenantId}/v2.0")
+            .WithClientSecret (clientSecret)
+            .WithRedirectUri (redirectURL)
+            .Build ();
+
+        // You also need to configure an MSAL token cache. so that token are remembered.
+        return confidentialClientApplication;
+    }
+}
+```
+
+```csharp
+// Registration page - redirect user to Microsoft to get authorization 
+public async Task<IActionResult> OnPostAsync ()
+{
+    var client = OAuthMicrosoft.CreateConfidentialClient ();
+
+    // Note: When getting authorization, specify all of the scopes that your application will ever need (eg. SMTP /and/ IMAP).
+    // Later, when requesting an access token, you will only ask for the specific scopes that you need (e.g. SMTP).
+    var authurlbuilder = client.GetAuthorizationRequestUrl (OAuthMicrosoft.RegistrationScopes);
+    var authurl = await authurlbuilder.ExecuteAsync ();
+
+    return this.Redirect (authurl.ToString ());
+}
+
+// Callback page = https://example.com/oauth/microsoft/callback in this example
+public async Task<IActionResult> OnGet ([FromQuery] string code)
+{
+    var confidentialClientApplication = OAuthMicrosoft.CreateConfidentialClient ();
+    var scopes = OAuthMicrosoft.SmtpScopes;
+
+    var auth = await confidentialClientApplication.AcquireTokenByAuthorizationCode (scopes, code).ExecuteAsync (); //this saves the token in msal cache
+
+    var ident = auth.Account.HomeAccountId.Identifier;
+    // Note: you will need to persist the ident to refer to later.
+}
+
+// Use the credentials
+
+public async Task SendEmailAsync (string ident)
+{
+    var confidentialClientApplication = OAuthMicrosoft.CreateConfidentialClient ();
+    var account = await confidentialClientApplication.GetAccountAsync (ident);
+    var scopes = OAuthMicrosoft.SmtpScopes;
+
+    try {
+        var auth = await confidentialClientApplication.AcquireTokenSilent (scopes, account).ExecuteAsync ();
+
+        using (var client = new SmtpClient ()) {
+            await client.ConnectAsync ("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
+
+            var oauth2 = new SaslMechanismOAuth2 (auth.Account.Username, auth.AccessToken);
+
+            await client.AuthenticateAsync (oauth2);
+
+            var serverfeedback = await client.SendAsync (message);
+            await client.DisconnectAsync (true);
+        }
+    } catch (MsalUiRequiredException) {
+        throw new Exception ("Need to get authorization again");
+    }
+}
+
+public async Task TestImapAsync (string ident)
+{
+    var confidentialClientApplication = OAuthMicrosoft.CreateConfidentialClient ();
+    var account = await confidentialClientApplication.GetAccountAsync (ident);
+    var scopes = OAuthMicrosoft.ImapScopes;
+
+    var auth = await confidentialClientApplication.AcquireTokenSilent (scopes, account).ExecuteAsync ();    
+
+    var oauth2 = new SaslMechanismOAuth2 (auth.Account.Username, auth.AccessToken);
+
+    using (var client = new ImapClient ()) {
+        await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+        await client.AuthenticateAsync (oauth2);
+        await client.DisconnectAsync (true);
+    }
+}
+```
 
 ## Web Services
 
