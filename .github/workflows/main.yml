@@ -108,7 +108,7 @@ jobs:
           name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}-${{ matrix.os }}-${{ matrix.build-configuration }}-TestResults.xml
           path: TestResult.xml
 
-      - if: ${{ env.GENERATE_CODE_COVERAGE == 'yes' }}
+      - if: ${{ env.GENERATE_CODE_COVERAGE == 'true' }}
         name: Upload code coverage data to coveralls.io
         id: upload_to_coveralls
         shell: pwsh
