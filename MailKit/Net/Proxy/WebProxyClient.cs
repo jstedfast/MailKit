@@ -87,7 +87,7 @@ namespace MailKit.Net.Proxy
 			return credentials.GetCredential (uri, "Basic");
 		}
 
-		static ProxyClient GetProxyClient (Uri proxyUri, ICredentials credentials)
+		internal static ProxyClient GetProxyClient (Uri proxyUri, ICredentials credentials)
 		{
 			var credential = GetNetworkCredential (credentials, proxyUri);
 
@@ -105,7 +105,28 @@ namespace MailKit.Net.Proxy
 				return new HttpProxyClient (proxyUri.Host, proxyUri.Port);
 			}
 
-			throw new NotImplementedException ($"The default system proxy does not support {proxyUri.Scheme}.");
+			if (proxyUri.Scheme.Equals ("socks4", StringComparison.OrdinalIgnoreCase)) {
+				if (credential != null)
+					return new Socks4Client (proxyUri.Host, proxyUri.Port, credential);
+
+				return new Socks4Client (proxyUri.Host, proxyUri.Port);
+			}
+
+			if (proxyUri.Scheme.Equals ("socks4a", StringComparison.OrdinalIgnoreCase)) {
+				if (credential != null)
+					return new Socks4aClient (proxyUri.Host, proxyUri.Port, credential);
+
+				return new Socks4aClient (proxyUri.Host, proxyUri.Port);
+			}
+
+			if (proxyUri.Scheme.Equals ("socks5", StringComparison.OrdinalIgnoreCase)) {
+				if (credential != null)
+					return new Socks5Client (proxyUri.Host, proxyUri.Port, credential);
+
+				return new Socks5Client (proxyUri.Host, proxyUri.Port);
+			}
+
+			throw new NotSupportedException ($"The default system proxy does not support {proxyUri.Scheme}.");
 		}
 
 		/// <summary>

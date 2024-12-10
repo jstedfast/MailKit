@@ -66,6 +66,29 @@ namespace UnitTests.Net.Proxy
 			Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await proxy.ConnectAsync ("www.google.com", 80, -ConnectTimeout));
 		}
 
+		[TestCase ("http://proxy:8080", null, null, typeof (HttpProxyClient))]
+		[TestCase ("http://proxy:8080", "user", "password", typeof (HttpProxyClient))]
+		[TestCase ("https://proxy:8080", null, null, typeof (HttpsProxyClient))]
+		[TestCase ("https://proxy:8080", "user", "password", typeof (HttpsProxyClient))]
+		[TestCase ("socks4://proxy:1080", null, null, typeof (Socks4Client))]
+		[TestCase ("socks4://proxy:1080", "user", "password", typeof (Socks4Client))]
+		[TestCase ("socks4a://proxy:1080", null, null, typeof (Socks4aClient))]
+		[TestCase ("socks4a://proxy:1080", "user", "password", typeof (Socks4aClient))]
+		[TestCase ("socks5://proxy:1080", null, null, typeof (Socks5Client))]
+		[TestCase ("socks5://proxy:1080", "user", "password", typeof (Socks5Client))]
+		[TestCase ("unsupported://proxy:1080", null, null, null)]
+		public void TestGetProxyClient (string proxyUri, string user, string password, Type expectedType)
+		{
+			var credentials = user != null ? new NetworkCredential (user, password) : null;
+
+			if (expectedType != null) {
+				var proxy = WebProxyClient.GetProxyClient (new Uri (proxyUri), credentials);
+				Assert.That (proxy, Is.InstanceOf (expectedType));
+			} else {
+				Assert.Throws<NotSupportedException> (() => WebProxyClient.GetProxyClient (new Uri (proxyUri), credentials));
+			}
+		}
+
 		[Test]
 		public void TestConnect ()
 		{
