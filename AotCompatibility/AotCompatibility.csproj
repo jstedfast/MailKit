@@ -24,7 +24,7 @@
 
     <ProjectReference Include="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
     <ProjectReference Include="..\submodules\MimeKit\MimeKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
-    <TrimmerRootAssembly Include="MailKit" Path="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
+    <TrimmerRootAssembly Include="MailKitLite" Path="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
     <TrimmerRootAssembly Include="MimeKitLite" Path="..\submodules\MimeKit\MimeKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
   </ItemGroup>
 
