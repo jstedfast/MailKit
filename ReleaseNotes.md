@@ -1,5 +1,17 @@
 # Release Notes
 
+## MailKit 4.9.0 (2024-12-09)
+
+* Added an IMAP work-around for mail.ru which sometimes sends integer tokens as decimals in its responses.
+  (issue [#1838](https://github.com/jstedfast/MailKit/issues/1838))
+* Added a workaround for GMail IMAP BODY responses that include multipart expressions without any children
+  (e.g. `("ALTERNATIVE")`). (issue [#1841](https://github.com/jstedfast/MailKit/issues/1841))
+* Fixed default system proxy to handle null credentials and check if the targetUri is bypassed.
+  (issue [#1852](https://github.com/jstedfast/MailKit/issues/1852))
+* Dropped support for net6.0 (Microsoft support ended Nov 12, 2024).
+* Bumped System.Threading.Tasks.Extensions dependency to 4.6.0.
+* Bumped MimeKit dependency to 4.9.0.
+
 ## MailKit 4.8.0 (2024-09-29)
 
 * Added a UniqueIdRange.SortOrder property.
