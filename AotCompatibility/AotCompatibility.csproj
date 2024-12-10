@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SelfContained>true</SelfContained>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <UseMailKitLite Condition=" '$(UseMailKitLite)' == '' ">false</UseMailKitLite>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MailKit\MailKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
+    <TrimmerRootAssembly Include="MailKit" Path="..\MailKit\MailKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
+    <TrimmerRootAssembly Include="MimeKit" Path="..\submodules\MimeKit\MimeKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
+
+    <ProjectReference Include="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
+    <ProjectReference Include="..\submodules\MimeKit\MimeKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
+    <TrimmerRootAssembly Include="MailKit" Path="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
+    <TrimmerRootAssembly Include="MimeKitLite" Path="..\submodules\MimeKit\MimeKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
+  </ItemGroup>
+
+</Project>
