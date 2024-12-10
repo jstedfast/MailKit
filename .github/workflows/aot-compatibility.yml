@@ -1,0 +1,32 @@
+name: AOT Compatibility
+
+on:
+  push:
+    branches: [ 'master' ]
+    paths-ignore:
+    - '**.md'
+  pull_request:
+    branches: [ 'master' ]
+    paths-ignore:
+    - '**.md'
+
+jobs:
+  aot-test:
+    strategy:
+      fail-fast: false  # ensures the entire test matrix is run, even if one permutation fails
+      matrix:
+        os: [ windows-latest ]
+        mailkitlite: [ true ]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # fetching all
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+
+    - name: publish AOT testApp, assert static analysis warning count, and run the app
+      shell: pwsh
+      run: .\scripts\test-aot-compatibility.ps1 ${{ matrix.mailkitlite }}
