@@ -472,92 +472,91 @@ namespace MailKit.Net.Imap {
 			Engine = engine;
 			Folder = folder;
 
-			using (var builder = new ByteArrayBuilder (1024)) {
-				byte[] buf, utf8 = new byte[8];
-				int argc = 0;
-				string str;
+			var builder = engine.GetCommandBuilder ();
+			byte[] buf, utf8 = new byte[8];
+			int argc = 0;
+			string str;
 
-				for (int i = 0; i < format.Length; i++) {
-					if (format[i] == '%') {
-						switch (format[++i]) {
-						case '%': // a literal %
-							builder.Append ((byte) '%');
-							break;
-						case 'd': // an integer
-							str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
-							buf = Encoding.ASCII.GetBytes (str);
-							builder.Append (buf, 0, buf.Length);
-							break;
-						case 'u': // an unsigned integer
-							str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
-							buf = Encoding.ASCII.GetBytes (str);
-							builder.Append (buf, 0, buf.Length);
-							break;
-						case 's':
-							str = (string) args[argc++];
-							buf = Encoding.ASCII.GetBytes (str);
-							builder.Append (buf, 0, buf.Length);
-							break;
-						case 'F': // an ImapFolder
-							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
-							AppendString (options, true, builder, utf7);
-							break;
-						case 'L': // a MimeMessage or a byte[]
-							var arg = args[argc++];
-							ImapLiteral literal;
-							byte[] prefix;
+			for (int i = 0; i < format.Length; i++) {
+				if (format[i] == '%') {
+					switch (format[++i]) {
+					case '%': // a literal %
+						builder.Append ((byte) '%');
+						break;
+					case 'd': // an integer
+						str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
+						buf = Encoding.ASCII.GetBytes (str);
+						builder.Append (buf, 0, buf.Length);
+						break;
+					case 'u': // an unsigned integer
+						str = ((uint) args[argc++]).ToString (CultureInfo.InvariantCulture);
+						buf = Encoding.ASCII.GetBytes (str);
+						builder.Append (buf, 0, buf.Length);
+						break;
+					case 's':
+						str = (string) args[argc++];
+						buf = Encoding.ASCII.GetBytes (str);
+						builder.Append (buf, 0, buf.Length);
+						break;
+					case 'F': // an ImapFolder
+						var utf7 = ((ImapFolder) args[argc++]).EncodedName;
+						AppendString (options, true, builder, utf7);
+						break;
+					case 'L': // a MimeMessage or a byte[]
+						var arg = args[argc++];
+						ImapLiteral literal;
+						byte[] prefix;
 
-							if (arg is MimeMessage message) {
-								prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
-								literal = new ImapLiteral (options, message, UpdateProgress);
-							} else {
-								literal = new ImapLiteral (options, (byte[]) arg);
-								prefix = LiteralTokenPrefix;
-							}
-
-							var length = literal.Length;
-							bool wait = true;
-
-							builder.Append (prefix, 0, prefix.Length);
-							buf = Encoding.ASCII.GetBytes (length.ToString (CultureInfo.InvariantCulture));
-							builder.Append (buf, 0, buf.Length);
-
-							if (CanUseNonSynchronizedLiteral (Engine, length)) {
-								builder.Append ((byte) '+');
-								wait = false;
-							}
-
-							builder.Append (LiteralTokenSuffix, 0, LiteralTokenSuffix.Length);
-
-							totalSize += length;
-
-							parts.Add (new ImapCommandPart (builder.ToArray (), literal, wait));
-							builder.Clear ();
-
-							if (prefix == UTF8LiteralTokenPrefix)
-								builder.Append ((byte) ')');
-							break;
-						case 'S': // a string which may need to be quoted or made into a literal
-							AppendString (options, true, builder, (string) args[argc++]);
-							break;
-						case 'Q': // similar to %S but string must be quoted at a minimum
-							AppendString (options, false, builder, (string) args[argc++]);
-							break;
-						default:
-							throw new FormatException ($"The %{format[i]} format specifier is not supported.");
+						if (arg is MimeMessage message) {
+							prefix = options.International ? UTF8LiteralTokenPrefix : LiteralTokenPrefix;
+							literal = new ImapLiteral (options, message, UpdateProgress);
+						} else {
+							literal = new ImapLiteral (options, (byte[]) arg);
+							prefix = LiteralTokenPrefix;
 						}
-					} else if (format[i] < 128) {
-						builder.Append ((byte) format[i]);
-					} else {
-						int nchars = char.IsSurrogate (format[i]) ? 2 : 1;
-						int nbytes = Encoding.UTF8.GetBytes (format, i, nchars, utf8, 0);
-						builder.Append (utf8, 0, nbytes);
-						i += nchars - 1;
-					}
-				}
 
-				parts.Add (new ImapCommandPart (builder.ToArray (), null));
+						var length = literal.Length;
+						bool wait = true;
+
+						builder.Append (prefix, 0, prefix.Length);
+						buf = Encoding.ASCII.GetBytes (length.ToString (CultureInfo.InvariantCulture));
+						builder.Append (buf, 0, buf.Length);
+
+						if (CanUseNonSynchronizedLiteral (Engine, length)) {
+							builder.Append ((byte) '+');
+							wait = false;
+						}
+
+						builder.Append (LiteralTokenSuffix, 0, LiteralTokenSuffix.Length);
+
+						totalSize += length;
+
+						parts.Add (new ImapCommandPart (builder.ToArray (), literal, wait));
+						builder.Clear ();
+
+						if (prefix == UTF8LiteralTokenPrefix)
+							builder.Append ((byte) ')');
+						break;
+					case 'S': // a string which may need to be quoted or made into a literal
+						AppendString (options, true, builder, (string) args[argc++]);
+						break;
+					case 'Q': // similar to %S but string must be quoted at a minimum
+						AppendString (options, false, builder, (string) args[argc++]);
+						break;
+					default:
+						throw new FormatException ($"The %{format[i]} format specifier is not supported.");
+					}
+				} else if (format[i] < 128) {
+					builder.Append ((byte) format[i]);
+				} else {
+					int nchars = char.IsSurrogate (format[i]) ? 2 : 1;
+					int nbytes = Encoding.UTF8.GetBytes (format, i, nchars, utf8, 0);
+					builder.Append (utf8, 0, nbytes);
+					i += nchars - 1;
+				}
 			}
+
+			parts.Add (new ImapCommandPart (builder.ToArray (), null));
 		}
 
 		/// <summary>
