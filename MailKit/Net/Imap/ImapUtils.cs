@@ -1693,7 +1693,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom: // Note: Technically, we should never get an Atom here, but if we do, we'll treat it as a QString.
 			case ImapTokenType.QString:
 			case ImapTokenType.Literal:
-				if (engine.QuirksMode == ImapQuirksMode.GMail && token.Type != ImapTokenType.Literal) {
+				if (engine.QuirksMode is ImapQuirksMode.GMail or ImapQuirksMode.QQMail or ImapQuirksMode.Yandex && token.Type != ImapTokenType.Literal) {
 					// Note: GMail's IMAP server implementation breaks when it encounters nested multiparts with the same
 					// boundary and returns a BODYSTRUCTURE like the example in https://github.com/jstedfast/MailKit/issues/205
 					// or like the example in https://github.com/jstedfast/MailKit/issues/777. There's also an issue with BODY
@@ -1710,6 +1710,9 @@ namespace MailKit.Net.Imap {
 					// If it is '(', then that would indicate the start of the Content-Type parameter list.
 					// If it is ')', then that would indicate a BODY response without a Content-Type parameter list.
 					// If it is NIL, then it would signify that the Content-Type has no parameters.
+					//
+					// Note: Yandex also has this problem. See https://github.com/jstedfast/MailKit/issues/1861
+					// As does QQMail: https://github.com/jstedfast/MailKit/issues/1076
 
 					// Peek at the next token to see what we've got. If we get a '(' or NIL, then treat this as a multipart.
 					nextToken = engine.PeekToken (cancellationToken);
@@ -1780,7 +1783,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom: // Note: Technically, we should never get an Atom here, but if we do, we'll treat it as a QString.
 			case ImapTokenType.QString:
 			case ImapTokenType.Literal:
-				if (engine.QuirksMode == ImapQuirksMode.GMail && token.Type != ImapTokenType.Literal) {
+				if (engine.QuirksMode is ImapQuirksMode.GMail or ImapQuirksMode.QQMail or ImapQuirksMode.Yandex && token.Type != ImapTokenType.Literal) {
 					// Note: GMail's IMAP server implementation breaks when it encounters nested multiparts with the same
 					// boundary and returns a BODYSTRUCTURE like the example in https://github.com/jstedfast/MailKit/issues/205
 					// or like the example in https://github.com/jstedfast/MailKit/issues/777. There's also an issue with BODY
@@ -1797,6 +1800,9 @@ namespace MailKit.Net.Imap {
 					// If it is '(', then that would indicate the start of the Content-Type parameter list.
 					// If it is ')', then that would indicate a BODY response without a Content-Type parameter list.
 					// If it is NIL, then it would signify that the Content-Type has no parameters.
+					//
+					// Note: Yandex also has this problem. See https://github.com/jstedfast/MailKit/issues/1861
+					// As does QQMail: https://github.com/jstedfast/MailKit/issues/1076
 
 					// Peek at the next token to see what we've got. If we get a '(' or NIL, then treat this as a multipart.
 					nextToken = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);

@@ -101,6 +101,7 @@ namespace MailKit.Net.Imap {
 		GMail,
 		hMailServer,
 		ProtonMail,
+		QQMail,
 		SmarterMail,
 		SunMicrosystems,
 		UW,
@@ -693,6 +694,8 @@ namespace MailKit.Net.Imap {
 				QuirksMode = ImapQuirksMode.Exchange;
 			else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
 				QuirksMode = ImapQuirksMode.GMail;
+			else if (text.Contains ("QQMail IMAP4 Server ready"))
+				QuirksMode = ImapQuirksMode.QQMail;
 			else if (text.StartsWith ("IMAPrev1", StringComparison.Ordinal)) // https://github.com/hmailserver/hmailserver/blob/master/hmailserver/source/Server/IMAP/IMAPConnection.cpp#L127
 				QuirksMode = ImapQuirksMode.hMailServer;
 			else if (text.Contains (" IMAP4rev1 2007f.") || text.Contains (" Panda IMAP "))
