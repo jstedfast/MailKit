@@ -467,10 +467,10 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
 
-				// Note: Exchange apparently doesn't quote folder names that contain tabs.
+				// Note: Exchange (Office365 and potentially 2016/2019/other versions) has a bug where it doesn't quote folder names that contain CTRL characters (including tab).
 				//
 				// See https://github.com/jstedfast/MailKit/issues/945 for details.
-				if (engine.QuirksMode == ImapQuirksMode.Exchange) {
+				if (token.Type == ImapTokenType.Atom && engine.QuirksMode == ImapQuirksMode.Exchange) {
 					var line = engine.ReadLine (cancellationToken);
 
 					// unget the \r\n sequence
@@ -502,10 +502,10 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
 
-				// Note: Exchange apparently doesn't quote folder names that contain tabs.
+				// Note: Exchange (Office365 and potentially 2016/2019/other versions) has a bug where it doesn't quote folder names that contain CTRL characters (including tab).
 				//
 				// See https://github.com/jstedfast/MailKit/issues/945 for details.
-				if (engine.QuirksMode == ImapQuirksMode.Exchange) {
+				if (token.Type == ImapTokenType.Atom && engine.QuirksMode == ImapQuirksMode.Exchange) {
 					var line = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
 
 					// unget the \r\n sequence
