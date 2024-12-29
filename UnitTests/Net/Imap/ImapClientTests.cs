@@ -7565,5 +7565,107 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Inbox, Is.Not.Null, "Inbox");
 			}
 		}
+
+		static void TestQuirksModeDetectionBasedOnGreeting (string greeting, string capability, ImapQuirksMode quirksMode)
+		{
+			var commands = new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", greeting),
+			};
+
+			if (capability != null)
+				commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", capability));
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+
+				var engine = (ImapEngine) client.SyncRoot;
+
+				Assert.That (engine.QuirksMode, Is.EqualTo (quirksMode), "QuirksMode");
+			}
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionCourier ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("courier.greeting.txt", null, ImapQuirksMode.Courier);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionCyrus ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("cyrus.greeting.txt", null, ImapQuirksMode.Cyrus);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionDomino ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("domino.greeting.txt", "domino.capability.txt", ImapQuirksMode.Domino);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionDovecot ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("dovecot.greeting.txt", null, ImapQuirksMode.Dovecot);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionExchange2003 ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("exchange.greeting-2003.txt", "exchange.capability-preauth.txt", ImapQuirksMode.Exchange2003);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionExchange2007 ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("exchange.greeting-2007.txt", "exchange.capability-preauth.txt", ImapQuirksMode.Exchange2007);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionGMail ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("gmail.greeting.txt", "gmail.capability.txt", ImapQuirksMode.GMail);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionQQMail ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("qqmail.greeting.txt", null, ImapQuirksMode.QQMail);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionSmarterMail ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("smartermail.greeting.txt", "common.capability.txt", ImapQuirksMode.SmarterMail);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionUW ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("uw.greeting.txt", null, ImapQuirksMode.UW);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionYahooMail ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("yahoo.greeting.txt", "yahoo.capabilities.txt", ImapQuirksMode.Yahoo);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionYandex ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("yandex.greeting.txt", "yandex.capability.txt", ImapQuirksMode.Yandex);
+		}
+
+		[Test]
+		public void TestQuirksModeDetectionZoho ()
+		{
+			TestQuirksModeDetectionBasedOnGreeting ("zoho.greeting.txt", "zoho.capability.txt", ImapQuirksMode.Zoho);
+		}
 	}
 }

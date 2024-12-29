@@ -354,7 +354,7 @@ namespace MailKit.Net.Imap {
 
 			string qresync;
 
-			if ((Engine.Capabilities & ImapCapabilities.Annotate) != 0 && Engine.QuirksMode != ImapQuirksMode.SunMicrosystems)
+			if ((Engine.Capabilities & ImapCapabilities.Annotate) != 0 && Engine.QuirksMode != ImapQuirksMode.iCloud)
 				qresync = string.Format (CultureInfo.InvariantCulture, "(ANNOTATE QRESYNC ({0} {1}", uidValidity, highestModSeq);
 			else
 				qresync = string.Format (CultureInfo.InvariantCulture, "(QRESYNC ({0} {1}", uidValidity, highestModSeq);
@@ -573,7 +573,7 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0)
 				@params += "CONDSTORE";
-			if ((Engine.Capabilities & ImapCapabilities.Annotate) != 0 && Engine.QuirksMode != ImapQuirksMode.SunMicrosystems)
+			if ((Engine.Capabilities & ImapCapabilities.Annotate) != 0 && Engine.QuirksMode != ImapQuirksMode.iCloud)
 				@params += " ANNOTATE";
 
 			if (@params.Length > 0)

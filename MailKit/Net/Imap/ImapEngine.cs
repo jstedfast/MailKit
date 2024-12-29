@@ -100,13 +100,14 @@ namespace MailKit.Net.Imap {
 		Exchange2007,
 		GMail,
 		hMailServer,
+		iCloud,
 		ProtonMail,
 		QQMail,
 		SmarterMail,
-		SunMicrosystems,
 		UW,
 		Yahoo,
-		Yandex
+		Yandex,
+		Zoho
 	}
 
 	class ImapFolderNameComparer : IEqualityComparer<string>
@@ -694,7 +695,7 @@ namespace MailKit.Net.Imap {
 				QuirksMode = ImapQuirksMode.Exchange;
 			else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
 				QuirksMode = ImapQuirksMode.GMail;
-			else if (text.Contains ("QQMail IMAP4 Server ready"))
+			else if (text.Contains ("QQMail "))
 				QuirksMode = ImapQuirksMode.QQMail;
 			else if (text.StartsWith ("IMAPrev1", StringComparison.Ordinal)) // https://github.com/hmailserver/hmailserver/blob/master/hmailserver/source/Server/IMAP/IMAPConnection.cpp#L127
 				QuirksMode = ImapQuirksMode.hMailServer;
@@ -702,8 +703,10 @@ namespace MailKit.Net.Imap {
 				QuirksMode = ImapQuirksMode.UW;
 			else if (text.Contains ("SmarterMail"))
 				QuirksMode = ImapQuirksMode.SmarterMail;
-			else if (text.Contains ("Yandex IMAP4rev1 "))
+			else if (text.Contains ("Yandex "))
 				QuirksMode = ImapQuirksMode.Yandex;
+			else if (text.Contains ("Zoho Mail "))
+				QuirksMode = ImapQuirksMode.Zoho;
 		}
 
 		/// <summary>
@@ -1425,8 +1428,8 @@ namespace MailKit.Net.Imap {
 				QuirksMode = ImapQuirksMode.GMail;
 			} else if (atom.Equals ("XSTOP", StringComparison.OrdinalIgnoreCase)) {
 				QuirksMode = ImapQuirksMode.ProtonMail;
-			} else if (atom.Equals ("X-SUN-IMAP", StringComparison.OrdinalIgnoreCase)) {
-				QuirksMode = ImapQuirksMode.SunMicrosystems;
+			} else if (atom.Equals ("XAPPLEPUSHSERVICE", StringComparison.OrdinalIgnoreCase)) {
+				QuirksMode = ImapQuirksMode.iCloud;
 			} else if (atom.Equals ("XYMHIGHESTMODSEQ", StringComparison.OrdinalIgnoreCase)) {
 				QuirksMode = ImapQuirksMode.Yahoo;
 			}
