@@ -682,7 +682,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsAtom (char c)
 		{
-			return c < 128 && !char.IsControl (c) && "(){ \t%*\\\"]".IndexOf (c) == -1;
+			return c < 128 && !char.IsControl (c) && "(){ %*\\\"]".IndexOf (c) == -1;
 		}
 
 		static bool IsQuotedSafe (ImapEngine engine, char c)
