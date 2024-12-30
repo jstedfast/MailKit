@@ -61,7 +61,7 @@ namespace MailKit.Net.Imap {
 
 	class ImapStream : Stream, ICancellableStream
 	{
-		public const string AtomSpecials    = "(){%*\\\"\n";
+		public const string AtomSpecials    = "(){%*\\\"";
 		public const string DefaultSpecials = "[]" + AtomSpecials;
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
@@ -524,7 +524,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsAtom (byte c, string specials)
 		{
-			return !IsCtrl (c) && !IsWhiteSpace (c) && specials.IndexOf ((char) c) == -1;
+			return !IsCtrl (c) && c != (byte) ' ' && specials.IndexOf ((char) c) == -1;
 		}
 
 		static bool IsCtrl (byte c)
@@ -534,7 +534,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsWhiteSpace (byte c)
 		{
-			return c == (byte) ' ' || c == (byte) '\t' || c == (byte) '\r';
+			return c == (byte) ' ' || c == (byte) '\r';
 		}
 
 		bool TryReadQuotedString (ByteArrayBuilder builder, ref bool escaped)
