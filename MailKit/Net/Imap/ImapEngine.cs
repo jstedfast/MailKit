@@ -2527,7 +2527,7 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		bool UpdateSimpleStatusValue (ImapFolder folder, string atom, ImapToken token)
+		static bool UpdateSimpleStatusValue (ImapFolder folder, string atom, ImapToken token)
 		{
 			uint count, uid;
 			ulong modseq;
