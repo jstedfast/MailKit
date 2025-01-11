@@ -46,9 +46,9 @@ namespace MailKit.Search
 		/// <param name="attribute">The annotation attribute.</param>
 		/// <param name="value">The annotation attribute value.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="entry"/> is <c>null</c>.</para>
+		/// <para><paramref name="entry"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="attribute"/> is <c>null</c>.</para>
+		/// <para><paramref name="attribute"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="attribute"/> is not a valid attribute for searching.

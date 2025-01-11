@@ -52,7 +52,7 @@ namespace MailKit {
 		/// Get the quota root.
 		/// </summary>
 		/// <remarks>
-		/// Gets the quota root. If the quota root is <c>null</c>, then
+		/// Gets the quota root. If the quota root is <see langword="null" />, then
 		/// it suggests that the folder does not have a quota.
 		/// </remarks>
 		/// <example>

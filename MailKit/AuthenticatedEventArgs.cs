@@ -44,7 +44,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="message">The free-form text.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		public AuthenticatedEventArgs (string message)
 		{

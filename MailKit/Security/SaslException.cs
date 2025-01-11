@@ -100,7 +100,7 @@ namespace MailKit.Security {
 		/// <param name="code">The error code.</param>
 		/// <param name="message">The error message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// <paramref name="mechanism"/> is <see langword="null" />.
 		/// </exception>
 		public SaslException (string mechanism, SaslErrorCode code, string message) : base (message)
 		{
@@ -122,7 +122,7 @@ namespace MailKit.Security {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 		[SecurityCritical]
 #if NET8_0_OR_GREATER

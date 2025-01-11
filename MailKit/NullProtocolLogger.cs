@@ -80,7 +80,7 @@ namespace MailKit {
 		/// <param name='offset'>The offset of the first byte to log.</param>
 		/// <param name='count'>The number of bytes to log.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
+		/// <paramref name="buffer"/> is <see langword="null" />.
 		/// </exception>
 		public void LogClient (byte[] buffer, int offset, int count)
 		{
@@ -96,7 +96,7 @@ namespace MailKit {
 		/// <param name='offset'>The offset of the first byte to log.</param>
 		/// <param name='count'>The number of bytes to log.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
+		/// <paramref name="buffer"/> is <see langword="null" />.
 		/// </exception>
 		public void LogServer (byte[] buffer, int offset, int count)
 		{

@@ -50,7 +50,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Creates a new <see cref="SmtpDataFilter"/>.
 		/// </remarks>
-		/// <param name="decode"><c>true</c> if the filter should decode the content; otherwise, <c>false</c>.</param>
+		/// <param name="decode"><see langword="true" /> if the filter should decode the content; otherwise, <see langword="false" />.</param>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory"/>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory"/>
@@ -152,7 +152,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="length">The length of the input buffer, starting at <paramref name="startIndex"/>.</param>
 		/// <param name="outputIndex">The output index.</param>
 		/// <param name="outputLength">The output length.</param>
-		/// <param name="flush">If set to <c>true</c>, all internally buffered data should be flushed to the output buffer.</param>
+		/// <param name="flush">If set to <see langword="true" />, all internally buffered data should be flushed to the output buffer.</param>
 		protected override byte[] Filter (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
 		{
 			if (decode)

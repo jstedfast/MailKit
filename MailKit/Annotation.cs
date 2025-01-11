@@ -46,7 +46,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="entry">The annotation entry.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="entry"/> is <c>null</c>.
+		/// <paramref name="entry"/> is <see langword="null" />.
 		/// </exception>
 		public Annotation (AnnotationEntry entry)
 		{

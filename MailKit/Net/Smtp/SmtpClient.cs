@@ -159,7 +159,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// <paramref name="protocolLogger"/> is <see langword="null" />.
 		/// </exception>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
@@ -188,9 +188,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <param name="meterFactory">The meter factory.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="protocolLogger"/> is <c>null</c>.</para>
+		/// <para><paramref name="protocolLogger"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="meterFactory"/> is <c>null</c>.</para>
+		/// <para><paramref name="meterFactory"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
@@ -291,7 +291,7 @@ namespace MailKit.Net.Smtp {
 		/// messages using the <c>BDAT</c> command instead of the <c>DATA</c> command even when it is not
 		/// necessary to do so.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the <c>BDAT</c> command is preferred over the <c>DATA</c> command; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the <c>BDAT</c> command is preferred over the <c>DATA</c> command; otherwise, <see langword="false" />.</value>
 		protected virtual bool PreferSendAsBinaryData {
 			get { return false; }
 		}
@@ -324,7 +324,7 @@ namespace MailKit.Net.Smtp {
 		/// <note type="note">This feature is only available if <see cref="Capabilities"/> contains the
 		/// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
 		/// </remarks>
-		/// <value><c>true</c> if the REQUIRETLS extension should be used; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the REQUIRETLS extension should be used; otherwise, <see langword="false" />.</value>
 		public bool RequireTLS {
 			get; set;
 		}
@@ -379,9 +379,9 @@ namespace MailKit.Net.Smtp {
 		/// Get whether or not the client is currently connected to an SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+		/// <para>The <see cref="IsConnected"/> state is set to <see langword="true" /> immediately after
 		/// one of the <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
-		/// methods succeeds and is not set back to <c>false</c> until either the client
+		/// methods succeeds and is not set back to <see langword="false" /> until either the client
 		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until an
 		/// <see cref="SmtpProtocolException"/> is thrown while attempting to read or write to
 		/// the underlying network socket.</para>
@@ -391,7 +391,7 @@ namespace MailKit.Net.Smtp {
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 		/// </example>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
 		public override bool IsConnected {
 			get { return connected; }
 		}
@@ -402,7 +402,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Gets whether or not the connection is secure (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
 		public override bool IsSecure {
 			get { return IsConnected && secure; }
 		}
@@ -413,7 +413,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public override bool IsEncrypted {
 			get { return IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
 		}
@@ -424,7 +424,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Gets whether or not the connection is signed (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public override bool IsSigned {
 			get { return IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
 		}
@@ -589,7 +589,7 @@ namespace MailKit.Net.Smtp {
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
 		/// methods.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
 		public override bool IsAuthenticated {
 			get { return authenticated; }
 		}
@@ -744,7 +744,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="command">The command.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="command"/> is <c>null</c>.
+		/// <paramref name="command"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -997,7 +997,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// <paramref name="mechanism"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="SmtpClient"/> is not connected.
@@ -1135,9 +1135,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="SmtpClient"/> is not connected.
@@ -1430,7 +1430,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -1544,9 +1544,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// <para><paramref name="socket"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -1622,9 +1622,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para><paramref name="stream"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -1707,12 +1707,12 @@ namespace MailKit.Net.Smtp {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <see langword="true" />, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
-		/// <param name="quit">If set to <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
+		/// <param name="quit">If set to <see langword="true" />, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -2540,9 +2540,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -2619,13 +2619,13 @@ namespace MailKit.Net.Smtp {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="sender"/> is <c>null</c>.</para>
+		/// <para><paramref name="sender"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="recipients"/> is <c>null</c>.</para>
+		/// <para><paramref name="recipients"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -2713,7 +2713,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="alias">The mailing address alias.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="alias"/> is <c>null</c>.
+		/// <paramref name="alias"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="alias"/> is an empty string.
@@ -2787,7 +2787,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="address">The mailbox address.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="address"/> is <c>null</c>.
+		/// <paramref name="address"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="address"/> is an empty string.
@@ -2828,8 +2828,8 @@ namespace MailKit.Net.Smtp {
 		/// Releases the unmanaged resources used by the <see cref="SmtpClient"/> and
 		/// optionally releases the managed resources.
 		/// </remarks>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-		/// <c>false</c> to release only the unmanaged resources.</param>
+		/// <param name="disposing"><see langword="true" /> to release both managed and unmanaged resources;
+		/// <see langword="false" /> to release only the unmanaged resources.</param>
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {

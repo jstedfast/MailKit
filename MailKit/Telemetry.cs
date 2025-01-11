@@ -90,7 +90,7 @@ namespace MailKit {
 			/// </remarks>
 			/// <param name="meterFactory">The meter factory.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="meterFactory"/> is <c>null</c>.
+			/// <paramref name="meterFactory"/> is <see langword="null" />.
 			/// </exception>
 			public static void Configure (IMeterFactory meterFactory)
 			{
@@ -175,7 +175,7 @@ namespace MailKit {
 			/// </remarks>
 			/// <param name="meterFactory">The meter factory.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="meterFactory"/> is <c>null</c>.
+			/// <paramref name="meterFactory"/> is <see langword="null" />.
 			/// </exception>
 			public static void Configure (IMeterFactory meterFactory)
 			{
@@ -260,7 +260,7 @@ namespace MailKit {
 			/// </remarks>
 			/// <param name="meterFactory">The meter factory.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="meterFactory"/> is <c>null</c>.
+			/// <paramref name="meterFactory"/> is <see langword="null" />.
 			/// </exception>
 			public static void Configure (IMeterFactory meterFactory)
 			{
@@ -345,7 +345,7 @@ namespace MailKit {
 			/// </remarks>
 			/// <param name="meterFactory">The meter factory.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="meterFactory"/> is <c>null</c>.
+			/// <paramref name="meterFactory"/> is <see langword="null" />.
 			/// </exception>
 			public static void Configure (IMeterFactory meterFactory)
 			{
@@ -381,7 +381,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="meterFactory">The meter factory.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="meterFactory"/> is <c>null</c>.
+		/// <paramref name="meterFactory"/> is <see langword="null" />.
 		/// </exception>
 		public static void Configure (IMeterFactory meterFactory)
 		{

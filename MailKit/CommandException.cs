@@ -55,7 +55,7 @@ namespace MailKit {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 		[SecuritySafeCritical]
 		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]

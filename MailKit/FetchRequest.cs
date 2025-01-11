@@ -69,7 +69,7 @@ namespace MailKit {
 		/// <param name="items">The items to fetch.</param>
 		/// <param name="headers">The specific set of headers to fetch.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -88,7 +88,7 @@ namespace MailKit {
 		/// <param name="items">The items to fetch.</param>
 		/// <param name="headers">The specific set of headers to fetch.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.

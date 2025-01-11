@@ -42,14 +42,14 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -86,14 +86,14 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -130,7 +130,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
@@ -138,7 +138,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -175,7 +175,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
@@ -183,7 +183,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -220,7 +220,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
@@ -229,7 +229,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -269,7 +269,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
@@ -278,7 +278,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -318,7 +318,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -326,9 +326,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -375,7 +375,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -383,9 +383,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -432,7 +432,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -441,9 +441,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -490,7 +490,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -499,9 +499,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -548,7 +548,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -558,9 +558,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -609,7 +609,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -619,9 +619,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -677,9 +677,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -728,9 +728,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -780,11 +780,11 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// <para><paramref name="dates"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -834,11 +834,11 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// <para><paramref name="dates"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -888,11 +888,11 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -972,11 +972,11 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -1057,13 +1057,13 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// <para><paramref name="dates"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -1150,13 +1150,13 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para><paramref name="flags"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// <para><paramref name="dates"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="messages"/> is null.</para>
@@ -1238,7 +1238,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1246,7 +1246,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1292,7 +1292,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1300,7 +1300,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1346,7 +1346,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1355,7 +1355,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1398,7 +1398,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1407,7 +1407,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1450,7 +1450,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
@@ -1459,9 +1459,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1514,7 +1514,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
@@ -1523,9 +1523,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1578,7 +1578,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
@@ -1588,9 +1588,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1643,7 +1643,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
@@ -1653,9 +1653,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1708,7 +1708,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1716,7 +1716,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -1762,7 +1762,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1770,7 +1770,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -1816,7 +1816,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1825,7 +1825,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -1868,7 +1868,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="message">The message.</param>
@@ -1877,7 +1877,7 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -1920,7 +1920,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
@@ -1929,9 +1929,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -1984,7 +1984,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
@@ -1993,9 +1993,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -2048,7 +2048,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
@@ -2058,9 +2058,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -2113,7 +2113,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Replaces the specified message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="folder">The folder.</param>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
@@ -2123,9 +2123,9 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.

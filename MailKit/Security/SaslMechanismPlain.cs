@@ -52,9 +52,9 @@ namespace MailKit.Security {
 		/// <param name="encoding">The encoding to use for the user's credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		public SaslMechanismPlain (Encoding encoding, NetworkCredential credentials) : base (credentials)
 		{
@@ -74,11 +74,11 @@ namespace MailKit.Security {
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		public SaslMechanismPlain (Encoding encoding, string userName, string password) : base (userName, password)
 		{
@@ -96,7 +96,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		public SaslMechanismPlain (NetworkCredential credentials) : this (Encoding.UTF8, credentials)
 		{
@@ -111,9 +111,9 @@ namespace MailKit.Security {
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		public SaslMechanismPlain (string userName, string password) : this (Encoding.UTF8, userName, password)
 		{
@@ -148,9 +148,9 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
 		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
+		/// should return <see langword="true" />.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the mechanism supports an initial response; otherwise, <see langword="false" />.</value>
 		public override bool SupportsInitialResponse {
 			get { return true; }
 		}

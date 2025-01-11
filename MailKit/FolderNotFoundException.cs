@@ -52,7 +52,7 @@ namespace MailKit {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected FolderNotFoundException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -71,7 +71,7 @@ namespace MailKit {
 		/// <param name="folderName">The name of the folder.</param>
 		/// <param name="innerException">The inner exception.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folderName"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <see langword="null" />.
 		/// </exception>
 		public FolderNotFoundException (string message, string folderName, Exception innerException) : base (message, innerException)
 		{
@@ -90,7 +90,7 @@ namespace MailKit {
 		/// <param name="message">The error message.</param>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folderName"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <see langword="null" />.
 		/// </exception>
 		public FolderNotFoundException (string message, string folderName) : base (message)
 		{
@@ -108,7 +108,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folderName"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <see langword="null" />.
 		/// </exception>
 		public FolderNotFoundException (string folderName) : this ("The requested folder could not be found.", folderName)
 		{
@@ -136,7 +136,7 @@ namespace MailKit {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 		[SecurityCritical]
 #if NET8_0_OR_GREATER

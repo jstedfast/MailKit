@@ -47,7 +47,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		public ReplaceRequest (MimeMessage message, MessageFlags flags = MessageFlags.None) : base (message, flags)
 		{
@@ -63,9 +63,9 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="keywords">The message keywords.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="keywords"/> is <c>null</c>.</para>
+		/// <para><paramref name="keywords"/> is <see langword="null" />.</para>
 		/// </exception>
 		public ReplaceRequest (MimeMessage message, MessageFlags flags, IEnumerable<string> keywords) : base (message, flags, keywords)
 		{
@@ -81,7 +81,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="internalDate">The internal date of the message.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		public ReplaceRequest (MimeMessage message, MessageFlags flags, DateTimeOffset internalDate) : base (message, flags, internalDate)
 		{
@@ -98,9 +98,9 @@ namespace MailKit {
 		/// <param name="keywords">The message keywords.</param>
 		/// <param name="internalDate">The internal date of the message.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="keywords"/> is <c>null</c>.</para>
+		/// <para><paramref name="keywords"/> is <see langword="null" />.</para>
 		/// </exception>
 		public ReplaceRequest (MimeMessage message, MessageFlags flags, IEnumerable<string> keywords, DateTimeOffset internalDate) : base (message, flags, keywords, internalDate)
 		{

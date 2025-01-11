@@ -46,9 +46,9 @@ namespace MailKit {
 		/// <param name="message">The message that was just sent.</param>
 		/// <param name="response">The response from the server.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="response"/> is <c>null</c>.</para>
+		/// <para><paramref name="response"/> is <see langword="null" />.</para>
 		/// </exception>
 		public MessageSentEventArgs (MimeMessage message, string response)
 		{

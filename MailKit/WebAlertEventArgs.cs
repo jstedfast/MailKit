@@ -47,9 +47,9 @@ namespace MailKit
 		/// <param name="uri">The web URI.</param>
 		/// <param name="message">The alert message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para><paramref name="uri"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// </exception>
 		public WebAlertEventArgs (Uri uri, string message) : base (message)
 		{

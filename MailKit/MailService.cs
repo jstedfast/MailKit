@@ -66,7 +66,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// <paramref name="protocolLogger"/> is <see langword="null" />.
 		/// </exception>
 		protected MailService (IProtocolLogger protocolLogger)
 		{
@@ -156,7 +156,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
-		/// When set to <c>null</c>, the operating system default is used. Use extreme caution when
+		/// When set to <see langword="null" />, the operating system default is used. Use extreme caution when
 		/// changing this setting.
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
@@ -195,17 +195,17 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets whether connecting via SSL/TLS should check certificate revocation.</para>
-		/// <para>Normally, the value of this property should be set to <c>true</c> (the default) for security
-		/// reasons, but there are times when it may be necessary to set it to <c>false</c>.</para>
+		/// <para>Normally, the value of this property should be set to <see langword="true" /> (the default) for security
+		/// reasons, but there are times when it may be necessary to set it to <see langword="false" />.</para>
 		/// <para>For example, most Certificate Authorities are probably pretty good at keeping their CRL and/or
 		/// OCSP servers up 24/7, but occasionally they do go down or are otherwise unreachable due to other
 		/// network problems between the client and the Certificate Authority. When this happens, it becomes
 		/// impossible to check the revocation status of one or more of the certificates in the chain
 		/// resulting in an <see cref="SslHandshakeException"/> being thrown in the
 		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> method. If this becomes a problem,
-		/// it may become desirable to set <see cref="CheckCertificateRevocation"/> to <c>false</c>.</para>
+		/// it may become desirable to set <see cref="CheckCertificateRevocation"/> to <see langword="false" />.</para>
 		/// </remarks>
-		/// <value><c>true</c> if certificate revocation should be checked; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if certificate revocation should be checked; otherwise, <see langword="false" />.</value>
 		public bool CheckCertificateRevocation {
 			get; set;
 		}
@@ -232,7 +232,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the local IP end point to use when connecting to the remote host.
 		/// </remarks>
-		/// <value>The local IP end point or <c>null</c> to use the default end point.</value>
+		/// <value>The local IP end point or <see langword="null" /> to use the default end point.</value>
 		public IPEndPoint LocalEndPoint {
 			get; set;
 		}
@@ -268,16 +268,16 @@ namespace MailKit {
 		/// Gets whether or not the client is currently connected to an mail server.
 		/// </summary>
 		/// <remarks>
-		///<para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+		///<para>The <see cref="IsConnected"/> state is set to <see langword="true" /> immediately after
 		/// one of the <a href="Overload_MailKit_MailService_Connect.htm">Connect</a>
-		/// methods succeeds and is not set back to <c>false</c> until either the client
+		/// methods succeeds and is not set back to <see langword="false" /> until either the client
 		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until a
 		/// <see cref="ProtocolException"/> is thrown while attempting to read or write to
 		/// the underlying network socket.</para>
 		/// <para>When an <see cref="ProtocolException"/> is caught, the connection state of the
 		/// <see cref="MailService"/> should be checked before continuing.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
 		public abstract bool IsConnected {
 			get;
 		}
@@ -288,7 +288,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the connection is secure (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
 		public abstract bool IsSecure {
 			get;
 		}
@@ -299,7 +299,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public abstract bool IsEncrypted {
 			get;
 		}
@@ -310,7 +310,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the connection is signed (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public abstract bool IsSigned {
 			get;
 		}
@@ -401,7 +401,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods
 		/// or any of the Async alternatives.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the client is authenticated; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the client is authenticated; otherwise, <see langword="false" />.</value>
 		public abstract bool IsAuthenticated {
 			get;
 		}
@@ -539,7 +539,7 @@ namespace MailKit {
 		/// for a list of commonly used mail servers such as gmail.com, outlook.com, mail.me.com, yahoo.com,
 		/// and gmx.net.</para>
 		/// </remarks>
-		/// <returns><c>true</c> if the certificate is deemed valid; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the certificate is deemed valid; otherwise, <see langword="false" />.</returns>
 		/// <param name="sender">The object that is connecting via SSL or TLS.</param>
 		/// <param name="certificate">The server's SSL certificate.</param>
 		/// <param name="chain">The server's SSL certificate chain.</param>
@@ -631,7 +631,7 @@ namespace MailKit {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -671,7 +671,7 @@ namespace MailKit {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -713,9 +713,9 @@ namespace MailKit {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// <para><paramref name="socket"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -757,9 +757,9 @@ namespace MailKit {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// <para><paramref name="socket"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -800,9 +800,9 @@ namespace MailKit {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para><paramref name="stream"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -842,9 +842,9 @@ namespace MailKit {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para><paramref name="stream"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -921,7 +921,7 @@ namespace MailKit {
 		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="uri"/> is <c>null</c>.
+		/// The <paramref name="uri"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// The <paramref name="uri"/> is not an absolute URI.
@@ -967,7 +967,7 @@ namespace MailKit {
 		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="uri"/> is <c>null</c>.
+		/// The <paramref name="uri"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// The <paramref name="uri"/> is not an absolute URI.
@@ -1011,7 +1011,7 @@ namespace MailKit {
 		/// <note type="note">
 		/// <para>The <paramref name="useSsl"/> argument only controls whether or
 		/// not the client makes an SSL-wrapped connection. In other words, even if the
-		/// <paramref name="useSsl"/> parameter is <c>false</c>, SSL/TLS may still be used if
+		/// <paramref name="useSsl"/> parameter is <see langword="false" />, SSL/TLS may still be used if
 		/// the mail server supports the STARTTLS extension.</para>
 		/// <para>To disable all use of SSL/TLS, use the
 		/// <see cref="Connect(string,int,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)"/>
@@ -1022,10 +1022,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="host">The host to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
-		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+		/// <param name="useSsl"><see langword="true" /> if the client should make an SSL-wrapped connection to the server; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="host"/> is <c>null</c>.
+		/// The <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is out of range (<value>0</value> to <value>65535</value>, inclusive).
@@ -1073,7 +1073,7 @@ namespace MailKit {
 		/// <note type="note">
 		/// <para>The <paramref name="useSsl"/> argument only controls whether or
 		/// not the client makes an SSL-wrapped connection. In other words, even if the
-		/// <paramref name="useSsl"/> parameter is <c>false</c>, SSL/TLS may still be used if
+		/// <paramref name="useSsl"/> parameter is <see langword="false" />, SSL/TLS may still be used if
 		/// the mail server supports the STARTTLS extension.</para>
 		/// <para>To disable all use of SSL/TLS, use the
 		/// <see cref="ConnectAsync(string,int,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)"/>
@@ -1085,10 +1085,10 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="host">The host to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
-		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+		/// <param name="useSsl"><see langword="true" /> if the client should make an SSL-wrapped connection to the server; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="host"/> is <c>null</c>.
+		/// The <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is out of range (<value>0</value> to <value>65535</value>, inclusive).
@@ -1148,9 +1148,9 @@ namespace MailKit {
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1196,9 +1196,9 @@ namespace MailKit {
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1242,7 +1242,7 @@ namespace MailKit {
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1290,7 +1290,7 @@ namespace MailKit {
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1339,11 +1339,11 @@ namespace MailKit {
 		/// <param name="password">The password.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1404,11 +1404,11 @@ namespace MailKit {
 		/// <param name="password">The password.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1470,9 +1470,9 @@ namespace MailKit {
 		/// <param name="password">The password.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1521,9 +1521,9 @@ namespace MailKit {
 		/// <param name="password">The password.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1563,7 +1563,7 @@ namespace MailKit {
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// <paramref name="mechanism"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1601,7 +1601,7 @@ namespace MailKit {
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// <paramref name="mechanism"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1630,12 +1630,12 @@ namespace MailKit {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <see langword="true" />, a logout/quit command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
-		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
+		/// <param name="quit">If set to <see langword="true" />, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1646,10 +1646,10 @@ namespace MailKit {
 		/// Asynchronously disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <see langword="true" />, a logout/quit command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
-		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
+		/// <param name="quit">If set to <see langword="true" />, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -1756,7 +1756,7 @@ namespace MailKit {
 		/// <param name="host">The name of the host that the client was connected to.</param>
 		/// <param name="port">The port that the client was connected to on the remote host.</param>
 		/// <param name="options">The SSL/TLS options that were used by the client.</param>
-		/// <param name="requested"><c>true</c> if the disconnect was explicitly requested; otherwise, <c>false</c>.</param>
+		/// <param name="requested"><see langword="true" /> if the disconnect was explicitly requested; otherwise, <see langword="false" />.</param>
 		protected virtual void OnDisconnected (string host, int port, SecureSocketOptions options, bool requested)
 		{
 			Disconnected?.Invoke (this, new DisconnectedEventArgs (host, port, options, requested));
@@ -1791,8 +1791,8 @@ namespace MailKit {
 		/// Releases the unmanaged resources used by the <see cref="MailService"/> and
 		/// optionally releases the managed resources.
 		/// </remarks>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-		/// <c>false</c> to release only the unmanaged resources.</param>
+		/// <param name="disposing"><see langword="true" /> to release both managed and unmanaged resources;
+		/// <see langword="false" /> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing)

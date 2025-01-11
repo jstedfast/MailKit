@@ -99,7 +99,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
-		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
+		/// <value>The text body if it exists; otherwise, <see langword="null" />.</value>
 		BodyPartText TextBody { get; }
 
 		/// <summary>
@@ -116,7 +116,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
-		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
+		/// <value>The html body if it exists; otherwise, <see langword="null" />.</value>
 		BodyPartText HtmlBody { get; }
 
 		/// <summary>
@@ -214,7 +214,7 @@ namespace MailKit {
 		/// <remarks>
 		/// This value should be based on whether the message subject contained any <c>"Re:"</c>, <c>"Re[#]:"</c> or <c>"FWD:"</c> prefixes.
 		/// </remarks>
-		/// <value><c>true</c> if the message is a reply; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the message is a reply; otherwise, <see langword="false" />.</value>
 		bool IsReply { get; }
 
 		/// <summary>

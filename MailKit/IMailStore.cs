@@ -72,7 +72,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the mail store supports quotas.
 		/// </remarks>
-		/// <value><c>true</c> if the mail store supports quotas; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the mail store supports quotas; otherwise, <see langword="false" />.</value>
 		bool SupportsQuotas { get; }
 
 		/// <summary>
@@ -191,9 +191,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Not all message stores support the concept of special folders,
-		/// so this method may return <c>null</c>.
+		/// so this method may return <see langword="null" />.
 		/// </remarks>
-		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <returns>The folder if available; otherwise <see langword="null" />.</returns>
 		/// <param name="folder">The type of special folder.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="folder"/> is out of range.
@@ -210,7 +210,7 @@ namespace MailKit {
 		/// <returns>The folder.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
@@ -225,10 +225,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The folders.</returns>
 		/// <param name="namespace">The namespace.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailService"/> has been disposed.
@@ -264,10 +264,10 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The folders.</returns>
 		/// <param name="namespace">The namespace.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -304,10 +304,10 @@ namespace MailKit {
 		/// <returns>The folders.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailService"/> has been disposed.
@@ -344,10 +344,10 @@ namespace MailKit {
 		/// <returns>The folders.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -385,7 +385,7 @@ namespace MailKit {
 		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="path"/> is <c>null</c>.
+		/// <paramref name="path"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -414,7 +414,7 @@ namespace MailKit {
 		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="path"/> is <c>null</c>.
+		/// <paramref name="path"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.

@@ -185,7 +185,7 @@ namespace MailKit {
 		/// <param name="path">The annotation entry path.</param>
 		/// <param name="scope">The scope of the annotation.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="path"/> is <c>null</c>.
+		/// <paramref name="path"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="path"/> is invalid.
@@ -214,9 +214,9 @@ namespace MailKit {
 		/// <param name="path">The annotation entry path.</param>
 		/// <param name="scope">The scope of the annotation.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="partSpecifier"/> is <c>null</c>.</para>
+		/// <para><paramref name="partSpecifier"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="path"/> is <c>null</c>.</para>
+		/// <para><paramref name="path"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="partSpecifier"/> is invalid.</para>
@@ -248,9 +248,9 @@ namespace MailKit {
 		/// <param name="path">The annotation entry path.</param>
 		/// <param name="scope">The scope of the annotation.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="part"/> is <c>null</c>.</para>
+		/// <para><paramref name="part"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="path"/> is <c>null</c>.</para>
+		/// <para><paramref name="path"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="path"/> is invalid.
@@ -325,8 +325,8 @@ namespace MailKit {
 		/// Determines whether the specified <see cref="MailKit.AnnotationEntry"/> is equal to the current <see cref="MailKit.AnnotationEntry"/>.
 		/// </remarks>
 		/// <param name="other">The <see cref="MailKit.AnnotationEntry"/> to compare with the current <see cref="MailKit.AnnotationEntry"/>.</param>
-		/// <returns><c>true</c> if the specified <see cref="MailKit.AnnotationEntry"/> is equal to the current
-		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified <see cref="MailKit.AnnotationEntry"/> is equal to the current
+		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <see langword="false" />.</returns>
 		public bool Equals (AnnotationEntry other)
 		{
 			return other?.Entry == Entry;
@@ -340,7 +340,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether two annotation entries are equal.
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="entry1"/> and <paramref name="entry2"/> are equal; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="entry1"/> and <paramref name="entry2"/> are equal; otherwise, <see langword="false" />.</returns>
 		/// <param name="entry1">The first annotation entry to compare.</param>
 		/// <param name="entry2">The second annotation entry to compare.</param>
 		public static bool operator == (AnnotationEntry entry1, AnnotationEntry entry2)
@@ -354,7 +354,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether two annotation entries are not equal.
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="entry1"/> and <paramref name="entry2"/> are not equal; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="entry1"/> and <paramref name="entry2"/> are not equal; otherwise, <see langword="false" />.</returns>
 		/// <param name="entry1">The first annotation entry to compare.</param>
 		/// <param name="entry2">The second annotation entry to compare.</param>
 		public static bool operator != (AnnotationEntry entry1, AnnotationEntry entry2)
@@ -369,8 +369,8 @@ namespace MailKit {
 		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.AnnotationEntry"/>.
 		/// </remarks>
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.AnnotationEntry"/>.</param>
-		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current
-		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified <see cref="System.Object"/> is equal to the current
+		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <see langword="false" />.</returns>
 		public override bool Equals (object obj)
 		{
 			return obj is AnnotationEntry entry && entry.Entry == Entry;
@@ -409,7 +409,7 @@ namespace MailKit {
 		/// <param name="entry">The annotation entry.</param>
 		/// <returns>The parsed annotation entry.</returns>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="entry"/> is <c>null</c>.
+		/// <paramref name="entry"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.FormatException">
 		/// <paramref name="entry"/> does not conform to the annotation entry syntax.

@@ -212,7 +212,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the set is read-only.
 		/// </remarks>
-		/// <value><c>true</c> if the set is read only; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the set is read only; otherwise, <see langword="false" />.</value>
 		public bool IsReadOnly {
 			get { return false; }
 		}
@@ -483,7 +483,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether or not the set contains the specified unique id.
 		/// </remarks>
-		/// <returns><value>true</value> if the specified unique identifier is in the set; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the specified unique identifier is in the set; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid">The unique id.</param>
 		public bool Contains (UniqueId uid)
 		{
@@ -500,7 +500,7 @@ namespace MailKit {
 		/// <param name="array">The array to copy the unique ids to.</param>
 		/// <param name="arrayIndex">The index into the array.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="array"/> is <c>null</c>.
+		/// <paramref name="array"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="arrayIndex"/> is out of set.
@@ -561,7 +561,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes the unique identifier from the set.
 		/// </remarks>
-		/// <returns><value>true</value> if the unique identifier was removed; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the unique identifier was removed; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid">The unique identifier to remove.</param>
 		public bool Remove (UniqueId uid)
 		{
@@ -748,7 +748,7 @@ namespace MailKit {
 		/// <returns>The string representation of the collection of unique identifiers.</returns>
 		/// <param name="uids">The unique identifiers.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the unique identifiers is invalid (has a value of <c>0</c>).
@@ -807,7 +807,7 @@ namespace MailKit {
 		/// <param name="uids">The unique identifiers.</param>
 		/// <param name="maxLength">The maximum length of any returned string of UIDs.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the unique identifiers is invalid (has a value of <c>0</c>).
@@ -896,14 +896,14 @@ namespace MailKit {
 		/// <remarks>
 		/// Attempts to parse the specified token as a set of unique identifiers.
 		/// </remarks>
-		/// <returns><c>true</c> if the set of unique identifiers were successfully parsed; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the set of unique identifiers were successfully parsed; otherwise, <see langword="false" />.</returns>
 		/// <param name="token">The token containing the set of unique identifiers.</param>
 		/// <param name="validity">The UIDVALIDITY value.</param>
 		/// <param name="uids">The set of unique identifiers.</param>
 		/// <param name="minValue">The minimum unique identifier value parsed.</param>
 		/// <param name="maxValue">The maximum unique identifier value parsed.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		internal static bool TryParse (string token, uint validity, out UniqueIdSet uids, out UniqueId? minValue, out UniqueId? maxValue)
 		{
@@ -987,12 +987,12 @@ namespace MailKit {
 		/// <remarks>
 		/// Attempts to parse the specified token as a set of unique identifiers.
 		/// </remarks>
-		/// <returns><c>true</c> if the set of unique identifiers were successfully parsed; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the set of unique identifiers were successfully parsed; otherwise, <see langword="false" />.</returns>
 		/// <param name="token">The token containing the set of unique identifiers.</param>
 		/// <param name="validity">The UIDVALIDITY value.</param>
 		/// <param name="uids">The set of unique identifiers.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		public static bool TryParse (string token, uint validity, out UniqueIdSet uids)
 		{
@@ -1005,11 +1005,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Attempts to parse the specified token as a set of unique identifiers.
 		/// </remarks>
-		/// <returns><c>true</c> if the set of unique identifiers were successfully parsed; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the set of unique identifiers were successfully parsed; otherwise, <see langword="false" />.</returns>
 		/// <param name="token">The token containing the set of unique identifiers.</param>
 		/// <param name="uids">The set of unique identifiers.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		public static bool TryParse (string token, out UniqueIdSet uids)
 		{

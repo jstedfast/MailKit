@@ -91,7 +91,7 @@ namespace MailKit.Net.Smtp {
 		/// <note type="note">This feature is only available if <see cref="Capabilities"/> contains the
 		/// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
 		/// </remarks>
-		/// <value><c>true</c> if the REQUIRETLS extension should be used; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the REQUIRETLS extension should be used; otherwise, <see langword="false" />.</value>
 		bool RequireTLS { get; set; }
 
 		/// <summary>
@@ -116,7 +116,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="alias">The mailing address alias.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="alias"/> is <c>null</c>.
+		/// <paramref name="alias"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="alias"/> is an empty string.
@@ -154,7 +154,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="alias">The mailing address alias.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="alias"/> is <c>null</c>.
+		/// <paramref name="alias"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="alias"/> is an empty string.
@@ -193,7 +193,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="address">The mailbox address.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="address"/> is <c>null</c>.
+		/// <paramref name="address"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="address"/> is an empty string.
@@ -232,7 +232,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="address">The mailbox address.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="address"/> is <c>null</c>.
+		/// <paramref name="address"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="address"/> is an empty string.

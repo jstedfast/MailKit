@@ -875,7 +875,7 @@ namespace MailKit.Net.Imap
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -926,7 +926,7 @@ namespace MailKit.Net.Imap
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -1065,7 +1065,7 @@ namespace MailKit.Net.Imap
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
@@ -1125,7 +1125,7 @@ namespace MailKit.Net.Imap
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
@@ -1210,7 +1210,7 @@ namespace MailKit.Net.Imap
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -1264,7 +1264,7 @@ namespace MailKit.Net.Imap
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -1388,9 +1388,9 @@ namespace MailKit.Net.Imap
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="orderBy"/> is empty.
@@ -1453,9 +1453,9 @@ namespace MailKit.Net.Imap
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="orderBy"/> is empty.
@@ -1596,9 +1596,9 @@ namespace MailKit.Net.Imap
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="orderBy"/> is empty.
@@ -1661,9 +1661,9 @@ namespace MailKit.Net.Imap
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="orderBy"/> is empty.
@@ -1776,7 +1776,7 @@ namespace MailKit.Net.Imap
 		/// <paramref name="algorithm"/> is not supported.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
@@ -1839,7 +1839,7 @@ namespace MailKit.Net.Imap
 		/// <paramref name="algorithm"/> is not supported.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
@@ -1944,9 +1944,9 @@ namespace MailKit.Net.Imap
 		/// <paramref name="algorithm"/> is not supported.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uids"/> is empty.</para>
@@ -2018,9 +2018,9 @@ namespace MailKit.Net.Imap
 		/// <paramref name="algorithm"/> is not supported.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uids"/> is empty.</para>

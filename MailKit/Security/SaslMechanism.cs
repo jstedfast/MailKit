@@ -119,7 +119,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		protected SaslMechanism (NetworkCredential credentials)
 		{
@@ -138,9 +138,9 @@ namespace MailKit.Security {
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		protected SaslMechanism (string userName, string password)
 		{
@@ -181,7 +181,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Gets whether or not the SASL mechanism supports channel binding.
 		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the SASL mechanism supports channel binding; otherwise, <see langword="false" />.</value>
 		public virtual bool SupportsChannelBinding {
 			get { return false; }
 		}
@@ -192,9 +192,9 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// <para>Gets whether or not the SASL mechanism supports an initial response (SASL-IR).</para>
 		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
+		/// should return <see langword="true" />.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports an initial response; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the SASL mechanism supports an initial response; otherwise, <see langword="false" />.</value>
 		public virtual bool SupportsInitialResponse {
 			get { return false; }
 		}
@@ -205,7 +205,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Gets or sets whether the SASL mechanism has finished authenticating.
 		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the SASL mechanism has finished authenticating; otherwise, <see langword="false" />.</value>
 		public bool IsAuthenticated {
 			get; protected set;
 		}
@@ -218,7 +218,7 @@ namespace MailKit.Security {
 		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
 		/// channel-bindings.</note>
 		/// </remarks>
-		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if channel-binding was negotiated; otherwise, <see langword="false" />.</value>
 		public virtual bool NegotiatedChannelBinding {
 			get { return false; }
 		}
@@ -231,7 +231,7 @@ namespace MailKit.Security {
 		/// <note type="note">Some SASL mechanisms, such as GSSAPI, are able to negotiate security layers
 		/// such as integrity and confidentiality protection.</note>
 		/// </remarks>
-		/// <value><c>true</c> if a security layer was negotiated; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if a security layer was negotiated; otherwise, <see langword="false" />.</value>
 		public virtual bool NegotiatedSecurityLayer {
 			get { return false; }
 		}
@@ -266,7 +266,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="token">A buffer containing the channel-binding token.</param>
-		/// <returns><c>true</c> if the channel-binding token was acquired; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
 		protected bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token)
 		{
 			if (ChannelBindingContext == null) {
@@ -425,10 +425,10 @@ namespace MailKit.Security {
 		/// Use this method to make sure that a SASL mechanism is supported before calling
 		/// <see cref="Create(string,NetworkCredential)"/>.
 		/// </remarks>
-		/// <returns><c>true</c> if the specified SASL mechanism is supported; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified SASL mechanism is supported; otherwise, <see langword="false" />.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// <paramref name="mechanism"/> is <see langword="null" />.
 		/// </exception>
 		public static bool IsSupported (string mechanism)
 		{
@@ -461,16 +461,16 @@ namespace MailKit.Security {
 		/// If unsure that a particular SASL mechanism is supported, you should first call
 		/// <see cref="IsSupported"/>.
 		/// </remarks>
-		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
+		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <see langword="null" />.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
 		/// <param name="encoding">The text encoding to use for the credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
+		/// <para><paramref name="mechanism"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		public static SaslMechanism Create (string mechanism, Encoding encoding, NetworkCredential credentials)
 		{
@@ -511,13 +511,13 @@ namespace MailKit.Security {
 		/// If unsure that a particular SASL mechanism is supported, you should first call
 		/// <see cref="IsSupported"/>.
 		/// </remarks>
-		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
+		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <see langword="null" />.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
+		/// <para><paramref name="mechanism"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		public static SaslMechanism Create (string mechanism, NetworkCredential credentials)
 		{
@@ -530,7 +530,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// This list was obtained from http://tools.ietf.org/html/rfc3454#appendix-C.1.2
 		/// </remarks>
-		/// <returns><c>true</c> if the character is a non-ASCII space; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the character is a non-ASCII space; otherwise, <see langword="false" />.</returns>
 		/// <param name="c">The character.</param>
 		static bool IsNonAsciiSpace (char c)
 		{
@@ -564,7 +564,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// This list was obtained from http://tools.ietf.org/html/rfc3454#appendix-B.1
 		/// </remarks>
-		/// <returns><c>true</c> if the character is commonly mapped to nothing; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the character is commonly mapped to nothing; otherwise, <see langword="false" />.</returns>
 		/// <param name="c">The character.</param>
 		static bool IsCommonlyMappedToNothing (char c)
 		{
@@ -590,7 +590,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// This list was obtained from http://tools.ietf.org/html/rfc3454#appendix-C.3
 		/// </remarks>
-		/// <returns><c>true</c> if the character is prohibited; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the character is prohibited; otherwise, <see langword="false" />.</returns>
 		/// <param name="s">The string.</param>
 		/// <param name="index">The character index.</param>
 		static bool IsProhibited (string s, int index)
@@ -664,7 +664,7 @@ namespace MailKit.Security {
 		/// <returns>The prepared string.</returns>
 		/// <param name="s">The string to prepare.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="s"/> is <c>null</c>.
+		/// <paramref name="s"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="s"/> contains prohibited characters.

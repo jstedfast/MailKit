@@ -61,7 +61,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -119,7 +119,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -174,9 +174,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -234,9 +234,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -293,9 +293,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -353,9 +353,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -418,7 +418,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -479,7 +479,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -541,9 +541,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -607,9 +607,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -673,9 +673,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -739,9 +739,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -797,7 +797,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -852,7 +852,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -907,9 +907,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -967,9 +967,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1026,9 +1026,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1086,9 +1086,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1147,7 +1147,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -1204,7 +1204,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -1262,9 +1262,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1324,9 +1324,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1386,9 +1386,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1448,9 +1448,9 @@ namespace MailKit {
 		/// <param name="headers">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="headers"/> is <c>null</c>.</para>
+		/// <para><paramref name="headers"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -1624,7 +1624,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -1686,7 +1686,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -1748,7 +1748,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -1810,7 +1810,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -1991,7 +1991,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -2056,7 +2056,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -2121,7 +2121,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -2183,7 +2183,7 @@ namespace MailKit {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.

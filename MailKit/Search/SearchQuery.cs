@@ -88,9 +88,9 @@ namespace MailKit.Search {
 		/// <param name="left">The first operand.</param>
 		/// <param name="right">The second operand.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="left"/> is <c>null</c>.</para>
+		/// <para><paramref name="left"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="right"/> is <c>null</c>.</para>
+		/// <para><paramref name="right"/> is <see langword="null" />.</para>
 		/// </exception>
 		public static BinarySearchQuery And (SearchQuery left, SearchQuery right)
 		{
@@ -112,7 +112,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="BinarySearchQuery"/> representing the conditional AND operation.</returns>
 		/// <param name="expr">An additional query to execute.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="expr"/> is <c>null</c>.
+		/// <paramref name="expr"/> is <see langword="null" />.
 		/// </exception>
 		public BinarySearchQuery And (SearchQuery expr)
 		{
@@ -137,9 +137,9 @@ namespace MailKit.Search {
 		/// <param name="value">The annotation attribute value.</param>
 		/// <returns>A <see cref="AnnotationSearchQuery"/>.</returns>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="entry"/> is <c>null</c>.</para>
+		/// <para><paramref name="entry"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="attribute"/> is <c>null</c>.</para>
+		/// <para><paramref name="attribute"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="attribute"/> is not a valid attribute for searching.
@@ -168,7 +168,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -188,7 +188,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -208,7 +208,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -351,7 +351,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -374,7 +374,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
 		/// <param name="expr">The expression</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="expr"/> is <c>null</c>.
+		/// <paramref name="expr"/> is <see langword="null" />.
 		/// </exception>
 		public static UnarySearchQuery Fuzzy (SearchQuery expr)
 		{
@@ -475,7 +475,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="keyword">The keyword.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="keyword"/> is <c>null</c>.
+		/// <paramref name="keyword"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="keyword"/> is empty.
@@ -502,10 +502,10 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="keywords">The keywords.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="keywords"/> is <c>null</c>.
+		/// <paramref name="keywords"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="keywords"/> is <c>null</c> or empty.</para>
+		/// <para>One or more of the <paramref name="keywords"/> is <see langword="null" /> or empty.</para>
 		/// <para>-or-</para>
 		/// <para>No keywords were given.</para>
 		/// </exception>
@@ -544,7 +544,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="keyword">The keyword.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="keyword"/> is <c>null</c>.
+		/// <paramref name="keyword"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="keyword"/> is empty.
@@ -571,10 +571,10 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="keywords">The keywords.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="keywords"/> is <c>null</c>.
+		/// <paramref name="keywords"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="keywords"/> is <c>null</c> or empty.</para>
+		/// <para>One or more of the <paramref name="keywords"/> is <see langword="null" /> or empty.</para>
 		/// <para>-or-</para>
 		/// <para>No keywords were given.</para>
 		/// </exception>
@@ -613,9 +613,9 @@ namespace MailKit.Search {
 		/// <param name="field">The header field to match against.</param>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="field"/> is <c>null</c>.</para>
+		/// <para><paramref name="field"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="text"/> is <c>null</c>.</para>
+		/// <para><paramref name="text"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="field"/> is empty.
@@ -664,7 +664,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -693,7 +693,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
 		/// <param name="expr">The expression</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="expr"/> is <c>null</c>.
+		/// <paramref name="expr"/> is <see langword="null" />.
 		/// </exception>
 		public static UnarySearchQuery Not (SearchQuery expr)
 		{
@@ -800,9 +800,9 @@ namespace MailKit.Search {
 		/// <param name="left">The first operand.</param>
 		/// <param name="right">The second operand.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="left"/> is <c>null</c>.</para>
+		/// <para><paramref name="left"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="right"/> is <c>null</c>.</para>
+		/// <para><paramref name="right"/> is <see langword="null" />.</para>
 		/// </exception>
 		public static BinarySearchQuery Or (SearchQuery left, SearchQuery right)
 		{
@@ -825,7 +825,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="BinarySearchQuery"/> representing the conditional AND operation.</returns>
 		/// <param name="expr">An additional query to execute.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="expr"/> is <c>null</c>.
+		/// <paramref name="expr"/> is <see langword="null" />.
 		/// </exception>
 		public BinarySearchQuery Or (SearchQuery expr)
 		{
@@ -997,7 +997,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -1017,7 +1017,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.
@@ -1037,7 +1037,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="UidSearchQuery"/>.</returns>
 		/// <param name="uids">The unique identifiers.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uids"/> is empty.
@@ -1119,7 +1119,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="label">The GMail label.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="label"/> is <c>null</c>.
+		/// <paramref name="label"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="label"/> is empty.
@@ -1148,7 +1148,7 @@ namespace MailKit.Search {
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="expression">The raw GMail search text.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="expression"/> is <c>null</c>.
+		/// <paramref name="expression"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="expression"/> is empty.

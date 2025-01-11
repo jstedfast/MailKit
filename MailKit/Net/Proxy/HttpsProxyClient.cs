@@ -66,7 +66,7 @@ namespace MailKit.Net.Proxy {
 		/// <param name="host">The host name of the proxy server.</param>
 		/// <param name="port">The proxy server port.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
@@ -91,9 +91,9 @@ namespace MailKit.Net.Proxy {
 		/// <param name="port">The proxy server port.</param>
 		/// <param name="credentials">The credentials to use to authenticate with the proxy server.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/>is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/>is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>1</c> and <c>65535</c>.
@@ -130,7 +130,7 @@ namespace MailKit.Net.Proxy {
 		/// </summary>
 		/// <remarks>
 		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
-		/// When set to <c>null</c>, the operating system default is used. Use extreme caution when
+		/// When set to <see langword="null" />, the operating system default is used. Use extreme caution when
 		/// changing this setting.
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
@@ -158,17 +158,17 @@ namespace MailKit.Net.Proxy {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets whether connecting via SSL/TLS should check certificate revocation.</para>
-		/// <para>Normally, the value of this property should be set to <c>true</c> (the default) for security
-		/// reasons, but there are times when it may be necessary to set it to <c>false</c>.</para>
+		/// <para>Normally, the value of this property should be set to <see langword="true" /> (the default) for security
+		/// reasons, but there are times when it may be necessary to set it to <see langword="false" />.</para>
 		/// <para>For example, most Certificate Authorities are probably pretty good at keeping their CRL and/or
 		/// OCSP servers up 24/7, but occasionally they do go down or are otherwise unreachable due to other
 		/// network problems between the client and the Certificate Authority. When this happens, it becomes
 		/// impossible to check the revocation status of one or more of the certificates in the chain
 		/// resulting in an <see cref="Security.SslHandshakeException"/> being thrown in the
 		/// <a href="Overload_MailKit_Net_Proxy_ProxyClient_Connect.htm">Connect</a> method. If this becomes a problem,
-		/// it may become desirable to set <see cref="CheckCertificateRevocation"/> to <c>false</c>.</para>
+		/// it may become desirable to set <see cref="CheckCertificateRevocation"/> to <see langword="false" />.</para>
 		/// </remarks>
-		/// <value><c>true</c> if certificate revocation should be checked; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if certificate revocation should be checked; otherwise, <see langword="false" />.</value>
 		public bool CheckCertificateRevocation {
 			get; set;
 		}
@@ -249,7 +249,7 @@ namespace MailKit.Net.Proxy {
 		/// <param name="port">The target server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -330,7 +330,7 @@ namespace MailKit.Net.Proxy {
 		/// <param name="port">The target server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.

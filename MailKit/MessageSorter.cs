@@ -206,9 +206,9 @@ namespace MailKit {
 		/// <param name="messages">The messages to sort.</param>
 		/// <param name="orderBy">The sort ordering.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="messages"/> contains one or more items that is missing information needed for sorting.</para>
@@ -257,9 +257,9 @@ namespace MailKit {
 		/// <param name="messages">The messages to sort.</param>
 		/// <param name="orderBy">The sort ordering.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para><paramref name="messages"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="messages"/> contains one or more items that is missing information needed for sorting.</para>

@@ -55,7 +55,7 @@ namespace MailKit {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected FolderNotOpenException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -82,7 +82,7 @@ namespace MailKit {
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">The inner exception.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folderName"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <see langword="null" />.
 		/// </exception>
 		public FolderNotOpenException (string folderName, FolderAccess access, string message, Exception innerException) : base (message, innerException)
 		{
@@ -103,7 +103,7 @@ namespace MailKit {
 		/// <param name="access">The minimum folder access required by the operation.</param>
 		/// <param name="message">The error message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folderName"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <see langword="null" />.
 		/// </exception>
 		public FolderNotOpenException (string folderName, FolderAccess access, string message) : base (message)
 		{
@@ -123,7 +123,7 @@ namespace MailKit {
 		/// <param name="folderName">The folder name.</param>
 		/// <param name="access">The minimum folder access required by the operation.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folderName"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <see langword="null" />.
 		/// </exception>
 		public FolderNotOpenException (string folderName, FolderAccess access) : this (folderName, access, GetDefaultMessage (access))
 		{
@@ -170,7 +170,7 @@ namespace MailKit {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 #if NET8_0_OR_GREATER
 		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]

@@ -58,7 +58,7 @@ namespace MailKit {
 		/// <param name="index">The message index.</param>
 		/// <param name="annotations">The annotations that changed.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="annotations"/> is <c>null</c>.
+		/// <paramref name="annotations"/> is <see langword="null" />.
 		/// </exception>
 		public AnnotationsChangedEventArgs (int index, IEnumerable<Annotation> annotations) : base (index)
 		{

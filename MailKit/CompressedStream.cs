@@ -64,7 +64,7 @@ namespace MailKit {
 		/// <summary>
 		/// Gets whether the stream supports reading.
 		/// </summary>
-		/// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the stream supports reading; otherwise, <see langword="false" />.</value>
 		public override bool CanRead {
 			get { return InnerStream.CanRead; }
 		}
@@ -72,7 +72,7 @@ namespace MailKit {
 		/// <summary>
 		/// Gets whether the stream supports writing.
 		/// </summary>
-		/// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the stream supports writing; otherwise, <see langword="false" />.</value>
 		public override bool CanWrite {
 			get { return InnerStream.CanWrite; }
 		}
@@ -80,7 +80,7 @@ namespace MailKit {
 		/// <summary>
 		/// Gets whether the stream supports seeking.
 		/// </summary>
-		/// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the stream supports seeking; otherwise, <see langword="false" />.</value>
 		public override bool CanSeek {
 			get { return false; }
 		}
@@ -88,7 +88,7 @@ namespace MailKit {
 		/// <summary>
 		/// Gets whether the stream supports I/O timeouts.
 		/// </summary>
-		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the stream supports I/O timeouts; otherwise, <see langword="false" />.</value>
 		public override bool CanTimeout {
 			get { return InnerStream.CanTimeout; }
 		}
@@ -166,7 +166,7 @@ namespace MailKit {
 		/// <param name="offset">The buffer offset.</param>
 		/// <param name="count">The number of bytes to read.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
+		/// <paramref name="buffer"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
@@ -227,7 +227,7 @@ namespace MailKit {
 		/// <param name="count">The number of bytes to read.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
+		/// <paramref name="buffer"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
@@ -287,7 +287,7 @@ namespace MailKit {
 		/// <param name="offset">The offset of the first byte to write.</param>
 		/// <param name="count">The number of bytes to write.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
+		/// <paramref name="buffer"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
@@ -338,7 +338,7 @@ namespace MailKit {
 		/// <param name="count">The number of bytes to write.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
+		/// <paramref name="buffer"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
@@ -452,8 +452,8 @@ namespace MailKit {
 		/// Releases the unmanaged resources used by the <see cref="CompressedStream"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-		/// <c>false</c> to release only the unmanaged resources.</param>
+		/// <param name="disposing"><see langword="true" /> to release both managed and unmanaged resources;
+		/// <see langword="false" /> to release only the unmanaged resources.</param>
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {

@@ -81,7 +81,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		public SaslMechanismNtlm (NetworkCredential credentials) : base (credentials)
 		{
@@ -98,9 +98,9 @@ namespace MailKit.Security {
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		public SaslMechanismNtlm (string userName, string password) : base (userName, password)
 		{
@@ -139,7 +139,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Gets whether or not the SASL mechanism supports channel binding.
 		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the SASL mechanism supports channel binding; otherwise, <see langword="false" />.</value>
 		public override bool SupportsChannelBinding {
 			get { return true; }
 		}
@@ -152,7 +152,7 @@ namespace MailKit.Security {
 		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
 		/// channel-bindings.</note>
 		/// </remarks>
-		/// <value><c>true</c> if channel-binding was negotiated; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if channel-binding was negotiated; otherwise, <see langword="false" />.</value>
 		public override bool NegotiatedChannelBinding {
 			get { return negotiatedChannelBinding; }
 		}
@@ -163,9 +163,9 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
 		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <value>true</value>.</para>
+		/// should return <see langword="true" />.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the mechanism supports an initial response; otherwise, <see langword="false" />.</value>
 		public override bool SupportsInitialResponse {
 			get { return true; }
 		}
@@ -178,7 +178,7 @@ namespace MailKit.Security {
 		/// <note type="note">In the future, this option will disappear as channel-binding will become the default. For now,
 		/// it is only an option because this feature has not been thoroughly tested.</note>
 		/// </remarks>
-		/// <value><c>true</c> if the NTLM SASL mechanism should allow channel-binding; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the NTLM SASL mechanism should allow channel-binding; otherwise, <see langword="false" />.</value>
 		public bool AllowChannelBinding {
 			get; set;
 		}
@@ -223,7 +223,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Gets or sets a value indicating that the caller generated the target's SPN from an untrusted source.
 		/// </remarks>
-		/// <value><c>true</c> if the <see cref="ServicePrincipalName"/> is unverified; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the <see cref="ServicePrincipalName"/> is unverified; otherwise, <see langword="false" />.</value>
 		public bool IsUnverifiedServicePrincipalName {
 			get; set;
 		}

@@ -60,7 +60,7 @@ namespace MailKit {
 		/// <param name="index">The message index.</param>
 		/// <param name="labels">The message labels.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -83,7 +83,7 @@ namespace MailKit {
 		/// <param name="labels">The message labels.</param>
 		/// <param name="modseq">The modification sequence value.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -107,7 +107,7 @@ namespace MailKit {
 		/// <param name="uid">The unique id of the message.</param>
 		/// <param name="labels">The message labels.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -131,7 +131,7 @@ namespace MailKit {
 		/// <param name="labels">The message labels.</param>
 		/// <param name="modseq">The modification sequence value.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.

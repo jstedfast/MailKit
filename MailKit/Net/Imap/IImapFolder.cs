@@ -59,7 +59,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -105,7 +105,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -154,7 +154,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -200,7 +200,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -243,7 +243,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -289,7 +289,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -335,7 +335,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -381,7 +381,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// <paramref name="partSpecifier"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -426,9 +426,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// <para><paramref name="callback"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -471,9 +471,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// <para><paramref name="callback"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -515,9 +515,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// <para><paramref name="callback"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -560,9 +560,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="callback"/> is <c>null</c>.</para>
+		/// <para><paramref name="callback"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -610,7 +610,7 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="callback"/> is <c>null</c>.
+		/// <paramref name="callback"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -656,7 +656,7 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="max"/> is out of range.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="callback"/> is <c>null</c>.
+		/// <paramref name="callback"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -697,7 +697,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -741,7 +741,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -785,7 +785,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.
@@ -832,7 +832,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <paramref name="query"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="query"/> is an empty string.

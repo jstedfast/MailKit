@@ -43,7 +43,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="folder">The newly created folder.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <c>null</c>.
+		/// <paramref name="folder"/> is <see langword="null" />.
 		/// </exception>
 		public FolderCreatedEventArgs (IMailFolder folder)
 		{

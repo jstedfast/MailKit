@@ -47,7 +47,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		public AppendRequest (MimeMessage message, MessageFlags flags = MessageFlags.None)
 		{
@@ -68,9 +68,9 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="keywords">The message keywords.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="keywords"/> is <c>null</c>.</para>
+		/// <para><paramref name="keywords"/> is <see langword="null" />.</para>
 		/// </exception>
 		public AppendRequest (MimeMessage message, MessageFlags flags, IEnumerable<string> keywords)
 		{
@@ -95,7 +95,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="internalDate">The internal date of the message.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <paramref name="message"/> is <see langword="null" />.
 		/// </exception>
 		public AppendRequest (MimeMessage message, MessageFlags flags, DateTimeOffset internalDate)
 		{
@@ -118,9 +118,9 @@ namespace MailKit {
 		/// <param name="keywords">The message keywords.</param>
 		/// <param name="internalDate">The internal date of the message.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para><paramref name="message"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="keywords"/> is <c>null</c>.</para>
+		/// <para><paramref name="keywords"/> is <see langword="null" />.</para>
 		/// </exception>
 		public AppendRequest (MimeMessage message, MessageFlags flags, IEnumerable<string> keywords, DateTimeOffset internalDate)
 		{
@@ -175,7 +175,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the timestamp that should be used by folder as the <see cref="MessageSummaryItems.InternalDate"/>.
 		/// </remarks>
-		/// <value>The date and time to use for the INTERNALDATE or <c>null</c> if it should be left up to the folder to decide.</value>
+		/// <value>The date and time to use for the INTERNALDATE or <see langword="null" /> if it should be left up to the folder to decide.</value>
 		public DateTimeOffset? InternalDate {
 			get; set;
 		}

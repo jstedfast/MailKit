@@ -50,9 +50,9 @@ namespace MailKit {
 		/// <param name="name">The identifier name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		public AccessControl (string name, IEnumerable<AccessRight> rights)
 		{
@@ -73,9 +73,9 @@ namespace MailKit {
 		/// <param name="name">The identifier name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		public AccessControl (string name, string rights)
 		{
@@ -95,7 +95,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="name">The identifier name.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		public AccessControl (string name)
 		{

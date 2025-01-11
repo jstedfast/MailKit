@@ -244,11 +244,11 @@ namespace MailKit.Net.Imap {
 		/// <param name="builder">The string builder.</param>
 		/// <param name="indexes">The indexes.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para><paramref name="engine"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="builder"/> is <c>null</c>.</para>
+		/// <para><paramref name="builder"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// One or more of the indexes has a negative value.
@@ -316,9 +316,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="indexes">The indexes.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para><paramref name="engine"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// One or more of the indexes has a negative value.
@@ -447,7 +447,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Determines whether the specified mailbox is the Inbox.
 		/// </summary>
-		/// <returns><c>true</c> if the specified mailbox name is the Inbox; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified mailbox name is the Inbox; otherwise, <see langword="false" />.</returns>
 		/// <param name="mailboxName">The mailbox name.</param>
 		public static bool IsInbox (string mailboxName)
 		{
@@ -642,8 +642,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="list">The list of folders to be populated.</param>
-		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
-		/// <param name="returnsSubscribed"><c>true</c> if the LIST response is expected to return \Subscribed flags; otherwise, <c>false</c>.</param>
+		/// <param name="isLsub"><see langword="true" /> if it is an LSUB response; otherwise, <see langword="false" />.</param>
+		/// <param name="returnsSubscribed"><see langword="true" /> if the LIST response is expected to return \Subscribed flags; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static void ParseFolderList (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
 		{
@@ -728,8 +728,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="list">The list of folders to be populated.</param>
-		/// <param name="isLsub"><c>true</c> if it is an LSUB response; otherwise, <c>false</c>.</param>
-		/// <param name="returnsSubscribed"><c>true</c> if the LIST response is expected to return \Subscribed flags; otherwise, <c>false</c>.</param>
+		/// <param name="isLsub"><see langword="true" /> if it is an LSUB response; otherwise, <see langword="false" />.</param>
+		/// <param name="returnsSubscribed"><see langword="true" /> if the LIST response is expected to return \Subscribed flags; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
 		{

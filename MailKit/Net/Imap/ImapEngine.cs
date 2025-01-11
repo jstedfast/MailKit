@@ -271,7 +271,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Indicates whether or not the engine is busy processing commands.
 		/// </remarks>
-		/// <value><c>true</c> if th e engine is busy processing commands; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if th e engine is busy processing commands; otherwise, <see langword="false" />.</value>
 		internal bool IsBusy {
 			get { return current != null; }
 		}
@@ -338,7 +338,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not the QRESYNC feature has been enabled.
 		/// </remarks>
-		/// <value><c>true</c> if the QRESYNC feature has been enabled; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the QRESYNC feature has been enabled; otherwise, <see langword="false" />.</value>
 		public bool QResyncEnabled {
 			get; internal set;
 		}
@@ -349,7 +349,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not the UTF8=ACCEPT feature has been enabled.
 		/// </remarks>
-		/// <value><c>true</c> if the UTF8=ACCEPT feature has been enabled; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the UTF8=ACCEPT feature has been enabled; otherwise, <see langword="false" />.</value>
 		public bool UTF8Enabled {
 			get; internal set;
 		}
@@ -393,7 +393,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not the engine is currently connected to a IMAP server.
 		/// </remarks>
-		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the engine is connected; otherwise, <see langword="false" />.</value>
 		public bool IsConnected {
 			get { return Stream != null && Stream.IsConnected; }
 		}
@@ -448,7 +448,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets a value indicating whether the engine is disposed.
 		/// </remarks>
-		/// <value><c>true</c> if the engine is disposed; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the engine is disposed; otherwise, <see langword="false" />.</value>
 		public bool IsDisposed {
 			get { return disposed; }
 		}
@@ -459,7 +459,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether the current NOTIFY status prevents using indexes and * for referencing messages. This is the case when the client has asked for MessageNew or MessageExpunge events on the SELECTED mailbox.
 		/// </remarks>
-		/// <value><c>true</c> if the use of indexes and * is prevented; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the use of indexes and * is prevented; otherwise, <see langword="false" />.</value>
 		internal bool NotifySelectedNewExpunge {
 			get; set;
 		}
@@ -3151,7 +3151,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="ic">The IMAP command.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="ic"/> is <c>null</c>.
+		/// <paramref name="ic"/> is <see langword="null" />.
 		/// </exception>
 		public ImapCommandResponse Run (ImapCommand ic)
 		{
@@ -3173,7 +3173,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="ic">The IMAP command.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="ic"/> is <c>null</c>.
+		/// <paramref name="ic"/> is <see langword="null" />.
 		/// </exception>
 		public async Task<ImapCommandResponse> RunAsync (ImapCommand ic)
 		{
@@ -3328,7 +3328,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the cached folder.
 		/// </summary>
-		/// <returns><c>true</c> if the folder was retrieved from the cache; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the folder was retrieved from the cache; otherwise, <see langword="false" />.</returns>
 		/// <param name="encodedName">The encoded folder name.</param>
 		/// <param name="folder">The cached folder.</param>
 		public bool TryGetCachedFolder (string encodedName, out ImapFolder folder)
@@ -4007,7 +4007,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The list of folders.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
@@ -4039,7 +4039,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The list of folders.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public async Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
@@ -4085,7 +4085,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Determines whether the mailbox name is valid or not.
 		/// </summary>
-		/// <returns><c>true</c> if the mailbox name is valid; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the mailbox name is valid; otherwise, <see langword="false" />.</returns>
 		/// <param name="mailboxName">The mailbox name.</param>
 		/// <param name="delim">The path delimiter.</param>
 		public static bool IsValidMailboxName (string mailboxName, char delim)

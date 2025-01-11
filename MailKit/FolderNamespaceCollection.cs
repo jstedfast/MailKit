@@ -74,7 +74,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="namespace">The namespace to add.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		public void Add (FolderNamespace @namespace)
 		{
@@ -101,11 +101,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Checks if the collection contains the specified namespace.
 		/// </remarks>
-		/// <returns><value>true</value> if the specified namespace exists;
-		/// otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the specified namespace exists;
+		/// otherwise, <see langword="false" />.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		public bool Contains (FolderNamespace @namespace)
 		{
@@ -121,11 +121,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes the first occurrence of the specified namespace.
 		/// </remarks>
-		/// <returns><value>true</value> if the first occurrence of the specified
-		/// namespace was removed; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the first occurrence of the specified
+		/// namespace was removed; otherwise, <see langword="false" />.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespace"/> is <c>null</c>.
+		/// <paramref name="namespace"/> is <see langword="null" />.
 		/// </exception>
 		public bool Remove (FolderNamespace @namespace)
 		{
@@ -144,7 +144,7 @@ namespace MailKit {
 		/// <value>The folder namespace at the specified index.</value>
 		/// <param name="index">The index.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="value"/> is <c>null</c>.
+		/// <paramref name="value"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.

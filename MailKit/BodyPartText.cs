@@ -55,7 +55,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Checks whether or not the text part's Content-Type is text/plain.
 		/// </remarks>
-		/// <value><c>true</c> if the text is html; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the text is html; otherwise, <see langword="false" />.</value>
 		public bool IsPlain {
 			get { return ContentType.IsMimeType ("text", "plain"); }
 		}
@@ -66,7 +66,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Checks whether or not the text part's Content-Type is text/html.
 		/// </remarks>
-		/// <value><c>true</c> if the text is html; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the text is html; otherwise, <see langword="false" />.</value>
 		public bool IsHtml {
 			get { return ContentType.IsMimeType ("text", "html"); }
 		}
@@ -95,7 +95,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="visitor">The visitor.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="visitor"/> is <c>null</c>.
+		/// <paramref name="visitor"/> is <see langword="null" />.
 		/// </exception>
 		public override void Accept (BodyPartVisitor visitor)
 		{

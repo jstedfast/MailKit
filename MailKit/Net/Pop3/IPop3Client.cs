@@ -239,7 +239,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="lang">The language code.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="lang"/> is <c>null</c>.
+		/// <paramref name="lang"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="lang"/> is empty.
@@ -278,7 +278,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="lang">The language code.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="lang"/> is <c>null</c>.
+		/// <paramref name="lang"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="lang"/> is empty.

@@ -44,9 +44,9 @@ namespace MailKit.Search {
 		/// <param name="field">The header field name.</param>
 		/// <param name="value">The value to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="field"/> is <c>null</c>.</para>
+		/// <para><paramref name="field"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="value"/> is <c>null</c>.</para>
+		/// <para><paramref name="value"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="field"/> is empty.

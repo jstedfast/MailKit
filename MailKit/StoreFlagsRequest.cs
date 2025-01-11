@@ -62,7 +62,7 @@ namespace MailKit {
 		/// <param name="action">The store action to perform.</param>
 		/// <param name="keywords">The custom keywords to add, remove or set on the message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="keywords"/> is <c>null</c>.
+		/// <paramref name="keywords"/> is <see langword="null" />.
 		/// </exception>
 		public StoreFlagsRequest (StoreAction action, IEnumerable<string> keywords)
 		{
@@ -83,7 +83,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add, remove or set on the message.</param>
 		/// <param name="keywords">The custom keywords to add, remove or set on the message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="keywords"/> is <c>null</c>.
+		/// <paramref name="keywords"/> is <see langword="null" />.
 		/// </exception>
 		public StoreFlagsRequest (StoreAction action, MessageFlags flags, IEnumerable<string> keywords)
 		{
@@ -134,9 +134,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Gets or sets whether the store operation should run silently.</para>
 		/// <para>Normally, when flags or keywords are changed on a message, a <see cref="IMailFolder.MessageFlagsChanged"/> event is emitted.
-		/// By setting <see cref="Silent"/> to <c>true</c>, this event will not be emitted as a result of this store operation.</para>
+		/// By setting <see cref="Silent"/> to <see langword="true" />, this event will not be emitted as a result of this store operation.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the store operation should run silently (not emitting events for flag changes); otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the store operation should run silently (not emitting events for flag changes); otherwise, <see langword="false" />.</value>
 		public bool Silent {
 			get; set;
 		}

@@ -106,7 +106,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="visitor">The visitor.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="visitor"/> is <c>null</c>.
+		/// <paramref name="visitor"/> is <see langword="null" />.
 		/// </exception>
 		public override void Accept (BodyPartVisitor visitor)
 		{

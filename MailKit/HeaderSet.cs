@@ -142,7 +142,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Get or set whether this set of headers is meant to be excluded when used with a <see cref="IFetchRequest"/>.
 		/// </remarks>
-		/// <value><c>true</c> if the headers are meant to be excluded; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the headers are meant to be excluded; otherwise, <see langword="false" />.</value>
 		/// <exception cref="InvalidOperationException">
 		/// The operation is invalid because the <see cref="HeaderSet"/> is read-only.
 		/// </exception>
@@ -160,7 +160,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the set of headers is read-only.
 		/// </remarks>
-		/// <value><c>true</c> if this instance is read only; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if this instance is read only; otherwise, <see langword="false" />.</value>
 		public bool IsReadOnly {
 			get; private set;
 		}
@@ -189,7 +189,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Adds the specified header to the set of headers.
 		/// </remarks>
-		/// <returns><c>true</c> if the header was added to the set; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the header was added to the set; otherwise, <see langword="false" />.</returns>
 		/// <param name="header">The header to add.</param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="header"/> is not a valid <see cref="HeaderId"/>.
@@ -213,10 +213,10 @@ namespace MailKit {
 		/// <remarks>
 		/// Adds the specified header to the set of headers.
 		/// </remarks>
-		/// <returns><c>true</c> if the header was added to the set; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the header was added to the set; otherwise, <see langword="false" />.</returns>
 		/// <param name="header">The header to add.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="header"/> is <c>null</c>.
+		/// <paramref name="header"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="InvalidOperationException">
 		/// The operation is invalid because the <see cref="HeaderSet"/> is read-only.
@@ -242,7 +242,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="item">The header to add.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="item"/> is <c>null</c>.
+		/// <paramref name="item"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="InvalidOperationException">
 		/// The operation is invalid because the <see cref="HeaderSet"/> is read-only.
@@ -260,7 +260,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="headers">The headers to add.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -291,7 +291,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="headers">The headers to add.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="headers"/> is <c>null</c>.
+		/// <paramref name="headers"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="ArgumentException">
 		/// One or more of the specified <paramref name="headers"/> is invalid.
@@ -339,7 +339,7 @@ namespace MailKit {
 		/// <param name="array">The array to copy the headers to.</param>
 		/// <param name="arrayIndex">The index into the array.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="array"/> is <c>null</c>.
+		/// <paramref name="array"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="arrayIndex"/> is out of range.
@@ -355,8 +355,8 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether or not the set of headers contains the specified header.
 		/// </remarks>
-		/// <returns><value>true</value> if the specified header exists;
-		/// otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the specified header exists;
+		/// otherwise, <see langword="false" />.</returns>
 		/// <param name="header">The header identifier.</param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="header"/> is not a valid <see cref="HeaderId"/>.
@@ -375,11 +375,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether or not the set of headers contains the specified header.
 		/// </remarks>
-		/// <returns><value>true</value> if the specified header exists;
-		/// otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the specified header exists;
+		/// otherwise, <see langword="false" />.</returns>
 		/// <param name="header">The name of the header.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="header"/> is <c>null</c>.
+		/// <paramref name="header"/> is <see langword="null" />.
 		/// </exception>
 		public bool Contains (string header)
 		{
@@ -395,8 +395,8 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes the specified header if it exists.
 		/// </remarks>
-		/// <returns><c>true</c> if the specified header was removed;
-		/// otherwise <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified header was removed;
+		/// otherwise, <see langword="false" />.</returns>
 		/// <param name="header">The header.</param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// <paramref name="header"/> is not a valid <see cref="HeaderId"/>.
@@ -420,11 +420,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes the specified header if it exists.
 		/// </remarks>
-		/// <returns><c>true</c> if the specified header was removed;
-		/// otherwise <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified header was removed;
+		/// otherwise, <see langword="false" />.</returns>
 		/// <param name="header">The header.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="header"/> is <c>null</c>.
+		/// <paramref name="header"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="InvalidOperationException">
 		/// The operation is invalid because the <see cref="HeaderSet"/> is read-only.

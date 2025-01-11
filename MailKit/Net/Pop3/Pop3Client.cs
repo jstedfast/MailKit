@@ -96,7 +96,7 @@ namespace MailKit.Net.Pop3 {
 		/// </example>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// <paramref name="protocolLogger"/> is <see langword="null" />.
 		/// </exception>
 		public Pop3Client (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
@@ -376,9 +376,9 @@ namespace MailKit.Net.Pop3 {
 		/// Gets whether or not the client is currently connected to an POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The <see cref="IsConnected"/> state is set to <c>true</c> immediately after
+		/// <para>The <see cref="IsConnected"/> state is set to <see langword="true" /> immediately after
 		/// one of the <a href="Overload_MailKit_Net_Pop3_Pop3Client_Connect.htm">Connect</a>
-		/// methods succeeds and is not set back to <c>false</c> until either the client
+		/// methods succeeds and is not set back to <see langword="false" /> until either the client
 		/// is disconnected via <see cref="Disconnect(bool,CancellationToken)"/> or until a
 		/// <see cref="Pop3ProtocolException"/> is thrown while attempting to read or write to
 		/// the underlying network socket.</para>
@@ -388,7 +388,7 @@ namespace MailKit.Net.Pop3 {
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
 		/// </example>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
 		public override bool IsConnected {
 			get { return engine.IsConnected; }
 		}
@@ -399,7 +399,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Gets whether or not the connection is secure (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
 		public override bool IsSecure {
 			get { return IsConnected && secure; }
 		}
@@ -410,7 +410,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Gets whether or not the connection is encrypted (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is encrypted; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public override bool IsEncrypted {
 			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
 		}
@@ -421,7 +421,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Gets whether or not the connection is signed (typically via SSL or TLS).
 		/// </remarks>
-		/// <value><c>true</c> if the connection is signed; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public override bool IsSigned {
 			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
 		}
@@ -585,7 +585,7 @@ namespace MailKit.Net.Pop3 {
 		/// <para>To authenticate with the POP3 server, use one of the
 		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
 		public override bool IsAuthenticated {
 			get { return engine.State == Pop3EngineState.Transaction; }
 		}
@@ -789,7 +789,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// <paramref name="mechanism"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -903,9 +903,9 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1156,7 +1156,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -1277,9 +1277,9 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// <para><paramref name="socket"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -1348,9 +1348,9 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="stream"/> is <c>null</c>.</para>
+		/// <para><paramref name="stream"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// <para><paramref name="host"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -1431,12 +1431,12 @@ namespace MailKit.Net.Pop3 {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <see langword="true" />, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
 		/// </example>
-		/// <param name="quit">If set to <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
+		/// <param name="quit">If set to <see langword="true" />, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1724,7 +1724,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="lang">The language code.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="lang"/> is <c>null</c>.
+		/// <paramref name="lang"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="lang"/> is empty.
@@ -1801,7 +1801,7 @@ namespace MailKit.Net.Pop3 {
 		/// along with <see cref="GetMessageUid(int, CancellationToken)"/> and
 		/// <see cref="GetMessageUids(CancellationToken)"/> will fail.</para>
 		/// </remarks>
-		/// <value><c>true</c> if supports UIDs; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if supports UIDs; otherwise, <see langword="false" />.</value>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -2634,7 +2634,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> are invalid.
@@ -2786,7 +2786,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> are invalid.
@@ -2889,7 +2889,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message or header stream.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -2937,11 +2937,11 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> are invalid.
@@ -2993,7 +2993,7 @@ namespace MailKit.Net.Pop3 {
 		/// <returns>The message or header streams.</returns>
 		/// <param name="startIndex">The index of the first stream to get.</param>
 		/// <param name="count">The number of streams to get.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -3121,7 +3121,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> are invalid.
@@ -3366,8 +3366,8 @@ namespace MailKit.Net.Pop3 {
 		/// Releases the unmanaged resources used by the <see cref="Pop3Client"/> and
 		/// optionally releases the managed resources.
 		/// </remarks>
-		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
-		/// <c>false</c> to release only the unmanaged resources.</param>
+		/// <param name="disposing"><see langword="true" /> to release both managed and unmanaged resources;
+		/// <see langword="false" /> to release only the unmanaged resources.</param>
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {

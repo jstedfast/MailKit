@@ -71,7 +71,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the timestamp that should be used by folder as the <see cref="MessageSummaryItems.InternalDate"/>.
 		/// </remarks>
-		/// <value>The date and time to use for the INTERNALDATE or <c>null</c> if it should be left up to the folder to decide.</value>
+		/// <value>The date and time to use for the INTERNALDATE or <see langword="null" /> if it should be left up to the folder to decide.</value>
 		DateTimeOffset? InternalDate { get; set; }
 
 		/// <summary>

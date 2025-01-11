@@ -97,7 +97,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not the client is currently in the IDLE state.
 		/// </remarks>
-		/// <value><c>true</c> if an IDLE command is active; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if an IDLE command is active; otherwise, <see langword="false" />.</value>
 		bool IsIdle { get; }
 
 		/// <summary>
@@ -252,14 +252,14 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Passes along the client implementation details to the server while also obtaining implementation
 		/// details from the server.</para>
-		/// <para>If the <paramref name="clientImplementation"/> is <c>null</c> or no properties have been set, no
+		/// <para>If the <paramref name="clientImplementation"/> is <see langword="null" /> or no properties have been set, no
 		/// identifying information will be sent to the server.</para>
 		/// <note type="security">
 		/// <para>Security Implications</para>
 		/// <para>This command has the danger of violating the privacy of users if misused. Clients should
 		/// notify users that they send the ID command.</para>
 		/// <para>It is highly desirable that implementations provide a method of disabling ID support, perhaps by
-		/// not calling this method at all, or by passing <c>null</c> as the <paramref name="clientImplementation"/>
+		/// not calling this method at all, or by passing <see langword="null" /> as the <paramref name="clientImplementation"/>
 		/// argument.</para>
 		/// <para>Implementors must exercise extreme care in adding properties to the <paramref name="clientImplementation"/>.
 		/// Some properties, such as a processor ID number, Ethernet address, or other unique (or mostly unique) identifier
@@ -270,7 +270,7 @@ namespace MailKit.Net.Imap {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
-		/// <returns>The implementation details of the server if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The implementation details of the server if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -302,14 +302,14 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Passes along the client implementation details to the server while also obtaining implementation
 		/// details from the server.</para>
-		/// <para>If the <paramref name="clientImplementation"/> is <c>null</c> or no properties have been set, no
+		/// <para>If the <paramref name="clientImplementation"/> is <see langword="null" /> or no properties have been set, no
 		/// identifying information will be sent to the server.</para>
 		/// <note type="security">
 		/// <para>Security Implications</para>
 		/// <para>This command has the danger of violating the privacy of users if misused. Clients should
 		/// notify users that they send the ID command.</para>
 		/// <para>It is highly desirable that implementations provide a method of disabling ID support, perhaps by
-		/// not calling this method at all, or by passing <c>null</c> as the <paramref name="clientImplementation"/>
+		/// not calling this method at all, or by passing <see langword="null" /> as the <paramref name="clientImplementation"/>
 		/// argument.</para>
 		/// <para>Implementors must exercise extreme care in adding properties to the <paramref name="clientImplementation"/>.
 		/// Some properties, such as a processor ID number, Ethernet address, or other unique (or mostly unique) identifier
@@ -317,7 +317,7 @@ namespace MailKit.Net.Imap {
 		/// attackers to exploit security holes in the client.</para>
 		/// </note>
 		/// </remarks>
-		/// <returns>The implementation details of the server if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The implementation details of the server if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -464,12 +464,12 @@ namespace MailKit.Net.Imap {
 		/// <para>This, combined with <see cref="Idle(CancellationToken, CancellationToken)"/>,
 		/// can be used to get instant notifications for changes to any of the specified folders.</para>
 		/// </remarks>
-		/// <param name="status"><c>true</c> if the server should immediately notify the client of the
-		/// selected folder's status; otherwise, <c>false</c>.</param>
+		/// <param name="status"><see langword="true" /> if the server should immediately notify the client of the
+		/// selected folder's status; otherwise, <see langword="false" />.</param>
 		/// <param name="eventGroups">The specific event groups that the client would like to receive notifications for.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="eventGroups"/> is <c>null</c>.
+		/// <paramref name="eventGroups"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="eventGroups"/> is empty.
@@ -515,12 +515,12 @@ namespace MailKit.Net.Imap {
 		/// can be used to get instant notifications for changes to any of the specified folders.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
-		/// <param name="status"><c>true</c> if the server should immediately notify the client of the
-		/// selected folder's status; otherwise, <c>false</c>.</param>
+		/// <param name="status"><see langword="true" /> if the server should immediately notify the client of the
+		/// selected folder's status; otherwise, <see langword="false" />.</param>
 		/// <param name="eventGroups">The specific event groups that the client would like to receive notifications for.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="eventGroups"/> is <c>null</c>.
+		/// <paramref name="eventGroups"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="eventGroups"/> is empty.

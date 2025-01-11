@@ -47,7 +47,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="controls">The list of access controls.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="controls"/> is <c>null</c>.
+		/// <paramref name="controls"/> is <see langword="null" />.
 		/// </exception>
 		public AccessControlList (IEnumerable<AccessControl> controls) : base (controls)
 		{

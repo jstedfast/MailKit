@@ -148,7 +148,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not the unique identifier is valid.
 		/// </remarks>
-		/// <value><c>true</c> if the unique identifier is valid; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the unique identifier is valid; otherwise, <see langword="false" />.</value>
 		public bool IsValid {
 			get { return Id != 0; }
 		}
@@ -185,8 +185,8 @@ namespace MailKit {
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <param name="other">The <see cref="MailKit.UniqueId"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
-		/// <returns><c>true</c> if the specified <see cref="MailKit.UniqueId"/> is equal to the current
-		/// <see cref="MailKit.UniqueId"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified <see cref="MailKit.UniqueId"/> is equal to the current
+		/// <see cref="MailKit.UniqueId"/>; otherwise, <see langword="false" />.</returns>
 		public bool Equals (UniqueId other)
 		{
 			return other.Id == Id;
@@ -201,7 +201,7 @@ namespace MailKit {
 		/// <para>Determines whether two unique identifiers are equal.</para>
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are equal; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="uid1"/> and <paramref name="uid2"/> are equal; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
 		public static bool operator == (UniqueId uid1, UniqueId uid2)
@@ -216,7 +216,7 @@ namespace MailKit {
 		/// <para>Determines whether one unique identifier is greater than another unique identifier.</para>
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="uid1"/> is greater than <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="uid1"/> is greater than <paramref name="uid2"/>; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
 		public static bool operator > (UniqueId uid1, UniqueId uid2)
@@ -231,7 +231,7 @@ namespace MailKit {
 		/// <para>Determines whether one unique identifier is greater than or equal to another unique identifier.</para>
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="uid1"/> is greater than or equal to <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="uid1"/> is greater than or equal to <paramref name="uid2"/>; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
 		public static bool operator >= (UniqueId uid1, UniqueId uid2)
@@ -246,7 +246,7 @@ namespace MailKit {
 		/// <para>Determines whether two unique identifiers are not equal.</para>
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are not equal; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="uid1"/> and <paramref name="uid2"/> are not equal; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
 		public static bool operator != (UniqueId uid1, UniqueId uid2)
@@ -261,7 +261,7 @@ namespace MailKit {
 		/// <para>Determines whether one unique identifier is less than another unique identifier.</para>
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="uid1"/> is less than <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="uid1"/> is less than <paramref name="uid2"/>; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
 		public static bool operator < (UniqueId uid1, UniqueId uid2)
@@ -276,7 +276,7 @@ namespace MailKit {
 		/// <para>Determines whether one unique identifier is less than or equal to another unique identifier.</para>
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
-		/// <returns><c>true</c> if <paramref name="uid1"/> is less than or equal to <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if <paramref name="uid1"/> is less than or equal to <paramref name="uid2"/>; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
 		public static bool operator <= (UniqueId uid1, UniqueId uid2)
@@ -292,8 +292,8 @@ namespace MailKit {
 		/// <note type="note">Validity values are not used in the comparison.</note>
 		/// </remarks>
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
-		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>;
-		/// otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>;
+		/// otherwise, <see langword="false" />.</returns>
 		public override bool Equals (object obj)
 		{
 			return obj is UniqueId uid && uid.Id == Id;
@@ -329,7 +329,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Attempts to parse a unique identifier.
 		/// </remarks>
-		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <returns><see langword="true" /> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
 		/// <param name="token">The token to parse.</param>
 		/// <param name="index">The index to start parsing.</param>
 		/// <param name="uid">The unique identifier.</param>
@@ -366,12 +366,12 @@ namespace MailKit {
 		/// <remarks>
 		/// Attempts to parse a unique identifier.
 		/// </remarks>
-		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <returns><see langword="true" /> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
 		/// <param name="token">The token to parse.</param>
 		/// <param name="validity">The UIDVALIDITY value.</param>
 		/// <param name="uid">The unique identifier.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		public static bool TryParse (string token, uint validity, out UniqueId uid)
 		{
@@ -394,11 +394,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Attempts to parse a unique identifier.
 		/// </remarks>
-		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <returns><see langword="true" /> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
 		/// <param name="token">The token to parse.</param>
 		/// <param name="uid">The unique identifier.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		public static bool TryParse (string token, out UniqueId uid)
 		{
@@ -415,7 +415,7 @@ namespace MailKit {
 		/// <param name="token">A string containing the unique identifier.</param>
 		/// <param name="validity">The UIDVALIDITY.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.FormatException">
 		/// <paramref name="token"/> is not in the correct format.
@@ -437,7 +437,7 @@ namespace MailKit {
 		/// <returns>The unique identifier.</returns>
 		/// <param name="token">A string containing the unique identifier.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="token"/> is <c>null</c>.
+		/// <paramref name="token"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.FormatException">
 		/// <paramref name="token"/> is not in the correct format.

@@ -45,7 +45,7 @@ namespace MailKit.Search
 		/// </remarks>
 		/// <param name="uids">The unique identifiers to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uids"/> is empty.

@@ -60,9 +60,9 @@ namespace MailKit.Security.Ntlm {
 		/// <param name="customData">The 8-byte platform-specific blob.</param>
 		/// <param name="machineId">The 256-bit randomly generated machine id.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="customData"/> is <c>null</c>.</para>
+		/// <para><paramref name="customData"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="machineId"/> is <c>null</c>.</para>
+		/// <para><paramref name="machineId"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="ArgumentException">
 		/// <para><paramref name="customData"/> is not 8 bytes.</para>

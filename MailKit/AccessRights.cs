@@ -47,7 +47,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="rights">The access rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="rights"/> is <c>null</c>.
+		/// <paramref name="rights"/> is <see langword="null" />.
 		/// </exception>
 		public AccessRights (IEnumerable<AccessRight> rights)
 		{
@@ -62,7 +62,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="rights">The access rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="rights"/> is <c>null</c>.
+		/// <paramref name="rights"/> is <see langword="null" />.
 		/// </exception>
 		public AccessRights (string rights)
 		{
@@ -96,7 +96,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not this set of access rights is read only.
 		/// </remarks>
-		/// <value><c>true</c> if this collection is read only; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if this collection is read only; otherwise, <see langword="false" />.</value>
 		public bool IsReadOnly {
 			get { return false; }
 		}
@@ -119,7 +119,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Adds the specified access right if it is not already included.
 		/// </remarks>
-		/// <returns><c>true</c> if the right was added; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the right was added; otherwise, <see langword="false" />.</returns>
 		/// <param name="right">The access right.</param>
 		public bool Add (AccessRight right)
 		{
@@ -137,7 +137,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Adds the right specified by the given character.
 		/// </remarks>
-		/// <returns><c>true</c> if the right was added; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the right was added; otherwise, <see langword="false" />.</returns>
 		/// <param name="right">The right.</param>
 		public bool Add (char right)
 		{
@@ -152,7 +152,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="rights">The rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="rights"/> is <c>null</c>.
+		/// <paramref name="rights"/> is <see langword="null" />.
 		/// </exception>
 		public void AddRange (string rights)
 		{
@@ -171,7 +171,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="rights">The rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="rights"/> is <c>null</c>.
+		/// <paramref name="rights"/> is <see langword="null" />.
 		/// </exception>
 		public void AddRange (IEnumerable<AccessRight> rights)
 		{
@@ -199,7 +199,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether or not the set of access rights already contains the specified right
 		/// </remarks>
-		/// <returns><value>true</value> if the specified right exists; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the specified right exists; otherwise, <see langword="false" />.</returns>
 		/// <param name="right">The access right.</param>
 		public bool Contains (AccessRight right)
 		{
@@ -216,7 +216,7 @@ namespace MailKit {
 		/// <param name="array">The array.</param>
 		/// <param name="arrayIndex">The array index.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="array"/> is <c>null</c>.
+		/// <paramref name="array"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="arrayIndex"/> is out of range.
@@ -238,7 +238,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes the specified access right.
 		/// </remarks>
-		/// <returns><value>true</value> if the access right was removed; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the access right was removed; otherwise, <see langword="false" />.</returns>
 		/// <param name="right">The access right.</param>
 		public bool Remove (AccessRight right)
 		{

@@ -45,7 +45,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		public SaslMechanismScramSha1 (NetworkCredential credentials) : base (credentials)
 		{
@@ -60,9 +60,9 @@ namespace MailKit.Security {
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		public SaslMechanismScramSha1 (string userName, string password) : base (userName, password)
 		{
@@ -126,7 +126,7 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <paramref name="credentials"/> is <see langword="null" />.
 		/// </exception>
 		public SaslMechanismScramSha1Plus (NetworkCredential credentials) : base (credentials)
 		{
@@ -141,9 +141,9 @@ namespace MailKit.Security {
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para><paramref name="userName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// <para><paramref name="password"/> is <see langword="null" />.</para>
 		/// </exception>
 		public SaslMechanismScramSha1Plus (string userName, string password) : base (userName, password)
 		{
@@ -166,7 +166,7 @@ namespace MailKit.Security {
 		/// <remarks>
 		/// Gets whether or not the SASL mechanism supports channel binding.
 		/// </remarks>
-		/// <value><c>true</c> if the SASL mechanism supports channel binding; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the SASL mechanism supports channel binding; otherwise, <see langword="false" />.</value>
 		public override bool SupportsChannelBinding {
 			get { return true; }
 		}

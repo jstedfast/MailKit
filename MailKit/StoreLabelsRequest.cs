@@ -60,7 +60,7 @@ namespace MailKit {
 		/// <param name="action">The store action to perform.</param>
 		/// <param name="labels">The custom keywords to add, remove or set on the message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		public StoreLabelsRequest (StoreAction action, IEnumerable<string> labels)
 		{
@@ -99,9 +99,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Gets or sets whether the store operation should run silently.</para>
 		/// <para>Normally, when flags or keywords are changed on a message, a <see cref="IMailFolder.MessageLabelsChanged"/> event is emitted.
-		/// By setting <see cref="Silent"/> to <c>true</c>, this event will not be emitted as a result of this store operation.</para>
+		/// By setting <see cref="Silent"/> to <see langword="true" />, this event will not be emitted as a result of this store operation.</para>
 		/// </remarks>
-		/// <value><c>true</c> if the store operation should run silently (not emitting events for label changes); otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the store operation should run silently (not emitting events for label changes); otherwise, <see langword="false" />.</value>
 		public bool Silent {
 			get; set;
 		}

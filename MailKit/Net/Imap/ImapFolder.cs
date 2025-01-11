@@ -71,7 +71,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="args">The constructor arguments.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="args"/> is <c>null</c>.
+		/// <paramref name="args"/> is <see langword="null" />.
 		/// </exception>
 		public ImapFolder (ImapFolderConstructorArgs args)
 		{
@@ -147,7 +147,7 @@ namespace MailKit.Net.Imap {
 		/// Determines whether or not an <see cref="ImapFolder"/> supports a feature.
 		/// </remarks>
 		/// <param name="feature">The desired feature.</param>
-		/// <returns><c>true</c> if the feature is supported; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the feature is supported; otherwise, <see langword="false" />.</returns>
 		public override bool Supports (FolderFeature feature)
 		{
 			switch (feature) {
@@ -316,7 +316,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets a value indicating whether the folder is currently open.
 		/// </remarks>
-		/// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the folder is currently open; otherwise, <see langword="false" />.</value>
 		public override bool IsOpen {
 			get { return Engine.Selected == this; }
 		}
@@ -714,7 +714,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Closes the folder, optionally expunging the messages marked for deletion.
 		/// </remarks>
-		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
+		/// <param name="expunge">If set to <see langword="true" />, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -760,7 +760,7 @@ namespace MailKit.Net.Imap {
 		/// Closes the folder, optionally expunging the messages marked for deletion.
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
-		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
+		/// <param name="expunge">If set to <see langword="true" />, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -901,10 +901,10 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The created folder.</returns>
 		/// <param name="name">The name of the folder to create.</param>
-		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise, <c>false</c>.</param>
+		/// <param name="isMessageFolder"><see langword="true" /> if the folder will be used to contain messages; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is empty or invalid.
@@ -948,10 +948,10 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The created folder.</returns>
 		/// <param name="name">The name of the folder to create.</param>
-		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise, <c>false</c>.</param>
+		/// <param name="isMessageFolder"><see langword="true" /> if the folder will be used to contain messages; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is empty or invalid.
@@ -1056,9 +1056,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="specialUses">A list of special uses for the folder being created.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="specialUses"/> is <c>null</c>.</para>
+		/// <para><paramref name="specialUses"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is empty or invalid.
@@ -1108,9 +1108,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="specialUses">A list of special uses for the folder being created.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="specialUses"/> is <c>null</c>.</para>
+		/// <para><paramref name="specialUses"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is empty or invalid.
@@ -1221,9 +1221,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="parent"/> is <c>null</c>.</para>
+		/// <para><paramref name="parent"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="parent"/> does not belong to the <see cref="ImapClient"/>.</para>
@@ -1277,9 +1277,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="parent"/> is <c>null</c>.</para>
+		/// <para><paramref name="parent"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="parent"/> does not belong to the <see cref="ImapClient"/>.</para>
@@ -1749,7 +1749,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
 		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1806,7 +1806,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
 		/// <param name="items">The status items to pre-populate.</param>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="subscribedOnly">If set to <see langword="true" />, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1919,7 +1919,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The name of the subfolder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is either an empty string or contains the <see cref="MailFolder.DirectorySeparator"/>.
@@ -1981,7 +1981,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The name of the subfolder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is either an empty string or contains the <see cref="MailFolder.DirectorySeparator"/>.
@@ -2526,7 +2526,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The identifier name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2571,7 +2571,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The identifier name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2783,9 +2783,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// No rights were specified.
@@ -2834,9 +2834,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// No rights were specified.
@@ -2884,9 +2884,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// No rights were specified.
@@ -2935,9 +2935,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// No rights were specified.
@@ -2985,9 +2985,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3033,9 +3033,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para><paramref name="name"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// <para><paramref name="rights"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3099,7 +3099,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The identity name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3144,7 +3144,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="name">The identity name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3389,9 +3389,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="tags"/> is <c>null</c>.</para>
+		/// <para><paramref name="tags"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3440,9 +3440,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="tags">The metadata tags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="tags"/> is <c>null</c>.</para>
+		/// <para><paramref name="tags"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3536,7 +3536,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="metadata">The metadata.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="metadata"/> is <c>null</c>.
+		/// <paramref name="metadata"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3584,7 +3584,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="metadata">The metadata.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="metadata"/> is <c>null</c>.
+		/// <paramref name="metadata"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4028,8 +4028,8 @@ namespace MailKit.Net.Imap {
 		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
 		/// </remarks>
 		/// <returns>The folder quota.</returns>
-		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
-		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="messageLimit">If not <see langword="null" />, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <see langword="null" />, sets the maximum storage size (in kilobytes).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4073,8 +4073,8 @@ namespace MailKit.Net.Imap {
 		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
 		/// </remarks>
 		/// <returns>The folder quota.</returns>
-		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
-		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="messageLimit">If not <see langword="null" />, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <see langword="null" />, sets the maximum storage size (in kilobytes).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4246,7 +4246,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4340,7 +4340,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4504,14 +4504,14 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Appends a message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4560,14 +4560,14 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Asynchronously appends a message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the appended message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="request">The append request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4708,12 +4708,12 @@ namespace MailKit.Net.Imap {
 		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="requests"/> is <c>null</c>.</para>
+		/// <para><paramref name="requests"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="ArgumentException">
-		/// One or more of the <paramref name="requests"/> is <c>null</c>.
+		/// One or more of the <paramref name="requests"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4790,12 +4790,12 @@ namespace MailKit.Net.Imap {
 		/// <param name="requests">The append requests.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="requests"/> is <c>null</c>.</para>
+		/// <para><paramref name="requests"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="ArgumentException">
-		/// One or more of the <paramref name="requests"/> is <c>null</c>.
+		/// One or more of the <paramref name="requests"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4948,15 +4948,15 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uid"/> is invalid.</para>
@@ -5022,15 +5022,15 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Asynchronously replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="uid">The UID of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uid"/> is invalid.</para>
@@ -5164,15 +5164,15 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -5237,15 +5237,15 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Asynchronously replaces a message in the folder and returns the UniqueId assigned to the new message.
 		/// </remarks>
-		/// <returns>The UID of the new message, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UID of the new message, if available; otherwise, <see langword="null" />.</returns>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="index">The index of the message to be replaced.</param>
 		/// <param name="request">The replace request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="request"/> is <c>null</c>.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -5389,9 +5389,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -5469,9 +5469,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
@@ -5565,9 +5565,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uids"/> is empty.</para>
@@ -5660,9 +5660,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uids"/> is empty.</para>
@@ -5777,9 +5777,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -5839,9 +5839,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -5928,9 +5928,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
@@ -5997,9 +5997,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>

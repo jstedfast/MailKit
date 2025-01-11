@@ -52,7 +52,7 @@ namespace MailKit.Net.Proxy
 		/// </remarks>
 		/// <param name="proxy">The web proxy.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <paramref name="proxy"/> is <c>null</c>.
+		/// <paramref name="proxy"/> is <see langword="null" />.
 		/// </exception>
 		public WebProxyClient (IWebProxy proxy) : base ("System", 0)
 		{
@@ -140,7 +140,7 @@ namespace MailKit.Net.Proxy
 		/// <param name="port">The target server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
@@ -186,7 +186,7 @@ namespace MailKit.Net.Proxy
 		/// <param name="port">The target server port.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
+		/// <paramref name="host"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.

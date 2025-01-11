@@ -43,7 +43,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="metadata">The metadata that changed.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="metadata"/> is <c>null</c>.
+		/// <paramref name="metadata"/> is <see langword="null" />.
 		/// </exception>
 		public MetadataChangedEventArgs (Metadata metadata)
 		{

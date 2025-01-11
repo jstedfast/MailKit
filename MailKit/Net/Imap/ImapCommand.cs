@@ -134,11 +134,11 @@ namespace MailKit.Net.Imap {
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para><paramref name="engine"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="format"/> is <c>null</c>.</para>
+		/// <para><paramref name="format"/> is <see langword="null" />.</para>
 		/// </exception>
 		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
 		{
@@ -260,9 +260,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
 		/// <exception cref="ArgumentNullException">
-		/// <para><paramref name="engine"/> is <c>null</c>.</para>
+		/// <para><paramref name="engine"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="format"/> is <c>null</c>.</para>
+		/// <para><paramref name="format"/> is <see langword="null" />.</para>
 		/// </exception>
 		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 			: this (engine, cancellationToken, folder, FormatOptions.Default, format, args)
@@ -478,9 +478,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="atom">The atom token.</param>
 		/// <param name="handler">The handler.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="atom"/> is <c>null</c>.</para>
+		/// <para><paramref name="atom"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="handler"/> is <c>null</c>.</para>
+		/// <para><paramref name="handler"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Untagged handlers must be registered before the command has been queued.
@@ -524,7 +524,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
-		/// <returns><c>true</c> if there are more command parts to send; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if there are more command parts to send; otherwise, <see langword="false" />.</returns>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -665,7 +665,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
-		/// <returns><c>true</c> if there are more command parts to send; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if there are more command parts to send; otherwise, <see langword="false" />.</returns>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -810,7 +810,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the first response-code of the specified type.
 		/// </remarks>
 		/// <param name="type">The type of response-code.</param>
-		/// <returns>The response-code if it exists; otherwise, <c>null</c>.</returns>
+		/// <returns>The response-code if it exists; otherwise, <see langword="null" />.</returns>
 		public ImapResponseCode GetResponseCode (ImapResponseCodeType type)
 		{
 			for (int i = 0; i < RespCodes.Count; i++) {

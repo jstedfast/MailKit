@@ -43,7 +43,7 @@ namespace MailKit.Net {
 		/// </remarks>
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="token">The channel-binding token.</param>
-		/// <returns><c>true</c> if the channel-binding token was acquired; otherwise, <c>false</c>.</returns>
+		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
 		bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token);
 	}
 }

@@ -69,7 +69,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether or not this body part collection is read only.
 		/// </remarks>
-		/// <value><c>true</c> if this collection is read only; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if this collection is read only; otherwise, <see langword="false" />.</value>
 		public bool IsReadOnly {
 			get { return false; }
 		}
@@ -82,7 +82,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="part">The body part.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="part"/> is <see langword="null" />.
 		/// </exception>
 		public void Add (BodyPart part)
 		{
@@ -109,10 +109,10 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether or not the collection contains the specified body part.
 		/// </remarks>
-		/// <returns><value>true</value> if the specified body part exists; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the specified body part exists; otherwise, <see langword="false" />.</returns>
 		/// <param name="part">The body part.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="part"/> is <see langword="null" />.
 		/// </exception>
 		public bool Contains (BodyPart part)
 		{
@@ -132,7 +132,7 @@ namespace MailKit {
 		/// <param name="array">The array.</param>
 		/// <param name="arrayIndex">The array index.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="array"/> is <c>null</c>.
+		/// <paramref name="array"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="arrayIndex"/> is out of range.
@@ -154,10 +154,10 @@ namespace MailKit {
 		/// <remarks>
 		/// Removes the specified body part.
 		/// </remarks>
-		/// <returns><value>true</value> if the body part was removed; otherwise <value>false</value>.</returns>
+		/// <returns><see langword="true" /> if the body part was removed; otherwise, <see langword="false" />.</returns>
 		/// <param name="part">The body part.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="part"/> is <see langword="null" />.
 		/// </exception>
 		public bool Remove (BodyPart part)
 		{
@@ -202,7 +202,7 @@ namespace MailKit {
 		/// <returns>The index of the part matching the specified URI if found; otherwise <c>-1</c>.</returns>
 		/// <param name="uri">The URI of the body part.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uri"/> is <c>null</c>.
+		/// <paramref name="uri"/> is <see langword="null" />.
 		/// </exception>
 		public int IndexOf (Uri uri)
 		{

@@ -44,7 +44,7 @@ namespace MailKit.Search
 		/// </remarks>
 		/// <param name="name">The name of the filter.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="name"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="name"/> is empty.

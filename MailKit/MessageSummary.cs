@@ -81,7 +81,7 @@ namespace MailKit {
 		/// <param name="folder">The folder that the message belongs to.</param>
 		/// <param name="index">The message index.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <c>null</c>.
+		/// <paramref name="folder"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is negative.
@@ -275,7 +275,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
-		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
+		/// <value>The text body if it exists; otherwise, <see langword="null" />.</value>
 		public BodyPartText TextBody {
 			get {
 				if (Body is BodyPartMultipart multipart) {
@@ -304,7 +304,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
-		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
+		/// <value>The html body if it exists; otherwise, <see langword="null" />.</value>
 		public BodyPartText HtmlBody {
 			get {
 				if (Body is BodyPartMultipart multipart) {
@@ -440,7 +440,7 @@ namespace MailKit {
 		/// <remarks>
 		/// This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
 		/// </remarks>
-		/// <value><c>true</c> if the message is a reply; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the message is a reply; otherwise, <see langword="false" />.</value>
 		public bool IsReply {
 			get {
 				UpdateThreadableSubject ();

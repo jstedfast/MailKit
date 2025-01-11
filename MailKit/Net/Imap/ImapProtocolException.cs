@@ -54,7 +54,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
+		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
 		[SecuritySafeCritical]
 		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
@@ -102,7 +102,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets or sets whether or not this exception was thrown due to an unexpected token.
 		/// </remarks>
-		/// <value><c>true</c> if an unexpected token was encountered; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if an unexpected token was encountered; otherwise, <see langword="false" />.</value>
 		internal bool UnexpectedToken {
 			get; set;
 		}

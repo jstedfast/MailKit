@@ -50,7 +50,7 @@ namespace MailKit.Security.Ntlm {
 		/// <param name="buffer">The raw target info buffer to decode.</param>
 		/// <param name="startIndex">The starting index of the target info structure.</param>
 		/// <param name="length">The length of the target info structure.</param>
-		/// <param name="unicode"><c>true</c> if the target info strings are unicode; otherwise, <c>false</c>.</param>
+		/// <param name="unicode"><see langword="true" /> if the target info strings are unicode; otherwise, <see langword="false" />.</param>
 		public NtlmTargetInfo (byte[] buffer, int startIndex, int length, bool unicode)
 		{
 			Decode (buffer, startIndex, length, unicode);
@@ -142,7 +142,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the server's NetBIOS computer name.
 		/// </remarks>
-		/// <value>The server's NetBIOS computer name if available; otherwise, <c>null</c>.</value>
+		/// <value>The server's NetBIOS computer name if available; otherwise, <see langword="null" />.</value>
 		public string ServerName {
 			get { return GetAvPairString (NtlmAttribute.ServerName); }
 			set { SetAvPairString (NtlmAttribute.ServerName, value); }
@@ -154,7 +154,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the server's NetBIOS domain name.
 		/// </remarks>
-		/// <value>The server's NetBIOS domain name if available; otherwise, <c>null</c>.</value>
+		/// <value>The server's NetBIOS domain name if available; otherwise, <see langword="null" />.</value>
 		public string DomainName {
 			get { return GetAvPairString (NtlmAttribute.DomainName); }
 			set { SetAvPairString (NtlmAttribute.DomainName, value); }
@@ -166,7 +166,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the fully qualified domain name (FQDN) of the server.
 		/// </remarks>
-		/// <value>The fully qualified domain name (FQDN) of the server if available; otherwise, <c>null</c>.</value>
+		/// <value>The fully qualified domain name (FQDN) of the server if available; otherwise, <see langword="null" />.</value>
 		public string DnsServerName {
 			get { return GetAvPairString (NtlmAttribute.DnsServerName); }
 			set { SetAvPairString (NtlmAttribute.DnsServerName, value); }
@@ -178,7 +178,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the fully qualified domain name (FQDN) of the domain.
 		/// </remarks>
-		/// <value>The fully qualified domain name (FQDN) of the domain if available; otherwise, <c>null</c>.</value>
+		/// <value>The fully qualified domain name (FQDN) of the domain if available; otherwise, <see langword="null" />.</value>
 		public string DnsDomainName {
 			get { return GetAvPairString (NtlmAttribute.DnsDomainName); }
 			set { SetAvPairString (NtlmAttribute.DnsDomainName, value); }
@@ -190,7 +190,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the fully qualified domain name (FQDN) of the forest.
 		/// </remarks>
-		/// <value>The fully qualified domain name (FQDN) of the forest if available; otherwise, <c>null</c>.</value>
+		/// <value>The fully qualified domain name (FQDN) of the forest if available; otherwise, <see langword="null" />.</value>
 		public string DnsTreeName {
 			get { return GetAvPairString (NtlmAttribute.DnsTreeName); }
 			set { SetAvPairString (NtlmAttribute.DnsTreeName, value); }
@@ -205,7 +205,7 @@ namespace MailKit.Security.Ntlm {
 		/// <para>0x00000002: Indicates that the client is providing message integrity in the MIC field (section 2.2.1.3) in the AUTHENTICATE_MESSAGE.</para>
 		/// <para>0x00000004: Indicates that the client is providing a target SPN generated from an untrusted source.</para>
 		/// </remarks>
-		/// <value>The 32-bit flags value if available; otherwise, <c>null</c>.</value>
+		/// <value>The 32-bit flags value if available; otherwise, <see langword="null" />.</value>
 		public int? Flags {
 			get { return ((NtlmAttributeFlagsValuePair) GetAvPair (NtlmAttribute.Flags))?.Value; }
 			set {
@@ -231,7 +231,7 @@ namespace MailKit.Security.Ntlm {
 		/// <para>A FILETIME structure ([MS-DTYP] section 2.3.3) in little-endian byte order that contains
 		/// the server local time. This structure is always sent in the CHALLENGE_MESSAGE.</para>
 		/// </remarks>
-		/// <value>The local time of the server, if available; otherwise <c>null</c>.</value>
+		/// <value>The local time of the server, if available; otherwise <see langword="null" />.</value>
 		public long? Timestamp {
 			get { return ((NtlmAttributeTimestampValuePair) GetAvPair (NtlmAttribute.Timestamp))?.Value; }
 			set {
@@ -256,7 +256,7 @@ namespace MailKit.Security.Ntlm {
 		/// <para>Gets or sets the single host data structure.</para>
 		/// <para>The Value field contains a platform-specific blob, as well as a MachineID created at computer startup to identify the calling machine.</para>
 		/// </remarks>
-		/// <value>The single host data structure, if available; otherwise, <c>null</c>.</value>
+		/// <value>The single host data structure, if available; otherwise, <see langword="null" />.</value>
 		public byte[] SingleHost {
 			get { return GetAvPairByteArray (NtlmAttribute.SingleHost); }
 			set { SetAvPairByteArray (NtlmAttribute.SingleHost, value); }
@@ -268,7 +268,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the Service Principal Name (SPN) of the server.
 		/// </remarks>
-		/// <value>The Service Principal Name (SPN) of the server, if available; otherwise, <c>null</c>.</value>
+		/// <value>The Service Principal Name (SPN) of the server, if available; otherwise, <see langword="null" />.</value>
 		public string TargetName {
 			get { return GetAvPairString (NtlmAttribute.TargetName); }
 			set { SetAvPairString (NtlmAttribute.TargetName, value); }
@@ -280,7 +280,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Gets or sets the channel binding hash.
 		/// </remarks>
-		/// <value>An MD5 hash of the channel binding data, if available; otherwise <c>null</c>.</value>
+		/// <value>An MD5 hash of the channel binding data, if available; otherwise <see langword="null" />.</value>
 		public byte[] ChannelBinding {
 			get { return GetAvPairByteArray (NtlmAttribute.ChannelBinding); }
 			set { SetAvPairByteArray (NtlmAttribute.ChannelBinding, value); }
@@ -410,7 +410,7 @@ namespace MailKit.Security.Ntlm {
 		/// <remarks>
 		/// Encodes the TargetInfo structure.
 		/// </remarks>
-		/// <param name="unicode"><c>true</c> if the strings should be encoded in Unicode; otherwise, <c>false</c>.</param>
+		/// <param name="unicode"><see langword="true" /> if the strings should be encoded in Unicode; otherwise, <see langword="false" />.</param>
 		/// <returns>The encoded TargetInfo.</returns>
 		public byte[] Encode (bool unicode)
 		{

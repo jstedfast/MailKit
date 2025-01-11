@@ -44,9 +44,9 @@ namespace MailKit {
 		/// <param name="oldName">The old name of the folder.</param>
 		/// <param name="newName">The new name of the folder.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="oldName"/> is <c>null</c>.</para>
+		/// <para><paramref name="oldName"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="newName"/> is <c>null</c>.</para>
+		/// <para><paramref name="newName"/> is <see langword="null" />.</para>
 		/// </exception>
 		public FolderRenamedEventArgs (string oldName, string newName)
 		{

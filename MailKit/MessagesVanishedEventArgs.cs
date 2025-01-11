@@ -44,9 +44,9 @@ namespace MailKit {
 		/// Creates a new <see cref="MessagesVanishedEventArgs"/>.
 		/// </remarks>
 		/// <param name="uids">The list of unique identifiers.</param>
-		/// <param name="earlier">If set to <c>true</c>, the messages vanished in the past as opposed to just now.</param>
+		/// <param name="earlier">If set to <see langword="true" />, the messages vanished in the past as opposed to just now.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		public MessagesVanishedEventArgs (IList<UniqueId> uids, bool earlier)
 		{
@@ -71,7 +71,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets whether the messages vanished in the past as opposed to just now.
 		/// </remarks>
-		/// <value><c>true</c> if the messages vanished earlier; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the messages vanished earlier; otherwise, <see langword="false" />.</value>
 		public bool Earlier {
 			get; private set;
 		}

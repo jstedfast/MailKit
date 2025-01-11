@@ -49,9 +49,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="mailboxFilter">The mailbox filter.</param>
 		/// <param name="events">The list of IMAP events.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="mailboxFilter"/> is <c>null</c>.</para>
+		/// <para><paramref name="mailboxFilter"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="events"/> is <c>null</c>.</para>
+		/// <para><paramref name="events"/> is <see langword="null" />.</para>
 		/// </exception>
 		public ImapEventGroup (ImapMailboxFilter mailboxFilter, IList<ImapEvent> events)
 		{
@@ -74,9 +74,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="mailboxFilter">The mailbox filter.</param>
 		/// <param name="events">The list of IMAP events.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="mailboxFilter"/> is <c>null</c>.</para>
+		/// <para><paramref name="mailboxFilter"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="events"/> is <c>null</c>.</para>
+		/// <para><paramref name="events"/> is <see langword="null" />.</para>
 		/// </exception>
 		public ImapEventGroup (ImapMailboxFilter mailboxFilter, params ImapEvent[] events) : this (mailboxFilter, (IList<ImapEvent>) events)
 		{
@@ -113,7 +113,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="command">The IMAP command builder.</param>
 		/// <param name="args">The IMAP command argument builder.</param>
-		/// <param name="notifySelectedNewExpunge">Gets set to <c>true</c> if the NOTIFY command requests the MessageNew or
+		/// <param name="notifySelectedNewExpunge">Gets set to <see langword="true" /> if the NOTIFY command requests the MessageNew or
 		/// MessageExpunged events for a SELECTED or SELECTED-DELAYED mailbox filter; otherwise it is left unchanged.</param>
 		internal void Format (ImapEngine engine, StringBuilder command, IList<object> args, ref bool notifySelectedNewExpunge)
 		{
@@ -251,7 +251,7 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="folders">The list of folders to watch for events.</param>
 			/// <exception cref="System.ArgumentNullException">
-			/// <paramref name="folders"/> is <c>null</c>.
+			/// <paramref name="folders"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="System.ArgumentException">
 			/// <para>The list of <paramref name="folders"/> is empty.</para>
@@ -271,7 +271,7 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="folders">The list of folders to watch for events.</param>
 			/// <exception cref="System.ArgumentNullException">
-			/// <paramref name="folders"/> is <c>null</c>.
+			/// <paramref name="folders"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="System.ArgumentException">
 			/// <para>The list of <paramref name="folders"/> is empty.</para>
@@ -292,7 +292,7 @@ namespace MailKit.Net.Imap {
 			/// <param name="name">The name of the mailbox filter.</param>
 			/// <param name="folders">The list of folders to watch for events.</param>
 			/// <exception cref="System.ArgumentNullException">
-			/// <paramref name="folders"/> is <c>null</c>.
+			/// <paramref name="folders"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="System.ArgumentException">
 			/// <para>The list of <paramref name="folders"/> is empty.</para>
@@ -368,7 +368,7 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="folders">The list of folders to watch for events.</param>
 			/// <exception cref="System.ArgumentNullException">
-			/// <paramref name="folders"/> is <c>null</c>.
+			/// <paramref name="folders"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="System.ArgumentException">
 			/// <para>The list of <paramref name="folders"/> is empty.</para>
@@ -388,7 +388,7 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="folders">The list of folders to watch for events.</param>
 			/// <exception cref="System.ArgumentNullException">
-			/// <paramref name="folders"/> is <c>null</c>.
+			/// <paramref name="folders"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="System.ArgumentException">
 			/// <para>The list of <paramref name="folders"/> is empty.</para>
@@ -573,7 +573,7 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapEvent"/> class.
 		/// </remarks>
 		/// <param name="name">The name of the IMAP event.</param>
-		/// <param name="isMessageEvent"><c>true</c> if the event is a message event; otherwise, <c>false</c>.</param>
+		/// <param name="isMessageEvent"><see langword="true" /> if the event is a message event; otherwise, <see langword="false" />.</param>
 		internal ImapEvent (string name, bool isMessageEvent)
 		{
 			IsMessageEvent = isMessageEvent;
@@ -586,7 +586,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not this <see cref="T:MailKit.Net.Imap.ImapEvent"/> is a message event.
 		/// </remarks>
-		/// <value><c>true</c> if is message event; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if is message event; otherwise, <see langword="false" />.</value>
 		internal bool IsMessageEvent {
 			get; private set;
 		}
@@ -611,7 +611,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="command">The IMAP command builder.</param>
 		/// <param name="args">The IMAP command argument builder.</param>
-		/// <param name="isSelectedFilter"><c>true</c> if the event is being registered for a
+		/// <param name="isSelectedFilter"><see langword="true" /> if the event is being registered for a
 		/// <see cref="ImapMailboxFilter.Selected"/> or <see cref="ImapMailboxFilter.SelectedDelayed"/>
 		/// mailbox filter.</param>
 		internal virtual void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)
@@ -644,7 +644,7 @@ namespace MailKit.Net.Imap {
 			/// </remarks>
 			/// <param name="request">The fetch request to use when new messages arrive.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="request"/> is <c>null</c>.
+			/// <paramref name="request"/> is <see langword="null" />.
 			/// </exception>
 			public MessageNew (IFetchRequest request) : base ("MessageNew", true)
 			{
@@ -675,7 +675,7 @@ namespace MailKit.Net.Imap {
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
 			/// <param name="headers">Additional message headers to retrieve for new messages.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="headers"/> is <c>null</c>.
+			/// <paramref name="headers"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="ArgumentException">
 			/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
@@ -693,7 +693,7 @@ namespace MailKit.Net.Imap {
 			/// <param name="items">The message summary items to automatically retrieve for new messages.</param>
 			/// <param name="headers">Additional message headers to retrieve for new messages.</param>
 			/// <exception cref="ArgumentNullException">
-			/// <paramref name="headers"/> is <c>null</c>.
+			/// <paramref name="headers"/> is <see langword="null" />.
 			/// </exception>
 			/// <exception cref="ArgumentException">
 			/// <para>One or more of the specified <paramref name="headers"/> is invalid.</para>
@@ -711,7 +711,7 @@ namespace MailKit.Net.Imap {
 			/// <param name="engine">The IMAP engine.</param>
 			/// <param name="command">The IMAP command builder.</param>
 			/// <param name="args">The IMAP command argument builder.</param>
-			/// <param name="isSelectedFilter"><c>true</c> if the event is being registered for a
+			/// <param name="isSelectedFilter"><see langword="true" /> if the event is being registered for a
 			/// <see cref="ImapMailboxFilter.Selected"/> or <see cref="ImapMailboxFilter.SelectedDelayed"/>
 			/// mailbox filter.</param>
 			internal override void Format (ImapEngine engine, StringBuilder command, IList<object> args, bool isSelectedFilter)

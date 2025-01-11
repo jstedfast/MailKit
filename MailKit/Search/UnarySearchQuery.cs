@@ -45,7 +45,7 @@ namespace MailKit.Search
 		/// <param name="term">The search term.</param>
 		/// <param name="operand">The operand.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="operand"/> is <c>null</c>.
+		/// <paramref name="operand"/> is <see langword="null" />.
 		/// </exception>
 		public UnarySearchQuery (SearchTerm term, SearchQuery operand) : base (term)
 		{

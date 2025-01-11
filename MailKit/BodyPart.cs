@@ -94,7 +94,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="visitor">The visitor.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="visitor"/> is <c>null</c>.
+		/// <paramref name="visitor"/> is <see langword="null" />.
 		/// </exception>
 		public abstract void Accept (BodyPartVisitor visitor);
 
@@ -692,11 +692,11 @@ namespace MailKit {
 		/// <note type="note">This syntax, while similar to IMAP's BODYSTRUCTURE syntax, is not completely
 		/// compatible.</note>
 		/// </remarks>
-		/// <returns><c>true</c>, if the body part was successfully parsed, <c>false</c> otherwise.</returns>
+		/// <returns><see langword="true" /> if the body part was successfully parsed; otherwise, <see langword="false" />.</returns>
 		/// <param name="text">The text to parse.</param>
 		/// <param name="part">The parsed body part.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		public static bool TryParse (string text, out BodyPart part)
 		{

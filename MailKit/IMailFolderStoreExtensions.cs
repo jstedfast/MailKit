@@ -58,7 +58,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -102,7 +102,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -149,7 +149,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -197,7 +197,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -243,10 +243,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -293,10 +293,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -343,10 +343,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -394,10 +394,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -443,7 +443,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -490,7 +490,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -537,7 +537,7 @@ namespace MailKit {
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -585,7 +585,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -631,10 +631,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -681,10 +681,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -731,10 +731,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -782,10 +782,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -831,7 +831,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -878,7 +878,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -925,7 +925,7 @@ namespace MailKit {
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -970,7 +970,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -1013,10 +1013,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1060,10 +1060,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1107,10 +1107,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1155,10 +1155,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1203,10 +1203,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1254,10 +1254,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1306,10 +1306,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1358,10 +1358,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1409,10 +1409,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1460,10 +1460,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1512,10 +1512,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1564,10 +1564,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1615,10 +1615,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1666,10 +1666,10 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1718,10 +1718,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1770,10 +1770,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
+		/// <paramref name="uids"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1819,7 +1819,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -1863,7 +1863,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -1907,7 +1907,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -1952,7 +1952,7 @@ namespace MailKit {
 		/// <param name="index">The index of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -1995,10 +1995,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2042,10 +2042,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2089,10 +2089,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2137,10 +2137,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2183,7 +2183,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2227,7 +2227,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2271,7 +2271,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2316,7 +2316,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2359,10 +2359,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2406,10 +2406,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2453,10 +2453,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2501,10 +2501,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2547,7 +2547,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2591,7 +2591,7 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2635,7 +2635,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2680,7 +2680,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -2723,10 +2723,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2770,10 +2770,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2817,10 +2817,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2865,10 +2865,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2913,10 +2913,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -2964,10 +2964,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3016,10 +3016,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3068,10 +3068,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="keywords">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3119,10 +3119,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3170,10 +3170,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3222,10 +3222,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3274,10 +3274,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="keywords">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3325,10 +3325,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3376,10 +3376,10 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3428,10 +3428,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3480,10 +3480,10 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="keywords">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
+		/// <paramref name="indexes"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -3544,10 +3544,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -3591,10 +3591,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -3637,12 +3637,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -3686,12 +3686,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -3734,10 +3734,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -3781,10 +3781,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -3827,12 +3827,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -3876,12 +3876,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -3924,10 +3924,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UIDs of the message.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -3971,10 +3971,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
@@ -4017,12 +4017,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4066,12 +4066,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4116,12 +4116,12 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4169,12 +4169,12 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4222,12 +4222,12 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4275,12 +4275,12 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4328,12 +4328,12 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4381,12 +4381,12 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4432,10 +4432,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -4479,10 +4479,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -4525,12 +4525,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -4574,12 +4574,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -4622,10 +4622,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -4669,10 +4669,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -4715,12 +4715,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -4764,12 +4764,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -4812,10 +4812,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -4859,10 +4859,10 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="labels"/> is <c>null</c>.
+		/// <paramref name="labels"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
@@ -4905,12 +4905,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -4954,12 +4954,12 @@ namespace MailKit {
 		/// <param name="folder">The folder.</param>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -5004,12 +5004,12 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -5057,12 +5057,12 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -5110,12 +5110,12 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -5163,12 +5163,12 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -5216,12 +5216,12 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -5269,12 +5269,12 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <see langword="true" />, no <see cref="IMailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// <para><paramref name="labels"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.

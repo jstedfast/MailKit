@@ -46,7 +46,7 @@ namespace MailKit
 		/// <param name="host">The name of the host that the client was connected to.</param>
 		/// <param name="port">The port that the client was connected to.</param>
 		/// <param name="options">The SSL/TLS options that were used by the client.</param>
-		/// <param name="requested">If <c>true</c>, the <see cref="IMailService"/> was disconnected via the
+		/// <param name="requested">If <see langword="true" />, the <see cref="IMailService"/> was disconnected via the
 		/// <see cref="IMailService.Disconnect(bool, System.Threading.CancellationToken)"/> method.</param>
 		public DisconnectedEventArgs (string host, int port, SecureSocketOptions options, bool requested) : base (host, port, options)
 		{
@@ -59,10 +59,10 @@ namespace MailKit
 		/// <remarks>
 		/// If the <see cref="IMailService"/> was disconnected via the
 		/// <see cref="IMailService.Disconnect(bool, System.Threading.CancellationToken)"/> method, then
-		/// the value of <see cref="IsRequested"/> will be <c>true</c>. If the connection was unexpectedly
-		/// dropped, then the value will be <c>false</c>.
+		/// the value of <see cref="IsRequested"/> will be <see langword="true" />. If the connection was unexpectedly
+		/// dropped, then the value will be <see langword="false" />.
 		/// </remarks>
-		/// <value><c>true</c> if the disconnect was explicitly requested; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the disconnect was explicitly requested; otherwise, <see langword="false" />.</value>
 		public bool IsRequested {
 			get; private set;
 		}

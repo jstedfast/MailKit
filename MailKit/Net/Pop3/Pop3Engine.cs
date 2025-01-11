@@ -144,7 +144,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Gets whether or not the engine is currently connected to a POP3 server.
 		/// </remarks>
-		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the engine is connected; otherwise, <see langword="false" />.</value>
 		public bool IsConnected {
 			get { return stream != null && stream.IsConnected; }
 		}
@@ -512,7 +512,7 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Run the command pipeline.
 		/// </summary>
-		/// <param name="throwOnError"><c>true</c> if exceptions should be thrown for failed commands; otherwise, <c>false</c>.</param>
+		/// <param name="throwOnError"><see langword="true" /> if exceptions should be thrown for failed commands; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="InvalidOperationException">
 		/// The engine is not connected.
@@ -545,7 +545,7 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Asynchronously run the command pipeline.
 		/// </summary>
-		/// <param name="throwOnError"><c>true</c> if exceptions should be thrown for failed commands; otherwise, <c>false</c>.</param>
+		/// <param name="throwOnError"><see langword="true" /> if exceptions should be thrown for failed commands; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="InvalidOperationException">
 		/// The engine is not connected.

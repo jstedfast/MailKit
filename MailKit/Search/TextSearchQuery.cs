@@ -45,7 +45,7 @@ namespace MailKit.Search
 		/// <param name="term">The search term.</param>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="text"/> is <c>null</c>.
+		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="text"/> is empty.

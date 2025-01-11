@@ -103,7 +103,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not cancellation has been requested.
 		/// </remarks>
-		/// <value><c>true</c> if cancellation has been requested; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if cancellation has been requested; otherwise, <see langword="false" />.</value>
 		public bool IsCancellationRequested {
 			get { return CancellationToken.IsCancellationRequested; }
 		}
@@ -114,7 +114,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not the IDLE command should be ended.
 		/// </remarks>
-		/// <value><c>true</c> if the IDLE command should end; otherwise, <c>false</c>.</value>
+		/// <value><see langword="true" /> if the IDLE command should end; otherwise, <see langword="false" />.</value>
 		public bool IsDoneRequested {
 			get { return DoneToken.IsCancellationRequested; }
 		}
@@ -143,7 +143,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The ImapEngine.</param>
 		/// <param name="ic">The ImapCommand.</param>
 		/// <param name="text">The text.</param>
-		/// <param name="doAsync"><c>true</c> if the command is being run asynchronously; otherwise, <c>false</c>.</param>
+		/// <param name="doAsync"><see langword="true" /> if the command is being run asynchronously; otherwise, <see langword="false" />.</param>
 		/// <returns></returns>
 		public Task ContinuationHandler (ImapEngine engine, ImapCommand ic, string text, bool doAsync)
 		{
