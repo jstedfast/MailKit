@@ -71,6 +71,16 @@ namespace UnitTests.Net.Imap {
 			ImapCapabilities.ESearch | ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.ListExtended |
 			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.UTF8Accept | ImapCapabilities.XList |
 			ImapCapabilities.GMailExt1 | ImapCapabilities.LiteralMinus | ImapCapabilities.AppendLimit;
+		static readonly ImapCapabilities ICloudInitialCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 |
+			ImapCapabilities.Status | ImapCapabilities.SaslIR;
+		static readonly ImapCapabilities ICloudAuthenticatedCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 |
+			ImapCapabilities.Status | ImapCapabilities.CondStore | ImapCapabilities.Enable | ImapCapabilities.QuickResync |
+			ImapCapabilities.Quota | ImapCapabilities.Namespace | ImapCapabilities.UidPlus | ImapCapabilities.Children |
+			ImapCapabilities.Binary | ImapCapabilities.Unselect | ImapCapabilities.Sort | ImapCapabilities.Catenate |
+			ImapCapabilities.Language | ImapCapabilities.ESearch | ImapCapabilities.ESort | ImapCapabilities.Thread |
+			ImapCapabilities.Context | ImapCapabilities.Within | ImapCapabilities.SaslIR | ImapCapabilities.SearchResults |
+			ImapCapabilities.Metadata | ImapCapabilities.Id | ImapCapabilities.Annotate | ImapCapabilities.MultiSearch |
+			ImapCapabilities.Idle | ImapCapabilities.ListStatus;
 		static readonly ImapCapabilities IMAP4rev2CoreCapabilities = ImapCapabilities.IMAP4rev2 | ImapCapabilities.Status |
 			ImapCapabilities.Namespace | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.ESearch |
 			ImapCapabilities.SearchResults | ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.SaslIR | ImapCapabilities.ListExtended |
@@ -3564,6 +3574,8 @@ namespace UnitTests.Net.Imap {
 
 				client.EnableQuickResync ();
 
+				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
+
 				// ENABLE QRESYNC a second time should no-op.
 				client.EnableQuickResync ();
 
@@ -3605,6 +3617,100 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
 				await client.EnableQuickResyncAsync ();
+
+				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
+
+				// ENABLE QRESYNC a second time should no-op.
+				await client.EnableQuickResyncAsync ();
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateEnableQuickResynciCloudCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "icloud.greeting.txt"),
+				new ImapReplayCommand ("A00000000 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "icloud.authenticate-plain.txt"),
+				new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "icloud.capability.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "icloud.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "icloud.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "icloud.enable-qresync.txt"),
+			};
+		}
+
+		[Test]
+		public void TestEnableQuickResynciCloud ()
+		{
+			var commands = CreateEnableQuickResynciCloudCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (ICloudInitialCapabilities));
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("ATOKEN"), "Expected SASL ATOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("ATOKEN2"), "Expected SASL ATOKEN2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (ICloudAuthenticatedCapabilities));
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
+
+				client.EnableQuickResync ();
+
+				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
+
+				// ENABLE QRESYNC a second time should no-op.
+				client.EnableQuickResync ();
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestEnableQuickResynciCloudAsync ()
+		{
+			var commands = CreateEnableQuickResynciCloudCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (ICloudInitialCapabilities));
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("ATOKEN"), "Expected SASL ATOKEN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("ATOKEN2"), "Expected SASL ATOKEN2 auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (ICloudAuthenticatedCapabilities));
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
+				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
+
+				await client.EnableQuickResyncAsync ();
+
+				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
 
 				// ENABLE QRESYNC a second time should no-op.
 				await client.EnableQuickResyncAsync ();

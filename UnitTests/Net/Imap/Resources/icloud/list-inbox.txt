@@ -1,0 +1,2 @@
+* LIST (\Noinferiors) "/" "INBOX"
+A######## OK LIST completed (took 0 ms)

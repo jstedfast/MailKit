@@ -380,9 +380,18 @@ namespace MailKit.Net.Imap {
 			return true;
 		}
 
-		static void ProcessEnableResponse (ImapCommand ic)
+		void ProcessEnableResponse (ImapCommand ic)
 		{
 			ic.ThrowIfNotOk ("ENABLE");
+
+			if (engine.QuirksMode == ImapQuirksMode.iCloud) {
+				// Note: iCloud's response to the `ENABLE QRESYNC CONDSTORE` command does not include an untagged response
+				// notifying us that QRESYNC or CONDSTORE have been enabled. Instead, if we get a tagged OK response, we
+				// assume that these features were enabled successfully.
+				//
+				// See https://github.com/jstedfast/MailKit/issues/1871 for details.
+				engine.QResyncEnabled = true;
+			}
 		}
 
 		/// <summary>
