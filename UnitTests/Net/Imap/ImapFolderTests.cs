@@ -1711,6 +1711,7 @@ namespace UnitTests.Net.Imap {
 				sublevel1.Closed += (o, e) => { sub1Closed++; };
 				sublevel2.Closed += (o, e) => { sub2Closed++; };
 
+				Assert.That (sublevel1.CanOpen, Is.True, "SubLevel1 can be opened");
 				sublevel1.Open (FolderAccess.ReadWrite);
 				sublevel1.Rename (toplevel2, "SubLevel1");
 
@@ -1722,6 +1723,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (top1Deleted, Is.EqualTo (1), "TopLevel1 should have received a Deleted event");
 				Assert.That (toplevel1.Exists, Is.False, "TopLevel1.Exists");
 
+				Assert.That (sublevel2.CanOpen, Is.True, "SubLevel2 can be opened");
 				sublevel2.Open (FolderAccess.ReadWrite);
 				toplevel2.Rename (personal, "TopLevel");
 
@@ -1786,6 +1788,7 @@ namespace UnitTests.Net.Imap {
 				sublevel1.Closed += (o, e) => { sub1Closed++; };
 				sublevel2.Closed += (o, e) => { sub2Closed++; };
 
+				Assert.That (sublevel1.CanOpen, Is.True, "SubLevel1 can be opened");
 				await sublevel1.OpenAsync (FolderAccess.ReadWrite);
 				await sublevel1.RenameAsync (toplevel2, "SubLevel1");
 
@@ -1797,6 +1800,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (top1Deleted, Is.EqualTo (1), "TopLevel1 should have received a Deleted event");
 				Assert.That (toplevel1.Exists, Is.False, "TopLevel1.Exists");
 
+				Assert.That (sublevel2.CanOpen, Is.True, "SubLevel2 can be opened");
 				await sublevel2.OpenAsync (FolderAccess.ReadWrite);
 				await toplevel2.RenameAsync (personal, "TopLevel");
 

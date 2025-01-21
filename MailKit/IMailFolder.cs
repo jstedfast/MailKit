@@ -226,6 +226,15 @@ namespace MailKit {
 		bool IsOpen { get; }
 
 		/// <summary>
+		/// Get whether or not the folder can be opened.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the folder can be opened.
+		/// </remarks>
+		/// <value><see langword="true" /> if the folder can be opened; otherwise, <see langword="false" />.</value>
+		bool CanOpen { get; }
+
+		/// <summary>
 		/// Get whether or not the folder exists.
 		/// </summary>
 		/// <remarks>

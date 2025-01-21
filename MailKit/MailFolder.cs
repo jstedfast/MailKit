@@ -297,6 +297,17 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get whether or not the folder can be opened.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the folder can be opened.
+		/// </remarks>
+		/// <value><see langword="true" /> if the folder can be opened; otherwise, <see langword="false" />.</value>
+		public bool CanOpen {
+			get { return (Attributes & (FolderAttributes.NoSelect | FolderAttributes.NonExistent)) == 0; }
+		}
+
+		/// <summary>
 		/// Get a value indicating whether the folder exists.
 		/// </summary>
 		/// <remarks>
