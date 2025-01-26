@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>4.9.0</version>
+    <version>4.10.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,16 +26,14 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Added an IMAP work-around for mail.ru which sometimes sends integer tokens as decimals in its responses. (issue #1838)
-* Added a workaround for GMail IMAP BODY responses that include multipart expressions without any children (e.g. `("ALTERNATIVE")`). (issue #1841)
-* Fixed default system proxy to handle null credentials and check if the targetUri is bypassed. (issue #1852)
-* Dropped support for net6.0 (Microsoft support ended Nov 12, 2024).
-* Bumped System.Threading.Tasks.Extensions dependency to 4.6.0.
-* Bumped MimeKit dependency to 4.9.0.
+* Work around a QQMail/Yandex IMAP BODYSTRUCTURE response for empty multipart. (issue #1861)
+* Added exception documentation for methods in IMailFolder. (issue #1868)
+* Added IMailFolder.CanOpen property that checks IMailFolder.Attributes for NoSelect and NonExistent flags.
+* Bumped MimeKit dependency to 4.10.0.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef net462 net47 net48 net8.0 netstandard netstandard2.0 netstandard2.1</tags>
+    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef</tags>
     <readme>docs\README.md</readme>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.2" />
@@ -59,30 +57,30 @@ Features include:
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKit" version="4.9.0" />
+        <dependency id="MimeKit" version="4.10.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKit" version="4.9.0" />
+        <dependency id="MimeKit" version="4.10.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKit" version="4.9.0" />
+        <dependency id="MimeKit" version="4.10.0" />
       </group>
       <group targetFramework="net8.0">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
-        <dependency id="MimeKit" version="4.9.0" />
+        <dependency id="MimeKit" version="4.10.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKit" version="4.9.0" />
+        <dependency id="MimeKit" version="4.10.0" />
       </group>
       <group targetFramework="netstandard2.1">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
-        <dependency id="MimeKit" version="4.9.0" />
+        <dependency id="MimeKit" version="4.10.0" />
       </group>
     </dependencies>
   </metadata>
