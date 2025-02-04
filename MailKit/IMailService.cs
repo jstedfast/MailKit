@@ -65,11 +65,12 @@ namespace MailKit {
 		/// Get or set the set of enabled SSL and/or TLS protocol versions that the client is allowed to use.
 		/// </summary>
 		/// <remarks>
-		/// <para>By default, MailKit initializes this value to enable only TLS v1.2 and greater.
-		/// TLS v1.1, TLS v1.0 and all versions of SSL are not enabled by default due to them all being
-		/// susceptible to security vulnerabilities such as POODLE.</para>
-		/// <para>This property should be set before calling any of the
-		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
+		/// <para>Gets or sets the enabled SSL and/or TLS protocol versions that the client is allowed to use.</para>
+		/// <para>By default, MailKit initializes this value to <see cref="SslProtocols.None"/> which allows the
+		/// operating system to choose the best protocol to use and to block protocols that are not secure.</para>
+		/// <note type="note">This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> or
+		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The SSL and TLS protocol versions that are supported.</value>
 		SslProtocols SslProtocols { get; set; }
@@ -79,9 +80,12 @@ namespace MailKit {
 		/// Get or set the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// </summary>
 		/// <remarks>
-		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
+		/// <para>Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// When set to <see langword="null" />, the operating system default is used. Use extreme caution when
-		/// changing this setting.
+		/// changing this setting.</para>
+		/// <note type="note">This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> or
+		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
 		CipherSuitesPolicy SslCipherSuitesPolicy { get; set; }
@@ -102,8 +106,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
 		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling any of the
-		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
+		/// <note type="note">This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> or
+		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		X509CertificateCollection ClientCertificates { get; set; }
@@ -131,8 +136,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets a callback function to validate the server certificate.</para>
-		/// <para>This property should be set before calling any of the
-		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> methods.</para>
+		/// <note type="note">This property should be set before calling any of the
+		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> or
+		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SslCertificateValidation.cs"/>
