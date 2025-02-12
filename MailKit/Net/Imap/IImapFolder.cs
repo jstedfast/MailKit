@@ -422,7 +422,7 @@ namespace MailKit.Net.Imap {
 		/// <para>Gets the streams for the specified messages.</para>
 		/// </remarks>
 		/// <param name="uids">The uids of the messages.</param>
-		/// <param name="callback"></param>
+		/// <param name="callback">A callback method that gets called for each stream as it is received.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -467,7 +467,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>An awaitable task.</returns>
 		/// <param name="uids">The uids of the messages.</param>
-		/// <param name="callback"></param>
+		/// <param name="callback">A callback method that gets called for each stream as it is received.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -511,7 +511,7 @@ namespace MailKit.Net.Imap {
 		/// <para>Gets the streams for the specified messages.</para>
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="callback"></param>
+		/// <param name="callback">A callback method that gets called for each stream as it is received.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -556,7 +556,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="callback"></param>
+		/// <param name="callback">A callback method that gets called for each stream as it is received.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -601,7 +601,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="callback"></param>
+		/// <param name="callback">A callback method that gets called for each stream as it is received.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -647,7 +647,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>An awaitable task.</returns>
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="callback"></param>
+		/// <param name="callback">A callback method that gets called for each stream as it is received.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
