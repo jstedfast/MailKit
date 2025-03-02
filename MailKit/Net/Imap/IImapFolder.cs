@@ -235,7 +235,9 @@ namespace MailKit.Net.Imap {
 		/// Get the specified body part.
 		/// </summary>
 		/// <remarks>
-		/// Gets the specified body part.
+		/// <para>Gets the specified body part.</para>
+		/// <note type="note">For more information about how to construct the <paramref name="partSpecifier"/>,
+		/// see <a href="https://www.rfc-editor.org/rfc/rfc3501.html#section-6.4.5">RFC3501, Section 6.4.5</a>.</note>
 		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -281,7 +283,9 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously get the specified body part.
 		/// </summary>
 		/// <remarks>
-		/// Gets the specified body part.
+		/// <para>Gets the specified body part.</para>
+		/// <note type="note">For more information about how to construct the <paramref name="partSpecifier"/>,
+		/// see <a href="https://www.rfc-editor.org/rfc/rfc3501.html#section-6.4.5">RFC3501, Section 6.4.5</a>.</note>
 		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -327,7 +331,9 @@ namespace MailKit.Net.Imap {
 		/// Get the specified body part.
 		/// </summary>
 		/// <remarks>
-		/// Gets the specified body part.
+		/// <para>Gets the specified body part.</para>
+		/// <note type="note">For more information about how to construct the <paramref name="partSpecifier"/>,
+		/// see <a href="https://www.rfc-editor.org/rfc/rfc3501.html#section-6.4.5">RFC3501, Section 6.4.5</a>.</note>
 		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -373,7 +379,9 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously get the specified body part.
 		/// </summary>
 		/// <remarks>
-		/// Gets the specified body part.
+		/// <para>Gets the specified body part.</para>
+		/// <note type="note">For more information about how to construct the <paramref name="partSpecifier"/>,
+		/// see <a href="https://www.rfc-editor.org/rfc/rfc3501.html#section-6.4.5">RFC3501, Section 6.4.5</a>.</note>
 		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="index">The index of the message.</param>
