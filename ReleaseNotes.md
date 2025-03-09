@@ -1,5 +1,12 @@
 # Release Notes
 
+## MailKit 4.11.0 (2025-03-08)
+
+* Default MailService.SslProtocols to SslProtocols.None which is what the dotnet SslStream team recommends.
+  (As weird as it may seem, SslProtocols.None does not mean "don't support any SSL protocols", it means
+  don't override the default system settings.)
+* Bumped MimeKit dependency to 4.11.0.
+
 ## MailKit 4.10.0 (2025-01-26)
 
 * Work around a QQMail/Yandex IMAP BODYSTRUCTURE response for empty multipart.
