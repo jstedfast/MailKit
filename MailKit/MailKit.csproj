@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
@@ -52,6 +52,10 @@
 
   <PropertyGroup>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+  </PropertyGroup>
+
+  <PropertyGroup>
+	  <DefineConstants Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">$(DefineConstants);GSSAPI_FEATURE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) Or '$(TargetFramework)' == 'netstandard2.0' ">
@@ -156,6 +160,7 @@
     <Compile Include="Search\TextSearchQuery.cs" />
     <Compile Include="Search\UidSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
+    <Compile Include="Security\SaslMechanismGssapi.cs" Condition="$(DefineConstants.Contains('GSSAPI_FEATURE'))" />
     <Compile Include="Security\Ntlm\BitConverterLE.cs" />
     <Compile Include="Security\Ntlm\DES.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />
     <Compile Include="Security\Ntlm\HMACMD5.cs" Condition=" $(TargetFramework.StartsWith('netstandard1.')) " />

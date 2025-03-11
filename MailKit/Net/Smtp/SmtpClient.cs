@@ -1213,10 +1213,7 @@ namespace MailKit.Net.Smtp {
 							continue;
 
 						try {
-							while (!sasl.IsAuthenticated) {
-								if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-									break;
-
+							while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
 								challenge = sasl.Challenge (response.Response, cancellationToken);
 								response = SendCommandInternal (challenge + "\r\n", cancellationToken);
 							}

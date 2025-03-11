@@ -41,6 +41,11 @@ namespace UnitTests.Security {
 			supportedKind = kind;
 		}
 
+		public ChannelBinding GetChannelBinding (ChannelBindingKind kind)
+		{
+			return null;
+		}
+
 		public bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token)
 		{
 			if (kind == supportedKind) {
