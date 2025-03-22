@@ -342,7 +342,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		public string Challenge (string token, CancellationToken cancellationToken = default)
+		public virtual string Challenge (string token, CancellationToken cancellationToken = default)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -396,7 +396,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		public async Task<string> ChallengeAsync (string token, CancellationToken cancellationToken = default)
+		public virtual async Task<string> ChallengeAsync (string token, CancellationToken cancellationToken = default)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -498,7 +498,11 @@ namespace MailKit.Security {
 			case "XOAUTH2":            return new SaslMechanismOAuth2 (credentials);
 			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
 			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
+#if NET7_0_OR_GREATER
+			case "NTLM":               return new SaslMechanismNtlmNative (credentials);
+#else
 			case "NTLM":               return new SaslMechanismNtlm (credentials);
+#endif
 			case "ANONYMOUS":          return new SaslMechanismAnonymous (encoding, credentials);
 			default:                   return null;
 			}

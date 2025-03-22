@@ -182,6 +182,7 @@
     <Compile Include="Security\SaslMechanismDigestMd5.cs" />
     <Compile Include="Security\SaslMechanismLogin.cs" />
     <Compile Include="Security\SaslMechanismNtlm.cs" />
+    <Compile Include="Security\SaslMechanismNtlmNative.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismOAuthBearer.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
