@@ -258,6 +258,27 @@ namespace MailKit.Security {
 			get; set;
 		}
 
+#if NET8_0_OR_GREATER
+		/// <summary>
+		/// Try to get a channel-binding.
+		/// </summary>
+		/// <remarks>
+		/// Tries to get the specified channel-binding.
+		/// </remarks>
+		/// <param name="kind">The kind of channel-binding desired.</param>
+		/// <param name="channelBinding">A buffer containing the channel-binding.</param>
+		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
+		protected bool TryGetChannelBinding (ChannelBindingKind kind, out ChannelBinding channelBinding)
+		{
+			if (ChannelBindingContext == null) {
+				channelBinding = null;
+				return false;
+			}
+
+			return ChannelBindingContext.TryGetChannelBinding (kind, out channelBinding);
+		}
+#endif
+
 		/// <summary>
 		/// Try to get a channel-binding token.
 		/// </summary>

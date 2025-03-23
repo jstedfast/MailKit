@@ -36,6 +36,17 @@ namespace MailKit.Net {
 	interface IChannelBindingContext
 	{
 		/// <summary>
+		/// Try to get a channel-binding.
+		/// </summary>
+		/// <remarks>
+		/// Tries to get the specified channel-binding.
+		/// </remarks>
+		/// <param name="kind">The kind of channel-binding desired.</param>
+		/// <param name="channelBinding">The channel-binding.</param>
+		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
+		bool TryGetChannelBinding (ChannelBindingKind kind, out ChannelBinding channelBinding);
+
+		/// <summary>
 		/// Try to get a channel-binding token.
 		/// </summary>
 		/// <remarks>

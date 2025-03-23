@@ -64,6 +64,36 @@ namespace MailKit.Net
 		}
 
 		/// <summary>
+		/// Try to get a channel-binding.
+		/// </summary>
+		/// <remarks>
+		/// Tries to get the specified channel-binding.
+		/// </remarks>
+		/// <param name="kind">The kind of channel-binding desired.</param>
+		/// <param name="channelBinding">The channel-binding.</param>
+		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
+		public bool TryGetChannelBinding (ChannelBindingKind kind, out ChannelBinding channelBinding)
+		{
+			int identifierLength;
+
+			if (kind == ChannelBindingKind.Endpoint) {
+				channelBinding = tlsServerEndPoint ??= GetChannelBinding (kind);
+				identifierLength = "tls-server-end-point:".Length;
+			} else if (kind == ChannelBindingKind.Unique) {
+				channelBinding = tlsUnique ??= GetChannelBinding (kind);
+				identifierLength = "tls-unique:".Length;
+			} else {
+				channelBinding = null;
+				return false;
+			}
+
+			if (channelBinding == null || channelBinding.Size <= 32 + identifierLength)
+				return false;
+
+			return true;
+		}
+
+		/// <summary>
 		/// Try to get a channel-binding token.
 		/// </summary>
 		/// <remarks>
@@ -74,23 +104,20 @@ namespace MailKit.Net
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
 		public bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token)
 		{
-			ChannelBinding channelBinding = null;
-			int identifierLength;
-
 			token = null;
 
+			if (!TryGetChannelBinding (kind, out var channelBinding))
+				return false;
+
+			int identifierLength;
+
 			if (kind == ChannelBindingKind.Endpoint) {
-				channelBinding = tlsServerEndPoint ??= GetChannelBinding (kind);
 				identifierLength = "tls-server-end-point:".Length;
 			} else if (kind == ChannelBindingKind.Unique) {
-				channelBinding = tlsUnique ??= GetChannelBinding (kind);
 				identifierLength = "tls-unique:".Length;
 			} else {
 				return false;
 			}
-
-			if (channelBinding == null || channelBinding.Size <= 32 + identifierLength)
-				return false;
 
 			int tokenLength = (channelBinding.Size - 32) - identifierLength;
 			token = new byte[tokenLength];

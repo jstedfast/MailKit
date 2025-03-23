@@ -28,9 +28,10 @@
 
 using System;
 using System.Net;
-using System.Net.Security;
 using System.Threading;
+using System.Net.Security;
 using System.Threading.Tasks;
+using System.Security.Authentication.ExtendedProtection;
 
 namespace MailKit.Security
 {
@@ -43,6 +44,8 @@ namespace MailKit.Security
 	public abstract class SaslMechanismNegotiateBase : SaslMechanism
 	{
 		NegotiateAuthentication negotiate;
+		bool negotiatedChannelBinding;
+		bool requestedChannelBinding;
 
 		static SaslException GetSaslException (string mechanismName, NegotiateAuthenticationStatusCode statusCode)
 		{
@@ -102,6 +105,53 @@ namespace MailKit.Security
 		}
 
 		/// <summary>
+		/// Get whether or not the SASL mechanism supports channel binding.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the SASL mechanism supports channel binding.
+		/// </remarks>
+		/// <value><see langword="true" /> if the SASL mechanism supports channel binding; otherwise, <see langword="false" />.</value>
+		public override bool SupportsChannelBinding {
+			get { return true; }
+		}
+
+		/// <summary>
+		/// Get whether or not channel-binding was negotiated by the SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not channel-binding has been negotiated by the SASL mechanism.</para>
+		/// <note type="note">Some SASL mechanisms, such as SCRAM-SHA1-PLUS and NTLM, are able to negotiate
+		/// channel-bindings.</note>
+		/// </remarks>
+		/// <value><see langword="true" /> if channel-binding was negotiated; otherwise, <see langword="false" />.</value>
+		public override bool NegotiatedChannelBinding {
+			get { return negotiatedChannelBinding; }
+		}
+
+		/// <summary>
+		/// Get or set the desired channel-binding to be negotiated by the SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the desired channel-binding to be negotiated by the SASL mechanism.
+		/// </remarks>
+		/// <value>The type of channel-binding.</value>
+		public ChannelBindingKind DesiredChannelBinding {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the service principal name (SPN) of the service that the client wishes to authenticate with.
+		/// </summary>
+		/// <remarks>
+		/// <para>Get or set the service principal name (SPN) of the service that the client wishes to authenticate with.</para>
+		/// <note type="note">This value is optional.</note>
+		/// </remarks>
+		/// <value>The service principal name (SPN) of the service that the client wishes to authenticate with.</value>
+		public string ServicePrincipalName {
+			get; set;
+		}
+
+		/// <summary>
 		/// Parse the server's challenge token and return the next challenge response.
 		/// </summary>
 		/// <remarks>
@@ -158,6 +208,14 @@ namespace MailKit.Security
 					Package = MechanismName,
 				};
 
+				if (DesiredChannelBinding != ChannelBindingKind.Unknown && TryGetChannelBinding (DesiredChannelBinding, out var channelBinding)) {
+					options.Binding = channelBinding;
+					requestedChannelBinding = true;
+				}
+
+				if (!string.IsNullOrEmpty (ServicePrincipalName))
+					options.TargetName = ServicePrincipalName;
+
 				negotiate = new NegotiateAuthentication (options);
 			}
 
@@ -165,6 +223,7 @@ namespace MailKit.Security
 
 			switch (statusCode) {
 			case NegotiateAuthenticationStatusCode.Completed:
+				negotiatedChannelBinding = requestedChannelBinding;
 				IsAuthenticated = true;
 				negotiate.Dispose ();
 				negotiate = null;
@@ -210,6 +269,8 @@ namespace MailKit.Security
 		public override void Reset ()
 		{
 			if (negotiate != null) {
+				negotiatedChannelBinding = false;
+				requestedChannelBinding = false;
 				negotiate.Dispose ();
 				negotiate = null;
 			}
