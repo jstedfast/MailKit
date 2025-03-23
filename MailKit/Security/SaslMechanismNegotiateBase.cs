@@ -132,7 +132,8 @@ namespace MailKit.Security
 		/// Get or set the desired channel-binding to be negotiated by the SASL mechanism.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the desired channel-binding to be negotiated by the SASL mechanism.
+		/// <para>Gets or sets the desired channel-binding to be negotiated by the SASL mechanism.</para>
+		/// <note type="note">This value is optional.</note>
 		/// </remarks>
 		/// <value>The type of channel-binding.</value>
 		public ChannelBindingKind DesiredChannelBinding {
