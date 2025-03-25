@@ -364,7 +364,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		public virtual string Challenge (string token, CancellationToken cancellationToken = default)
+		public string Challenge (string token, CancellationToken cancellationToken = default)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -418,7 +418,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		public virtual async Task<string> ChallengeAsync (string token, CancellationToken cancellationToken = default)
+		public async Task<string> ChallengeAsync (string token, CancellationToken cancellationToken = default)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 

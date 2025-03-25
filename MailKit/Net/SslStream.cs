@@ -44,8 +44,7 @@ namespace MailKit.Net
 			get { return base.InnerStream; }
 		}
 
-		/// <inheritdoc/>
-		public ChannelBinding GetChannelBinding (ChannelBindingKind kind)
+		ChannelBinding GetChannelBinding (ChannelBindingKind kind)
 		{
 			ChannelBinding channelBinding;
 

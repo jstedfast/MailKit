@@ -66,7 +66,7 @@ namespace MailKit.Security {
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismNtlm"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new SASL context using the default network credentials.
+		/// Creates a new NTLM SASL context using the default network credentials.
 		/// </remarks>
 		public SaslMechanismNtlm () : this (CredentialCache.DefaultNetworkCredentials)
 		{

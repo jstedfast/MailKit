@@ -28,9 +28,9 @@
 
 using System;
 using System.Net;
+using System.Buffers;
 using System.Threading;
 using System.Net.Security;
-using System.Threading.Tasks;
 using System.Security.Authentication.ExtendedProtection;
 
 namespace MailKit.Security
@@ -43,9 +43,12 @@ namespace MailKit.Security
 	/// </remarks>
 	public abstract class SaslMechanismNegotiateBase : SaslMechanism
 	{
+		static ReadOnlySpan<byte> SaslNoSecurityLayerToken => new byte[] { 1, 0, 0, 0 };
+
 		NegotiateAuthentication negotiate;
 		bool negotiatedChannelBinding;
 		bool requestedChannelBinding;
+		bool negotiatedSecurityLayer;
 
 		static SaslException GetSaslException (string mechanismName, NegotiateAuthenticationStatusCode statusCode)
 		{
@@ -105,6 +108,42 @@ namespace MailKit.Security
 		}
 
 		/// <summary>
+		/// Get whether or not the SASL mechanism supports an initial response (SASL-IR).
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the SASL mechanism supports an initial response (SASL-IR).</para>
+		/// <para>SASL mechanisms that support sending an initial client response to the server
+		/// should return <see langword="true" />.</para>
+		/// </remarks>
+		/// <value><see langword="true" /> if the SASL mechanism supports an initial response; otherwise, <see langword="false" />.</value>
+		public override bool SupportsInitialResponse {
+			get { return true; }
+		}
+
+		/// <summary>
+		/// Get the name of the authentication mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the name of the authentication mechanism.</para>
+		/// <note type="note">This value MUST be one of the following: "NTLM", "Kerberos" or "Negotiate".</note>
+		/// </remarks>
+		/// <value>The name of the authentication mechanism.</value>
+		protected abstract string AuthMechanism {
+			get;
+		}
+
+		/// <summary>
+		/// Get the required protection level.
+		/// </summary>
+		/// <remarks>
+		/// Gets the required protection level.
+		/// </remarks>
+		/// <value>The required protection level.</value>
+		protected virtual ProtectionLevel RequiredProtectionLevel {
+			get { return ProtectionLevel.None; }
+		}
+
+		/// <summary>
 		/// Get whether or not the SASL mechanism supports channel binding.
 		/// </summary>
 		/// <remarks>
@@ -141,6 +180,30 @@ namespace MailKit.Security
 		}
 
 		/// <summary>
+		/// Get whether or not the SASL mechanism supports negotiating a security layer.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the SASL mechanism supports negotiating a security layer.
+		/// </remarks>
+		/// <value><see langword="true"/> if the SASL mechanism supports negotiating a security layer; otherwise, <see langword="false"/>.</value>
+		protected virtual bool SupportsSecurityLayer {
+			get { return false; }
+		}
+
+		/// <summary>
+		/// Get whether or not a security layer was negotiated by the SASL mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not a security layer has been negotiated by the SASL mechanism.</para>
+		/// <note type="note">Some SASL mechanisms, such as GSSAPI, are able to negotiate security layers
+		/// such as integrity and confidentiality protection.</note>
+		/// </remarks>
+		/// <value><see langword="true" /> if a security layer was negotiated; otherwise, <see langword="false" />.</value>
+		public override bool NegotiatedSecurityLayer {
+			get { return negotiatedSecurityLayer; }
+		}
+
+		/// <summary>
 		/// Get or set the service principal name (SPN) of the service that the client wishes to authenticate with.
 		/// </summary>
 		/// <remarks>
@@ -172,62 +235,64 @@ namespace MailKit.Security
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken = default)
 		{
-			// Note: This does not need to be implemented because we override the Challenge(string) method instead.
-			throw new NotImplementedException ();
+			if (!SupportsSecurityLayer && IsAuthenticated)
+				return null;
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			// On the first call, initialize the NegotiateAuthentication if needed.
+			negotiate ??= new NegotiateAuthentication (CreateClientOptions ());
+
+			var challenge = token != null ? token.AsSpan (startIndex, length) : ReadOnlySpan<byte>.Empty;
+
+			if (IsAuthenticated) {
+				// If auth completed and another challenge was received, then the server
+				// may be doing "correct" form of GSSAPI SASL. Validate the incoming and
+				// produce outgoing SASL security layer negotiate message.
+				return GetSecurityLayerNegotiationResponse (challenge);
+			}
+
+			// Calculate the challenge response.
+			return GetChallengeResponse (challenge);
 		}
 
 		/// <summary>
-		/// Decode the base64-encoded server challenge and return the next challenge response encoded in base64.
+		/// Create the <see cref="NegotiateAuthenticationClientOptions"/>.
 		/// </summary>
 		/// <remarks>
-		/// Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+		/// Creates the <see cref="NegotiateAuthenticationClientOptions"/>.
 		/// </remarks>
-		/// <returns>The next base64-encoded challenge response.</returns>
-		/// <param name="token">The server's base64-encoded challenge token.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.NotSupportedException">
-		/// The SASL mechanism does not support SASL-IR.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="SaslException">
-		/// An error has occurred while parsing the server's challenge token.
-		/// </exception>
-		public override string Challenge (string token, CancellationToken cancellationToken = default)
+		/// <returns>The client options.</returns>
+		protected virtual NegotiateAuthenticationClientOptions CreateClientOptions ()
 		{
-			cancellationToken.ThrowIfCancellationRequested ();
+			var options = new NegotiateAuthenticationClientOptions {
+				RequiredProtectionLevel = RequiredProtectionLevel,
+				Credential = Credentials,
+				Package = AuthMechanism,
+			};
 
-			if (IsAuthenticated)
-				return string.Empty;
-
-			if (negotiate == null) {
-				var options = new NegotiateAuthenticationClientOptions {
-					Credential = Credentials,
-					Package = MechanismName,
-				};
-
-				if (DesiredChannelBinding != ChannelBindingKind.Unknown && TryGetChannelBinding (DesiredChannelBinding, out var channelBinding)) {
-					options.Binding = channelBinding;
-					requestedChannelBinding = true;
-				}
-
-				if (!string.IsNullOrEmpty (ServicePrincipalName))
-					options.TargetName = ServicePrincipalName;
-
-				negotiate = new NegotiateAuthentication (options);
+			if (DesiredChannelBinding != ChannelBindingKind.Unknown && TryGetChannelBinding (DesiredChannelBinding, out var channelBinding)) {
+				options.Binding = channelBinding;
+				requestedChannelBinding = true;
 			}
 
-			var response = negotiate.GetOutgoingBlob (token, out var statusCode);
+			if (!string.IsNullOrEmpty (ServicePrincipalName))
+				options.TargetName = ServicePrincipalName;
+
+			return options;
+		}
+
+		byte[] GetChallengeResponse (ReadOnlySpan<byte> challenge)
+		{
+			var response = negotiate.GetOutgoingBlob (challenge, out NegotiateAuthenticationStatusCode statusCode);
 
 			switch (statusCode) {
 			case NegotiateAuthenticationStatusCode.Completed:
+				// Authentication is completed (but may receive a Security Layer negotiation challenge next).
 				negotiatedChannelBinding = requestedChannelBinding;
 				IsAuthenticated = true;
-				negotiate.Dispose ();
-				negotiate = null;
 				break;
 			case NegotiateAuthenticationStatusCode.ContinueNeeded:
 				break;
@@ -238,27 +303,67 @@ namespace MailKit.Security
 			return response;
 		}
 
-		/// <summary>
-		/// Asynchronously decode the base64-encoded server challenge and return the next challenge response encoded in base64.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
-		/// </remarks>
-		/// <returns>The next base64-encoded challenge response.</returns>
-		/// <param name="token">The server's base64-encoded challenge token.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.NotSupportedException">
-		/// The SASL mechanism does not support SASL-IR.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="SaslException">
-		/// An error has occurred while parsing the server's challenge token.
-		/// </exception>
-		public override Task<string> ChallengeAsync (string token, CancellationToken cancellationToken = default)
+		// Function for SASL security layer negotiation after authorization completes.
+		//
+		// Returns null for failure.
+		//
+		// Cloned from: https://github.com/dotnet/runtime/blob/4631ecec883a90ae9c29c058eea4527f9f2cb473/src/libraries/System.Net.Mail/src/System/Net/Mail/SmtpNegotiateAuthenticationModule.cs#L107
+		byte[] GetSecurityLayerNegotiationResponse (ReadOnlySpan<byte> challenge)
 		{
-			return Task.FromResult (Challenge (token, cancellationToken));
+			NegotiateAuthenticationStatusCode statusCode;
+			byte[] input = challenge.ToArray ();
+			Span<byte> unwrapped;
+
+			statusCode = negotiate.UnwrapInPlace (input, out int unwrappedOffset, out int unwrappedLength, out _);
+			if (statusCode != NegotiateAuthenticationStatusCode.Completed)
+				return null;
+
+			unwrapped = input.AsSpan (unwrappedOffset, unwrappedLength);
+
+			// Per RFC 2222 Section 7.2.2:
+			//   the client should then expect the server to issue a
+			//   token in a subsequent challenge.  The client passes
+			//   this token to GSS_Unwrap and interprets the first
+			//   octet of cleartext as a bit-mask specifying the
+			//   security layers supported by the server and the
+			//   second through fourth octets as the maximum size
+			//   output_message to send to the server.
+			// Section 7.2.3
+			//   The security layer and their corresponding bit-masks
+			//   are as follows:
+			//     1 No security layer
+			//     2 Integrity protection
+			//       Sender calls GSS_Wrap with conf_flag set to FALSE
+			//     4 Privacy protection
+			//       Sender calls GSS_Wrap with conf_flag set to TRUE
+			//
+			// Exchange 2007 and our client only support
+			// "No security layer". We verify that the server offers
+			// option to use no security layer and negotiate that if
+			// possible.
+
+			if (unwrapped.Length != 4 || (unwrapped[0] & 0x01) != 0x01)
+				return null;
+
+			// Continuing with RFC 2222 section 7.2.2:
+			//   The client then constructs data, with the first octet
+			//   containing the bit-mask specifying the selected security
+			//   layer, the second through fourth octets containing in
+			//   network byte order the maximum size output_message the client
+			//   is able to receive, and the remaining octets containing the
+			//   authorization identity.
+			//
+			// So now this constructs the "wrapped" response.
+
+			// let MakeSignature figure out length of output
+			ArrayBufferWriter<byte> writer = new ArrayBufferWriter<byte> ();
+			statusCode = negotiate.Wrap (SaslNoSecurityLayerToken, writer, false, out _);
+			if (statusCode != NegotiateAuthenticationStatusCode.Completed)
+				return null;
+
+			negotiatedSecurityLayer = true;
+
+			return writer.WrittenSpan.ToArray ();
 		}
 
 		/// <summary>
@@ -272,6 +377,7 @@ namespace MailKit.Security
 			if (negotiate != null) {
 				negotiatedChannelBinding = false;
 				requestedChannelBinding = false;
+				negotiatedSecurityLayer = false;
 				negotiate.Dispose ();
 				negotiate = null;
 			}

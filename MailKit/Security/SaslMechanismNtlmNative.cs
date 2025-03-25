@@ -80,6 +80,18 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Get the name of the authentication mechanism.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the name of the authentication mechanism.</para>
+		/// <note type="note">This value MUST be one of the following: "NTLM", "Kerberos" or "Negotiate".</note>
+		/// </remarks>
+		/// <value>The name of the authentication mechanism.</value>
+		protected override string AuthMechanism {
+			get { return MechanismName; }
+		}
+
+		/// <summary>
 		/// Get the name of the SASL mechanism.
 		/// </summary>
 		/// <remarks>
@@ -88,19 +100,6 @@ namespace MailKit.Security {
 		/// <value>The name of the SASL mechanism.</value>
 		public override string MechanismName {
 			get { return "NTLM"; }
-		}
-
-		/// <summary>
-		/// Get whether or not the mechanism supports an initial response (SASL-IR).
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets whether or not the mechanism supports an initial response (SASL-IR).</para>
-		/// <para>SASL mechanisms that support sending an initial client response to the server
-		/// should return <see langword="true" />.</para>
-		/// </remarks>
-		/// <value><see langword="true" /> if the mechanism supports an initial response; otherwise, <see langword="false" />.</value>
-		public override bool SupportsInitialResponse {
-			get { return true; }
 		}
 	}
 }
