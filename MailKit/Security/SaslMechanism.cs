@@ -68,11 +68,13 @@ namespace MailKit.Security {
 
 			// Note: It's probably arguable that NTLM is more secure than SCRAM but the odds of a server supporting both is probably low.
 			var supported = new List<string> {
+#if NET7_0_OR_GREATER
 				"GSSAPI",
+#endif
+				"NTLM",
 				"SCRAM-SHA-512",
 				"SCRAM-SHA-256",
-				"SCRAM-SHA-1",
-				"NTLM"
+				"SCRAM-SHA-1"
 			};
 			if (md5supported) {
 				supported.Add ("DIGEST-MD5");
@@ -472,7 +474,7 @@ namespace MailKit.Security {
 			case "LOGIN":              return true;
 			case "NTLM":               return true;
 			case "ANONYMOUS":          return true;
-#if GSSAPI_FEATURE
+#if NET7_0_OR_GREATER
 			case "GSSAPI":             return true;
 #endif
 			default:                   return false;
@@ -523,14 +525,12 @@ namespace MailKit.Security {
 			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
 			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
 #if NET7_0_OR_GREATER
+			case "GSSAPI":             return new SaslMechanismGssapi (credentials);
 			case "NTLM":               return new SaslMechanismNtlmNative (credentials);
 #else
 			case "NTLM":               return new SaslMechanismNtlm (credentials);
 #endif
 			case "ANONYMOUS":          return new SaslMechanismAnonymous (encoding, credentials);
-#if GSSAPI_FEATURE
-			case "GSSAPI":             return new SaslMechanismGssapi (credentials);
-#endif
 			default:                   return null;
 			}
 		}
