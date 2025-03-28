@@ -1,7 +1,8 @@
 ﻿//
 // SaslMechanismNegotiateBase.cs
 //
-// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
+// Authors: Roman Konecny <rokonecn@microsoft.com>
+//          Jeffrey Stedfast <jestedfa@microsoft.com>
 //
 // Copyright (c) 2013-2025 .NET Foundation and Contributors
 //
