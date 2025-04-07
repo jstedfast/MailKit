@@ -69,6 +69,7 @@ namespace MailKit {
 		/// </remarks>
 		protected MailFolder ()
 		{
+			FirstUnread = -1;
 		}
 
 		/// <summary>
@@ -373,7 +374,7 @@ namespace MailKit {
 		/// <para>Gets the size of the folder in bytes.</para>
 		/// <note type="note">If the value is not set, then the size is unspecified.</note>
 		/// </remarks>
-		/// <value>The size.</value>
+		/// <value>The size of the folder, in bytes.</value>
 		public ulong? Size {
 			get; protected set;
 		}
@@ -382,9 +383,12 @@ namespace MailKit {
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// This value will only be set after the folder has been opened.
+		/// <para>Gets the index of the first unread message in the folder.</para>
+		/// <note type="note"><para>This value will only be set after the folder has been opened.</para>
+		/// <para>A value of <c>-1</c> indicates that there are no unread messages in the folder or that the server
+		/// has not provided the index of the first unread message.</para></note>
 		/// </remarks>
-		/// <value>The index of the first unread message.</value>
+		/// <value>The index of the first unread message or <c>-1</c> if there are no unread messages in the folder.</value>
 		public int FirstUnread {
 			get; protected set;
 		}
@@ -404,7 +408,7 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get the number of recently added messages in the folder.
+		/// Get the number of recently delivered messages in the folder.
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the number of recently delivered messages in the folder.</para>
@@ -412,7 +416,7 @@ namespace MailKit {
 		/// <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
 		/// with <see cref="StatusItems.Recent"/> or by opening the folder.</note>
 		/// </remarks>
-		/// <value>The number of recently added messages.</value>
+		/// <value>The number of recently delivered messages.</value>
 		public int Recent {
 			get; protected set;
 		}
@@ -438,7 +442,7 @@ namespace MailKit {
 		/// Get the threading algorithms supported by the folder.
 		/// </summary>
 		/// <remarks>
-		/// Get the threading algorithms supported by the folder.
+		/// Gets the threading algorithms supported by the folder.
 		/// </remarks>
 		/// <value>The supported threading algorithms.</value>
 		public abstract HashSet<ThreadingAlgorithm> ThreadingAlgorithms { get; }
@@ -9377,6 +9381,7 @@ namespace MailKit {
 			PermanentFlags = MessageFlags.None;
 			AcceptedFlags = MessageFlags.None;
 			Access = FolderAccess.None;
+			FirstUnread = -1;
 
 			AnnotationAccess = AnnotationAccess.None;
 			AnnotationScopes = AnnotationScope.None;

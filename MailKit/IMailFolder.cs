@@ -290,16 +290,19 @@ namespace MailKit {
 		/// <para>Gets the size of the folder in bytes.</para>
 		/// <note type="note">If the value is not set, then the size is unspecified.</note>
 		/// </remarks>
-		/// <value>The size.</value>
+		/// <value>The size of the folder, in bytes.</value>
 		ulong? Size { get; }
 
 		/// <summary>
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>
-		/// This value will only be set after the folder has been opened.
+		/// <para>Gets the index of the first unread message in the folder.</para>
+		/// <note type="note"><para>This value will only be set after the folder has been opened.</para>
+		/// <para>A value of <c>-1</c> indicates that there are no unread messages in the folder or that the server
+		/// has not provided the index of the first unread message.</para></note>
 		/// </remarks>
-		/// <value>The index of the first unread message.</value>
+		/// <value>The index of the first unread message or <c>-1</c> if there are no unread messages in the folder.</value>
 		int FirstUnread { get; }
 
 		/// <summary>
@@ -343,7 +346,7 @@ namespace MailKit {
 		/// Get the threading algorithms supported by the folder.
 		/// </summary>
 		/// <remarks>
-		/// Get the threading algorithms supported by the folder.
+		/// Gets the threading algorithms supported by the folder.
 		/// </remarks>
 		/// <value>The supported threading algorithms.</value>
 		HashSet<ThreadingAlgorithm> ThreadingAlgorithms { get; }
