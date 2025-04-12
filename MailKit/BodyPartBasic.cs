@@ -91,7 +91,9 @@ namespace MailKit {
 		/// Gets the size of the body part, in bytes.
 		/// </summary>
 		/// <remarks>
-		/// Gets the size of the body part, in bytes.
+		/// <para>Gets the size of the body part, in bytes.</para>
+		/// <note type="note">Note that this size is the size in its transfer encoding
+		/// and not the resulting size after any decoding.</note>
 		/// </remarks>
 		/// <value>The number of octets.</value>
 		public uint Octets {
