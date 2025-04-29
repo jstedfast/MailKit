@@ -509,6 +509,29 @@ namespace MailKit.Search {
 		/// <para>-or-</para>
 		/// <para>No keywords were given.</para>
 		/// </exception>
+		public static SearchQuery HasKeywords (params string[] keywords)
+		{
+			return HasKeywords ((IEnumerable<string>) keywords);
+		}
+
+		/// <summary>
+		/// Match messages that have all of the specified keywords set.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that have all of the specified keywords set.</para>
+		/// <para>A keyword is a user-defined message flag that can be set (or unset) on a message.</para>
+		/// <note type="note">This is equivalent to AND-ing multiple <c>KEYWORD</c> search keys as defined in <a href="https://datatracker.ietf.org/doc/html/rfc3501#section-6.4.4">rfc3501</a>.</note>
+		/// </remarks>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="keywords">The keywords.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="keywords"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="keywords"/> is <see langword="null" /> or empty.</para>
+		/// <para>-or-</para>
+		/// <para>No keywords were given.</para>
+		/// </exception>
 		public static SearchQuery HasKeywords (IEnumerable<string> keywords)
 		{
 			if (keywords == null)
@@ -558,6 +581,29 @@ namespace MailKit.Search {
 				throw new ArgumentException ("The keyword cannot be an empty string.", nameof (keyword));
 
 			return new TextSearchQuery (SearchTerm.NotKeyword, keyword);
+		}
+
+		/// <summary>
+		/// Match messages that do not have any of the specified keywords set.
+		/// </summary>
+		/// <remarks>
+		/// <para>Matches messages that do not have any of the specified keywords set.</para>
+		/// <para>A keyword is a user-defined message flag that can be set (or unset) on a message.</para>
+		/// <note type="note">This is equivalent to AND-ing multiple <c>UNKEYWORD</c> search keys as defined in <a href="https://datatracker.ietf.org/doc/html/rfc3501#section-6.4.4">rfc3501</a>.</note>
+		/// </remarks>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="keywords">The keywords.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="keywords"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="keywords"/> is <see langword="null" /> or empty.</para>
+		/// <para>-or-</para>
+		/// <para>No keywords were given.</para>
+		/// </exception>
+		public static SearchQuery NotKeywords (params string[] keywords)
+		{
+			return NotKeywords ((IEnumerable<string>) keywords);
 		}
 
 		/// <summary>

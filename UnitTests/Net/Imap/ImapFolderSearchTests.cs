@@ -148,6 +148,170 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateSearchKeywordsCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+filters.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SEARCH RETURN (ALL) KEYWORD \\flag\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000006 UID SEARCH RETURN (ALL) UNKEYWORD \\flag\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000007 UID SEARCH RETURN (ALL) KEYWORD \"two words\"\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000008 UID SEARCH RETURN (ALL) UNKEYWORD \"two words\"\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000009 UID SEARCH RETURN (ALL) KEYWORD $IsSpam\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000010 UID SEARCH RETURN (ALL) UNKEYWORD $IsSpam\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000011 UID SEARCH RETURN (ALL) KEYWORD \\flag KEYWORD \"two words\" KEYWORD $IsSpam\r\n", "dovecot.search-all.txt"),
+				new ImapReplayCommand ("A00000012 UID SEARCH RETURN (ALL) UNKEYWORD \\flag UNKEYWORD \"two words\" UNKEYWORD $IsSpam\r\n", "dovecot.search-all.txt")
+			};
+		}
+
+		[Test]
+		public void TestSearchKeywords ()
+		{
+			var commands = CreateSearchKeywordsCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var uids = inbox.Search (SearchQuery.HasKeyword ("\\flag"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.NotKeyword ("\\flag"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.HasKeyword ("two words"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.NotKeyword ("two words"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.HasKeyword ("$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.NotKeyword ("$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.HasKeywords ("\\flag", "two words", "$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = inbox.Search (SearchQuery.NotKeywords ("\\flag", "two words", "$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSearchKeywordsAsync ()
+		{
+			var commands = CreateSearchKeywordsCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var uids = await inbox.SearchAsync (SearchQuery.HasKeyword ("\\flag"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.NotKeyword ("\\flag"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.HasKeyword ("two words"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.NotKeyword ("two words"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.HasKeyword ("$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.NotKeyword ("$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.HasKeywords ("\\flag", "two words", "$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				uids = await inbox.SearchAsync (SearchQuery.NotKeywords ("\\flag", "two words", "$IsSpam"));
+				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
+				for (int i = 0; i < uids.Count; i++)
+					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static IList<ImapReplayCommand> CreateSearchFilterCommands ()
 		{
 			return new List<ImapReplayCommand> {
