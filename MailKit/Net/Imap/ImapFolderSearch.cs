@@ -85,6 +85,29 @@ namespace MailKit.Net.Imap
 			args.Add (buffer);
 		}
 
+		void AddKeywordArgument (StringBuilder builder, List<object> args, string text, ref string charset)
+		{
+			// Note: Technically, the IMAP RFC states that keywords are not allowed to start with '\',
+			// but some non-rfc-compliant IMAP servers do it anyway, so we need to allow it here.
+			// See https://github.com/jstedfast/MailKit/issues/1906 for details.
+			int startIndex = text[0] == '\\' ? 1 : 0;
+			bool isAtom = true;
+
+			for (int i = startIndex; i < text.Length; i++) {
+				if (!ImapCommand.IsAtom (text[i])) {
+					isAtom = false;
+					break;
+				}
+			}
+
+			if (isAtom) {
+				builder.Append ("%s");
+				args.Add (text);
+			} else {
+				AddTextArgument (builder, args, text, ref charset);
+			}
+		}
+
 		void BuildQuery (StringBuilder builder, SearchQuery query, List<object> args, bool parens, ref string charset)
 		{
 			AnnotationSearchQuery annotation;
@@ -196,7 +219,7 @@ namespace MailKit.Net.Imap
 			case SearchTerm.Keyword:
 				text = (TextSearchQuery) query;
 				builder.Append ("KEYWORD ");
-				AddTextArgument (builder, args, text.Text, ref charset);
+				AddKeywordArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.LargerThan:
 				numeric = (NumericSearchQuery) query;
@@ -236,7 +259,7 @@ namespace MailKit.Net.Imap
 			case SearchTerm.NotKeyword:
 				text = (TextSearchQuery) query;
 				builder.Append ("UNKEYWORD ");
-				AddTextArgument (builder, args, text.Text, ref charset);
+				AddKeywordArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.NotRecent:
 				builder.Append ("OLD");

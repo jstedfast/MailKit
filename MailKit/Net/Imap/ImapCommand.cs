@@ -368,7 +368,7 @@ namespace MailKit.Net.Imap {
 			Progress?.Report (nwritten, totalSize);
 		}
 
-		static bool IsAtom (char c)
+		internal static bool IsAtom (char c)
 		{
 			return c < 128 && !char.IsControl (c) && "(){ %*\\\"]".IndexOf (c) == -1;
 		}
