@@ -1,5 +1,21 @@
 # Release Notes
 
+## MailKit 4.12.0 (2025-04-28)
+
+* Added support for native NTLM auth (using .NET Core's NegotiateAuthentication API).
+  This new class is called SaslMechanismNtlmNative and is the default NTLM mechanism
+  used by MailKit clients on net8.0+.
+* Added support for the GSSAPI SASL mechanism for net8.0+.
+  (issue [#1249](https://github.com/jstedfast/MailKit/issues/1249))
+* Fixed MailFolder.FirstUnread to be initialized to -1 to indicate unknown.
+  (issue [#1898](https://github.com/jstedfast/MailKit/issues/1898))
+* Added support for non-compliant keywords that begin with '\'.
+  (issue [#1906](https://github.com/jstedfast/MailKit/issues/1906))
+* Added SearchQuery.HasKeywords/NotKeywords() overloads that take params instead of IEnumerable&lt;string&gt;.
+* Bumped System.Threading.Tasks.Extensions from 4.6.2 to 4.6.3.
+* Bumped System.Formats.Asn1 from 8.0.1 to 8.0.2.
+* Bumped MimeKit dependency to 4.12.0.
+
 ## MailKit 4.11.0 (2025-03-08)
 
 * Default MailService.SslProtocols to SslProtocols.None which is what the dotnet SslStream team recommends.
