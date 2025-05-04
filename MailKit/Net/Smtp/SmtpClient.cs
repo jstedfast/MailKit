@@ -589,7 +589,7 @@ namespace MailKit.Net.Smtp {
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
 		/// methods.</para>
 		/// </remarks>
-		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
+		/// <value><see langword="true" /> if the client is authenticated; otherwise, <see langword="false" />.</value>
 		public override bool IsAuthenticated {
 			get { return authenticated; }
 		}
