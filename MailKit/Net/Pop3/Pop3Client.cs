@@ -585,7 +585,7 @@ namespace MailKit.Net.Pop3 {
 		/// <para>To authenticate with the POP3 server, use one of the
 		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.</para>
 		/// </remarks>
-		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
+		/// <value><see langword="true" /> if the client is authenticated; otherwise, <see langword="false" />.</value>
 		public override bool IsAuthenticated {
 			get { return engine.State == Pop3EngineState.Transaction; }
 		}
