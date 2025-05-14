@@ -385,6 +385,23 @@ namespace MailKit.Security
 
 			base.Reset ();
 		}
+
+		internal static bool CheckSupported (string mechanismName)
+		{
+			try {
+				var options = new NegotiateAuthenticationClientOptions {
+					Credential = new NetworkCredential ("username", "password"),
+					Package = mechanismName,
+				};
+				var negotiate = new NegotiateAuthentication (options);
+
+				negotiate.GetOutgoingBlob (Array.Empty<byte> (), out NegotiateAuthenticationStatusCode statusCode);
+
+				return statusCode == NegotiateAuthenticationStatusCode.Completed;
+			} catch {
+				return false;
+			}
+		}
 	}
 }
 

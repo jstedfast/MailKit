@@ -55,28 +55,32 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.</para>
 		/// </remarks>
 		static readonly string[] RankedAuthenticationMechanisms;
-		static readonly bool md5supported;
+#if NET7_0_OR_GREATER
+		static readonly bool NativeNtlmSupported;
+		static readonly bool GssapiSupported;
+#endif
+		static readonly bool Md5Supported;
 
 		static SaslMechanism ()
 		{
 			try {
 				using (var md5 = MD5.Create ())
-					md5supported = true;
+					Md5Supported = true;
 			} catch {
-				md5supported = false;
+				Md5Supported = false;
 			}
 
-			// Note: It's probably arguable that NTLM is more secure than SCRAM but the odds of a server supporting both is probably low.
-			var supported = new List<string> {
 #if NET7_0_OR_GREATER
-				"GSSAPI",
+			NativeNtlmSupported = SaslMechanismNegotiateBase.CheckSupported ("NTLM");
+			GssapiSupported = SaslMechanismNegotiateBase.CheckSupported ("GSSAPI");
 #endif
-				"NTLM",
+
+			var supported = new List<string> {
 				"SCRAM-SHA-512",
 				"SCRAM-SHA-256",
 				"SCRAM-SHA-1"
 			};
-			if (md5supported) {
+			if (Md5Supported) {
 				supported.Add ("DIGEST-MD5");
 				supported.Add ("CRAM-MD5");
 			}
@@ -466,8 +470,8 @@ namespace MailKit.Security {
 			case "SCRAM-SHA-256":      return true;
 			case "SCRAM-SHA-1-PLUS":   return true;
 			case "SCRAM-SHA-1":        return true;
-			case "DIGEST-MD5":         return md5supported;
-			case "CRAM-MD5":           return md5supported;
+			case "DIGEST-MD5":         return Md5Supported;
+			case "CRAM-MD5":           return Md5Supported;
 			case "OAUTHBEARER":        return true;
 			case "XOAUTH2":            return true;
 			case "PLAIN":              return true;
@@ -475,7 +479,7 @@ namespace MailKit.Security {
 			case "NTLM":               return true;
 			case "ANONYMOUS":          return true;
 #if NET7_0_OR_GREATER
-			case "GSSAPI":             return true;
+			case "GSSAPI":             return GssapiSupported;
 #endif
 			default:                   return false;
 			}
@@ -518,15 +522,15 @@ namespace MailKit.Security {
 			case "SCRAM-SHA-256":      return new SaslMechanismScramSha256 (credentials);
 			case "SCRAM-SHA-1-PLUS":   return new SaslMechanismScramSha1Plus (credentials);
 			case "SCRAM-SHA-1":        return new SaslMechanismScramSha1 (credentials);
-			case "DIGEST-MD5":         return md5supported ? new SaslMechanismDigestMd5 (credentials) : null;
-			case "CRAM-MD5":           return md5supported ? new SaslMechanismCramMd5 (credentials) : null;
+			case "DIGEST-MD5":         return Md5Supported ? new SaslMechanismDigestMd5 (credentials) : null;
+			case "CRAM-MD5":           return Md5Supported ? new SaslMechanismCramMd5 (credentials) : null;
 			case "OAUTHBEARER":        return new SaslMechanismOAuthBearer (credentials);
 			case "XOAUTH2":            return new SaslMechanismOAuth2 (credentials);
 			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
 			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
 #if NET7_0_OR_GREATER
-			case "GSSAPI":             return new SaslMechanismGssapi (credentials);
-			case "NTLM":               return new SaslMechanismNtlmNative (credentials);
+			case "GSSAPI":             return GssapiSupported ? new SaslMechanismGssapi (credentials) : null;
+			case "NTLM":               return NativeNtlmSupported ? new SaslMechanismNtlmNative (credentials) : new SaslMechanismNtlm (credentials);
 #else
 			case "NTLM":               return new SaslMechanismNtlm (credentials);
 #endif
