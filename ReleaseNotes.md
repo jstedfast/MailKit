@@ -1,5 +1,14 @@
 # Release Notes
 
+## MailKit 4.12.1 (2025-05-17)
+
+* Fixed authentication bugs introduced into 4.12.0 related to adding GSSAPI and native NTLM auth support
+  which causes problems on Linux/Mac.
+  (issue [#1910](https://github.com/jstedfast/MailKit/issues/1910))
+  (issue [#1911](https://github.com/jstedfast/MailKit/issues/1911))
+* Reverted System.Threading.Tasks.Extensions dependency back to 4.6.2.
+* Reverted System.Formats.Asn1 dependency back to 8.0.1.
+
 ## MailKit 4.12.0 (2025-04-28)
 
 * Added support for native NTLM auth (using .NET Core's NegotiateAuthentication API).

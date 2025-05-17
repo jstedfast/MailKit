@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.</Description>
     <AssemblyTitle>MailKit</AssemblyTitle>
-    <VersionPrefix>4.12.0</VersionPrefix>
+    <VersionPrefix>4.12.1</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
     <LangVersion>10</LangVersion>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net8.0</TargetFrameworks>
