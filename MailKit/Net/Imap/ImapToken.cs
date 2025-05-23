@@ -155,6 +155,8 @@ namespace MailKit.Net.Imap {
 					}
 				}
 
+				if (builder.Equals ("+", false))
+					return Plus;
 				if (builder.Equals ("OK", false))
 					return Ok;
 				if (builder.Equals ("FETCH", false))

@@ -1,4 +1,5 @@
 * LIST (\HasNoChildren \Subscribed) "/" "INBOX"
+* LIST (\HasNoChildren \Subscribed) "/" +Folder
 * LIST (\HasChildren \NonExistent \Subscribed) "/" "[Gmail]"
 * LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/All Mail"
 * LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Drafts"

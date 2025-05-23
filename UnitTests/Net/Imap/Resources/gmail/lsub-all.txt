@@ -1,4 +1,5 @@
 * LSUB (\HasNoChildren) "/" "INBOX"
+* LSUB (\HasNoChildren) "/" +Folder
 * LSUB (\HasChildren \NonExistent) "/" "[Gmail]"
 * LSUB (\HasNoChildren) "/" "[Gmail]/All Mail"
 * LSUB (\HasNoChildren) "/" "[Gmail]/Drafts"

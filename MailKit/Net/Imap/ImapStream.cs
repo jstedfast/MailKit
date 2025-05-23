@@ -836,12 +836,6 @@ namespace MailKit.Net.Imap {
 			if (c == '\\')
 				return ReadFlagToken (specials, cancellationToken);
 
-			if (c == '+') {
-				inputIndex++;
-
-				return ImapToken.Plus;
-			}
-
 			if (IsAtom (input[inputIndex], specials))
 				return ReadAtomToken (specials, cancellationToken);
 
@@ -887,12 +881,6 @@ namespace MailKit.Net.Imap {
 
 			if (c == '\\')
 				return await ReadFlagTokenAsync (specials, cancellationToken).ConfigureAwait (false);
-
-			if (c == '+') {
-				inputIndex++;
-
-				return ImapToken.Plus;
-			}
 
 			if (IsAtom (input[inputIndex], specials))
 				return await ReadAtomTokenAsync (specials, cancellationToken).ConfigureAwait (false);
