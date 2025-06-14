@@ -6,6 +6,7 @@
 
 * [Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?](#completely-free)
 * [Why do I get `NotSupportedException: No data is available for encoding ######. For information on defining a custom encoding, see the documentation for the Encoding.RegisterProvider method.`?](#register-provider)
+* [Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5+ app?](#garbled-text)
 * [Why do I get a `TypeLoadException` when I try to create a new MimeMessage?](#type-load-exception)
 * [Why do I get `"MailKit.Security.SslHandshakeException: An error occurred while attempting to establish an SSL or TLS connection."` when I try to Connect?](#ssl-handshake-exception)
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#protocol-log)
@@ -23,11 +24,10 @@
 * [How can I save messages?](#save-messages)
 * [How can I save attachments?](#save-attachments)
 * [How can I get the email addresses in the From, To, and Cc headers?](#address-headers)
-* [Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?](#untitled-attachments)
+* [Why do attachments with Unicode filenames appear as "ATT0####.dat" in Outlook?](#untitled-attachments)
 * [How can I decrypt PGP messages that are embedded in the main message text?](#decrypt-inline-pgp)
 * [How can I reply to a message?](#reply-message)
 * [How can I forward a message?](#forward-message)
-* [Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?](#garbled-text)
 
 ### ImapClient
 
@@ -66,6 +66,22 @@ the following line of code to your program initialization (e.g. the beginning of
 ```csharp
 System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
 ```
+
+### <a id="garbled-text">Q: Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5+ app?</a>
+
+.NET Core (and ASP.NET Core by extension) and .NET 5 (and later) only provide the Unicode encodings, ASCII and ISO-8859-1 by default.
+Other text encodings are not available to your application unless your application
+[registers](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.registerprovider?view=net-5.0) the encoding
+provider that provides all of the additional encodings.
+
+First, add a package reference for the [System.Text.Encoding.CodePages](https://www.nuget.org/packages/System.Text.Encoding.CodePages)
+nuget package to your project and then register the additional text encodings using the following code snippet:
+
+```csharp
+System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
+```
+
+Note: The above code snippet should be safe to call in .NET Framework versions >= 4.6 as well.
 
 ### <a name="type-load-exception">Q: Why do I get a `TypeLoadException` when I try to create a new MimeMessage?</a>
 
@@ -307,7 +323,7 @@ code snippet to connect to GMail via IMAP:
 ```csharp
 using (var client = new ImapClient ()) {
     client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-    client.Authenticate ("user@gmail.com", "password");
+    client.Authenticate ("user@gmail.com", "app-specific-password");
 
     // do stuff...
 
@@ -1000,7 +1016,7 @@ foreach (var mailbox in message.To.Mailboxes)
     Console.WriteLine ("{0}'s email address is {1}", mailbox.Name, mailbox.Address);
 ```
 
-### <a id="untitled-attachments">Q: Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</a>
+### <a id="untitled-attachments">Q: Why do attachments with Unicode filenames appear as "ATT0####.dat" in Outlook?</a>
 
 An attachment filename is stored as a MIME parameter on the `Content-Disposition` header. Unfortunately,
 the original MIME specifications did not specify a method for encoding non-ASCII filenames. In 1997,
@@ -1532,22 +1548,6 @@ public static MimeMessage Forward (MimeMessage original, MailboxAddress from, IE
 ```
 
 Keep in mind that not all messages will have a `TextBody` available, so you'll have to find a way to handle those cases.
-
-### <a id="garbled-text">Q: Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5 app?</a>
-
-.NET Core (and ASP.NET Core by extension) and .NET 5 only provide the Unicode encodings, ASCII and ISO-8859-1 by default.
-Other text encodings are not available to your application unless your application
-[registers](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.registerprovider?view=net-5.0) the encoding
-provider that provides all of the additional encodings.
-
-First, add a package reference for the [System.Text.Encoding.CodePages](https://www.nuget.org/packages/System.Text.Encoding.CodePages)
-nuget package to your project and then register the additional text encodings using the following code snippet:
-
-```csharp
-System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
-```
-
-Note: The above code snippet should be safe to call in .NET Framework versions >= 4.6 as well.
 
 ## ImapClient
 

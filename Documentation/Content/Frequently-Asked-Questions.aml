@@ -28,7 +28,95 @@
         </para>
       </content>
     </section>
-    
+
+    <section address="CodePages">
+      <title>Why do I get "NotSupportedException: No data is available for encoding ######."?</title>
+      <content>
+        <para>
+          In .NET Core, Microsoft decided to split out the non-Unicode text encodings into a separate NuGet package called
+          <externalLink>
+            <linkText>System.Text.Encoding.CodePages</linkText>
+              <linkUri>https://www.nuget.org/packages/System.Text.Encoding.CodePages</linkUri>
+              <linkTarget>_blank</linkTarget>
+            </externalLink>.
+          </para>
+          <para>
+            MimeKit already pulls in a reference to this NuGet package, so you shouldn't need to add a reference to it in
+            your project. That said, you will still need to register the encoding provider. It is recommended that you add
+            the following line of code to your program initialization (e.g. the beginning of your program's Main() method):
+          </para>
+          <code language="c#">
+            System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
+          </code>
+      </content>
+    </section>
+
+    <section address="GarbledText">
+      <title>Why does text show up garbled in my ASP.NET Core / .NET Core / .NET 5+ app?</title>
+      <content>
+        <para>
+          .NET Core (and ASP.NET Core by extension) and .NET 5 (and later) only provide the Unicode encodings, ASCII and ISO-8859-1 by default.
+          Other text encodings are not available to your application unless your application
+          <externalLink>
+            <linkText>registers</linkText>
+            <linkUri>https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.registerprovider?view=net-5.0</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> the encoding
+          provider that provides all of the additional encodings.
+        </para>
+        <para>
+          First, add a package reference for the
+          <externalLink>
+            <linkText>System.Text.Encoding.CodePages</linkText>
+            <linkUri>https://www.nuget.org/packages/System.Text.Encoding.CodePages</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> nuget package to your project and then register the additional text encodings using the following code snippet:
+        </para>
+        <code language="c#">
+          System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Instance);
+        </code>
+        <para>
+          Note: The above code snippet should be safe to call in .NET Framework versions >= 4.6 as well.
+        </para>
+      </content>
+    </section>
+
+    <section address="TypeLoadException">
+      <title>Why do I get a TypeLoadException when I try to create a new MimeMessage?</title>
+      <content>
+        <para>
+          This only seems to happen in cases where the application is built for .NET Framework (v4.x) and seems to be most
+          common for ASP.NET web applications that were built using Visual Studio 2019 (it is unclear whether this happens
+          with Visual Studio 2022 as well).
+        </para>
+        <para>
+          The issue is that some (older?) versions of MSBuild do not correctly generate <literal>*.dll.config</literal>,
+          <literal>app.config</literal> and/or <literal>web.config</literal> files with proper assembly version binding
+          redirects.
+        </para>
+        <para>
+          If this problem is happening to you, make sure to use MimeKit and MailKit >= v4.0 which include <literal>MimeKit.dll.config</literal>
+          and <literal>MailKit.dll.config</literal>.
+        </para>
+        <para>
+          The next step is to manually edit your application's <literal>app.config</literal> (or <literal>web.config</literal>) to add a
+          binding redirect for <literal>System.Runtime.CompilerServices.Unsafe</literal>:
+        </para>
+        <code language="xml">
+          &lt;configuration&gt;
+            &lt;runtime&gt;
+              &lt;assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1"&gt;
+                &lt;dependentAssembly&gt;
+                  &lt;assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/&gt;
+                  &lt;bindingRedirect oldVersion="0.0.0.0-6.0.0.0" newVersion="6.0.0.0" /&gt;
+                &lt;/dependentAssembly&gt;
+              &lt;/assemblyBinding&gt;
+            &lt;/runtime&gt;
+          &lt;/configuration&gt;
+        </code>
+      </content>
+    </section>
+
     <section address="SslHandshakeException">
       <title>Why do I get "An error occurred while attempting to establish an SSL or TLS connection." when I try to Connect?</title>
       <content>
@@ -297,11 +385,12 @@
     </section>
     
     <section address="GMailHiddenMessages">
-      <title>Why don't I see some of my messages when accessing GMail with POP3?</title>
+      <title>Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</title>
       <content>
         <para>
-          By default, GMail's POP3 server does not behave like a standard POP3 server and hides messages
-          from clients (as well as having other non-standard behavior) that have already been viewed.
+          By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
+          and hides messages from clients using those protocols (as well as having other non-standard
+          behavior).
         </para>
         <para>
           If you want to configure your GMail POP3 settings to behave the way POP3 is intended to behave,
@@ -329,12 +418,42 @@
       <title>How do I access GMail using MailKit?</title>
       <content>
         <para>
-          The first thing that you will need to do is to configure your GMail account to
+          As of September 30th, 2024, authentication using only a username and password is
           <externalLink>
-            <linkText>enable less secure apps</linkText>
-            <linkUri>https://www.google.com/settings/security/lesssecureapps</linkUri>
+            <linkText>no longer supported by Google</linkText>
+            <linkUri>https://support.google.com/accounts/answer/6010255?hl=en</linkUri>
             <linkTarget>_blank</linkTarget>
-          </externalLink>, or you'll need to use OAuth 2.0 authentication (which is a bit more complex).
+          </externalLink>.
+        </para>
+        <para>
+          There are now only 2 options to choose from:
+        </para>
+        <list class="ordered">
+          <listItem>
+            <para>
+              Use OAuth 2.0 to authenticate with GMail. This is the recommended approach.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              Use an App Password to authenticate with GMail. This is a less secure option and is not recommended.
+              It is only available for accounts that have 2-Step Verification enabled.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          To use an App password, you will first need to
+          <externalLink>
+            <linkText>turn on 2-Step Verification</linkText>
+            <linkUri>https://support.google.com/accounts/answer/185839</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>.
+          Once 2-Step Verification is turned on, you can
+          <externalLink>
+            <linkText>generate an App password</linkText>
+            <linkUri>https://myaccount.google.com/apppasswords</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>.
         </para>
         <para>
           Then, assuming that your GMail account is <literal>user@gmail.com</literal>, you would use the following
@@ -343,7 +462,7 @@
         <code language="c#">
 using (var client = new ImapClient ()) {
     client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-    client.Authenticate ("user@gmail.com", "password");
+    client.Authenticate ("user@gmail.com", "app-specific-password");
     
     // do stuff...
     
@@ -352,7 +471,7 @@ using (var client = new ImapClient ()) {
         </code>
         <para>
           Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
-          use a Pop3Client or SmtpClient as appropriate).
+          use a <literal>Pop3Client</literal> or <literal>SmtpClient</literal> as appropriate).
         </para>
       </content>
     </section>
@@ -738,7 +857,7 @@ foreach (var mailbox in message.To.Mailboxes)
     </section>
     
     <section address="UntitledAttachments">
-      <title>Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</title>
+      <title>Why do attachments with Unicode filenames appear as "ATT0####.dat" in Outlook?</title>
       <content>
         <para>
           An attachment filename is stored as a MIME parameter on the <literal>Content-Disposition</literal>
