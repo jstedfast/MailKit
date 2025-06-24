@@ -6,7 +6,7 @@
     <VersionPrefix>4.12.1</VersionPrefix>
     <Authors>Jeffrey Stedfast</Authors>
     <LangVersion>10</LangVersion>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net462;net47;net48;net8.0</TargetFrameworks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <AssemblyName>MailKit</AssemblyName>
