@@ -198,8 +198,10 @@ namespace MailKit.Net.Proxy {
 
 			if (ServerCertificateValidationCallback != null) {
 				valid = ServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
+#if NETFRAMEWORK
 			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
 				valid = ServicePointManager.ServerCertificateValidationCallback (ProxyHost, certificate, chain, sslPolicyErrors);
+#endif
 			} else {
 				valid = sslPolicyErrors == SslPolicyErrors.None;
 			}

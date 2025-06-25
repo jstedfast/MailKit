@@ -612,8 +612,10 @@ namespace MailKit.Net.Smtp {
 
 			if (ServerCertificateValidationCallback != null) {
 				valid = ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
+#if NETFRAMEWORK
 			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
 				valid = ServicePointManager.ServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
+#endif
 			} else {
 				valid = DefaultServerCertificateValidationCallback (uri.Host, certificate, chain, sslPolicyErrors);
 			}
