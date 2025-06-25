@@ -10,6 +10,6 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MailKit" Version="4.12.1" />
+        <PackageReference Include="MailKit" Version="4.13.0" />
     </ItemGroup>
 </Project>

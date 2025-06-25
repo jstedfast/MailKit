@@ -1,5 +1,14 @@
 # Release Notes
 
+## MailKit 4.13.0 (2025-06-25)
+
+* Fixed tokenization of IMAP atom tokens that start with '+'.
+  (issue [#1914](https://github.com/jstedfast/MailKit/issues/1914))
+* Fixed the Imap/Pop3/Smtp clients to no longer fallback to using the
+  ServicePointManager.ServerCertificateValidationCallback method on .NET Core.
+  (issue [#1925](https://github.com/jstedfast/MailKit/issues/1925))
+* Bumped MimeKit dependency to 4.13.0.
+
 ## MailKit 4.12.1 (2025-05-17)
 
 * Fixed authentication bugs introduced into 4.12.0 related to adding GSSAPI and native NTLM auth support

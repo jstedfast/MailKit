@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.12.1" />
+    <PackageReference Include="MailKit" Version="4.13.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthenticationFailedEventArgs.cs" />
