@@ -576,7 +576,7 @@ namespace MailKit {
 		/// <param name="host">The target host that the client is connected to.</param>
 		/// <param name="remoteCertificateValidationCallback">The remote certificate validation callback.</param>
 		/// <returns>The client SSL/TLS authentication options.</returns>
-		protected SslClientAuthenticationOptions GetSslClientAuthenticationOptions (string host, RemoteCertificateValidationCallback remoteCertificateValidationCallback)
+		protected virtual SslClientAuthenticationOptions GetSslClientAuthenticationOptions (string host, RemoteCertificateValidationCallback remoteCertificateValidationCallback)
 		{
 			return new SslClientAuthenticationOptions {
 				CertificateRevocationCheckMode = CheckCertificateRevocation ? X509RevocationMode.Online : X509RevocationMode.NoCheck,
