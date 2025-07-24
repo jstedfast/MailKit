@@ -272,6 +272,8 @@ Next, register the Service Principal for your web service:
 New-ServicePrincipal -AppId <APPLICATION_ID> -ObjectId <OBJECT_ID> [-Organization <ORGANIZATION_ID>]
 ```
 
+Note: In the Azure portal, make sure you retrieve the Object ID from the Service Principal, under Enterprise Applications, and not the App Registration.
+
 ### Granting Permissions for Your Web Service
 
 In order to grant permissions for your web service to access an Office365 and/or Exchange account, you'll need to first get the
