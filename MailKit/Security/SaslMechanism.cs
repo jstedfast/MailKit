@@ -55,9 +55,10 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.</para>
 		/// </remarks>
 		static readonly string[] RankedAuthenticationMechanisms;
+
 #if NET7_0_OR_GREATER
-		static readonly bool NativeNtlmSupported;
-		static readonly bool GssapiSupported;
+		static Lazy<bool> NativeNtlmSupported = new Lazy<bool> (CheckNativeNtlmSupported, LazyThreadSafetyMode.ExecutionAndPublication);
+		static Lazy<bool> GssapiSupported = new Lazy<bool> (CheckGssapiSupported, LazyThreadSafetyMode.ExecutionAndPublication);
 #endif
 		static readonly bool Md5Supported;
 
@@ -70,16 +71,12 @@ namespace MailKit.Security {
 				Md5Supported = false;
 			}
 
-#if NET7_0_OR_GREATER
-			NativeNtlmSupported = SaslMechanismNegotiateBase.CheckSupported ("NTLM");
-			GssapiSupported = SaslMechanismNegotiateBase.CheckSupported ("GSSAPI");
-#endif
-
 			var supported = new List<string> {
 				"SCRAM-SHA-512",
 				"SCRAM-SHA-256",
 				"SCRAM-SHA-1"
 			};
+
 			if (Md5Supported) {
 				supported.Add ("DIGEST-MD5");
 				supported.Add ("CRAM-MD5");
@@ -89,6 +86,18 @@ namespace MailKit.Security {
 
 			RankedAuthenticationMechanisms = supported.ToArray ();
 		}
+
+#if NET7_0_OR_GREATER
+		static bool CheckNativeNtlmSupported ()
+		{
+			return SaslMechanismNegotiateBase.CheckSupported ("NTLM");
+		}
+
+		static bool CheckGssapiSupported ()
+		{
+			return SaslMechanismNegotiateBase.CheckSupported ("GSSAPI");
+		}
+#endif
 
 		/// <summary>
 		/// Rank authentication mechanisms in order of security.
@@ -479,7 +488,7 @@ namespace MailKit.Security {
 			case "NTLM":               return true;
 			case "ANONYMOUS":          return true;
 #if NET7_0_OR_GREATER
-			case "GSSAPI":             return GssapiSupported;
+			case "GSSAPI":             return GssapiSupported.Value;
 #endif
 			default:                   return false;
 			}
@@ -529,8 +538,8 @@ namespace MailKit.Security {
 			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
 			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
 #if NET7_0_OR_GREATER
-			case "GSSAPI":             return GssapiSupported ? new SaslMechanismGssapi (credentials) : null;
-			case "NTLM":               return NativeNtlmSupported ? new SaslMechanismNtlmNative (credentials) : new SaslMechanismNtlm (credentials);
+			case "GSSAPI":             return GssapiSupported.Value ? new SaslMechanismGssapi (credentials) : null;
+			case "NTLM":               return NativeNtlmSupported.Value ? new SaslMechanismNtlmNative (credentials) : new SaslMechanismNtlm (credentials);
 #else
 			case "NTLM":               return new SaslMechanismNtlm (credentials);
 #endif
