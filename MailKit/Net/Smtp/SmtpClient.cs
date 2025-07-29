@@ -2101,18 +2101,6 @@ namespace MailKit.Net.Smtp {
 			return null;
 		}
 
-		class OriginalRecipient
-		{
-			public readonly string AddrType;
-			public readonly string Address;
-
-			public OriginalRecipient (string addrType, string address)
-			{
-				AddrType = addrType;
-				Address = address;
-			}
-		}
-
 		/// <summary>
 		/// Get the original intended recipient address and address type.
 		/// </summary>
@@ -2125,11 +2113,12 @@ namespace MailKit.Net.Smtp {
 		/// <param name="message">The message being sent.</param>
 		/// <param name="mailbox">The recipient mailbox.</param>
 		/// <returns>The original recipient address and the address type.</returns>
-		OriginalRecipient GetOriginalRecipientAddress (MimeMessage message, MailboxAddress mailbox)
+		void GetOriginalRecipientAddress (MimeMessage message, MailboxAddress mailbox, out string addrType, out string address)
 		{
 			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
 
-			return new OriginalRecipient ("rfc822", mailbox.GetAddress (idnEncode));
+			addrType = "rfc822";
+			address = mailbox.GetAddress (idnEncode);
 		}
 
 		static string GetNotifyString (DeliveryStatusNotification notify)
@@ -2166,11 +2155,11 @@ namespace MailKit.Net.Smtp {
 					command.Append (" NOTIFY=");
 					command.Append (GetNotifyString (notify.Value));
 
-					var orcpt = GetOriginalRecipientAddress (message, mailbox);
+					GetOriginalRecipientAddress (message, mailbox, out var addrType, out var address);
 					command.Append (" ORCPT=");
-					command.Append (orcpt.AddrType);
+					command.Append (addrType);
 					command.Append (';');
-					AppendHexEncoded (command, orcpt.Address);
+					AppendHexEncoded (command, address);
 				}
 			}
 
