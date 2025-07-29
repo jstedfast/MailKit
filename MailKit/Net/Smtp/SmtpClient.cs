@@ -2112,7 +2112,8 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="message">The message being sent.</param>
 		/// <param name="mailbox">The recipient mailbox.</param>
-		/// <returns>The original recipient address and the address type.</returns>
+		/// <param name="addrType">The original recipient address type.</param>
+		/// <param name="address">The original recipient address.</param>
 		void GetOriginalRecipientAddress (MimeMessage message, MailboxAddress mailbox, out string addrType, out string address)
 		{
 			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
