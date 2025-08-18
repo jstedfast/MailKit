@@ -1838,42 +1838,6 @@ namespace MailKit.Net.Smtp {
 			return recipients;
 		}
 
-		[Flags]
-		enum SmtpExtensions {
-			None         = 0,
-			EightBitMime = 1 << 0,
-			BinaryMime   = 1 << 1,
-			UTF8         = 1 << 2,
-		}
-
-		class ContentTransferEncodingVisitor : MimeVisitor
-		{
-			readonly SmtpCapabilities capabilities;
-
-			public ContentTransferEncodingVisitor (SmtpCapabilities capabilities)
-			{
-				this.capabilities = capabilities;
-			}
-
-			public SmtpExtensions SmtpExtensions {
-				get; private set;
-			}
-
-			protected override void VisitMimePart (MimePart entity)
-			{
-				switch (entity.ContentTransferEncoding) {
-				case ContentEncoding.EightBit:
-					if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
-						SmtpExtensions |= SmtpExtensions.EightBitMime;
-					break;
-				case ContentEncoding.Binary:
-					if ((capabilities & SmtpCapabilities.BinaryMime) != 0)
-						SmtpExtensions |= SmtpExtensions.BinaryMime;
-					break;
-				}
-			}
-		}
-
 		/// <summary>
 		/// Invoked when the sender is accepted by the SMTP server.
 		/// </summary>
@@ -1975,6 +1939,15 @@ namespace MailKit.Net.Smtp {
 			} finally {
 				ArrayPool<byte>.Shared.Return (buffer);
 			}
+		}
+
+		[Flags]
+		enum SmtpExtensions
+		{
+			None = 0,
+			EightBitMime = 1 << 0,
+			BinaryMime = 1 << 1,
+			UTF8 = 1 << 2,
 		}
 
 		string CreateMailFromCommand (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size)
@@ -2402,10 +2375,30 @@ namespace MailKit.Net.Smtp {
 			Prepare (format, message, constraint, MaxLineLength);
 
 			// figure out which SMTP extensions we need to use
-			var visitor = new ContentTransferEncodingVisitor (capabilities);
-			visitor.Visit (message);
+			extensions = SmtpExtensions.None;
 
-			extensions = visitor.SmtpExtensions;
+			using (var iter = new MimeIterator (message)) {
+				while (iter.MoveNext ()) {
+					if (iter.Current is MimePart part) {
+						if (part.ContentTransferEncoding == ContentEncoding.EightBit) {
+							if ((capabilities & SmtpCapabilities.EightBitMime) != 0) {
+								extensions |= SmtpExtensions.EightBitMime;
+
+								if ((capabilities & SmtpCapabilities.BinaryMime) == 0) {
+									// BINARYMIME is not supported, so there's no sense in continuing to scan more MimeParts.
+									break;
+								}
+							}
+						} else if (part.ContentTransferEncoding == ContentEncoding.Binary) {
+							if ((capabilities & SmtpCapabilities.BinaryMime) != 0) {
+								// Once we've decided we require BINARYMIME, no sense continuing to check for 8BITMIME.
+								extensions |= SmtpExtensions.BinaryMime;
+								break;
+							}
+						}
+					}
+				}
+			}
 
 			if ((Capabilities & SmtpCapabilities.UTF8) != 0 && (format.International || sender.IsInternational || recipients.Any (x => x.IsInternational)))
 				extensions |= SmtpExtensions.UTF8;
