@@ -469,7 +469,7 @@ namespace MailKit {
 			case "imap.mail.me.com":
 				switch (issuer) {
 				case AppleCertificateIssuer:
-					return (serial == "53EAE7751B02B72138935D30BF550930" && fingerprint == "BF811C09DE8E8CC2004D48256351EE564C3D403E"); // Expires 8/20/2025 2:44:05 PM
+					return (serial == "727C5B5D469DD497480ED0D25D43F5BB" && fingerprint == "395B6CA1957C6BA624454A4F85501EFDD9AEB920"); // Expires 10/30/2025 3:45:05 PM
 				default:
 					return false;
 				}
