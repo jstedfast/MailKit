@@ -10,8 +10,8 @@
 
 |  Platform   |Build Status|Code Coverage|Static Analysis|
 |:------------|:----------:|:-----------:|:-------------:|
-|**Linux/Mac**|[![Build Status](https://github.com/jstedfast/MailKit/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/jstedfast/MailKit/actions/workflows/main.yml)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
-|**Windows**  |[![Build Status](https://github.com/jstedfast/MailKit/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/jstedfast/MailKit/actions/workflows/main.yml)|[![Code Coverage](https://coveralls.io/repos/jstedfast/MailKit/badge.svg?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://scan.coverity.com/projects/3202/badge.svg)](https://scan.coverity.com/projects/3202)|
+|**Linux/Mac**|[![Build Status](https://github.com/jstedfast/MailKit/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/jstedfast/MailKit/actions/workflows/main.yml)|[![Code Coverage](https://img.shields.io/coverallsCoverage/github/jstedfast/MailKit?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://img.shields.io/coverity/scan/3202)](https://scan.coverity.com/projects/3202)|
+|**Windows**  |[![Build Status](https://github.com/jstedfast/MailKit/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/jstedfast/MailKit/actions/workflows/main.yml)|[![Code Coverage](https://img.shields.io/coverallsCoverage/github/jstedfast/MailKit?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://img.shields.io/coverity/scan/3202)](https://scan.coverity.com/projects/3202)|
 
 ## What is MailKit?
 
