@@ -303,7 +303,31 @@ intended to behave according to their protocol specifications, you'll need to lo
 GMail account via your web browser and navigate to the `Forwarding and POP/IMAP` tab of your
 GMail Settings page and set your options to look like this:
 
-![GMail POP3 and IMAP Settings](https://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
+![GMail POP3 and IMAP Settings](Documentation/media/gmail-imap-pop3-settings.png "GMail POP3 and IMAP Settings")
+
+**POP download:**
+
+**1. Status:** POP is enabled for all mail that has arrived since 12/31/69
+-[X] Enable POP for **all mail** (even mail that's already been downloaded)
+-[ ] Enable POP for **mail that arrives from now on**
+-[ ] **Disable** POP
+
+**2. When messages are accessed with POP** \[keep GMail's copy in the Inbox]
+
+**IMAP access:**
+
+**When I mark a message in IMAP as deleted:**
+-[ ] Auto-Expunge on - Immediately update the server. (default)
+-[X] Auto-Expunge off - Wait for the client to update the server.
+
+**When a message is marked as deleted and expunged from the last visible IMAP folder:**
+-[ ] Archive the message (default)
+-[ ] Move the message to the Trash
+-[X] Immediately delete the message forever
+
+**Folder size limits**
+-[X] Do not limit the number of messages in an IMAP folder (default)
+-[ ] Limit IMAP folders to contain no more than this many messages \[1000]
 
 ### <a id="gmail-access">Q: How can I access GMail using MailKit?</a>
 
