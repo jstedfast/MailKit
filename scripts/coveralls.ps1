@@ -7,7 +7,7 @@ $debugDir = Join-Path $binDir "Debug"
 $OutputDir = Join-Path $debugDir $targetFramework.InnerText
 
 # Upload code-coverage data to coveralls.io
-& dotnet tool run csmacnz.Coveralls --opencover -i coverage.xml `
+& dotnet tool run --allow-roll-forward csmacnz.Coveralls --opencover -i coverage.xml `
 	--repoToken $env:COVERALLS_REPO_TOKEN `
 	--useRelativePaths `
 	--basePath $OutputDir `
