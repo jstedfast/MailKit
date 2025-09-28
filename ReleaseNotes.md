@@ -1,5 +1,14 @@
 # Release Notes
 
+## MailKit 4.14.0 (2025-09-28)
+
+* Updated MailService::GetSslClientAuthenticationOptions to be protected virtual.
+  (issue [#1931](https://github.com/jstedfast/MailKit/issues/1931))
+* Fixed initialization of SaslMechanism to lazily check if GSSAPI and/or NTLM are
+  supported (natively) to avoid undesirable error messages appearing in dotnet logs
+  on Linux systems. (issue [#1924](https://github.com/jstedfast/MailKit/issues/1924))
+* Bumped MimeKit dependency to 4.14.0.
+
 ## MailKit 4.13.0 (2025-06-25)
 
 * Fixed tokenization of IMAP atom tokens that start with '+'.

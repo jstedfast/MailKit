@@ -7,7 +7,7 @@
         <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="MailKit" Version="4.13.0" />
+        <PackageReference Include="MailKit" Version="4.14.0" />
         <PackageReference Include="Drastic.MonoTouch.Dialog" Version="1.0.0" />
     </ItemGroup>
 </Project>
