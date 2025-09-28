@@ -378,7 +378,7 @@ namespace UnitTests.Security {
 		static void AssertBadSslWrongHostServerCertificate (X509Certificate2 certificate)
 		{
 			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("*.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=R11, O=Let's Encrypt, C=US"), "Issuer");
+			Assert.That (certificate.Issuer, Is.EqualTo ("CN=R12, O=Let's Encrypt, C=US"), "Issuer");
 			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
 			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
 		}
@@ -546,7 +546,7 @@ namespace UnitTests.Security {
 		static void AssertBadSslRevokedServerCertificate (X509Certificate2 certificate)
 		{
 			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("revoked.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=E6, O=Let's Encrypt, C=US"), "Issuer");
+			Assert.That (certificate.Issuer, Is.EqualTo ("CN=E8, O=Let's Encrypt, C=US"), "Issuer");
 			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
 			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
 		}
