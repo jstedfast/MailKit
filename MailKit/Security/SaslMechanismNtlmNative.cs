@@ -34,7 +34,20 @@ namespace MailKit.Security {
 	/// The NTLM SASL mechanism.
 	/// </summary>
 	/// <remarks>
-	/// A SASL mechanism based on NTLM that uses .NET Core's <see cref="NegotiateAuthentication"/> class for authenticating.
+	/// <para>A SASL mechanism based on NTLM that uses .NET Core's <see cref="NegotiateAuthentication"/> class for authenticating.</para>
+	/// <note type="warning">
+	/// <para>NTLM is a legacy challenge-response authentication mechanism introduced by Microsoft
+	/// in the 1990's and suffers from the following weaknesses:</para>
+	/// <list type="bullet">
+	/// <item>Pass-the-Hash Attacks: Stolen NTLM hashes can be reused without knowing the password.</item>
+	/// <item>Relay Attacks: NTLM does not protect against credential forwarding.</item>
+	/// <item>Cryptography: NTLMv1 relies on DES and MD4 which are both very weak. NTLMv2 relies on HMAC-MD5
+	/// which is better but still considered very weak by modern standards.</item>
+	/// </list>
+	/// <para>Microsoft recommends disabling NTLM and migrating to Kerberos
+	/// (<a href="T_MailKit_Security_SaslMechanismGssapi.htm">GSSAPI</a>)
+	/// or modern alternatives.</para>
+	/// </note>
 	/// </remarks>
 	public class SaslMechanismNtlmNative : SaslMechanismNegotiateBase
 	{

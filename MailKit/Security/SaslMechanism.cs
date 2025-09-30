@@ -74,7 +74,12 @@ namespace MailKit.Security {
 			var supported = new List<string> {
 				"SCRAM-SHA-512",
 				"SCRAM-SHA-256",
-				"SCRAM-SHA-1"
+				"SCRAM-SHA-1",
+
+				// Note: NTLM is considered less secure than even SCRAM-SHA-1 (even though SHA-1 is considered weak)
+				// because it is vulnerable to replay and MitM attacks. The cryptography used by NTLM is also very
+				// weak at this point (DES for NTLMv1 and HMAC-MD5 for NTLMv2).
+				"NTLM"
 			};
 
 			if (Md5Supported) {
