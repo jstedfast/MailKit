@@ -1852,7 +1852,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Invoked when a recipient is not accepted by the SMTP server.
+		/// Invoked when the sender is not accepted by the SMTP server.
 		/// </summary>
 		/// <remarks>
 		/// The default implementation throws an appropriate <see cref="SmtpCommandException"/>.
