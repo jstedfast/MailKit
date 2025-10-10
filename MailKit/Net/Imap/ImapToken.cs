@@ -46,12 +46,11 @@ namespace MailKit.Net.Imap {
 		Asterisk      = (int) '*',
 		OpenBracket   = (int) '[',
 		CloseBracket  = (int) ']',
-		Plus          = (int) '+',
 	}
 
 	class ImapToken
 	{
-		public static readonly ImapToken Plus = new ImapToken (ImapTokenType.Plus, '+');
+		public static readonly ImapToken Plus = new ImapToken (ImapTokenType.Atom, "+");
 		public static readonly ImapToken Asterisk = new ImapToken (ImapTokenType.Asterisk, '*');
 		public static readonly ImapToken OpenParen = new ImapToken (ImapTokenType.OpenParen, '(');
 		public static readonly ImapToken CloseParen = new ImapToken (ImapTokenType.CloseParen, ')');
@@ -108,7 +107,6 @@ namespace MailKit.Net.Imap {
 		public static ImapToken Create (ImapTokenType type, char c)
 		{
 			switch (type) {
-			case ImapTokenType.Plus: return Plus;
 			case ImapTokenType.Asterisk: return Asterisk;
 			case ImapTokenType.OpenParen: return OpenParen;
 			case ImapTokenType.CloseParen: return CloseParen;
@@ -205,7 +203,6 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.QString:      return MimeUtils.Quote ((string) Value);
 			case ImapTokenType.Literal:      return string.Format (CultureInfo.InvariantCulture, "{{{0}}}", (int) Value);
 			case ImapTokenType.Eoln:         return "'\\n'";
-			case ImapTokenType.Plus:         return "'+'";
 			case ImapTokenType.OpenParen:    return "'('";
 			case ImapTokenType.CloseParen:   return "')'";
 			case ImapTokenType.Asterisk:     return "'*'";

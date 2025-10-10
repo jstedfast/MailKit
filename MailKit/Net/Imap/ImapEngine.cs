@@ -1474,7 +1474,7 @@ namespace MailKit.Net.Imap {
 			// like we did in v4.1.0 (and older), then we can avoid this exception.
 			//
 			// See https://github.com/jstedfast/MailKit/issues/1654 for details.
-			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Plus) {
+			while (token.Type == ImapTokenType.Atom) {
 				var atom = token.Value.ToString ();
 
 				ProcessCapabilityToken (atom);
@@ -1501,7 +1501,7 @@ namespace MailKit.Net.Imap {
 			// like we did in v4.1.0 (and older), then we can avoid this exception.
 			//
 			// See https://github.com/jstedfast/MailKit/issues/1654 for details.
-			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Plus) {
+			while (token.Type == ImapTokenType.Atom) {
 				var atom = token.Value.ToString ();
 
 				ProcessCapabilityToken (atom);

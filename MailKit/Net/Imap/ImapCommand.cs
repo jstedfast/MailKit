@@ -591,7 +591,7 @@ namespace MailKit.Net.Imap {
 					token = Engine.ReadToken (CancellationToken);
 				}
 
-				if (token.Type == ImapTokenType.Plus) {
+				if (token == ImapToken.Plus) {
 					// we've gotten a continuation response from the server
 					var text = Engine.ReadLine (CancellationToken).Trim ();
 
@@ -732,7 +732,7 @@ namespace MailKit.Net.Imap {
 					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
 				}
 
-				if (token.Type == ImapTokenType.Plus) {
+				if (token == ImapToken.Plus) {
 					// we've gotten a continuation response from the server
 					var text = (await Engine.ReadLineAsync (CancellationToken).ConfigureAwait (false)).Trim ();
 

@@ -4337,6 +4337,80 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		[Test]
+		public void TestParseFlagsList ()
+		{
+			const string text = "(\\Answered \\Flagged \\Deleted \\Seen \\Draft + TAG TAG2 a b c d e f g h i j k l m n o p q r s t u v w x y z)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						var keywords = new HashSet<string> ();
+						MessageFlags flags;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							flags = ImapUtils.ParseFlagsList (engine, "INBOX", keywords, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ($"Parsing FLAGS response failed: {ex}");
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
+
+						Assert.That (flags, Is.EqualTo (MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft), "message flags");
+
+						Assert.That (keywords, Has.Count.EqualTo (29), "keywords.Count");
+						Assert.That (keywords.Contains ("+"), Is.True, "Contains +");
+						Assert.That (keywords.Contains ("TAG"), Is.True, "Contains TAG");
+						Assert.That (keywords.Contains ("TAG2"), Is.True, "Contains TAG2");
+
+						for (char c = 'a'; c <= 'z'; c++)
+							Assert.That (keywords.Contains (c.ToString ()), Is.True, $"Contains {c}");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseFlagsListAsync ()
+		{
+			const string text = "(\\Answered \\Flagged \\Deleted \\Seen \\Draft + TAG TAG2 a b c d e f g h i j k l m n o p q r s t u v w x y z)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						var keywords = new HashSet<string> ();
+						MessageFlags flags;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							flags = await ImapUtils.ParseFlagsListAsync (engine, "INBOX", keywords, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ($"Parsing FLAGS response failed: {ex}");
+							return;
+						}
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
+
+						Assert.That (flags, Is.EqualTo (MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.Draft), "message flags");
+
+						Assert.That (keywords, Has.Count.EqualTo (29), "keywords.Count");
+						Assert.That (keywords.Contains ("+"), Is.True, "Contains +");
+						Assert.That (keywords.Contains ("TAG"), Is.True, "Contains TAG");
+						Assert.That (keywords.Contains ("TAG2"), Is.True, "Contains TAG2");
+
+						for (char c = 'a'; c <= 'z'; c++)
+							Assert.That (keywords.Contains (c.ToString ()), Is.True, $"Contains {c}");
+					}
+				}
+			}
+		}
+
 		ImapFolder CreateImapFolder (ImapFolderConstructorArgs args)
 		{
 			return new ImapFolder (args);
