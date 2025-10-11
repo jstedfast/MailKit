@@ -1987,6 +1987,8 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (alerts, Is.EqualTo (5), $"Unexpected number of alerts: {alerts}");
 
+				Assert.That (client.Inbox, Is.Not.Null, "Inbox");
+
 				client.Disconnect (false);
 			}
 		}
@@ -2020,6 +2022,8 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (alerts, Is.EqualTo (5), $"Unexpected number of alerts: {alerts}");
+
+				Assert.That (client.Inbox, Is.Not.Null, "Inbox");
 
 				await client.DisconnectAsync (false);
 			}
@@ -7638,6 +7642,121 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (1), "SharedNamespaces.Count");
 				Assert.That (client.SharedNamespaces[0].Path, Is.EqualTo ("Public Folders"), "SharedNamespaces[0].Path");
 				Assert.That (client.SharedNamespaces[0].DirectorySeparator, Is.EqualTo ('/'), "SharedNamespaces[0].DirectorySeparator");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateListInboxFallbackAfterEmptyListExtendedCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "strato.de.greeting.txt"),
+				new ImapReplayCommand ("A00000000 AUTHENTICATE PLAIN\r\n", ImapReplayCommandResponse.Plus),
+				new ImapReplayCommand ("A00000000", "AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "strato.de.authenticate.txt"),
+				new ImapReplayCommand ("A00000001 CAPABILITY\r\n", "strato.de.capability.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "strato.de.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000004 LIST \"\" \"INBOX\"\r\n", "strato.de.list-inbox.txt"),
+				new ImapReplayCommand ("A00000005 XLIST \"\" \"*\"\r\n", "strato.de.xlist.txt"),
+				new ImapReplayCommand ("A00000006 LOGOUT\r\n", ImapReplayCommandResponse.OK)
+			};
+		}
+
+		[Test]
+		public void TestListInboxFallbackAfterEmptyListExtended ()
+		{
+			const ImapCapabilities InitialCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
+				ImapCapabilities.AppendLimit | ImapCapabilities.Enable | ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move |
+				ImapCapabilities.ListExtended | ImapCapabilities.Namespace | ImapCapabilities.Quota | ImapCapabilities.Sort |
+				ImapCapabilities.SpecialUse | ImapCapabilities.UidPlus;
+			const ImapCapabilities AuthenticatedCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
+				ImapCapabilities.AppendLimit | ImapCapabilities.CreateSpecialUse | ImapCapabilities.Quota | ImapCapabilities.Children |
+				ImapCapabilities.CondStore | ImapCapabilities.Enable | ImapCapabilities.ESort | ImapCapabilities.ESearch | ImapCapabilities.I18NLevel |
+				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | /*ImapCapabilities.ListStatus | ImapCapabilities.ListExtended |*/
+				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | /*ImapCapabilities.Preview |*/ ImapCapabilities.FuzzySearch |
+				ImapCapabilities.Sort | ImapCapabilities.SearchResults | /*ImapCapabilities.SpecialUse |*/ ImapCapabilities.StatusSize |
+				ImapCapabilities.UidPlus | ImapCapabilities.Unselect | ImapCapabilities.Within | ImapCapabilities.XList;
+			var commands = CreateListInboxFallbackAfterEmptyListExtendedCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+
+				Assert.That (client.Capabilities, Is.EqualTo (InitialCapabilities));
+				Assert.That (client.AppendLimit, Is.EqualTo (104857600), "AppendLimit");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (AuthenticatedCapabilities));
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
+				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
+				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('.'), "PersonalNamespaces[0].DirectorySeparator");
+				Assert.That (client.OtherNamespaces, Has.Count.EqualTo (0), "OtherNamespaces.Count");
+				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (0), "SharedNamespaces.Count");
+
+				Assert.That (client.Inbox, Is.Not.Null, "Inbox");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestListInboxFallbackAfterEmptyListExtendedAsync ()
+		{
+			const ImapCapabilities InitialCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
+				ImapCapabilities.AppendLimit | ImapCapabilities.Enable | ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move |
+				ImapCapabilities.ListExtended | ImapCapabilities.Namespace | ImapCapabilities.Quota | ImapCapabilities.Sort |
+				ImapCapabilities.SpecialUse | ImapCapabilities.UidPlus;
+			const ImapCapabilities AuthenticatedCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
+				ImapCapabilities.AppendLimit | ImapCapabilities.CreateSpecialUse | ImapCapabilities.Quota | ImapCapabilities.Children |
+				ImapCapabilities.CondStore | ImapCapabilities.Enable | ImapCapabilities.ESort | ImapCapabilities.ESearch | ImapCapabilities.I18NLevel |
+				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | /*ImapCapabilities.ListStatus | ImapCapabilities.ListExtended |*/
+				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | /*ImapCapabilities.Preview |*/ ImapCapabilities.FuzzySearch |
+				ImapCapabilities.Sort | ImapCapabilities.SearchResults | /*ImapCapabilities.SpecialUse |*/ ImapCapabilities.StatusSize |
+				ImapCapabilities.UidPlus | ImapCapabilities.Unselect | ImapCapabilities.Within | ImapCapabilities.XList;
+			var commands = CreateListInboxFallbackAfterEmptyListExtendedCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
+
+				Assert.That (client.Capabilities, Is.EqualTo (InitialCapabilities));
+				Assert.That (client.AppendLimit, Is.EqualTo (104857600), "AppendLimit");
+				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Expected SASL LOGIN auth mechanism");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities, Is.EqualTo (AuthenticatedCapabilities));
+				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
+				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
+				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('.'), "PersonalNamespaces[0].DirectorySeparator");
+				Assert.That (client.OtherNamespaces, Has.Count.EqualTo (0), "OtherNamespaces.Count");
+				Assert.That (client.SharedNamespaces, Has.Count.EqualTo (0), "SharedNamespaces.Count");
+
+				Assert.That (client.Inbox, Is.Not.Null, "Inbox");
 
 				await client.DisconnectAsync (true);
 			}

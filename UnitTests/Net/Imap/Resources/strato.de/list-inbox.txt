@@ -1,0 +1,2 @@
+* LIST (\HasChildren) "." "INBOX"
+A######## OK LIST completed

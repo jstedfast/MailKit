@@ -3686,6 +3686,32 @@ namespace MailKit.Net.Imap {
 
 			ProcessListInboxResponse (ic, command, list);
 
+			if (Inbox == null) {
+				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+					// Note: This is a work-around for IMAP servers such as imap.strato.de which do not return a list of folders
+					// for the `LIST "" "INBOX" RETURN (SUBSCRIBED CHILDREN)` command. Disable the LIST-EXTENDED (and dependent)
+					// capabilities since they are clearly broken.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1957 for details.
+					Capabilities &= ~(ImapCapabilities.ListExtended | ImapCapabilities.ListStatus | ImapCapabilities.SpecialUse);
+
+					// Send a vanilla `LIST "" "INBOX"` command to get the INBOX folder.
+					ic = QueueListInboxCommand (cancellationToken, out command, out list);
+
+					Run (ic);
+
+					ProcessListInboxResponse (ic, command, list);
+				}
+
+				if (Inbox == null) {
+					// If we still don't have the INBOX folder, just create a placeholder for it.
+					char delim = PersonalNamespaces.Count > 0 ? PersonalNamespaces[0].DirectorySeparator : '/';
+					var inbox = CreateImapFolder ("INBOX", FolderAttributes.Inbox, delim);
+					CacheFolder (inbox);
+					Inbox = inbox;
+				}
+			}
+
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
 				ic = QueueListSpecialUseCommand (command, list, cancellationToken);
 
@@ -3716,6 +3742,32 @@ namespace MailKit.Net.Imap {
 			await RunAsync (ic).ConfigureAwait (false);
 
 			ProcessListInboxResponse (ic, command, list);
+
+			if (Inbox == null) {
+				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+					// Note: This is a work-around for IMAP servers such as imap.strato.de which do not return a list of folders
+					// for the `LIST "" "INBOX" RETURN (SUBSCRIBED CHILDREN)` command. Disable the LIST-EXTENDED (and dependent)
+					// capabilities since they are clearly broken.
+					//
+					// See https://github.com/jstedfast/MailKit/issues/1957 for details.
+					Capabilities &= ~(ImapCapabilities.ListExtended | ImapCapabilities.ListStatus | ImapCapabilities.SpecialUse);
+
+					// Send a vanilla `LIST "" "INBOX"` command to get the INBOX folder.
+					ic = QueueListInboxCommand (cancellationToken, out command, out list);
+
+					await RunAsync (ic).ConfigureAwait (false);
+
+					ProcessListInboxResponse (ic, command, list);
+				}
+
+				if (Inbox == null) {
+					// If we still don't have the INBOX folder, just create a placeholder for it.
+					char delim = PersonalNamespaces.Count > 0 ? PersonalNamespaces[0].DirectorySeparator : '/';
+					var inbox = CreateImapFolder ("INBOX", FolderAttributes.Inbox, delim);
+					CacheFolder (inbox);
+					Inbox = inbox;
+				}
+			}
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
 				ic = QueueListSpecialUseCommand (command, list, cancellationToken);
