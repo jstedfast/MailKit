@@ -1,5 +1,14 @@
 # Release Notes
 
+## MailKit 4.14.1 (2025-10-13)
+
+* Re-added NTLM to the list of mechanisms to try by default.
+  (issue [#1953](https://github.com/jstedfast/MailKit/issues/1953))
+* Fixed IMAP to treat '+' as a normal Atom token.
+  (issue [#1956](https://github.com/jstedfast/MailKit/issues/1956))
+* Added fallback logic for imap.strato.de if LIST doesn't return the INBOX.
+  (issue [#1957](https://github.com/jstedfast/MailKit/issues/1957))
+
 ## MailKit 4.14.0 (2025-09-28)
 
 * Updated MailService::GetSslClientAuthenticationOptions to be protected virtual.
