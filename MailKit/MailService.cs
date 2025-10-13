@@ -67,9 +67,15 @@ namespace MailKit {
 			if (protocolLogger == null)
 				throw new ArgumentNullException (nameof (protocolLogger));
 
+#if NET462
+			// Default the SslProtocols value to Tls12 in order to avoid using SSL3 and TLS1.0/1.1 which are
+			// considered insecure (and is the latest protocol version supported by net462).
+			SslProtocols = SslProtocols.Tls12;
+#else
 			// Default the SslProtocols value to `None` which allows the operating system to choose the best
 			// protocol to use and to block protocols that are not secure.
 			SslProtocols = SslProtocols.None;
+#endif
 			CheckCertificateRevocation = true;
 			ProtocolLogger = protocolLogger;
 		}
