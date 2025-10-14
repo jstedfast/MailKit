@@ -35,7 +35,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using SslProtocols = System.Security.Authentication.SslProtocols;
 
 using MailKit.Net;
 using MailKit.Net.Proxy;
@@ -67,10 +66,11 @@ namespace MailKit {
 			if (protocolLogger == null)
 				throw new ArgumentNullException (nameof (protocolLogger));
 
-#if NET462
-			// Default the SslProtocols value to Tls12 in order to avoid using SSL3 and TLS1.0/1.1 which are
-			// considered insecure (and is the latest protocol version supported by net462).
-			SslProtocols = SslProtocols.Tls12;
+#if NETFRAMEWORK
+			// Default the SslProtocols value to whatever the system default is (as defined by ServicePointManager.SecurityProtocol).
+			//
+			// See discussion in https://github.com/jstedfast/MailKit/issues/1952 for details.
+			SslProtocols = (SslProtocols) ServicePointManager.SecurityProtocol;
 #else
 			// Default the SslProtocols value to `None` which allows the operating system to choose the best
 			// protocol to use and to block protocols that are not secure.
