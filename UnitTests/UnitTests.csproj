@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="AltCover" Version="9.0.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="nunit" Version="4.3.2" />
     <PackageReference Include="NUnit.Analyzers" Version="4.11.2">
