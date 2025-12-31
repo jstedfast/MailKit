@@ -22,10 +22,16 @@ jobs:
 
     steps:
       - name: Setup/Install the .NET 8 SDK
-        id: install-netsdk
+        id: install-netsdk8
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+
+      - name: Setup/Install the .NET 10 SDK
+        id: install-netsdk
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
 
       - if: runner.os == 'Windows'
         name: Setup MSBuild
