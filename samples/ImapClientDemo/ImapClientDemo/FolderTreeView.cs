@@ -218,7 +218,7 @@ namespace ImapClientDemo
 			public override void Run (CancellationToken cancellationToken)
 			{
 				if (!folder.IsOpen)
-				folder.Status (StatusItems.Unread, cancellationToken);
+					folder.Status (StatusItems.Unread, cancellationToken);
 
 				// Proxy the PostProcess() method call to the GUI thread.
 				Program.RunOnMainThread (treeView, PostProcess);
