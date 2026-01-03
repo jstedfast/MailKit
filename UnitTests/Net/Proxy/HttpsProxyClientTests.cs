@@ -49,6 +49,12 @@ namespace UnitTests.Net.Proxy {
 			}
 		}
 
+		[OneTimeTearDown]
+		public void TearDown ()
+		{
+			certificate?.Dispose ();
+		}
+
 		[Test]
 		public void TestArgumentExceptions ()
 		{
