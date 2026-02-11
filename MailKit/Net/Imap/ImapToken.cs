@@ -93,10 +93,12 @@ namespace MailKit.Net.Imap {
 		static readonly ImapToken XGMMsgId = new ImapToken (ImapTokenType.Atom, "X-GM-MSGID");
 		static readonly ImapToken XGMThrId = new ImapToken (ImapTokenType.Atom, "X-GM-THRID");
 
+		static readonly ImapTokenCache Cache = new ImapTokenCache ();
+
 		public readonly ImapTokenType Type;
 		public readonly object Value;
 
-		ImapToken (ImapTokenType type, object value = null)
+		internal ImapToken (ImapTokenType type, object value = null)
 		{
 			Value = value;
 			Type = type;
@@ -123,8 +125,25 @@ namespace MailKit.Net.Imap {
 			return new ImapToken (type, literalLength);
 		}
 
+		static bool IsCacheable (ByteArrayBuilder builder)
+		{
+			if (builder.Length < 2 || builder.Length > 32)
+				return false;
+
+			// Any atom token that starts with a digit is likely to be an integer value, so don't cache it.
+			if (builder[0] >= (byte) '0' && builder[0] <= (byte) '9')
+				return false;
+
+			// Any atom token that starts with 'A'->'Z' and is followed by digits is a tag token. Ignore.
+			if (builder[0] >= (byte) 'A' && builder[0] <= (byte) 'Z' && builder[1] >= (byte) '0' && builder[1] <= (byte) '9')
+				return false;
+
+			return true;
+		}
+
 		public static ImapToken Create (ImapTokenType type, ByteArrayBuilder builder)
 		{
+			bool cachable = false;
 			string value;
 
 			if (type == ImapTokenType.Flag) {
@@ -134,6 +153,8 @@ namespace MailKit.Net.Imap {
 					if (builder.Equals (value, true))
 						return token;
 				}
+
+				cachable = true;
 			} else if (type == ImapTokenType.Atom) {
 				if (builder.Equals ("NIL", true)) {
 					// Look for the cached NIL token that matches this capitalization.
@@ -181,16 +202,23 @@ namespace MailKit.Net.Imap {
 					return XGMMsgId;
 				if (builder.Equals ("X-GM-THRID", false))
 					return XGMThrId;
+
+				cachable = IsCacheable (builder);
+			} else if (type == ImapTokenType.QString) {
+				cachable = true;
 			}
+
+			if (cachable)
+				return Cache.AddOrGet (type, builder);
 
 			value = builder.ToString ();
 
 			return new ImapToken (type, value);
 		}
 
-		public static ImapToken Create (ImapTokenType type, string value)
+		public static ImapToken CreateError (ByteArrayBuilder builder)
 		{
-			return new ImapToken (type, value);
+			return new ImapToken (ImapTokenType.Error, builder.ToString ());
 		}
 
 		public override string ToString ()
