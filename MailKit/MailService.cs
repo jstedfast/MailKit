@@ -340,6 +340,9 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
+#if NET10_0_OR_GREATER
+		[Obsolete ("Use SslCipherSuite instead.")]
+#endif
 		public abstract CipherAlgorithmType? SslCipherAlgorithm {
 			get;
 		}
@@ -351,6 +354,9 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
+#if NET10_0_OR_GREATER
+		[Obsolete ("Use SslCipherSuite instead.")]
+#endif
 		public abstract int? SslCipherStrength {
 			get;
 		}
@@ -362,6 +368,9 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
+#if NET10_0_OR_GREATER
+		[Obsolete ("Use SslCipherSuite instead.")]
+#endif
 		public abstract HashAlgorithmType? SslHashAlgorithm {
 			get;
 		}
@@ -373,6 +382,9 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
+#if NET10_0_OR_GREATER
+		[Obsolete ("Use SslCipherSuite instead.")]
+#endif
 		public abstract int? SslHashStrength {
 			get;
 		}
@@ -384,6 +396,9 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
+#if NET10_0_OR_GREATER
+		[Obsolete ("Use SslCipherSuite instead.")]
+#endif
 		public abstract ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get;
 		}
@@ -395,6 +410,9 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
+#if NET10_0_OR_GREATER
+		[Obsolete ("Use SslCipherSuite instead.")]
+#endif
 		public abstract int? SslKeyExchangeStrength {
 			get;
 		}
