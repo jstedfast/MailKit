@@ -205,9 +205,20 @@ namespace MailKit.Security
 			if (validationInfo != null) {
 				try {
 					int rootIndex = validationInfo.ChainElements.Count - 1;
-					if (rootIndex > 0)
+
+					if (rootIndex > 0) {
+#if NET10_0_OR_GREATER
+						root = X509CertificateLoader.LoadCertificate (validationInfo.ChainElements[rootIndex].Certificate.RawData);
+#else
 						root = new X509Certificate2 (validationInfo.ChainElements[rootIndex].Certificate.RawData);
+#endif
+					}
+
+#if NET10_0_OR_GREATER
+					certificate = X509CertificateLoader.LoadCertificate (validationInfo.Certificate.RawData);
+#else
 					certificate = new X509Certificate2 (validationInfo.Certificate.RawData);
+#endif
 
 					if ((validationInfo.SslPolicyErrors & SslPolicyErrors.RemoteCertificateNotAvailable) != 0) {
 						message.AppendLine ("The SSL certificate for the server was not available.");
@@ -338,7 +349,11 @@ namespace MailKit.Security
 
 		public SslChainElement (X509ChainElement element)
 		{
+#if NET10_0_OR_GREATER
+			Certificate = X509CertificateLoader.LoadCertificate (element.Certificate.RawData);
+#else
 			Certificate = new X509Certificate2 (element.Certificate.RawData);
+#endif
 			ChainElementStatus = element.ChainElementStatus;
 			Information = element.Information;
 		}
@@ -359,7 +374,11 @@ namespace MailKit.Security
 
 		public SslCertificateValidationInfo (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
+#if NET10_0_OR_GREATER
+			Certificate = X509CertificateLoader.LoadCertificate (certificate.Export (X509ContentType.Cert));
+#else
 			Certificate = new X509Certificate2 (certificate.Export (X509ContentType.Cert));
+#endif
 			ChainElements = new List<SslChainElement> ();
 			SslPolicyErrors = sslPolicyErrors;
 			ChainStatus = chain.ChainStatus;
