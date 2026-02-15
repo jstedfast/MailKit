@@ -27,6 +27,8 @@ jobs:
 
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
 
     - name: publish AOT testApp, assert static analysis warning count, and run the app
       shell: pwsh
