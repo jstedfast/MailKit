@@ -1,5 +1,15 @@
 # Release Notes
 
+## MailKit 4.15.0 (2026-02-15)
+
+* Default the SmtpClient/Pop3Client/ImapClient.SslProtocols to the ServicePointManager.SecurityProtocol
+  value in .NET Framework (net4x). (issue [#1952](https://github.com/jstedfast/MailKit/issues/1952))
+* Added support for.NET 10.
+* Marked IMailService.SslCipherAlgorithm, SslCipherStrength, SslHashAlgorithm, SslHashStrength,
+  SslKeyExchangeAlgorithm, and SslKeyExchangeStrength as Obsolete in .NET 10 in favor of the
+  IMailService.SslCipherSuite property (.NET 10 only).
+* Bumped MimeKit dependency to 4.15.0.
+
 ## MailKit 4.14.1 (2025-10-13)
 
 * Re-added NTLM to the list of mechanisms to try by default.

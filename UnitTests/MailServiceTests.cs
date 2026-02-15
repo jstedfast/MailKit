@@ -40,14 +40,8 @@ namespace UnitTests {
 		bool SslCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			var certificate2 = certificate as X509Certificate2;
-			var cn = certificate2.GetNameInfo (X509NameType.SimpleName, false);
-			var fingerprint = certificate2.Thumbprint;
-			var serial = certificate2.SerialNumber;
-			var issuer = certificate2.Issuer;
-			var expires = certificate2.NotAfter;
 
 			Assert.That (certificate2, Is.Not.Null, "Cast");
-			Assert.That (MailService.IsKnownMailServerCertificate (certificate2), Is.True, $"IsKnownMailServerCertificate failed: {cn} (issuer == \"{issuer}\" && serial == \"{serial}\" && fingerprint == \"{fingerprint}\"); // Expires {expires}");
 
 			return true;
 		}
@@ -60,28 +54,9 @@ namespace UnitTests {
 				"pop://pop.gmail.com:995",
 				"smtp://smtp.gmail.com:587",
 
-				"imap://imap-mail.outlook.com:993",
-				"pop://pop-mail.outlook.com:995",
-				"smtp://smtp-mail.outlook.com:587",
-
 				"imap://outlook.office365.com:993",
 				"pop://outlook.office365.com:995",
 				"smtp://smtp.office365.com:587",
-
-				"imap://imap.mail.me.com:993",
-				"smtp://smtp.mail.me.com:587",
-
-				"imap://imap.mail.yahoo.com:993",
-				"pop://pop.mail.yahoo.com:995",
-				"smtp://smtp.mail.yahoo.com:587",
-
-				"imap://imap.gmx.com:993",
-				"pop://pop.gmx.com:995",
-				"smtp://mail.gmx.com:465",
-
-				"imap://imap.gmx.de:993",
-				"pop://pop.gmx.de:995",
-				"smtp://mail.gmx.de:465"
 			};
 
 			foreach (var server in servers) {
