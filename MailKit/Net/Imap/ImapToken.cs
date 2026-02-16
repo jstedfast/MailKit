@@ -96,7 +96,7 @@ namespace MailKit.Net.Imap {
 		public readonly ImapTokenType Type;
 		public readonly object Value;
 
-		ImapToken (ImapTokenType type, object value = null)
+		ImapToken (ImapTokenType type, object value)
 		{
 			Value = value;
 			Type = type;
