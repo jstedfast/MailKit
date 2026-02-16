@@ -27,17 +27,20 @@
 using System;
 using System.Text;
 using System.Buffers;
+using System.Runtime.CompilerServices;
 
 namespace MailKit
 {
 	class ByteArrayBuilder : IDisposable
 	{
+		readonly int initialCapacity;
 		byte[] buffer;
 		int length;
 
-		public ByteArrayBuilder (int initialCapacity)
+		public ByteArrayBuilder (int capacity)
 		{
-			buffer = ArrayPool<byte>.Shared.Rent (initialCapacity);
+			buffer = ArrayPool<byte>.Shared.Rent (capacity);
+			initialCapacity = capacity;
 			length = 0;
 		}
 
@@ -45,6 +48,16 @@ namespace MailKit
 			get { return length; }
 		}
 
+		public byte this[int index] {
+			get { return buffer[index]; }
+		}
+
+		public byte[] GetBuffer ()
+		{
+			return buffer;
+		}
+
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		void EnsureCapacity (int capacity)
 		{
 			if (capacity > buffer.Length) {
@@ -70,6 +83,11 @@ namespace MailKit
 
 		public void Clear ()
 		{
+			if (buffer.Length > initialCapacity * 4) {
+				ArrayPool<byte>.Shared.Return (buffer);
+				buffer = ArrayPool<byte>.Shared.Rent (initialCapacity);
+			}
+
 			length = 0;
 		}
 
