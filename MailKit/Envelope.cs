@@ -221,7 +221,10 @@ namespace MailKit {
 		static void EncodeGroup (StringBuilder builder, GroupAddress group)
 		{
 			builder.Append ("(NIL NIL ");
-			MimeUtils.AppendQuoted (builder, group.Name);
+			if (group.Name != null)
+				MimeUtils.AppendQuoted (builder, group.Name);
+			else
+				builder.Append ("NIL");
 			builder.Append (" NIL)");
 			EncodeInternetAddressListAddresses (builder, group.Members);
 			builder.Append ("(NIL NIL NIL NIL)");
@@ -426,6 +429,8 @@ namespace MailKit {
 			index++;
 
 			if (domain != null) {
+				user ??= "NIL";
+
 				// Note: The serializer injects "localhost" as the domain when provided a UNIX mailbox or the special <> mailbox.
 				var address = domain == "localhost" ? user : user + "@" + domain;
 
@@ -433,7 +438,7 @@ namespace MailKit {
 					addr = new MailboxAddress (name, domains, address);
 				else
 					addr = new MailboxAddress (name, address);
-			} else if (user != null) {
+			} else {
 				addr = new GroupAddress (user);
 			}
 
