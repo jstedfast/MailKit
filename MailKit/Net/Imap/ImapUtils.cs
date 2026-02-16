@@ -1151,6 +1151,7 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} else {
+				type ??= "application";
 				subtype = ReadStringToken (engine, format, cancellationToken);
 			}
 
@@ -1207,6 +1208,7 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} else {
+				type ??= "application";
 				subtype = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
 			}
 
