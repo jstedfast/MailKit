@@ -32,6 +32,7 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.IO;
@@ -93,7 +94,7 @@ namespace MailKit.Net.Imap
 					Messages.Add (message);
 			}
 
-			public bool TryGetValue (int index, out MessageSummary message)
+			public bool TryGetValue (int index, [NotNullWhen (true)] out MessageSummary? message)
 			{
 				int i;
 
@@ -107,7 +108,7 @@ namespace MailKit.Net.Imap
 				return true;
 			}
 
-			public void OnMessageExpunged (object sender, MessageEventArgs args)
+			public void OnMessageExpunged (object? sender, MessageEventArgs args)
 			{
 				int index = BinarySearch (args.Index, false);
 
@@ -1814,9 +1815,9 @@ namespace MailKit.Net.Imap
 		abstract class FetchStreamContextBase : IDisposable
 		{
 			public readonly List<Section> Sections = new List<Section> ();
-			readonly ITransferProgress progress;
+			readonly ITransferProgress? progress;
 
-			public FetchStreamContextBase (ITransferProgress progress)
+			protected FetchStreamContextBase (ITransferProgress? progress)
 			{
 				this.progress = progress;
 			}
@@ -1830,7 +1831,7 @@ namespace MailKit.Net.Imap
 				return Task.CompletedTask;
 			}
 
-			public virtual bool Contains (int index, string specifier, out Section section)
+			public virtual bool Contains (int index, string specifier, [NotNullWhen (true)] out Section? section)
 			{
 				section = null;
 				return false;
@@ -1868,7 +1869,7 @@ namespace MailKit.Net.Imap
 
 		class FetchStreamContext : FetchStreamContextBase
 		{
-			public FetchStreamContext (ITransferProgress progress) : base (progress)
+			public FetchStreamContext (ITransferProgress? progress) : base (progress)
 			{
 			}
 
@@ -1877,7 +1878,7 @@ namespace MailKit.Net.Imap
 				Sections.Add (section);
 			}
 
-			public bool TryGetSection (UniqueId uid, string specifier, out Section section, bool remove = false)
+			public bool TryGetSection (UniqueId uid, string specifier, [NotNullWhen (true)] out Section? section, bool remove = false)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					var item = Sections[i];
@@ -1899,7 +1900,7 @@ namespace MailKit.Net.Imap
 				return false;
 			}
 
-			public bool TryGetSection (int index, string specifier, out Section section, bool remove = false)
+			public bool TryGetSection (int index, string specifier, [NotNullWhen (true)] out Section section, bool remove = false)
 			{
 				for (int i = 0; i < Sections.Count; i++) {
 					var item = Sections[i];
@@ -1937,7 +1938,7 @@ namespace MailKit.Net.Imap
 			var labels = new MessageLabelsChangedEventArgs (index);
 			var flags = new MessageFlagsChangedEventArgs (index);
 			var modSeq = new ModSeqChangedEventArgs (index);
-			var ctx = (FetchStreamContextBase) ic.UserData;
+			var ctx = (FetchStreamContextBase) ic.UserData!;
 			var sectionBuilder = new StringBuilder ();
 			bool annotationsChanged = false;
 			bool modSeqChanged = false;
@@ -2195,7 +2196,7 @@ namespace MailKit.Net.Imap
 			var labels = new MessageLabelsChangedEventArgs (index);
 			var flags = new MessageFlagsChangedEventArgs (index);
 			var modSeq = new ModSeqChangedEventArgs (index);
-			var ctx = (FetchStreamContextBase) ic.UserData;
+			var ctx = (FetchStreamContextBase) ic.UserData!;
 			var sectionBuilder = new StringBuilder ();
 			bool annotationsChanged = false;
 			bool modSeqChanged = false;
@@ -2485,7 +2486,7 @@ namespace MailKit.Net.Imap
 			return query;
 		}
 
-		ImapCommand QueueGetHeadersCommand (UniqueId uid, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx)
+		ImapCommand QueueGetHeadersCommand (UniqueId uid, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -2549,7 +2550,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (uid, cancellationToken, progress, out var ctx);
 			Section section;
@@ -2605,7 +2606,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (uid, cancellationToken, progress, out var ctx);
 			Section section;
@@ -2621,7 +2622,7 @@ namespace MailKit.Net.Imap
 			return await ParseHeadersAsync (section.Stream, cancellationToken).ConfigureAwait (false);
 		}
 
-		ImapCommand QueueGetHeadersCommand (UniqueId uid, string partSpecifier, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx, out string[] tags)
+		ImapCommand QueueGetHeadersCommand (UniqueId uid, string partSpecifier, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext ctx, out string[] tags)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -2645,8 +2646,10 @@ namespace MailKit.Net.Imap
 		{
 			ProcessFetchResponse (ic);
 
-			if (!ctx.TryGetSection (uid, tags[0], out section, true))
+			if (!ctx.TryGetSection (uid, tags[0], out var sect, true))
 				throw new MessageNotFoundException ("The IMAP server did not return the requested body part headers.");
+
+			section = sect;
 		}
 
 		/// <summary>
@@ -2693,7 +2696,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual HeaderList GetHeaders (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual HeaderList GetHeaders (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (uid, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			Section section;
@@ -2753,7 +2756,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task<HeaderList> GetHeadersAsync (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task<HeaderList> GetHeadersAsync (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (uid, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			Section section;
@@ -2813,7 +2816,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -2868,7 +2871,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -2879,7 +2882,7 @@ namespace MailKit.Net.Imap
 			return GetHeadersAsync (uid, part.PartSpecifier, cancellationToken, progress);
 		}
 
-		ImapCommand QueueGetHeadersCommand (int index, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx)
+		ImapCommand QueueGetHeadersCommand (int index, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -2943,7 +2946,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (index, cancellationToken, progress, out var ctx);
 			Section section;
@@ -2999,7 +3002,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (index, cancellationToken, progress, out var ctx);
 			Section section;
@@ -3015,7 +3018,7 @@ namespace MailKit.Net.Imap
 			return await ParseHeadersAsync (section.Stream, cancellationToken).ConfigureAwait (false);
 		}
 
-		ImapCommand QueueGetHeadersCommand (int index, string partSpecifier, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx, out string[] tags)
+		ImapCommand QueueGetHeadersCommand (int index, string partSpecifier, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext ctx, out string[] tags)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -3087,7 +3090,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual HeaderList GetHeaders (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual HeaderList GetHeaders (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (index, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			Section section;
@@ -3147,7 +3150,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task<HeaderList> GetHeadersAsync (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task<HeaderList> GetHeadersAsync (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetHeadersCommand (index, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			Section section;
@@ -3207,7 +3210,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -3262,7 +3265,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -3337,7 +3340,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (uid, cancellationToken, progress, out var ctx);
 			Section section;
@@ -3393,7 +3396,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (uid, cancellationToken, progress, out var ctx);
 			Section section;
@@ -3473,7 +3476,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (index, cancellationToken, progress, out var ctx);
 			Section section;
@@ -3529,7 +3532,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (index, cancellationToken, progress, out var ctx);
 			Section section;
@@ -3565,7 +3568,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, out ChainedStream chained, out bool dispose)
+		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, out ChainedStream? chained, out bool dispose)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3648,7 +3651,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetBodyPartCommand (uid, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
@@ -3719,7 +3722,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task<MimeEntity> GetBodyPartAsync (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task<MimeEntity> GetBodyPartAsync (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetBodyPartCommand (uid, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
@@ -3788,7 +3791,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -3846,7 +3849,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -3878,7 +3881,7 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, out ChainedStream chained, out bool dispose)
+		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, out ChainedStream? chained, out bool dispose)
 		{
 			ProcessFetchResponse (ic);
 
@@ -3948,7 +3951,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual MimeEntity GetBodyPart (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual MimeEntity GetBodyPart (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetBodyPartCommand (index, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
@@ -4016,7 +4019,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task<MimeEntity> GetBodyPartAsync (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task<MimeEntity> GetBodyPartAsync (int index, string partSpecifier, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetBodyPartCommand (index, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
@@ -4082,7 +4085,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4137,7 +4140,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4148,7 +4151,7 @@ namespace MailKit.Net.Imap
 			return GetBodyPartAsync (index, part.PartSpecifier, cancellationToken, progress);
 		}
 
-		ImapCommand QueueGetStreamCommand (UniqueId uid, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx)
+		ImapCommand? QueueGetStreamCommand (UniqueId uid, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, out FetchStreamContext? ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -4179,8 +4182,10 @@ namespace MailKit.Net.Imap
 		{
 			ProcessFetchResponse (ic);
 
-			if (!ctx.TryGetSection (uid, string.Empty, out section, true))
+			if (!ctx.TryGetSection (uid, string.Empty, out var sect, true))
 				throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
+
+			section = sect;
 		}
 
 		/// <summary>
@@ -4233,7 +4238,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ctx);
 
@@ -4303,7 +4308,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ctx);
 
@@ -4323,7 +4328,7 @@ namespace MailKit.Net.Imap
 			return section.Stream;
 		}
 
-		ImapCommand QueueGetStreamCommand (int index, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx)
+		ImapCommand? QueueGetStreamCommand (int index, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext? ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4407,7 +4412,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ctx);
 
@@ -4476,7 +4481,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ctx);
 
@@ -4573,7 +4578,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (uid, section, cancellationToken, progress, out var ctx);
 			Section s;
@@ -4638,7 +4643,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (uid, section, cancellationToken, progress, out var ctx);
 			Section s;
@@ -4654,7 +4659,7 @@ namespace MailKit.Net.Imap
 			return s.Stream;
 		}
 
-		ImapCommand QueueGetStreamCommand (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx)
+		ImapCommand? QueueGetStreamCommand (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext? ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -4742,7 +4747,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ctx);
 
@@ -4818,7 +4823,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ctx);
 
@@ -4913,7 +4918,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (index, section, cancellationToken, progress, out var ctx);
 			Section s;
@@ -4975,7 +4980,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (index, section, cancellationToken, progress, out var ctx);
 			Section s;
@@ -4991,7 +4996,7 @@ namespace MailKit.Net.Imap
 			return s.Stream;
 		}
 
-		ImapCommand QueueGetStreamCommand (int index, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext ctx)
+		ImapCommand? QueueGetStreamCommand (int index, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress progress, out FetchStreamContext? ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -5080,7 +5085,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ctx);
 
@@ -5155,7 +5160,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override async Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ctx);
 
@@ -5180,7 +5185,7 @@ namespace MailKit.Net.Imap
 			readonly ImapFolder folder;
 			readonly object callback;
 
-			public FetchStreamCallbackContext (ImapFolder folder, object callback, ITransferProgress progress) : base (progress)
+			public FetchStreamCallbackContext (ImapFolder folder, object callback, ITransferProgress? progress) : base (progress)
 			{
 				this.folder = folder;
 				this.callback = callback;
@@ -5306,7 +5311,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual void GetStreams (IList<UniqueId> uids, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual void GetStreams (IList<UniqueId> uids, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			ValidateArguments (uids, callback);
 
@@ -5365,7 +5370,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task GetStreamsAsync (IList<UniqueId> uids, ImapFetchStreamAsyncCallback callback, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task GetStreamsAsync (IList<UniqueId> uids, ImapFetchStreamAsyncCallback callback, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			ValidateArguments (uids, callback);
 
@@ -5450,7 +5455,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual void GetStreams (IList<int> indexes, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual void GetStreams (IList<int> indexes, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			ValidateArguments (indexes, callback);
 
@@ -5509,7 +5514,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task GetStreamsAsync (IList<int> indexes, ImapFetchStreamAsyncCallback callback, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task GetStreamsAsync (IList<int> indexes, ImapFetchStreamAsyncCallback callback, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			ValidateArguments (indexes, callback);
 
@@ -5595,7 +5600,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual void GetStreams (int min, int max, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual void GetStreams (int min, int max, ImapFetchStreamCallback callback, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			ValidateArguments (min, max, callback);
 
@@ -5655,7 +5660,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public virtual async Task GetStreamsAsync (int min, int max, ImapFetchStreamAsyncCallback callback, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual async Task GetStreamsAsync (int min, int max, ImapFetchStreamAsyncCallback callback, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			ValidateArguments (min, max, callback);
 

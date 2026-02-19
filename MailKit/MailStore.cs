@@ -120,7 +120,7 @@ namespace MailKit {
 		/// <note type="note">This property will only be available after the client has been authenticated.</note>
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		public abstract IMailFolder Inbox {
+		public abstract IMailFolder? Inbox {
 			get;
 		}
 
@@ -232,7 +232,7 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
-		public abstract IMailFolder GetFolder (SpecialFolder folder);
+		public abstract IMailFolder? GetFolder (SpecialFolder folder);
 
 		/// <summary>
 		/// Get the folder for the specified namespace.
@@ -520,7 +520,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
+		public abstract string? GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -555,7 +555,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
+		public abstract Task<string?> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets the specified metadata.

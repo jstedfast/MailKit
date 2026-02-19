@@ -35,6 +35,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Authentication;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using MailKit.Security;
@@ -258,7 +259,7 @@ namespace MailKit.Net.Imap {
 			return folder;
 		}
 
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		bool ValidateRemoteCertificate (object? sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 			bool valid;
 
@@ -1276,13 +1277,14 @@ namespace MailKit.Net.Imap {
 			try {
 				int capabilitiesVersion = engine.CapabilitiesVersion;
 				var uri = new Uri ("imap://" + engine.Uri.Host);
-				NetworkCredential cred;
-				ImapCommand ic = null;
+				NetworkCredential? cred;
+				ImapCommand? ic = null;
 				SaslMechanism sasl;
 				string id;
 
 				foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
-					cred = credentials.GetCredential (uri, authmech);
+					if ((cred = credentials.GetCredential (uri, authmech)) == null)
+						continue;
 
 					if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 						continue;
@@ -2252,7 +2254,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
-		public override IMailFolder Inbox {
+		public override IMailFolder? Inbox {
 			get {
 				CheckDisposed ();
 				CheckConnected ();
@@ -2288,7 +2290,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the SPECIAL-USE nor XLIST extensions.
 		/// </exception>
-		public override IMailFolder GetFolder (SpecialFolder folder)
+		public override IMailFolder? GetFolder (SpecialFolder folder)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2470,12 +2472,12 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		string ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
+		string? ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
 		{
 			ic.ThrowIfNotOk ("GETMETADATA");
 
 			var metadata = (MetadataCollection) ic.UserData;
-			string value = null;
+			string? value = null;
 
 			for (int i = 0; i < metadata.Count; i++) {
 				if (metadata[i].EncodedName.Length == 0 && metadata[i].Tag.Id == tag.Id) {
@@ -2523,7 +2525,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
+		public override string? GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueGetMetadataCommand (tag, cancellationToken);
 
@@ -2532,7 +2534,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, tag);
 		}
 
-		bool TryQueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken, out ImapCommand ic)
+		bool TryQueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -2659,7 +2661,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		bool TryQueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken, out ImapCommand ic)
+		bool TryQueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -2753,22 +2755,22 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
-		void OnEngineMetadataChanged (object sender, MetadataChangedEventArgs e)
+		void OnEngineMetadataChanged (object? sender, MetadataChangedEventArgs e)
 		{
 			OnMetadataChanged (e.Metadata);
 		}
 
-		void OnEngineFolderCreated (object sender, FolderCreatedEventArgs e)
+		void OnEngineFolderCreated (object? sender, FolderCreatedEventArgs e)
 		{
 			OnFolderCreated (e.Folder);
 		}
 
-		void OnEngineAlert (object sender, AlertEventArgs e)
+		void OnEngineAlert (object? sender, AlertEventArgs e)
 		{
 			OnAlert (e.Message);
 		}
 
-		void OnEngineWebAlert (object sender, WebAlertEventArgs e)
+		void OnEngineWebAlert (object? sender, WebAlertEventArgs e)
 		{
 			OnWebAlert (e.WebUri, e.Message);
 		}
@@ -2800,7 +2802,7 @@ namespace MailKit.Net.Imap {
 			WebAlert?.Invoke (this, new WebAlertEventArgs (uri, message));
 		}
 
-		void OnEngineDisconnected (object sender, EventArgs e)
+		void OnEngineDisconnected (object? sender, EventArgs e)
 		{
 			if (connecting)
 				return;

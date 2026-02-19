@@ -39,7 +39,7 @@ namespace MailKit.Net.Imap
 		static readonly IStoreFlagsRequest AddDeletedFlag = new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true };
 		static readonly IStoreFlagsRequest RemoveDeletedFlag = new StoreFlagsRequest (StoreAction.Remove, MessageFlags.Deleted) { Silent = true };
 
-		static void ProcessUnmodified (ImapCommand ic, ref UniqueIdSet uids, ulong? modseq)
+		static void ProcessUnmodified (ImapCommand ic, ref UniqueIdSet? uids, ulong? modseq)
 		{
 			if (modseq.HasValue) {
 				foreach (var rc in ic.RespCodes.OfType<ModifiedResponseCode> ()) {
@@ -172,7 +172,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<UniqueId> Store (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
-			UniqueIdSet unmodified = null;
+			UniqueIdSet? unmodified = null;
 
 			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
 				Engine.Run (ic);
@@ -236,7 +236,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
-			UniqueIdSet unmodified = null;
+			UniqueIdSet? unmodified = null;
 
 			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -252,7 +252,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		ImapCommand QueueStoreCommand (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken)
+		ImapCommand? QueueStoreCommand (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -569,7 +569,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<UniqueId> Store (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
-			UniqueIdSet unmodified = null;
+			UniqueIdSet? unmodified = null;
 
 			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
 				Engine.Run (ic);
@@ -633,7 +633,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
-			UniqueIdSet unmodified = null;
+			UniqueIdSet? unmodified = null;
 
 			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -649,7 +649,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		ImapCommand QueueStoreCommand (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken)
+		ImapCommand? QueueStoreCommand (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));

@@ -36,6 +36,7 @@ using System.Collections.ObjectModel;
 
 using MimeKit;
 using MimeKit.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -571,7 +572,7 @@ namespace MailKit.Net.Imap {
 				attrs |= FolderAttributes.Flagged;
 		}
 
-		static void AddFolder (ImapEngine engine, List<ImapFolder> list, ImapFolder folder, string encodedName, char delim, FolderAttributes attrs, bool isLsub, bool returnsSubscribed)
+		static void AddFolder (ImapEngine engine, List<ImapFolder>? list, ImapFolder? folder, string encodedName, char delim, FolderAttributes attrs, bool isLsub, bool returnsSubscribed)
 		{
 			if (folder != null || engine.TryGetCachedFolder (encodedName, out folder)) {
 				if ((attrs & FolderAttributes.NonExistent) != 0) {
@@ -608,12 +609,12 @@ namespace MailKit.Net.Imap {
 			list?.Add (folder);
 		}
 
-		static void ProcessListExtensionProperty (ImapEngine engine, ref ImapFolder folder, string encodedName, char delim, FolderAttributes attrs, string property, string value)
+		static void ProcessListExtensionProperty (ImapEngine engine, ref ImapFolder? folder, string encodedName, char delim, FolderAttributes attrs, string property, string? value)
 		{
-			if (property.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase)) {
+			if (property.Equals ("OLDNAME", StringComparison.OrdinalIgnoreCase) && value != null) {
 				var oldEncodedName = value.TrimEnd (delim);
 
-				if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder oldFolder)) {
+				if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder? oldFolder)) {
 					var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
 
 					engine.FolderCache.Remove (oldEncodedName);
@@ -645,12 +646,12 @@ namespace MailKit.Net.Imap {
 		/// <param name="isLsub"><see langword="true" /> if it is an LSUB response; otherwise, <see langword="false" />.</param>
 		/// <param name="returnsSubscribed"><see langword="true" /> if the LIST response is expected to return \Subscribed flags; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static void ParseFolderList (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
+		public static void ParseFolderList (ImapEngine engine, List<ImapFolder>? list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
 			var token = engine.ReadToken (cancellationToken);
 			var attrs = FolderAttributes.None;
-			ImapFolder folder = null;
+			ImapFolder? folder = null;
 			string encodedName;
 			char delim;
 
@@ -731,12 +732,12 @@ namespace MailKit.Net.Imap {
 		/// <param name="isLsub"><see langword="true" /> if it is an LSUB response; otherwise, <see langword="false" />.</param>
 		/// <param name="returnsSubscribed"><see langword="true" /> if the LIST response is expected to return \Subscribed flags; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder> list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
+		public static async Task ParseFolderListAsync (ImapEngine engine, List<ImapFolder>? list, bool isLsub, bool returnsSubscribed, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, isLsub ? "LSUB" : "LIST", "{0}");
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 			var attrs = FolderAttributes.None;
-			ImapFolder folder = null;
+			ImapFolder? folder = null;
 			string encodedName;
 			char delim;
 
@@ -817,7 +818,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		public static Task UntaggedListHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
-			var list = (List<ImapFolder>) ic.UserData;
+			var list = (List<ImapFolder>) ic.UserData!;
 
 			if (doAsync)
 				return ParseFolderListAsync (engine, list, ic.Lsub, ic.ListReturnsSubscribed, ic.CancellationToken);
@@ -894,7 +895,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="doAsync">Whether or not asynchronous IO methods should be used.</param>
 		public static Task UntaggedMetadataHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
-			var metadata = (MetadataCollection) ic.UserData;
+			var metadata = (MetadataCollection) ic.UserData!;
 
 			if (doAsync)
 				return ParseMetadataAsync (engine, metadata, ic.CancellationToken);
@@ -934,7 +935,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal static string ReadNStringToken (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
+		internal static string? ReadNStringToken (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			string value;
@@ -959,7 +960,7 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
-		internal static async ValueTask<string> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
+		internal static async ValueTask<string?> ReadNStringTokenAsync (ImapEngine engine, string format, bool rfc2047, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 			string value;
@@ -1089,7 +1090,7 @@ namespace MailKit.Net.Imap {
 
 		//static readonly string[] MediaTypes = new string[] { "text", "application", "audio", "image", "message", "multipart", "video" };
 
-		static bool IsMediaTypeWithDefaultSubtype (string type, out string subtype)
+		static bool IsMediaTypeWithDefaultSubtype (string type, [NotNullWhen (true)] out string? subtype)
 		{
 			if (type.Equals ("text", StringComparison.OrdinalIgnoreCase)) {
 				subtype = "plain";
@@ -1122,7 +1123,7 @@ namespace MailKit.Net.Imap {
 		{
 			var type = ReadNStringToken (engine, format, false, cancellationToken);
 			var token = engine.PeekToken (cancellationToken);
-			string subtype;
+			string? subtype;
 
 			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil) {
 				// Note: work around broken IMAP server implementations...
@@ -1179,7 +1180,7 @@ namespace MailKit.Net.Imap {
 		{
 			var type = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 			var token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
-			string subtype;
+			string? subtype;
 
 			if (token.Type == ImapTokenType.OpenParen || token.Type == ImapTokenType.Nil) {
 				// Note: work around broken IMAP server implementations...
@@ -1232,7 +1233,7 @@ namespace MailKit.Net.Imap {
 			return contentType;
 		}
 
-		static ContentDisposition ParseContentDisposition (ImapEngine engine, string format, CancellationToken cancellationToken)
+		static ContentDisposition? ParseContentDisposition (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			// body-fld-dsp    = "(" string SP body-fld-param ")" / nil
 			var token = engine.ReadToken (cancellationToken);
@@ -1260,7 +1261,7 @@ namespace MailKit.Net.Imap {
 			if (string.IsNullOrEmpty (dsp))
 				builder.Append (ContentDisposition.Attachment);
 			else
-				builder.Append (dsp.Trim ('"'));
+				builder.Append (dsp!.Trim ('"'));
 
 			token = engine.ReadToken (cancellationToken);
 
@@ -1283,7 +1284,7 @@ namespace MailKit.Net.Imap {
 			return disposition;
 		}
 
-		static async Task<ContentDisposition> ParseContentDispositionAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
+		static async Task<ContentDisposition?> ParseContentDispositionAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			// body-fld-dsp    = "(" string SP body-fld-param ")" / nil
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -1311,7 +1312,7 @@ namespace MailKit.Net.Imap {
 			if (string.IsNullOrEmpty (dsp))
 				builder.Append (ContentDisposition.Attachment);
 			else
-				builder.Append (dsp.Trim ('"'));
+				builder.Append (dsp!.Trim ('"'));
 
 			token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -1334,11 +1335,11 @@ namespace MailKit.Net.Imap {
 			return disposition;
 		}
 
-		static string[] ParseContentLanguage (ImapEngine engine, string format, CancellationToken cancellationToken)
+		static string[]? ParseContentLanguage (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			var languages = new List<string> ();
-			string language;
+			string? language;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1378,11 +1379,11 @@ namespace MailKit.Net.Imap {
 			return languages.ToArray ();
 		}
 
-		static async Task<string[]> ParseContentLanguageAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
+		static async Task<string[]?> ParseContentLanguageAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 			var languages = new List<string> ();
-			string language;
+			string? language;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1422,7 +1423,7 @@ namespace MailKit.Net.Imap {
 			return languages.ToArray ();
 		}
 
-		static Uri ParseContentLocation (string location)
+		static Uri? ParseContentLocation (string? location)
 		{
 			if (string.IsNullOrWhiteSpace (location))
 				return null;
@@ -1436,14 +1437,14 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
-		static Uri ParseContentLocation (ImapEngine engine, string format, CancellationToken cancellationToken)
+		static Uri? ParseContentLocation (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var location = ReadNStringToken (engine, format, false, cancellationToken);
 
 			return ParseContentLocation (location);
 		}
 
-		static async Task<Uri> ParseContentLocationAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
+		static async Task<Uri?> ParseContentLocationAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var location = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 
@@ -1866,7 +1867,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		public static BodyPart ParseBody (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		public static BodyPart? ParseBody (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -1975,7 +1976,7 @@ namespace MailKit.Net.Imap {
 			return body;
 		}
 
-		public static async Task<BodyPart> ParseBodyAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		public static async Task<BodyPart?> ParseBodyAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -2126,7 +2127,7 @@ namespace MailKit.Net.Imap {
 
 				var mailbox = Mailbox;
 				var domain = Domain;
-				string name = null;
+				string? name = null;
 				string address;
 
 				if (Name != null)
@@ -2412,7 +2413,7 @@ namespace MailKit.Net.Imap {
 		{
 			string format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "ENVELOPE", "{0}");
 			var token = engine.ReadToken (cancellationToken);
-			string nstring;
+			string? nstring;
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
@@ -2466,7 +2467,7 @@ namespace MailKit.Net.Imap {
 		{
 			string format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "ENVELOPE", "{0}");
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-			string nstring;
+			string? nstring;
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
@@ -2972,9 +2973,9 @@ namespace MailKit.Net.Imap {
 			ic.UserData = threads;
 
 			if (doAsync)
-				return ParseThreadsAsync (engine, ic.Folder.UidValidity, threads, ic.CancellationToken);
+				return ParseThreadsAsync (engine, ic.Folder!.UidValidity, threads, ic.CancellationToken);
 
-			ParseThreads (engine, ic.Folder.UidValidity, threads, ic.CancellationToken);
+			ParseThreads (engine, ic.Folder!.UidValidity, threads, ic.CancellationToken);
 
 			return Task.CompletedTask;
 		}

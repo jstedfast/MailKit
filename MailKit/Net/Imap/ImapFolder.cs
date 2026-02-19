@@ -30,6 +30,7 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 
@@ -84,6 +85,7 @@ namespace MailKit.Net.Imap {
 			InitializeProperties (args);
 		}
 
+		[MemberNotNull ("Engine", "EncodedName")]
 		void InitializeProperties (ImapFolderConstructorArgs args)
 		{
 			DirectorySeparator = args.DirectorySeparator;
@@ -242,7 +244,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void ProcessResponseCodes (ImapCommand ic, IMailFolder folder, bool throwNotFound = true)
+		void ProcessResponseCodes (ImapCommand ic, IMailFolder? folder, bool throwNotFound = true)
 		{
 			bool tryCreate = false;
 
@@ -329,9 +331,9 @@ namespace MailKit.Net.Imap {
 		static Task UntaggedQResyncFetchHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			if (doAsync)
-				return ic.Folder.OnUntaggedFetchResponseAsync (engine, index, ic.CancellationToken);
+				return ic.Folder!.OnUntaggedFetchResponseAsync (engine, index, ic.CancellationToken);
 
-			ic.Folder.OnUntaggedFetchResponse (engine, index, ic.CancellationToken);
+			ic.Folder!.OnUntaggedFetchResponse (engine, index, ic.CancellationToken);
 
 			return Task.CompletedTask;
 		}
@@ -673,11 +675,11 @@ namespace MailKit.Net.Imap {
 			return OpenAsync (ic, access);
 		}
 
-		ImapCommand QueueCloseCommand (bool expunge, CancellationToken cancellationToken)
+		ImapCommand? QueueCloseCommand (bool expunge, CancellationToken cancellationToken)
 		{
 			CheckState (true, expunge);
 
-			ImapCommand ic;
+			ImapCommand? ic;
 
 			if (expunge) {
 				ic = Engine.QueueCommand (cancellationToken, this, "CLOSE\r\n");
@@ -810,10 +812,10 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		IMailFolder ProcessGetCreatedFolderResponse (ImapCommand ic, string encodedName, string id, bool specialUse)
+		IMailFolder? ProcessGetCreatedFolderResponse (ImapCommand ic, string encodedName, string? id, bool specialUse)
 		{
-			var list = (List<ImapFolder>) ic.UserData;
-			ImapFolder folder;
+			var list = (List<ImapFolder>) ic.UserData!;
+			ImapFolder? folder;
 
 			ProcessResponseCodes (ic, null);
 
@@ -865,7 +867,7 @@ namespace MailKit.Net.Imap {
 			return (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
 		}
 
-		IMailFolder Create (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
+		IMailFolder? Create (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
 		{
 			Engine.Run (ic);
 
@@ -879,7 +881,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetCreatedFolderResponse (ic, encodedName, id, specialUse);
 		}
 
-		async Task<IMailFolder> CreateAsync (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
+		async Task<IMailFolder?> CreateAsync (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
 		{
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -933,7 +935,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
+		public override IMailFolder? Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueCreateCommand (name, isMessageFolder, cancellationToken, out var encodedName);
 
@@ -980,7 +982,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
+		public override Task<IMailFolder?> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueCreateCommand (name, isMessageFolder, cancellationToken, out var encodedName);
 
@@ -1090,7 +1092,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
+		public override IMailFolder? Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueCreateCommand (name, specialUses, cancellationToken, out var encodedName);
 
@@ -1142,7 +1144,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
+		public override Task<IMailFolder?> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueCreateCommand (name, specialUses, cancellationToken, out var encodedName);
 
@@ -1623,7 +1625,7 @@ namespace MailKit.Net.Imap {
 			ProcessUnsubscribeResponse (ic);
 		}
 
-		ImapCommand QueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder> list, out bool status)
+		ImapCommand? QueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder>? list, out bool status)
 		{
 			CheckState (false, false);
 
@@ -1781,12 +1783,12 @@ namespace MailKit.Net.Imap {
 
 			Engine.Run (ic);
 
-			var children = ProcessGetSubfoldersResponse (ic, list, out var unparented);
+			var children = ProcessGetSubfoldersResponse (ic, list!, out var unparented);
 
 			// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 			// parent folders now so that they are not left in an inconsistent state.
 			if (unparented)
-				Engine.LookupParentFolders (list, cancellationToken);
+				Engine.LookupParentFolders (list!, cancellationToken);
 
 			if (status) {
 				for (int i = 0; i < children.Count; i++) {
@@ -1838,12 +1840,12 @@ namespace MailKit.Net.Imap {
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			var children = ProcessGetSubfoldersResponse (ic, list, out var unparented);
+			var children = ProcessGetSubfoldersResponse (ic, list!, out var unparented);
 
 			// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 			// parent folders now so that they are not left in an inconsistent state.
 			if (unparented)
-				await Engine.LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
+				await Engine.LookupParentFoldersAsync (list!, cancellationToken).ConfigureAwait (false);
 
 			if (status) {
 				for (int i = 0; i < children.Count; i++) {
@@ -1855,7 +1857,7 @@ namespace MailKit.Net.Imap {
 			return children;
 		}
 
-		ImapCommand QueueGetSubfolderCommand (string name, CancellationToken cancellationToken, out List<ImapFolder> list, out string fullName, out string encodedName, out ImapFolder folder)
+		ImapCommand? QueueGetSubfolderCommand (string name, CancellationToken cancellationToken, out List<ImapFolder>? list, out string? fullName, out string? encodedName, out ImapFolder? folder)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -1895,9 +1897,9 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		ImapFolder ProcessGetSubfolderResponse (ImapCommand ic, List<ImapFolder> list, string encodedName)
+		ImapFolder? ProcessGetSubfolderResponse (ImapCommand ic, List<ImapFolder> list, string encodedName)
 		{
-			ImapFolder folder;
+			ImapFolder? folder;
 
 			ProcessResponseCodes (ic, null);
 
@@ -1957,16 +1959,16 @@ namespace MailKit.Net.Imap {
 
 			Engine.Run (ic);
 
-			folder = ProcessGetSubfolderResponse (ic, list, encodedName);
+			folder = ProcessGetSubfolderResponse (ic, list!, encodedName!);
 
-			if (list.Count > 1 || folder == null) {
+			if (list!.Count > 1 || folder == null) {
 				// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 				// parent folders now so that they are not left in an inconsistent state.
 				Engine.LookupParentFolders (list, cancellationToken);
 			}
 
 			if (folder == null)
-				throw new FolderNotFoundException (fullName);
+				throw new FolderNotFoundException (fullName!);
 
 			return folder;
 		}
@@ -2019,16 +2021,16 @@ namespace MailKit.Net.Imap {
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			folder = ProcessGetSubfolderResponse (ic, list, encodedName);
+			folder = ProcessGetSubfolderResponse (ic, list!, encodedName!);
 
-			if (list.Count > 1 || folder == null) {
+			if (list!.Count > 1 || folder == null) {
 				// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 				// parent folders now so that they are not left in an inconsistent state.
 				await Engine.LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 			}
 
 			if (folder == null)
-				throw new FolderNotFoundException (fullName);
+				throw new FolderNotFoundException (fullName!);
 
 			return folder;
 		}
@@ -2134,7 +2136,7 @@ namespace MailKit.Net.Imap {
 			ProcessCheckResponse (ic);
 		}
 
-		ImapCommand QueueStatusCommand (StatusItems items, CancellationToken cancellationToken)
+		ImapCommand? QueueStatusCommand (StatusItems items, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
@@ -2282,7 +2284,7 @@ namespace MailKit.Net.Imap {
 		static void ParseAcl (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ACL", "{0}");
-			var acl = (AccessControlList) ic.UserData;
+			var acl = (AccessControlList) ic.UserData!;
 			string name, rights;
 			ImapToken token;
 
@@ -2302,7 +2304,7 @@ namespace MailKit.Net.Imap {
 		static async Task ParseAclAsync (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ACL", "{0}");
-			var acl = (AccessControlList) ic.UserData;
+			var acl = (AccessControlList) ic.UserData!;
 			string name, rights;
 			ImapToken token;
 
@@ -2351,7 +2353,7 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("GETACL");
 
-			return (AccessControlList) ic.UserData;
+			return (AccessControlList) ic.UserData!;
 		}
 
 		/// <summary>
@@ -2439,7 +2441,7 @@ namespace MailKit.Net.Imap {
 		static void ParseListRights (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "LISTRIGHTS", "{0}");
-			var access = (AccessRights) ic.UserData;
+			var access = (AccessRights) ic.UserData!;
 			ImapToken token;
 
 			// read the mailbox name
@@ -2460,7 +2462,7 @@ namespace MailKit.Net.Imap {
 		static async Task ParseListRightsAsync (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "LISTRIGHTS", "{0}");
-			var access = (AccessRights) ic.UserData;
+			var access = (AccessRights) ic.UserData!;
 			ImapToken token;
 
 			// read the mailbox name
@@ -2513,7 +2515,7 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("LISTRIGHTS");
 
-			return (AccessRights) ic.UserData;
+			return (AccessRights) ic.UserData!;
 		}
 
 		/// <summary>
@@ -2609,7 +2611,7 @@ namespace MailKit.Net.Imap {
 		static void ParseMyRights (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "MYRIGHTS", "{0}");
-			var access = (AccessRights) ic.UserData;
+			var access = (AccessRights) ic.UserData!;
 
 			// read the mailbox name
 			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
@@ -2621,7 +2623,7 @@ namespace MailKit.Net.Imap {
 		static async Task ParseMyRightsAsync (ImapEngine engine, ImapCommand ic)
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "MYRIGHTS", "{0}");
-			var access = (AccessRights) ic.UserData;
+			var access = (AccessRights) ic.UserData!;
 
 			// read the mailbox name
 			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
@@ -2662,7 +2664,7 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("MYRIGHTS");
 
-			return (AccessRights) ic.UserData;
+			return (AccessRights) ic.UserData!;
 		}
 
 		/// <summary>
@@ -3196,15 +3198,15 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		string ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
+		string? ProcessGetMetadataResponse (ImapCommand ic, MetadataTag tag)
 		{
-			var metadata = (MetadataCollection) ic.UserData;
+			var metadata = (MetadataCollection) ic.UserData!;
 
 			ProcessResponseCodes (ic, null);
 
 			ic.ThrowIfNotOk ("GETMETADATA");
 
-			string value = null;
+			string? value = null;
 
 			for (int i = 0; i < metadata.Count; i++) {
 				if (metadata[i].EncodedName == EncodedName && metadata[i].Tag.Id == tag.Id) {
@@ -3252,7 +3254,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
+		public override string? GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueGetMetadataCommand (tag, cancellationToken);
 
@@ -3294,7 +3296,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
+		public override async Task<string?> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueGetMetadataCommand (tag, cancellationToken);
 
@@ -3303,7 +3305,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, tag);
 		}
 
-		ImapCommand QueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
+		ImapCommand? QueueGetMetadataCommand (MetadataOptions options, IEnumerable<MetadataTag> tags, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -3375,7 +3377,7 @@ namespace MailKit.Net.Imap {
 			if (metadata != null && metadata.SubType == MetadataResponseCodeSubType.LongEntries)
 				options.LongEntries = metadata.Value;
 
-			return Engine.FilterMetadata ((MetadataCollection) ic.UserData, EncodedName);
+			return Engine.FilterMetadata ((MetadataCollection) ic.UserData!, EncodedName);
 		}
 
 		/// <summary>
@@ -3480,7 +3482,7 @@ namespace MailKit.Net.Imap {
 			return ProcessGetMetadataResponse (ic, options);
 		}
 
-		ImapCommand QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
+		ImapCommand? QueueSetMetadataCommand (MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			if (metadata == null)
 				throw new ArgumentNullException (nameof (metadata));
@@ -3650,7 +3652,7 @@ namespace MailKit.Net.Imap {
 		static void ParseQuotaRoot (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
-			var ctx = (QuotaContext) ic.UserData;
+			var ctx = (QuotaContext) ic.UserData!;
 
 			// The first token should be the mailbox name
 			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
@@ -3669,7 +3671,7 @@ namespace MailKit.Net.Imap {
 		static async Task ParseQuotaRootAsync (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
-			var ctx = (QuotaContext) ic.UserData;
+			var ctx = (QuotaContext) ic.UserData!;
 
 			// The first token should be the mailbox name
 			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
@@ -3707,7 +3709,7 @@ namespace MailKit.Net.Imap {
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
 			var quotaRoot = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
-			var ctx = (QuotaContext) ic.UserData;
+			var ctx = (QuotaContext) ic.UserData!;
 			var quota = new Quota ();
 
 			var token = engine.ReadToken (ic.CancellationToken);
@@ -3757,7 +3759,7 @@ namespace MailKit.Net.Imap {
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
 			var quotaRoot = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
-			var ctx = (QuotaContext) ic.UserData;
+			var ctx = (QuotaContext) ic.UserData!;
 			var quota = new Quota ();
 
 			var token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
@@ -3840,9 +3842,9 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		bool TryProcessGetQuotaResponse (ImapCommand ic, out string encodedName, out Quota quota)
+		bool TryProcessGetQuotaResponse (ImapCommand ic, [NotNullWhen (true)] out string? encodedName, [NotNullWhen (true)] out Quota? quota)
 		{
-			var ctx = (QuotaContext) ic.UserData;
+			var ctx = (QuotaContext) ic.UserData!;
 
 			ProcessResponseCodes (ic, null);
 
@@ -4001,7 +4003,7 @@ namespace MailKit.Net.Imap {
 
 		FolderQuota ProcessSetQuotaResponse (ImapCommand ic)
 		{
-			var ctx = (QuotaContext) ic.UserData;
+			var ctx = (QuotaContext) ic.UserData!;
 
 			ProcessResponseCodes (ic, null);
 
@@ -4652,9 +4654,10 @@ namespace MailKit.Net.Imap {
 						list.Add (keyword);
 				}
 
-				if (requests[i].InternalDate.HasValue) {
+				var internalDate = requests[i].InternalDate;
+				if (internalDate.HasValue) {
 					builder.Append ('"');
-					builder.Append (ImapUtils.FormatInternalDate (requests[i].InternalDate.Value));
+					builder.Append (ImapUtils.FormatInternalDate (internalDate.Value));
 					builder.Append ("\" ");
 				}
 
@@ -5356,7 +5359,7 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		void GetCopiedUids (ImapCommand ic, ref UniqueIdSet src, ref UniqueIdSet dest)
+		static void GetCopiedUids (ImapCommand ic, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
@@ -5366,12 +5369,12 @@ namespace MailKit.Net.Imap {
 					src = copy.SrcUidSet;
 				} else {
 					dest.AddRange (copy.DestUidSet);
-					src.AddRange (copy.SrcUidSet);
+					src!.AddRange (copy.SrcUidSet);
 				}
 			}
 		}
 
-		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			ProcessCopyToResponse (ic, destination);
 
@@ -5443,8 +5446,8 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
 				Engine.Run (ic);
@@ -5455,7 +5458,7 @@ namespace MailKit.Net.Imap {
 			if (dest == null)
 				return UniqueIdMap.Empty;
 
-			return new UniqueIdMap (src, dest);
+			return new UniqueIdMap (src!, dest);
 		}
 
 		/// <summary>
@@ -5523,8 +5526,8 @@ namespace MailKit.Net.Imap {
 				return UniqueIdMap.Empty;
 			}
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -5535,10 +5538,10 @@ namespace MailKit.Net.Imap {
 			if (dest == null)
 				return UniqueIdMap.Empty;
 
-			return new UniqueIdMap (src, dest);
+			return new UniqueIdMap (src!, dest);
 		}
 
-		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet src, ref UniqueIdSet dest)
+		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			ProcessMoveToResponse (ic, destination);
 
@@ -5625,8 +5628,8 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
 				Engine.Run (ic);
@@ -5637,7 +5640,7 @@ namespace MailKit.Net.Imap {
 			if (dest == null)
 				return UniqueIdMap.Empty;
 
-			return new UniqueIdMap (src, dest);
+			return new UniqueIdMap (src!, dest);
 		}
 
 		/// <summary>
@@ -5720,8 +5723,8 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			UniqueIdSet dest = null;
-			UniqueIdSet src = null;
+			UniqueIdSet? dest = null;
+			UniqueIdSet? src = null;
 
 			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -5732,7 +5735,7 @@ namespace MailKit.Net.Imap {
 			if (dest == null)
 				return UniqueIdMap.Empty;
 
-			return new UniqueIdMap (src, dest);
+			return new UniqueIdMap (src!, dest);
 		}
 
 		void ValidateArguments (IList<int> indexes, IMailFolder destination)
@@ -5743,7 +5746,7 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		ImapCommand QueueCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand? QueueCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -5890,7 +5893,7 @@ namespace MailKit.Net.Imap {
 			ProcessCopyToResponse (ic, destination);
 		}
 
-		ImapCommand QueueMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand? QueueMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -6122,7 +6125,7 @@ namespace MailKit.Net.Imap {
 				uid = message.UniqueId;
 
 			if ((message.Fields & MessageSummaryItems.Flags) != 0) {
-				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, (HashSet<string>) message.Keywords) {
+				var args = new MessageFlagsChangedEventArgs (index, message.Flags!.Value, (HashSet<string>) message.Keywords) {
 					ModSeq = message.ModSeq,
 					UniqueId = uid
 				};
@@ -6149,7 +6152,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if ((message.Fields & MessageSummaryItems.ModSeq) != 0) {
-				var args = new ModSeqChangedEventArgs (index, message.ModSeq.Value) {
+				var args = new ModSeqChangedEventArgs (index, message.ModSeq!.Value) {
 					UniqueId = uid
 				};
 

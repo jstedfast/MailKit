@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 
@@ -119,10 +120,10 @@ namespace MailKit.Net.Imap {
 			DirectorySeparator = directorySeparator;
 		}
 
-		public bool Equals (string x, string y)
+		public bool Equals (string? x, string? y)
 		{
-			x = ImapUtils.CanonicalizeMailboxName (x, DirectorySeparator);
-			y = ImapUtils.CanonicalizeMailboxName (y, DirectorySeparator);
+			x = ImapUtils.CanonicalizeMailboxName (x!, DirectorySeparator);
+			y = ImapUtils.CanonicalizeMailboxName (y!, DirectorySeparator);
 
 			return x == y;
 		}
@@ -158,7 +159,7 @@ namespace MailKit.Net.Imap {
 		readonly List<ImapCommand> queue;
 		long clientConnectedTimestamp;
 		internal char TagPrefix;
-		ImapCommand current;
+		ImapCommand? current;
 		MimeParser parser;
 		internal int Tag;
 		bool disposed;
@@ -438,7 +439,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the selected folder.
 		/// </remarks>
 		/// <value>The selected folder.</value>
-		public ImapFolder Selected {
+		public ImapFolder? Selected {
 			get; internal set;
 		}
 
@@ -470,7 +471,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the Inbox folder.
 		/// </summary>
 		/// <value>The Inbox folder.</value>
-		public ImapFolder Inbox {
+		public ImapFolder? Inbox {
 			get; private set;
 		}
 
@@ -478,7 +479,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special folder containing an aggregate of all messages.
 		/// </summary>
 		/// <value>The folder containing all messages.</value>
-		public ImapFolder All {
+		public ImapFolder? All {
 			get; private set;
 		}
 
@@ -486,7 +487,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special archive folder.
 		/// </summary>
 		/// <value>The archive folder.</value>
-		public ImapFolder Archive {
+		public ImapFolder? Archive {
 			get; private set;
 		}
 
@@ -494,7 +495,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special folder containing drafts.
 		/// </summary>
 		/// <value>The drafts folder.</value>
-		public ImapFolder Drafts {
+		public ImapFolder? Drafts {
 			get; private set;
 		}
 
@@ -502,7 +503,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special folder containing flagged messages.
 		/// </summary>
 		/// <value>The flagged folder.</value>
-		public ImapFolder Flagged {
+		public ImapFolder? Flagged {
 			get; private set;
 		}
 
@@ -510,7 +511,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special folder containing important messages.
 		/// </summary>
 		/// <value>The important folder.</value>
-		public ImapFolder Important {
+		public ImapFolder? Important {
 			get; private set;
 		}
 
@@ -518,7 +519,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special folder containing junk messages.
 		/// </summary>
 		/// <value>The junk folder.</value>
-		public ImapFolder Junk {
+		public ImapFolder? Junk {
 			get; private set;
 		}
 
@@ -526,7 +527,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the special folder containing sent messages.
 		/// </summary>
 		/// <value>The sent.</value>
-		public ImapFolder Sent {
+		public ImapFolder? Sent {
 			get; private set;
 		}
 
@@ -534,7 +535,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the folder containing deleted messages.
 		/// </summary>
 		/// <value>The trash folder.</value>
-		public ImapFolder Trash {
+		public ImapFolder? Trash {
 			get; private set;
 		}
 
@@ -623,7 +624,7 @@ namespace MailKit.Net.Imap {
 			Stream = stream;
 		}
 
-		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind, Uri uri = null)
+		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind, Uri? uri = null)
 		{
 #if NET6_0_OR_GREATER
 			return NetworkOperation.Start (kind, uri ?? Uri, Telemetry.ImapClient.ActivitySource, metrics);
@@ -831,7 +832,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void RecordClientDisconnected (Exception ex)
+		void RecordClientDisconnected (Exception? ex)
 		{
 #if NET6_0_OR_GREATER
 			metrics?.RecordClientDisconnected (clientConnectedTimestamp, Uri, ex);
@@ -846,7 +847,7 @@ namespace MailKit.Net.Imap {
 		/// Disconnects the <see cref="ImapEngine"/>.
 		/// </remarks>
 		/// <param name="ex">The exception that is causing the disconnection.</param>
-		public void Disconnect (Exception ex)
+		public void Disconnect (Exception? ex)
 		{
 			RecordClientDisconnected (ex);
 
@@ -1477,7 +1478,7 @@ namespace MailKit.Net.Imap {
 			while (token.Type == ImapTokenType.Atom) {
 				var atom = token.Value.ToString ();
 
-				ProcessCapabilityToken (atom);
+				ProcessCapabilityToken (atom!);
 
 				token = ReadToken (cancellationToken);
 			}
@@ -1504,7 +1505,7 @@ namespace MailKit.Net.Imap {
 			while (token.Type == ImapTokenType.Atom) {
 				var atom = token.Value.ToString ();
 
-				ProcessCapabilityToken (atom);
+				ProcessCapabilityToken (atom!);
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 			}
@@ -2527,7 +2528,7 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		static bool UpdateSimpleStatusValue (ImapFolder folder, string atom, ImapToken token)
+		static bool UpdateSimpleStatusValue (ImapFolder? folder, string atom, ImapToken token)
 		{
 			uint count, uid;
 			ulong modseq;
@@ -2750,8 +2751,8 @@ namespace MailKit.Net.Imap {
 		internal void ProcessUntaggedResponse (CancellationToken cancellationToken)
 		{
 			var token = ReadToken (cancellationToken);
-			var folder = current.Folder ?? Selected;
-			ImapUntaggedHandler handler;
+			var folder = current!.Folder ?? Selected;
+			ImapUntaggedHandler? handler;
 			string atom;
 
 			// Note: work around broken IMAP servers such as home.pl which sends "* [COPYUID ...]" resp-codes
@@ -2813,7 +2814,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
 				var flags = ImapUtils.ParseFlagsList (this, atom, keywords, cancellationToken);
-				folder.UpdateAcceptedFlags (flags, keywords);
+				folder!.UpdateAcceptedFlags (flags, keywords);
 				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
@@ -2903,8 +2904,8 @@ namespace MailKit.Net.Imap {
 		internal async Task ProcessUntaggedResponseAsync (CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-			var folder = current.Folder ?? Selected;
-			ImapUntaggedHandler handler;
+			var folder = current!.Folder ?? Selected;
+			ImapUntaggedHandler? handler;
 			string atom;
 
 			// Note: work around broken IMAP servers such as home.pl which sends "* [COPYUID ...]" resp-codes
@@ -2966,7 +2967,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
 				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, cancellationToken).ConfigureAwait (false);
-				folder.UpdateAcceptedFlags (flags, keywords);
+				folder!.UpdateAcceptedFlags (flags, keywords);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
@@ -3072,7 +3073,7 @@ namespace MailKit.Net.Imap {
 
 		void OnImapProtocolException (ImapProtocolException ex)
 		{
-			var ic = current;
+			var ic = current!;
 
 			Disconnect (ex);
 
@@ -3088,7 +3089,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (!string.IsNullOrEmpty (ic.ResponseText))
-					throw new ImapProtocolException (ic.ResponseText);
+					throw new ImapProtocolException (ic.ResponseText!);
 			}
 		}
 
@@ -3099,7 +3100,7 @@ namespace MailKit.Net.Imap {
 		{
 			PopNextCommand ();
 
-			current.Status = ImapCommandStatus.Active;
+			current!.Status = ImapCommandStatus.Active;
 
 			try {
 				while (current.Step ()) {
@@ -3126,7 +3127,7 @@ namespace MailKit.Net.Imap {
 		{
 			PopNextCommand ();
 
-			current.Status = ImapCommandStatus.Active;
+			current!.Status = ImapCommandStatus.Active;
 
 			try {
 				while (await current.StepAsync ().ConfigureAwait (false)) {
@@ -3257,7 +3258,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
-		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
+		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder? folder, FormatOptions options, string format, params object[] args)
 		{
 			var ic = new ImapCommand (this, cancellationToken, folder, options, format, args);
 			QueueCommand (ic);
@@ -3272,7 +3273,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="folder">The folder that the command operates on.</param>
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
-		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
+		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder? folder, string format, params object[] args)
 		{
 			return QueueCommand (cancellationToken, folder, FormatOptions.Default, format, args);
 		}
@@ -3331,12 +3332,12 @@ namespace MailKit.Net.Imap {
 		/// <returns><see langword="true" /> if the folder was retrieved from the cache; otherwise, <see langword="false" />.</returns>
 		/// <param name="encodedName">The encoded folder name.</param>
 		/// <param name="folder">The cached folder.</param>
-		public bool TryGetCachedFolder (string encodedName, out ImapFolder folder)
+		public bool TryGetCachedFolder (string encodedName, [NotNullWhen (true)] out ImapFolder? folder)
 		{
 			return FolderCache.TryGetValue (encodedName, out folder);
 		}
 
-		bool RequiresParentLookup (ImapFolder folder, out string encodedParentName)
+		bool RequiresParentLookup (ImapFolder folder, [NotNullWhen (true)] out string? encodedParentName)
 		{
 			encodedParentName = null;
 
@@ -3554,7 +3555,7 @@ namespace MailKit.Net.Imap {
 			return ic.Response;
 		}
 
-		internal static ImapFolder GetFolder (List<ImapFolder> folders, string encodedName)
+		internal static ImapFolder? GetFolder (List<ImapFolder> folders, string encodedName)
 		{
 			for (int i = 0; i < folders.Count; i++) {
 				if (encodedName.Equals (folders[i].EncodedName, StringComparison.OrdinalIgnoreCase))
@@ -3790,9 +3791,9 @@ namespace MailKit.Net.Imap {
 
 		ImapFolder ProcessGetQuotaRootResponse (ImapCommand ic, string quotaRoot, out List<ImapFolder> list)
 		{
-			ImapFolder folder;
+			ImapFolder? folder;
 
-			list = (List<ImapFolder>) ic.UserData;
+			list = (List<ImapFolder>) ic.UserData!;
 
 			ic.ThrowIfNotOk ("LIST");
 
@@ -3873,9 +3874,9 @@ namespace MailKit.Net.Imap {
 
 		static ImapFolder ProcessGetFolderResponse (ImapCommand ic, string path, string encodedName, out List<ImapFolder> list)
 		{
-			ImapFolder folder;
+			ImapFolder? folder;
 
-			list = (List<ImapFolder>) ic.UserData;
+			list = (List<ImapFolder>) ic.UserData!;
 
 			ic.ThrowIfNotOk ("LIST");
 
@@ -4064,7 +4065,7 @@ namespace MailKit.Net.Imap {
 		public IList<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var ic = QueueGetFoldersCommand (@namespace, items, subscribedOnly, cancellationToken, out bool status);
-			var list = (List<ImapFolder>) ic.UserData;
+			var list = (List<ImapFolder>) ic.UserData!;
 
 			Run (ic);
 
@@ -4096,7 +4097,7 @@ namespace MailKit.Net.Imap {
 		public async Task<IList<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var ic = QueueGetFoldersCommand (@namespace, items, subscribedOnly, cancellationToken, out bool status);
-			var list = (List<ImapFolder>) ic.UserData;
+			var list = (List<ImapFolder>) ic.UserData!;
 
 			await RunAsync (ic).ConfigureAwait (false);
 
