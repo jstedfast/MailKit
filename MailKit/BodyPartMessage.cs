@@ -53,7 +53,7 @@ namespace MailKit {
 		/// Gets the envelope of the message, if available.
 		/// </remarks>
 		/// <value>The envelope.</value>
-		public Envelope Envelope {
+		public Envelope? Envelope {
 			get; set;
 		}
 
@@ -64,7 +64,7 @@ namespace MailKit {
 		/// Gets the body structure of the message.
 		/// </remarks>
 		/// <value>The body structure.</value>
-		public BodyPart Body {
+		public BodyPart? Body {
 			get; set;
 		}
 

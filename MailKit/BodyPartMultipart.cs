@@ -67,7 +67,7 @@ namespace MailKit {
 		/// Gets the Content-Disposition of the body part, if available.
 		/// </remarks>
 		/// <value>The content disposition.</value>
-		public ContentDisposition ContentDisposition {
+		public ContentDisposition? ContentDisposition {
 			get; set;
 		}
 
@@ -78,7 +78,7 @@ namespace MailKit {
 		/// Gets the Content-Language of the body part, if available.
 		/// </remarks>
 		/// <value>The content language.</value>
-		public string[] ContentLanguage {
+		public string[]? ContentLanguage {
 			get; set;
 		}
 
@@ -89,7 +89,7 @@ namespace MailKit {
 		/// Gets the Content-Location of the body part, if available.
 		/// </remarks>
 		/// <value>The content location.</value>
-		public Uri ContentLocation {
+		public Uri? ContentLocation {
 			get; set;
 		}
 

@@ -55,7 +55,7 @@ namespace MailKit {
 		/// Gets the folder that the message belongs to, if available.
 		/// </remarks>
 		/// <value>The folder.</value>
-		IMailFolder Folder {
+		IMailFolder? Folder {
 			get;
 		}
 
@@ -83,7 +83,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The body structure of the message.</value>
-		BodyPart Body { get; }
+		BodyPart? Body { get; }
 
 		/// <summary>
 		/// Gets the text body part of the message if it exists.
@@ -100,7 +100,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <value>The text body if it exists; otherwise, <see langword="null" />.</value>
-		BodyPartText TextBody { get; }
+		BodyPartText? TextBody { get; }
 
 		/// <summary>
 		/// Gets the html body part of the message if it exists.
@@ -117,7 +117,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
 		/// </example>
 		/// <value>The html body if it exists; otherwise, <see langword="null" />.</value>
-		BodyPartText HtmlBody { get; }
+		BodyPartText? HtmlBody { get; }
 
 		/// <summary>
 		/// Gets the body parts of the message.
@@ -168,7 +168,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The preview text.</value>
-		string PreviewText { get; }
+		string? PreviewText { get; }
 
 		/// <summary>
 		/// Gets the envelope of the message, if available.
@@ -186,7 +186,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The envelope of the message.</value>
-		Envelope Envelope { get; }
+		Envelope? Envelope { get; }
 
 		/// <summary>
 		/// Gets the normalized subject.
@@ -257,7 +257,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The message annotations.</value>
-		IReadOnlyList<Annotation> Annotations { get; }
+		IReadOnlyList<Annotation>? Annotations { get; }
 
 		/// <summary>
 		/// Gets the list of headers, if available.
@@ -271,7 +271,7 @@ namespace MailKit {
 		/// </para>
 		/// </remarks>
 		/// <value>The list of headers.</value>
-		HeaderList Headers { get; }
+		HeaderList? Headers { get; }
 
 		/// <summary>
 		/// Gets the internal date of the message, if available.
@@ -341,7 +341,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The references.</value>
-		MessageIdList References { get; }
+		MessageIdList? References { get; }
 
 		/// <summary>
 		/// Get the globally unique identifier for the message, if available.
@@ -357,7 +357,7 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The globally unique message identifier.</value>
-		string EmailId { get; }
+		string? EmailId { get; }
 
 		/// <summary>
 		/// Get the globally unique thread identifier for the message, if available.
@@ -373,7 +373,7 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The globally unique thread identifier.</value>
-		string ThreadId { get; }
+		string? ThreadId { get; }
 
 		/// <summary>
 		/// Gets the unique identifier of the message, if available.
@@ -441,7 +441,7 @@ namespace MailKit {
 		/// methods.</para>
 		/// </remarks>
 		/// <value>The GMail labels.</value>
-		IList<string> GMailLabels { get; }
+		IList<string>? GMailLabels { get; }
 
 		#endregion
 	}

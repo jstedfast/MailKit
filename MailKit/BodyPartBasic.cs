@@ -59,7 +59,7 @@ namespace MailKit {
 		/// Gets the Content-Id of the body part, if available.
 		/// </remarks>
 		/// <value>The content identifier.</value>
-		public string ContentId {
+		public string? ContentId {
 			get; set;
 		}
 
@@ -70,7 +70,7 @@ namespace MailKit {
 		/// Gets the Content-Description of the body part, if available.
 		/// </remarks>
 		/// <value>The content description.</value>
-		public string ContentDescription {
+		public string? ContentDescription {
 			get; set;
 		}
 
@@ -83,7 +83,7 @@ namespace MailKit {
 		/// method to parse this value into a usable <see cref="MimeKit.ContentEncoding"/>.</para>
 		/// </remarks>
 		/// <value>The content transfer encoding.</value>
-		public string ContentTransferEncoding {
+		public string? ContentTransferEncoding {
 			get; set;
 		}
 
@@ -107,7 +107,7 @@ namespace MailKit {
 		/// Gets the MD5 hash of the content, if available.
 		/// </remarks>
 		/// <value>The content md5.</value>
-		public string ContentMd5 {
+		public string? ContentMd5 {
 			get; set;
 		}
 
@@ -121,7 +121,7 @@ namespace MailKit {
 		/// summary information from an <see cref="IMailFolder"/>.</note>
 		/// </remarks>
 		/// <value>The content disposition.</value>
-		public ContentDisposition ContentDisposition {
+		public ContentDisposition? ContentDisposition {
 			get; set;
 		}
 
@@ -135,7 +135,7 @@ namespace MailKit {
 		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The content language.</value>
-		public string[] ContentLanguage {
+		public string[]? ContentLanguage {
 			get; set;
 		}
 
@@ -149,7 +149,7 @@ namespace MailKit {
 		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The content location.</value>
-		public Uri ContentLocation {
+		public Uri? ContentLocation {
 			get; set;
 		}
 
@@ -179,9 +179,9 @@ namespace MailKit {
 		/// fetching summary information from an <see cref="IMailFolder"/>.</note>
 		/// </remarks>
 		/// <value>The name of the file.</value>
-		public string FileName {
+		public string? FileName {
 			get {
-				string filename = null;
+				string? filename = null;
 
 				if (ContentDisposition != null)
 					filename = ContentDisposition.FileName;

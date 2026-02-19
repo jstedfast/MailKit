@@ -28,6 +28,7 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -136,7 +137,7 @@ namespace MailKit {
 		/// The Message-Id that the message is replying to.
 		/// </remarks>
 		/// <value>The Message-Id that the message is replying to.</value>
-		public string InReplyTo {
+		public string? InReplyTo {
 			get; set;
 		}
 
@@ -158,7 +159,7 @@ namespace MailKit {
 		/// Gets the ID of the message, if available.
 		/// </remarks>
 		/// <value>The message identifier.</value>
-		public string MessageId {
+		public string? MessageId {
 			get; set;
 		}
 
@@ -169,7 +170,7 @@ namespace MailKit {
 		/// Gets the subject of the message.
 		/// </remarks>
 		/// <value>The subject.</value>
-		public string Subject {
+		public string? Subject {
 			get; set;
 		}
 
@@ -351,7 +352,7 @@ namespace MailKit {
 			return string.Compare (text, index, "NIL", 0, 3, StringComparison.Ordinal) == 0;
 		}
 
-		static bool TryParse (string text, ref int index, out string nstring)
+		static bool TryParse (string text, ref int index, out string? nstring)
 		{
 			nstring = null;
 
@@ -399,7 +400,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out InternetAddress addr)
+		static bool TryParse (string text, ref int index, [NotNullWhen (true)] out InternetAddress? addr)
 		{
 			addr = null;
 
@@ -408,16 +409,16 @@ namespace MailKit {
 
 			index++;
 
-			if (!TryParse (text, ref index, out string name))
+			if (!TryParse (text, ref index, out string? name))
 				return false;
 
-			if (!TryParse (text, ref index, out string route))
+			if (!TryParse (text, ref index, out string? route))
 				return false;
 
-			if (!TryParse (text, ref index, out string user))
+			if (!TryParse (text, ref index, out string? user))
 				return false;
 
-			if (!TryParse (text, ref index, out string domain))
+			if (!TryParse (text, ref index, out string? domain))
 				return false;
 
 			while (index < text.Length && text[index] == ' ')
@@ -445,7 +446,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out InternetAddressList list)
+		static bool TryParse (string text, ref int index, [NotNullWhen (true)] out InternetAddressList? list)
 		{
 			list = null;
 
@@ -480,7 +481,7 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out InternetAddress addr))
+				if (!TryParse (text, ref index, out InternetAddress? addr))
 					return false;
 
 				if (addr != null) {
@@ -510,7 +511,7 @@ namespace MailKit {
 			return true;
 		}
 
-		internal static bool TryParse (string text, ref int index, out Envelope envelope)
+		internal static bool TryParse (string text, ref int index, out Envelope? envelope)
 		{
 			DateTimeOffset? date = null;
 
@@ -530,7 +531,7 @@ namespace MailKit {
 
 			index++;
 
-			if (!TryParse (text, ref index, out string nstring))
+			if (!TryParse (text, ref index, out string? nstring))
 				return false;
 
 			if (nstring != null) {
@@ -540,31 +541,31 @@ namespace MailKit {
 				date = value;
 			}
 
-			if (!TryParse (text, ref index, out string subject))
+			if (!TryParse (text, ref index, out string? subject))
 				return false;
 
-			if (!TryParse (text, ref index, out InternetAddressList from))
+			if (!TryParse (text, ref index, out InternetAddressList? from))
 				return false;
 
-			if (!TryParse (text, ref index, out InternetAddressList sender))
+			if (!TryParse (text, ref index, out InternetAddressList? sender))
 				return false;
 
-			if (!TryParse (text, ref index, out InternetAddressList replyto))
+			if (!TryParse (text, ref index, out InternetAddressList? replyto))
 				return false;
 
-			if (!TryParse (text, ref index, out InternetAddressList to))
+			if (!TryParse (text, ref index, out InternetAddressList? to))
 				return false;
 
-			if (!TryParse (text, ref index, out InternetAddressList cc))
+			if (!TryParse (text, ref index, out InternetAddressList? cc))
 				return false;
 
-			if (!TryParse (text, ref index, out InternetAddressList bcc))
+			if (!TryParse (text, ref index, out InternetAddressList? bcc))
 				return false;
 
-			if (!TryParse (text, ref index, out string inreplyto))
+			if (!TryParse (text, ref index, out string? inreplyto))
 				return false;
 
-			if (!TryParse (text, ref index, out string messageid))
+			if (!TryParse (text, ref index, out string? messageid))
 				return false;
 
 			if (index >= text.Length || text[index] != ')')
@@ -602,7 +603,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
-		public static bool TryParse (string text, out Envelope envelope)
+		public static bool TryParse (string text, out Envelope? envelope)
 		{
 			if (text == null)
 				throw new ArgumentNullException (nameof (text));

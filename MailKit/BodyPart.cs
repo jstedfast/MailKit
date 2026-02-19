@@ -28,6 +28,7 @@ using System;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -103,7 +104,7 @@ namespace MailKit {
 			builder.Append (value.ToString (CultureInfo.InvariantCulture));
 		}
 
-		internal static void Encode (StringBuilder builder, string value)
+		internal static void Encode (StringBuilder builder, string? value)
 		{
 			if (value != null)
 				MimeUtils.AppendQuoted (builder, value);
@@ -111,7 +112,7 @@ namespace MailKit {
 				builder.Append ("NIL");
 		}
 
-		internal static void Encode (StringBuilder builder, Uri location)
+		internal static void Encode (StringBuilder builder, Uri? location)
 		{
 			if (location != null)
 				MimeUtils.AppendQuoted (builder, location.ToString ());
@@ -119,7 +120,7 @@ namespace MailKit {
 				builder.Append ("NIL");
 		}
 
-		internal static void Encode (StringBuilder builder, string[] values)
+		internal static void Encode (StringBuilder builder, string[]? values)
 		{
 			if (values == null || values.Length == 0) {
 				builder.Append ("NIL");
@@ -159,7 +160,7 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		internal static void Encode (StringBuilder builder, ContentDisposition disposition)
+		internal static void Encode (StringBuilder builder, ContentDisposition? disposition)
 		{
 			if (disposition == null) {
 				builder.Append ("NIL");
@@ -197,7 +198,7 @@ namespace MailKit {
 			}
 		}
 
-		internal static void Encode (StringBuilder builder, Envelope envelope)
+		internal static void Encode (StringBuilder builder, Envelope? envelope)
 		{
 			if (envelope == null) {
 				builder.Append ("NIL");
@@ -207,7 +208,7 @@ namespace MailKit {
 			envelope.Encode (builder);
 		}
 
-		internal static void Encode (StringBuilder builder, BodyPart body)
+		internal static void Encode (StringBuilder builder, BodyPart? body)
 		{
 			if (body == null) {
 				builder.Append ("NIL");
@@ -268,7 +269,7 @@ namespace MailKit {
 			return index > startIndex;
 		}
 
-		static bool TryParse (string text, ref int index, out string nstring)
+		static bool TryParse (string text, ref int index, out string? nstring)
 		{
 			nstring = null;
 
@@ -316,7 +317,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out string[] values)
+		static bool TryParse (string text, ref int index, out string[]? values)
 		{
 			values = null;
 
@@ -346,7 +347,7 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out string value))
+				if (!TryParse (text, ref index, out string? value))
 					return false;
 
 				list.Add (value);
@@ -361,11 +362,11 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out Uri uri)
+		static bool TryParse (string text, ref int index, out Uri? uri)
 		{
 			uri = null;
 
-			if (!TryParse (text, ref index, out string nstring))
+			if (!TryParse (text, ref index, out string? nstring))
 				return false;
 
 			if (!string.IsNullOrEmpty (nstring)) {
@@ -378,7 +379,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out IList<Parameter> parameters)
+		static bool TryParse (string text, ref int index, [NotNullWhen (true)] out IList<Parameter>? parameters)
 		{
 			parameters = null;
 
@@ -409,10 +410,10 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out string name))
+				if (!TryParse (text, ref index, out string? name) || name == null)
 					return false;
 
-				if (!TryParse (text, ref index, out string value))
+				if (!TryParse (text, ref index, out string? value) || value == null)
 					return false;
 
 				parameters.Add (new Parameter (name, value));
@@ -426,7 +427,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out ContentDisposition disposition)
+		static bool TryParse (string text, ref int index, out ContentDisposition? disposition)
 		{
 			disposition = null;
 
@@ -447,10 +448,10 @@ namespace MailKit {
 
 			index++;
 
-			if (!TryParse (text, ref index, out string value))
+			if (!TryParse (text, ref index, out string? value) || value == null)
 				return false;
 
-			if (!TryParse (text, ref index, out IList<Parameter> parameters))
+			if (!TryParse (text, ref index, out IList<Parameter>? parameters))
 				return false;
 
 			if (index >= text.Length || text[index] != ')')
@@ -466,9 +467,9 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, bool multipart, out ContentType contentType)
+		static bool TryParse (string text, ref int index, bool multipart, [NotNullWhen (true)] out ContentType? contentType)
 		{
-			string type, subtype;
+			string? type, subtype;
 
 			contentType = null;
 
@@ -488,7 +489,7 @@ namespace MailKit {
 			if (!TryParse (text, ref index, out subtype))
 				return false;
 
-			if (!TryParse (text, ref index, out IList<Parameter> parameters))
+			if (!TryParse (text, ref index, out IList<Parameter>? parameters))
 				return false;
 
 			contentType = new ContentType (type ?? "application", subtype ?? "octet-stream");
@@ -499,7 +500,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, string prefix, out IList<BodyPart> children)
+		static bool TryParse (string text, ref int index, string prefix, [NotNullWhen (true)] out IList<BodyPart>? children)
 		{
 			string path;
 			int id = 1;
@@ -517,7 +518,7 @@ namespace MailKit {
 
 				path = prefix + id;
 
-				if (!TryParse (text, ref index, path, out BodyPart part))
+				if (!TryParse (text, ref index, path, out BodyPart? part))
 					return false;
 
 				while (index < text.Length && text[index] == ' ')
@@ -530,12 +531,12 @@ namespace MailKit {
 			return index < text.Length;
 		}
 
-		static bool TryParse (string text, ref int index, string path, out BodyPart part)
+		static bool TryParse (string text, ref int index, string path, out BodyPart? part)
 		{
-			ContentDisposition disposition;
-			ContentType contentType;
-			string[] array;
-			Uri location;
+			ContentDisposition? disposition;
+			ContentType? contentType;
+			string[]? array;
+			Uri? location;
 
 			part = null;
 
@@ -561,7 +562,7 @@ namespace MailKit {
 				var multipart = new BodyPartMultipart ();
 
 				if (text[index] == '(') {
-					if (!TryParse (text, ref index, prefix, out IList<BodyPart> children))
+					if (!TryParse (text, ref index, prefix, out IList<BodyPart>? children))
 						return false;
 
 					foreach (var child in children)
@@ -592,10 +593,10 @@ namespace MailKit {
 
 				part = multipart;
 			} else {
-				BodyPartMessage message = null;
-				BodyPartText txt = null;
-				BodyPartBasic basic;
-				string nstring;
+				BodyPartMessage? message = null;
+				BodyPartText? txt = null;
+				BodyPartBasic? basic;
+				string? nstring;
 
 				if (!TryParse (text, ref index, false, out contentType))
 					return false;
@@ -650,12 +651,12 @@ namespace MailKit {
 				basic.ContentLocation = location;
 
 				if (message != null) {
-					if (!Envelope.TryParse (text, ref index, out Envelope envelope))
+					if (!Envelope.TryParse (text, ref index, out Envelope? envelope))
 						return false;
 
 					message.Envelope = envelope;
 
-					if (!TryParse (text, ref index, path, out BodyPart body))
+					if (!TryParse (text, ref index, path, out BodyPart? body))
 						return false;
 
 					message.Body = body;
@@ -698,7 +699,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="text"/> is <see langword="null" />.
 		/// </exception>
-		public static bool TryParse (string text, out BodyPart part)
+		public static bool TryParse (string text, out BodyPart? part)
 		{
 			if (text == null)
 				throw new ArgumentNullException (nameof (text));
