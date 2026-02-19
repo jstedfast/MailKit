@@ -101,7 +101,7 @@ namespace MailKit.Net {
 			return true;
 		}
 
-		internal static TagList GetTags (Uri uri, Exception ex)
+		internal static TagList GetTags (Uri uri, Exception? ex)
 		{
 			var tags = new TagList {
 				{ "url.scheme", uri.Scheme },
@@ -115,7 +115,7 @@ namespace MailKit.Net {
 			return tags;
 		}
 
-		public void RecordClientDisconnected (long startTimestamp, Uri uri, Exception ex = null)
+		public void RecordClientDisconnected (long startTimestamp, Uri uri, Exception? ex = null)
 		{
 			if (ConnectionDuration.Enabled) {
 				var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - startTimestamp).TotalSeconds;
