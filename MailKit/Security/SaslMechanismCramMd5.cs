@@ -106,7 +106,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (token == null)
 				throw new NotSupportedException ("CRAM-MD5 does not support SASL-IR.");
@@ -140,13 +140,13 @@ namespace MailKit.Security {
 			using (var md5 = MD5.Create ()) {
 				md5.TransformBlock (ipad, 0, ipad.Length, null, 0);
 				md5.TransformFinalBlock (token, startIndex, length);
-				digest = md5.Hash;
+				digest = md5.Hash!;
 			}
 
 			using (var md5 = MD5.Create ()) {
 				md5.TransformBlock (opad, 0, opad.Length, null, 0);
 				md5.TransformFinalBlock (digest, 0, digest.Length);
-				digest = md5.Hash;
+				digest = md5.Hash!;
 			}
 
 			var buffer = new byte[userName.Length + 1 + (digest.Length * 2)];

@@ -153,14 +153,14 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (IsAuthenticated)
 				return ErrorResponse;
 
 			var authzid = Encoding.UTF8.GetBytes (Credentials.UserName);
-			var port = Uri.Port.ToString (CultureInfo.InvariantCulture);
-			var host = Encoding.UTF8.GetBytes (Uri.Host);
+			var port = Uri!.Port.ToString (CultureInfo.InvariantCulture);
+			var host = Encoding.UTF8.GetBytes (Uri!.Host);
 			var authToken = Credentials.Password;
 
 			var buf = new byte[CalculateBufferSize (authzid, host, port, authToken)];

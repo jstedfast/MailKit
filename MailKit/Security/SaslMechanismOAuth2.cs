@@ -124,7 +124,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (IsAuthenticated)
 				return null;

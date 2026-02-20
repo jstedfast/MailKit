@@ -261,14 +261,14 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (IsAuthenticated)
 				return null;
 
 			string userName = Credentials.UserName;
 			string domain = Credentials.Domain;
-			NtlmMessageBase message = null;
+			NtlmMessageBase? message = null;
 
 			if (string.IsNullOrEmpty (domain)) {
 				int index;
@@ -293,6 +293,9 @@ namespace MailKit.Security {
 				state = LoginState.Challenge;
 				break;
 			case LoginState.Challenge:
+				if (token == null)
+					throw new SaslException (MechanismName, SaslErrorCode.MissingChallenge, "Server response did not contain any authentication data.");
+
 				var password = Credentials.Password;
 				message = GetChallengeResponse (domain, userName, password, token, startIndex, length);
 				IsAuthenticated = true;
@@ -309,7 +312,7 @@ namespace MailKit.Security {
 				ClientChallenge = Nonce,
 				Timestamp = Timestamp
 			};
-			byte[] channelBindingToken = null;
+			byte[]? channelBindingToken = null;
 
 			if (AllowChannelBinding && challenge.TargetInfo != null) {
 				// Only bother with attempting to channel-bind if the CHALLENGE_MESSAGE's TargetInfo is not NULL.

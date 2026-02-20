@@ -127,7 +127,7 @@ namespace MailKit.Security {
 		/// for all accesses. This is separate from the user name used for authentication.
 		/// </remarks>
 		/// <value>The authorization identifier.</value>
-		public string AuthorizationId {
+		public string? AuthorizationId {
 			get; set;
 		}
 
@@ -175,7 +175,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (IsAuthenticated)
 				return null;

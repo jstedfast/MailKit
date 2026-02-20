@@ -50,10 +50,10 @@ namespace MailKit.Security {
 
 		ChannelBindingKind channelBindingKind;
 		bool negotiatedChannelBinding;
-		byte[] channelBindingToken;
-		internal string cnonce;
-		string client, server;
-		byte[] salted, auth;
+		byte[]? channelBindingToken;
+		internal string? cnonce;
+		string? client, server;
+		byte[]? salted, auth;
 		LoginState state;
 
 		/// <summary>
@@ -95,7 +95,7 @@ namespace MailKit.Security {
 		/// for all accesses. This is separate from the user name used for authentication.
 		/// </remarks>
 		/// <value>The authorization identifier.</value>
-		public string AuthorizationId {
+		public string? AuthorizationId {
 			get; set;
 		}
 
@@ -263,7 +263,7 @@ namespace MailKit.Security {
 			return kind == ChannelBindingKind.Endpoint ? "tls-server-end-point" : "tls-unique";
 		}
 
-		static string GetChannelBindingInput (ChannelBindingKind kind, string authzid)
+		static string GetChannelBindingInput (ChannelBindingKind kind, string? authzid)
 		{
 			string flag;
 
@@ -273,8 +273,7 @@ namespace MailKit.Security {
 				flag = "n";
 			}
 
-			if (string.IsNullOrEmpty (authzid))
-				authzid = string.Empty;
+			authzid ??= string.Empty;
 
 			return flag + "," + Normalize (authzid) + ",";
 		}
@@ -299,7 +298,7 @@ namespace MailKit.Security {
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken)
 		{
 			if (IsAuthenticated)
 				return null;
@@ -334,9 +333,12 @@ namespace MailKit.Security {
 				state = LoginState.Final;
 				break;
 			case LoginState.Final:
+				if (token == null)
+					throw new SaslException (MechanismName, SaslErrorCode.MissingChallenge, "Server response did not contain any authentication data.");
+
 				server = Encoding.UTF8.GetString (token, startIndex, length);
 				var tokens = ParseServerChallenge (server);
-				string salt, nonce, iterations;
+				string? salt, nonce, iterations;
 				int count;
 
 				if (!tokens.TryGetValue ('s', out salt))
@@ -348,7 +350,7 @@ namespace MailKit.Security {
 				if (!tokens.TryGetValue ('i', out iterations))
 					throw new SaslException (MechanismName, SaslErrorCode.IncompleteChallenge, "Challenge did not contain an iteration count.");
 
-				if (!nonce.StartsWith (cnonce, StringComparison.Ordinal))
+				if (!nonce.StartsWith (cnonce!, StringComparison.Ordinal))
 					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "Challenge contained an invalid nonce.");
 
 				if (!int.TryParse (iterations, NumberStyles.None, CultureInfo.InvariantCulture, out count) || count < 1)
@@ -362,7 +364,7 @@ namespace MailKit.Security {
 				var inputBuffer = Encoding.ASCII.GetBytes (input);
 				string base64;
 
-				if (SupportsChannelBinding && channelBindingKind != ChannelBindingKind.Unknown) {
+				if (SupportsChannelBinding && channelBindingToken != null) {
 					var binding = new byte[inputBuffer.Length + channelBindingToken.Length];
 
 					Buffer.BlockCopy (inputBuffer, 0, binding, 0, inputBuffer.Length);
@@ -389,14 +391,17 @@ namespace MailKit.Security {
 				state = LoginState.Validate;
 				break;
 			case LoginState.Validate:
+				if (token == null)
+					throw new SaslException (MechanismName, SaslErrorCode.MissingChallenge, "Server response did not contain any authentication data.");
+
 				var challenge = Encoding.UTF8.GetString (token, startIndex, length);
 
 				if (!challenge.StartsWith ("v=", StringComparison.Ordinal))
 					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "Challenge did not start with a signature.");
 
 				signature = Convert.FromBase64String (challenge.Substring (2));
-				var serverKey = HMAC (salted, Encoding.ASCII.GetBytes ("Server Key"));
-				var calculated = HMAC (serverKey, auth);
+				var serverKey = HMAC (salted!, Encoding.ASCII.GetBytes ("Server Key"));
+				var calculated = HMAC (serverKey, auth!);
 
 				if (signature.Length != calculated.Length)
 					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Challenge contained a signature with an invalid length.");
