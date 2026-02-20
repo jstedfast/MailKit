@@ -31,6 +31,7 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Net.Imap
 {
@@ -252,7 +253,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		ImapCommand? QueueStoreCommand (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken)
+		bool TryQueueStoreCommand (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -265,8 +266,10 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, true);
 
+			ic = null;
+
 			if (indexes.Count == 0)
-				return null;
+				return false;
 
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
 			string action;
@@ -274,13 +277,13 @@ namespace MailKit.Net.Imap
 			switch (request.Action) {
 			case StoreAction.Add:
 				if ((request.Flags & SettableFlags) == 0 && numKeywords == 0)
-					return null;
+					return false;
 
 				action = request.Silent ? "+FLAGS.SILENT" : "+FLAGS";
 				break;
 			case StoreAction.Remove:
 				if ((request.Flags & SettableFlags) == 0 && numKeywords == 0)
-					return null;
+					return false;
 
 				action = request.Silent ? "-FLAGS.SILENT" : "-FLAGS";
 				break;
@@ -305,7 +308,9 @@ namespace MailKit.Net.Imap
 			ImapUtils.FormatFlagsList (command, request.Flags & PermanentFlags, request.Keywords != null ? request.Keywords.Count : 0);
 			command.Append ("\r\n");
 
-			return Engine.QueueCommand (cancellationToken, this, command.ToString (), keywordList);
+			ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), keywordList);
+
+			return true;
 		}
 
 		/// <summary>
@@ -356,9 +361,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<int> Store (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, request, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
 			Engine.Run (ic);
@@ -416,9 +419,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<int>> StoreAsync (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, request, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -649,7 +650,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		ImapCommand? QueueStoreCommand (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken)
+		bool TryQueueStoreCommand (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -662,21 +663,23 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, true);
 
+			ic = null;
+
 			if (indexes.Count == 0)
-				return null;
+				return false;
 
 			string action;
 
 			switch (request.Action) {
 			case StoreAction.Add:
 				if (request.Labels == null || request.Labels.Count == 0)
-					return null;
+					return false;
 
 				action = request.Silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS";
 				break;
 			case StoreAction.Remove:
 				if (request.Labels == null || request.Labels.Count == 0)
-					return null;
+					return false;
 
 				action = request.Silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS";
 				break;
@@ -702,7 +705,9 @@ namespace MailKit.Net.Imap
 			AppendLabelList (command, request.Labels, args);
 			command.Append ("\r\n");
 
-			return Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
+			ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
+
+			return true;
 		}
 
 		/// <summary>
@@ -753,9 +758,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<int> Store (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, request, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
 			Engine.Run (ic);
@@ -813,9 +816,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<int>> StoreAsync (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, request, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);

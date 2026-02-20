@@ -160,7 +160,7 @@ namespace MailKit.Net.Imap {
 		long clientConnectedTimestamp;
 		internal char TagPrefix;
 		ImapCommand? current;
-		MimeParser parser;
+		MimeParser? parser;
 		internal int Tag;
 		bool disposed;
 
@@ -362,7 +362,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the URI of the IMAP server.
 		/// </remarks>
 		/// <value>The URI of the IMAP server.</value>
-		public Uri Uri {
+		public Uri? Uri {
 			get; internal set;
 		}
 
@@ -373,7 +373,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the underlying IMAP stream.
 		/// </remarks>
 		/// <value>The IMAP stream.</value>
-		public ImapStream Stream {
+		public ImapStream? Stream {
 			get; private set;
 		}
 
@@ -627,9 +627,9 @@ namespace MailKit.Net.Imap {
 		public NetworkOperation StartNetworkOperation (NetworkOperationKind kind, Uri? uri = null)
 		{
 #if NET6_0_OR_GREATER
-			return NetworkOperation.Start (kind, uri ?? Uri, Telemetry.ImapClient.ActivitySource, metrics);
+			return NetworkOperation.Start (kind, uri ?? Uri!, Telemetry.ImapClient.ActivitySource, metrics);
 #else
-			return NetworkOperation.Start (kind, uri ?? Uri);
+			return NetworkOperation.Start (kind, uri ?? Uri!);
 #endif
 		}
 
@@ -835,7 +835,7 @@ namespace MailKit.Net.Imap {
 		void RecordClientDisconnected (Exception? ex)
 		{
 #if NET6_0_OR_GREATER
-			metrics?.RecordClientDisconnected (clientConnectedTimestamp, Uri, ex);
+			metrics?.RecordClientDisconnected (clientConnectedTimestamp, Uri!, ex);
 #endif
 			clientConnectedTimestamp = 0;
 		}
@@ -893,7 +893,7 @@ namespace MailKit.Net.Imap {
 				bool complete;
 
 				do {
-					complete = Stream.ReadLine (builder, cancellationToken);
+					complete = Stream!.ReadLine (builder, cancellationToken);
 				} while (!complete);
 
 				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
@@ -926,7 +926,7 @@ namespace MailKit.Net.Imap {
 				bool complete;
 
 				do {
-					complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
+					complete = await Stream!.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
 				} while (!complete);
 
 				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
@@ -955,7 +955,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
-			return Stream.ReadToken (cancellationToken);
+			return Stream!.ReadToken (cancellationToken);
 		}
 
 		/// <summary>
@@ -977,7 +977,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ValueTask<ImapToken> ReadTokenAsync (CancellationToken cancellationToken)
 		{
-			return Stream.ReadTokenAsync (cancellationToken);
+			return Stream!.ReadTokenAsync (cancellationToken);
 		}
 
 		/// <summary>
@@ -1000,7 +1000,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken ReadToken (string specials, CancellationToken cancellationToken)
 		{
-			return Stream.ReadToken (specials, cancellationToken);
+			return Stream!.ReadToken (specials, cancellationToken);
 		}
 
 		/// <summary>
@@ -1023,7 +1023,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ValueTask<ImapToken> ReadTokenAsync (string specials, CancellationToken cancellationToken)
 		{
-			return Stream.ReadTokenAsync (specials, cancellationToken);
+			return Stream!.ReadTokenAsync (specials, cancellationToken);
 		}
 
 		/// <summary>
@@ -1046,7 +1046,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken PeekToken (string specials, CancellationToken cancellationToken)
 		{
-			var token = Stream.ReadToken (specials, cancellationToken);
+			var token = Stream!.ReadToken (specials, cancellationToken);
 
 			Stream.UngetToken (token);
 
@@ -1073,7 +1073,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public async ValueTask<ImapToken> PeekTokenAsync (string specials, CancellationToken cancellationToken)
 		{
-			var token = await Stream.ReadTokenAsync (specials, cancellationToken).ConfigureAwait (false);
+			var token = await Stream!.ReadTokenAsync (specials, cancellationToken).ConfigureAwait (false);
 
 			Stream.UngetToken (token);
 
@@ -1099,7 +1099,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken PeekToken (CancellationToken cancellationToken)
 		{
-			var token = Stream.ReadToken (cancellationToken);
+			var token = Stream!.ReadToken (cancellationToken);
 
 			Stream.UngetToken (token);
 
@@ -1125,7 +1125,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public async ValueTask<ImapToken> PeekTokenAsync (CancellationToken cancellationToken)
 		{
-			var token = await Stream.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			var token = await Stream!.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			Stream.UngetToken (token);
 
@@ -1148,7 +1148,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public string ReadLiteral (CancellationToken cancellationToken)
 		{
-			if (Stream.Mode != ImapStreamMode.Literal)
+			if (Stream!.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
 
 			int literalLength = Stream.LiteralLength;
@@ -1188,7 +1188,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public async Task<string> ReadLiteralAsync (CancellationToken cancellationToken)
 		{
-			if (Stream.Mode != ImapStreamMode.Literal)
+			if (Stream!.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
 
 			int literalLength = Stream.LiteralLength;
@@ -1225,7 +1225,7 @@ namespace MailKit.Net.Imap {
 
 					try {
 						do {
-							nread = Stream.Read (buf, 0, BufferSize, cancellationToken);
+							nread = Stream!.Read (buf, 0, BufferSize, cancellationToken);
 						} while (nread > 0);
 					} finally {
 						ArrayPool<byte>.Shared.Return (buf);
@@ -1247,7 +1247,7 @@ namespace MailKit.Net.Imap {
 
 					try {
 						do {
-							nread = await Stream.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
+							nread = await Stream!.ReadAsync (buf, 0, BufferSize, cancellationToken).ConfigureAwait (false);
 						} while (nread > 0);
 					} finally {
 						ArrayPool<byte>.Shared.Return (buf);
@@ -1486,7 +1486,7 @@ namespace MailKit.Net.Imap {
 			AssertToken (token, sentinel, GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
 
 			// unget the sentinel
-			Stream.UngetToken (token);
+			Stream!.UngetToken (token);
 
 			StandardizeCapabilities ();
 		}
@@ -1513,7 +1513,7 @@ namespace MailKit.Net.Imap {
 			AssertToken (token, sentinel, GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
 
 			// unget the sentinel
-			Stream.UngetToken (token);
+			Stream!.UngetToken (token);
 
 			StandardizeCapabilities ();
 		}
@@ -1923,14 +1923,14 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case ImapResponseCodeType.Capability:
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
 				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				perm.Flags = ImapUtils.ParseFlagsList (this, "PERMANENTFLAGS", perm.Keywords, cancellationToken);
 				token = ReadToken (cancellationToken);
 				break;
@@ -2020,7 +2020,7 @@ namespace MailKit.Net.Imap {
 					copy.SrcUidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.SrcUidSet = new UniqueIdSet ();
-					Stream.UngetToken (token);
+					Stream!.UngetToken (token);
 				}
 
 				token = ReadToken (cancellationToken);
@@ -2029,7 +2029,7 @@ namespace MailKit.Net.Imap {
 					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.DestUidSet = new UniqueIdSet ();
-					Stream.UngetToken (token);
+					Stream!.UngetToken (token);
 				}
 
 				token = ReadToken (cancellationToken);
@@ -2249,14 +2249,14 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case ImapResponseCodeType.Capability:
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				await UpdateCapabilitiesAsync (ImapTokenType.CloseBracket, cancellationToken).ConfigureAwait (false);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", perm.Keywords, cancellationToken).ConfigureAwait (false);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 				break;
@@ -2346,7 +2346,7 @@ namespace MailKit.Net.Imap {
 					copy.SrcUidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.SrcUidSet = new UniqueIdSet ();
-					Stream.UngetToken (token);
+					Stream!.UngetToken (token);
 				}
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2355,7 +2355,7 @@ namespace MailKit.Net.Imap {
 					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.DestUidSet = new UniqueIdSet ();
-					Stream.UngetToken (token);
+					Stream!.UngetToken (token);
 				}
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2759,11 +2759,11 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
 			if (token.Type == ImapTokenType.OpenBracket) {
 				// unget the '[' token and then pretend that we got an "OK"
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				atom = "OK";
 			} else if (token.Type != ImapTokenType.Atom) {
 				// if we get anything else here, just ignore it?
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				SkipLine (cancellationToken);
 				return;
 			} else {
@@ -2912,11 +2912,11 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
 			if (token.Type == ImapTokenType.OpenBracket) {
 				// unget the '[' token and then pretend that we got an "OK"
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				atom = "OK";
 			} else if (token.Type != ImapTokenType.Atom) {
 				// if we get anything else here, just ignore it?
-				Stream.UngetToken (token);
+				Stream!.UngetToken (token);
 				await SkipLineAsync (cancellationToken).ConfigureAwait (false);
 				return;
 			} else {
@@ -4159,6 +4159,7 @@ namespace MailKit.Net.Imap {
 			return mailboxName.Length > 0;
 		}
 
+		[MemberNotNull (nameof (parser))]
 		void InitializeParser (Stream stream, bool persistent)
 		{
 			if (parser == null)
@@ -4212,7 +4213,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives an alert message from the server.
 		/// </summary>
-		public event EventHandler<AlertEventArgs> Alert;
+		public event EventHandler<AlertEventArgs>? Alert;
 
 		internal void OnAlert (string message)
 		{
@@ -4222,7 +4223,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a webalert message from the server.
 		/// </summary>
-		public event EventHandler<WebAlertEventArgs> WebAlert;
+		public event EventHandler<WebAlertEventArgs>? WebAlert;
 
 		internal void OnWebAlert (Uri uri, string message)
 		{
@@ -4232,7 +4233,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a notification that a folder has been created.
 		/// </summary>
-		public event EventHandler<FolderCreatedEventArgs> FolderCreated;
+		public event EventHandler<FolderCreatedEventArgs>? FolderCreated;
 
 		internal void OnFolderCreated (IMailFolder folder)
 		{
@@ -4242,7 +4243,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a notification that metadata has changed.
 		/// </summary>
-		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+		public event EventHandler<MetadataChangedEventArgs>? MetadataChanged;
 
 		internal void OnMetadataChanged (Metadata metadata)
 		{
@@ -4252,7 +4253,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when the engine receives a notification overflow message from the server.
 		/// </summary>
-		public event EventHandler<EventArgs> NotificationOverflow;
+		public event EventHandler<EventArgs>? NotificationOverflow;
 
 		internal void OnNotificationOverflow ()
 		{
@@ -4262,7 +4263,7 @@ namespace MailKit.Net.Imap {
 			NotificationOverflow?.Invoke (this, EventArgs.Empty);
 		}
 
-		public event EventHandler<EventArgs> Disconnected;
+		public event EventHandler<EventArgs>? Disconnected;
 
 		void OnDisconnected ()
 		{

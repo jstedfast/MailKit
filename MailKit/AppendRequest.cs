@@ -203,7 +203,7 @@ namespace MailKit {
 		/// Gets or sets the transfer progress reporting mechanism.
 		/// </remarks>
 		/// <value>The transfer progress mechanism.</value>
-		public ITransferProgress TransferProgress {
+		public ITransferProgress? TransferProgress {
 			get; set;
 		}
 	}

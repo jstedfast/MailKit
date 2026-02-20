@@ -30,7 +30,6 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -548,21 +547,22 @@ namespace MailKit.Net.Imap {
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
 
-				Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
+				Engine.Stream!.Write (buf, 0, buf.Length, CancellationToken);
 			}
 
 			do {
-				var command = parts[current].Command;
+				var part = parts[current];
+				var command = part.Command;
 
-				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
+				Engine.Stream!.Write (command, 0, command.Length, CancellationToken);
 
 				// if the server doesn't support LITERAL+ (or LITERAL-), we'll need to wait
 				// for a "+" response before writing out the any literals...
-				if (parts[current].WaitForContinuation)
+				if (part.WaitForContinuation || part.Literal == null)
 					break;
 
 				// otherwise, we can write out any and all literal tokens we have...
-				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+				part.Literal.WriteTo (Engine.Stream, CancellationToken);
 
 				if (current + 1 >= parts.Count)
 					break;
@@ -598,7 +598,7 @@ namespace MailKit.Net.Imap {
 
 					// if we've got a Literal pending, the '+' means we can send it now...
 					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+						parts[current].Literal!.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
 
@@ -689,21 +689,22 @@ namespace MailKit.Net.Imap {
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
 
-				await Engine.Stream.WriteAsync (buf, 0, buf.Length, CancellationToken).ConfigureAwait (false);
+				await Engine.Stream!.WriteAsync (buf, 0, buf.Length, CancellationToken).ConfigureAwait (false);
 			}
 
 			do {
-				var command = parts[current].Command;
+				var part = parts[current];
+				var command = part.Command;
 
-				await Engine.Stream.WriteAsync (command, 0, command.Length, CancellationToken).ConfigureAwait (false);
+				await Engine.Stream!.WriteAsync (command, 0, command.Length, CancellationToken).ConfigureAwait (false);
 
 				// if the server doesn't support LITERAL+ (or LITERAL-), we'll need to wait
 				// for a "+" response before writing out the any literals...
-				if (parts[current].WaitForContinuation)
+				if (part.WaitForContinuation || part.Literal == null)
 					break;
 
 				// otherwise, we can write out any and all literal tokens we have...
-				await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+				await part.Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
 
 				if (current + 1 >= parts.Count)
 					break;
@@ -739,7 +740,7 @@ namespace MailKit.Net.Imap {
 
 					// if we've got a Literal pending, the '+' means we can send it now...
 					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						await parts[current].Literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+						await parts[current].Literal!.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
 						break;
 					}
 
@@ -812,7 +813,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="type">The type of response-code.</param>
 		/// <returns>The response-code if it exists; otherwise, <see langword="null" />.</returns>
-		public ImapResponseCode GetResponseCode (ImapResponseCodeType type)
+		public ImapResponseCode? GetResponseCode (ImapResponseCodeType type)
 		{
 			for (int i = 0; i < RespCodes.Count; i++) {
 				if (RespCodes[i].Type == type)

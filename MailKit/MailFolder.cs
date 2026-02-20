@@ -9349,7 +9349,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Opened"/> event is emitted when the folder is opened.
 		/// </remarks>
-		public event EventHandler<EventArgs> Opened;
+		public event EventHandler<EventArgs>? Opened;
 
 		/// <summary>
 		/// Raise the opened event.
@@ -9368,7 +9368,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Closed"/> event is emitted when the folder is closed.
 		/// </remarks>
-		public event EventHandler<EventArgs> Closed;
+		public event EventHandler<EventArgs>? Closed;
 
 		/// <summary>
 		/// Raise the closed event.
@@ -9396,7 +9396,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Deleted"/> event is emitted when the folder is deleted.
 		/// </remarks>
-		public event EventHandler<EventArgs> Deleted;
+		public event EventHandler<EventArgs>? Deleted;
 
 		/// <summary>
 		/// Raise the deleted event.
@@ -9415,7 +9415,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Renamed"/> event is emitted when the folder is renamed.
 		/// </remarks>
-		public event EventHandler<FolderRenamedEventArgs> Renamed;
+		public event EventHandler<FolderRenamedEventArgs>? Renamed;
 
 		/// <summary>
 		/// Raise the renamed event.
@@ -9458,7 +9458,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Subscribed"/> event is emitted when the folder is subscribed.
 		/// </remarks>
-		public event EventHandler<EventArgs> Subscribed;
+		public event EventHandler<EventArgs>? Subscribed;
 
 		/// <summary>
 		/// Raise the subscribed event.
@@ -9477,7 +9477,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Unsubscribed"/> event is emitted when the folder is unsubscribed.
 		/// </remarks>
-		public event EventHandler<EventArgs> Unsubscribed;
+		public event EventHandler<EventArgs>? Unsubscribed;
 
 		/// <summary>
 		/// Raise the unsubscribed event.
@@ -9499,7 +9499,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
 		/// </example>
-		public event EventHandler<MessageEventArgs> MessageExpunged;
+		public event EventHandler<MessageEventArgs>? MessageExpunged;
 
 		/// <summary>
 		/// Raise the message expunged event.
@@ -9519,7 +9519,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MessagesVanished"/> event is emitted when messages vanish from the folder.
 		/// </remarks>
-		public event EventHandler<MessagesVanishedEventArgs> MessagesVanished;
+		public event EventHandler<MessagesVanishedEventArgs>? MessagesVanished;
 
 		/// <summary>
 		/// Raise the messages vanished event.
@@ -9542,7 +9542,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
 		/// </example>
-		public event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
+		public event EventHandler<MessageFlagsChangedEventArgs>? MessageFlagsChanged;
 
 		/// <summary>
 		/// Raise the message flags changed event.
@@ -9562,7 +9562,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MessageLabelsChanged"/> event is emitted when the labels for a message are changed.
 		/// </remarks>
-		public event EventHandler<MessageLabelsChangedEventArgs> MessageLabelsChanged;
+		public event EventHandler<MessageLabelsChangedEventArgs>? MessageLabelsChanged;
 
 		/// <summary>
 		/// Raise the message labels changed event.
@@ -9582,7 +9582,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="AnnotationsChanged"/> event is emitted when the annotations for a message are changed.
 		/// </remarks>
-		public event EventHandler<AnnotationsChangedEventArgs> AnnotationsChanged;
+		public event EventHandler<AnnotationsChangedEventArgs>? AnnotationsChanged;
 
 		/// <summary>
 		/// Raise the message annotations changed event.
@@ -9617,7 +9617,7 @@ namespace MailKit {
 		/// property to determine which f<see cref="IMessageSummary"/> properties have
 		/// been populated.</note>
 		/// </remarks>
-		public event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
+		public event EventHandler<MessageSummaryFetchedEventArgs>? MessageSummaryFetched;
 
 		/// <summary>
 		/// Raise the message summary fetched event.
@@ -9652,7 +9652,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MetadataChanged"/> event is emitted when metadata changes.
 		/// </remarks>
-		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+		public event EventHandler<MetadataChangedEventArgs>? MetadataChanged;
 
 		/// <summary>
 		/// Raise the metadata changed event.
@@ -9672,7 +9672,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="ModSeqChanged"/> event is emitted when the mod-sequence for a message is changed.
 		/// </remarks>
-		public event EventHandler<ModSeqChangedEventArgs> ModSeqChanged;
+		public event EventHandler<ModSeqChangedEventArgs>? ModSeqChanged;
 
 		/// <summary>
 		/// Raise the message mod-sequence changed event.
@@ -9692,7 +9692,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="HighestModSeqChanged"/> event is emitted whenever the <see cref="HighestModSeq"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> HighestModSeqChanged;
+		public event EventHandler<EventArgs>? HighestModSeqChanged;
 
 		/// <summary>
 		/// Raise the highest mod-sequence changed event.
@@ -9711,7 +9711,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="UidNextChanged"/> event is emitted whenever the <see cref="UidNext"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> UidNextChanged;
+		public event EventHandler<EventArgs>? UidNextChanged;
 
 		/// <summary>
 		/// Raise the next UID changed event.
@@ -9730,7 +9730,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="UidValidityChanged"/> event is emitted whenever the <see cref="UidValidity"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> UidValidityChanged;
+		public event EventHandler<EventArgs>? UidValidityChanged;
 
 		/// <summary>
 		/// Raise the uid validity changed event.
@@ -9749,7 +9749,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="IdChanged"/> event is emitted whenever the <see cref="Id"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> IdChanged;
+		public event EventHandler<EventArgs>? IdChanged;
 
 		/// <summary>
 		/// Raise the ID changed event.
@@ -9768,7 +9768,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="SizeChanged"/> event is emitted whenever the <see cref="Size"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> SizeChanged;
+		public event EventHandler<EventArgs>? SizeChanged;
 
 		/// <summary>
 		/// Raise the size changed event.
@@ -9790,7 +9790,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
 		/// </example>
-		public event EventHandler<EventArgs> CountChanged;
+		public event EventHandler<EventArgs>? CountChanged;
 
 		/// <summary>
 		/// Raise the message count changed event.
@@ -9809,7 +9809,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="RecentChanged"/> event is emitted whenever the <see cref="Recent"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> RecentChanged;
+		public event EventHandler<EventArgs>? RecentChanged;
 
 		/// <summary>
 		/// Raise the recent message count changed event.
@@ -9828,7 +9828,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="UnreadChanged"/> event is emitted whenever the <see cref="Unread"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> UnreadChanged;
+		public event EventHandler<EventArgs>? UnreadChanged;
 
 		/// <summary>
 		/// Raise the unread message count changed event.

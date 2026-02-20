@@ -803,7 +803,7 @@ namespace MailKit {
 		/// The <see cref="Alert"/> event is raised whenever the mail server sends an
 		/// alert message.
 		/// </remarks>
-		public event EventHandler<AlertEventArgs> Alert;
+		public event EventHandler<AlertEventArgs>? Alert;
 
 		/// <summary>
 		/// Raise the alert event.
@@ -826,7 +826,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="FolderCreated"/> event is emitted when a new folder is created.
 		/// </remarks>
-		public event EventHandler<FolderCreatedEventArgs> FolderCreated;
+		public event EventHandler<FolderCreatedEventArgs>? FolderCreated;
 
 		/// <summary>
 		/// Raise the folder created event.
@@ -846,7 +846,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MetadataChanged"/> event is emitted when metadata changes.
 		/// </remarks>
-		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+		public event EventHandler<MetadataChangedEventArgs>? MetadataChanged;
 
 		/// <summary>
 		/// Raise the metadata changed event.

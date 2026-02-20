@@ -124,7 +124,7 @@ namespace MailKit.Net.Imap {
 		{
 			if (Engine.State == ImapEngineState.Idle) {
 				try {
-					Engine.Stream.Write (DoneCommand, 0, DoneCommand.Length, CancellationToken);
+					Engine.Stream!.Write (DoneCommand, 0, DoneCommand.Length, CancellationToken);
 					Engine.Stream.Flush (CancellationToken);
 				} catch {
 					return;

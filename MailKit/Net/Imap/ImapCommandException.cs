@@ -77,7 +77,8 @@ namespace MailKit.Net.Imap {
 		internal static ImapCommandException Create (string command, ImapCommand ic)
 		{
 			var result = ic.Response.ToString ().ToUpperInvariant ();
-			string message, reason = null;
+			string? reason = null;
+			string message;
 
 			if (string.IsNullOrEmpty (ic.ResponseText)) {
 				for (int i = ic.RespCodes.Count - 1; i >= 0; i--) {
@@ -86,9 +87,9 @@ namespace MailKit.Net.Imap {
 						break;
 					}
 				}
-			} else {
-				reason = ic.ResponseText;
 			}
+
+			reason ??= ic.ResponseText ?? string.Empty;
 
 			if (!string.IsNullOrEmpty (reason))
 				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response: {2}", command, result, reason);

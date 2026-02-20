@@ -115,7 +115,7 @@ namespace MailKit {
 		/// appended to the original folder.</para>
 		/// </remarks>
 		/// <value>The destination folder.</value>
-		public IMailFolder Destination {
+		public IMailFolder? Destination {
 			get; set;
 		}
 	}

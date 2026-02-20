@@ -857,14 +857,14 @@ namespace MailKit.Net.Imap {
 			return Engine.QueueCommand (cancellationToken, null, "CREATE %S\r\n", createName);
 		}
 
-		MailboxIdResponseCode ProcessCreateResponse (ImapCommand ic)
+		MailboxIdResponseCode? ProcessCreateResponse (ImapCommand ic)
 		{
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok && ic.GetResponseCode (ImapResponseCodeType.AlreadyExists) == null)
 				throw ImapCommandException.Create ("CREATE", ic);
 
-			return (MailboxIdResponseCode) ic.GetResponseCode (ImapResponseCodeType.MailboxId);
+			return ic.GetResponseCode (ImapResponseCodeType.MailboxId) as MailboxIdResponseCode;
 		}
 
 		IMailFolder? Create (ImapCommand ic, string encodedName, bool specialUse, CancellationToken cancellationToken)
@@ -3373,8 +3373,8 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("GETMETADATA");
 
-			var metadata = (MetadataResponseCode) ic.GetResponseCode (ImapResponseCodeType.Metadata);
-			if (metadata != null && metadata.SubType == MetadataResponseCodeSubType.LongEntries)
+			var rc = ic.GetResponseCode (ImapResponseCodeType.Metadata);
+			if (rc is MetadataResponseCode metadata && metadata.SubType == MetadataResponseCodeSubType.LongEntries)
 				options.LongEntries = metadata.Value;
 
 			return Engine.FilterMetadata ((MetadataCollection) ic.UserData!, EncodedName);
@@ -4492,9 +4492,9 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("APPEND");
 
-			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
-			if (append != null)
+			if (rc is AppendUidResponseCode append)
 				return append.UidSet[0];
 
 			return null;
@@ -4692,9 +4692,9 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("APPEND");
 
-			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
-			if (append != null)
+			if (rc is AppendUidResponseCode append)
 				return append.UidSet;
 
 			return Array.Empty<UniqueId> ();
@@ -4937,9 +4937,9 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("REPLACE");
 
-			var append = (AppendUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.AppendUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid);
 
-			if (append != null)
+			if (rc is AppendUidResponseCode append)
 				return append.UidSet[0];
 
 			return null;
@@ -5361,9 +5361,9 @@ namespace MailKit.Net.Imap {
 
 		static void GetCopiedUids (ImapCommand ic, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
-			var copy = (CopyUidResponseCode) ic.GetResponseCode (ImapResponseCodeType.CopyUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
-			if (copy != null) {
+			if (rc is CopyUidResponseCode copy) {
 				if (dest == null) {
 					dest = copy.DestUidSet;
 					src = copy.SrcUidSet;
@@ -6133,7 +6133,7 @@ namespace MailKit.Net.Imap {
 				OnMessageFlagsChanged (args);
 			}
 
-			if ((message.Fields & MessageSummaryItems.GMailLabels) != 0) {
+			if (message.GMailLabels != null) {
 				var args = new MessageLabelsChangedEventArgs (index, message.GMailLabels) {
 					ModSeq = message.ModSeq,
 					UniqueId = uid
@@ -6142,7 +6142,7 @@ namespace MailKit.Net.Imap {
 				OnMessageLabelsChanged (args);
 			}
 
-			if ((message.Fields & MessageSummaryItems.Annotations) != 0) {
+			if (message.Annotations != null) {
 				var args = new AnnotationsChangedEventArgs (index, message.Annotations) {
 					ModSeq = message.ModSeq,
 					UniqueId = uid
@@ -6151,8 +6151,8 @@ namespace MailKit.Net.Imap {
 				OnAnnotationsChanged (args);
 			}
 
-			if ((message.Fields & MessageSummaryItems.ModSeq) != 0) {
-				var args = new ModSeqChangedEventArgs (index, message.ModSeq!.Value) {
+			if (message.ModSeq.HasValue) {
+				var args = new ModSeqChangedEventArgs (index, message.ModSeq.Value) {
 					UniqueId = uid
 				};
 
