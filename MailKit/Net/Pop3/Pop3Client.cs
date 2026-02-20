@@ -75,7 +75,7 @@ namespace MailKit.Net.Pop3 {
 		readonly Pop3AuthenticationSecretDetector detector = new Pop3AuthenticationSecretDetector ();
 		readonly MimeParser parser = new MimeParser (Stream.Null);
 		readonly Pop3Engine engine;
-		SslCertificateValidationInfo sslValidationInfo;
+		SslCertificateValidationInfo? sslValidationInfo;
 		ProbedCapabilities probed;
 		bool disposed, disconnecting, secure, utf8;
 		int timeout = 2 * 60 * 1000;
@@ -193,7 +193,7 @@ namespace MailKit.Net.Pop3 {
 		/// information details provided by the server.
 		/// </remarks>
 		/// <value>The implementation details.</value>
-		public string Implementation {
+		public string? Implementation {
 			get { return engine.Implementation; }
 		}
 
@@ -257,7 +257,7 @@ namespace MailKit.Net.Pop3 {
 				throw new ServiceNotAuthenticatedException ("The Pop3Client has not been authenticated.");
 		}
 
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		bool ValidateRemoteCertificate (object? sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
 		{
 			bool valid;
 
@@ -265,13 +265,13 @@ namespace MailKit.Net.Pop3 {
 			sslValidationInfo = null;
 
 			if (ServerCertificateValidationCallback != null) {
-				valid = ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+				valid = ServerCertificateValidationCallback (engine.Uri!.Host, certificate, chain, sslPolicyErrors);
 #if NETFRAMEWORK
 			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
-				valid = ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+				valid = ServicePointManager.ServerCertificateValidationCallback (engine.Uri!.Host, certificate, chain, sslPolicyErrors);
 #endif
 			} else {
-				valid = DefaultServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
+				valid = DefaultServerCertificateValidationCallback (engine.Uri!.Host, certificate, chain, sslPolicyErrors);
 			}
 
 			if (!valid) {
@@ -365,7 +365,7 @@ namespace MailKit.Net.Pop3 {
 		public override int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected && engine.Stream.CanTimeout) {
+				if (IsConnected && engine.Stream!.CanTimeout) {
 					engine.Stream.WriteTimeout = value;
 					engine.Stream.ReadTimeout = value;
 				}
@@ -414,7 +414,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public override bool IsEncrypted {
-			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
+			get { return IsSecure && (engine.Stream!.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
 		}
 
 		/// <summary>
@@ -425,7 +425,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public override bool IsSigned {
-			get { return IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
+			get { return IsSecure && (engine.Stream!.Stream is SslStream sslStream) && sslStream.IsSigned; }
 		}
 
 		/// <summary>
@@ -440,7 +440,7 @@ namespace MailKit.Net.Pop3 {
 		/// <value>The negotiated SSL or TLS protocol version.</value>
 		public override SslProtocols SslProtocol {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
 
 				return SslProtocols.None;
@@ -462,7 +462,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.CipherAlgorithm;
 
 				return null;
@@ -484,7 +484,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override int? SslCipherStrength {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.CipherStrength;
 
 				return null;
@@ -501,7 +501,7 @@ namespace MailKit.Net.Pop3 {
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.NegotiatedCipherSuite;
 
 				return null;
@@ -524,7 +524,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.HashAlgorithm;
 
 				return null;
@@ -546,7 +546,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override int? SslHashStrength {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.HashStrength;
 
 				return null;
@@ -568,7 +568,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeAlgorithm;
 
 				return null;
@@ -590,7 +590,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override int? SslKeyExchangeStrength {
 			get {
-				if (IsSecure && (engine.Stream.Stream is SslStream sslStream))
+				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeStrength;
 
 				return null;
@@ -669,7 +669,7 @@ namespace MailKit.Net.Pop3 {
 				this.client = client;
 			}
 
-			public string AuthMessage {
+			public string? AuthMessage {
 				get; private set;
 			}
 
@@ -683,7 +683,7 @@ namespace MailKit.Net.Pop3 {
 					var challenge = mechanism.Challenge (text, cancellationToken);
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
-					pop3.Stream.Write (buf, 0, buf.Length, cancellationToken);
+					pop3.Stream!.Write (buf, 0, buf.Length, cancellationToken);
 					pop3.Stream.Flush (cancellationToken);
 
 					var response = pop3.ReadLine (cancellationToken).TrimEnd ();
@@ -703,7 +703,7 @@ namespace MailKit.Net.Pop3 {
 					var challenge = await mechanism.ChallengeAsync (text, cancellationToken).ConfigureAwait (false);
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
-					await pop3.Stream.WriteAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
+					await pop3.Stream!.WriteAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
 					await pop3.Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
 					var response = (await pop3.ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
@@ -781,7 +781,7 @@ namespace MailKit.Net.Pop3 {
 
 		SaslAuthContext GetSaslAuthContext (SaslMechanism mechanism, Uri saslUri)
 		{
-			mechanism.ChannelBindingContext = engine.Stream.Stream as IChannelBindingContext;
+			mechanism.ChannelBindingContext = engine.Stream!.Stream as IChannelBindingContext;
 			mechanism.Uri = saslUri;
 
 			return new SaslAuthContext (this, mechanism);
@@ -845,7 +845,7 @@ namespace MailKit.Net.Pop3 {
 			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ("pop://" + engine.Uri.Host);
+				var saslUri = new Uri ("pop://" + engine.Uri!.Host);
 				var ctx = GetSaslAuthContext (mechanism, saslUri);
 
 				var pc = ctx.Authenticate (cancellationToken);
@@ -855,7 +855,7 @@ namespace MailKit.Net.Pop3 {
 
 				pc.ThrowIfError ();
 
-				OnAuthenticated (ctx.AuthMessage, cancellationToken);
+				OnAuthenticated (ctx.AuthMessage!, cancellationToken);
 			} catch (Exception ex) {
 				operation.SetError (ex);
 				throw;
@@ -879,9 +879,8 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 		}
 
-		string GetApopCommand (Encoding encoding, ICredentials credentials, Uri saslUri)
+		string GetApopCommand (Encoding encoding, NetworkCredential cred)
 		{
-			var cred = credentials.GetCredential (saslUri, "APOP");
 			var userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
 			var password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 			var challenge = engine.ApopToken + password;
@@ -961,12 +960,13 @@ namespace MailKit.Net.Pop3 {
 			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ("pop://" + engine.Uri.Host);
-				string userName, password, message = null;
-				NetworkCredential cred;
+				var saslUri = new Uri ("pop://" + engine.Uri!.Host);
+				string userName, password;
+				NetworkCredential? cred;
+				string? message = null;
 
-				if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
-					var apop = GetApopCommand (encoding, credentials, saslUri);
+				if ((engine.Capabilities & Pop3Capabilities.Apop) != 0 && (cred = credentials.GetCredential (saslUri, "APOP")) != null) {
+					var apop = GetApopCommand (encoding, cred);
 
 					detector.IsAuthenticating = true;
 
@@ -986,11 +986,11 @@ namespace MailKit.Net.Pop3 {
 
 				if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
 					foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
-						SaslMechanism sasl;
+						SaslMechanism? sasl;
 
 						cred = credentials.GetCredential (saslUri, authmech);
 
-						if ((sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
+						if (cred == null || (sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 							continue;
 
 						cancellationToken.ThrowIfCancellationRequested ();
@@ -1004,13 +1004,15 @@ namespace MailKit.Net.Pop3 {
 
 						pc.ThrowIfError ();
 
-						OnAuthenticated (ctx.AuthMessage, cancellationToken);
+						OnAuthenticated (ctx.AuthMessage!, cancellationToken);
 						return;
 					}
 				}
 
 				// fall back to the classic USER & PASS commands...
-				cred = credentials.GetCredential (saslUri, "DEFAULT");
+				if ((cred = credentials.GetCredential (saslUri, "DEFAULT")) == null)
+					throw new AuthenticationException ("No credentials could be found for the POP3 server.");
+
 				userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
 				password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 				detector.IsAuthenticating = true;
@@ -1105,7 +1107,7 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 
 			try {
-				ProtocolLogger.LogConnect (engine.Uri);
+				ProtocolLogger.LogConnect (engine.Uri!);
 			} catch {
 				stream.Dispose ();
 				secure = false;
@@ -1127,7 +1129,7 @@ namespace MailKit.Net.Pop3 {
 
 					try {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						engine.Stream.Stream = tls;
+						engine.Stream!.Stream = tls;
 
 						SslHandshake (tls, host, cancellationToken);
 					} catch (Exception ex) {
@@ -1555,11 +1557,11 @@ namespace MailKit.Net.Pop3 {
 			SendCommand (cancellationToken, "NOOP\r\n");
 		}
 
-		void OnEngineDisconnected (object sender, EventArgs e)
+		void OnEngineDisconnected (object? sender, EventArgs e)
 		{
 			var options = SecureSocketOptions.None;
 			bool requested = disconnecting;
-			string host = null;
+			string? host = null;
 			int port = 0;
 
 			if (engine.Uri != null) {
@@ -1636,7 +1638,7 @@ namespace MailKit.Net.Pop3 {
 
 		static void ReadLangResponse (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 		{
-			var langs = (List<Pop3Language>) pc.UserData;
+			var langs = (List<Pop3Language>) pc.UserData!;
 
 			do {
 				var response = engine.ReadLine (cancellationToken);
@@ -1890,7 +1892,7 @@ namespace MailKit.Net.Pop3 {
 
 			engine.Capabilities |= Pop3Capabilities.UIDL;
 
-			return (T) pc.UserData;
+			return (T) pc.UserData!;
 		}
 
 		/// <summary>
@@ -1944,7 +1946,7 @@ namespace MailKit.Net.Pop3 {
 		static void ParseUidlAllResponse (Pop3Command pc, string response)
 		{
 			var tokens = response.Split (Space, StringSplitOptions.RemoveEmptyEntries);
-			var uids = (List<string>) pc.UserData;
+			var uids = (List<string>) pc.UserData!;
 
 			if (tokens.Length < 2) {
 				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the UIDL command.");
@@ -2129,13 +2131,13 @@ namespace MailKit.Net.Pop3 {
 
 			engine.Run (true, cancellationToken);
 
-			return (int) pc.UserData;
+			return (int) pc.UserData!;
 		}
 
 		static void ParseListAllResponse (Pop3Command pc, string response)
 		{
 			var tokens = response.Split (Space, StringSplitOptions.RemoveEmptyEntries);
-			var sizes = (List<int>) pc.UserData;
+			var sizes = (List<int>) pc.UserData!;
 
 			if (tokens.Length < 2) {
 				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", response);
@@ -2236,13 +2238,13 @@ namespace MailKit.Net.Pop3 {
 
 		abstract class DownloadContext<T>
 		{
-			readonly ITransferProgress progress;
+			readonly ITransferProgress? progress;
 			readonly Pop3Client client;
-			T[] downloaded;
+			T[]? downloaded;
 			long nread;
 			int idx;
 
-			protected DownloadContext (Pop3Client client, ITransferProgress progress)
+			protected DownloadContext (Pop3Client client, ITransferProgress? progress)
 			{
 				this.progress = progress;
 				this.client = client;
@@ -2269,34 +2271,34 @@ namespace MailKit.Net.Pop3 {
 			void OnDataReceived (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 			{
 				try {
-					engine.Stream.Mode = Pop3StreamMode.Data;
+					engine.Stream!.Mode = Pop3StreamMode.Data;
 
 					var item = Parse (engine.Stream, cancellationToken);
 
-					downloaded[idx++] = item;
+					downloaded![idx++] = item;
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 
-					engine.Stream.CopyTo (Stream.Null, 4096);
+					engine.Stream!.CopyTo (Stream.Null, 4096);
 				} finally {
-					engine.Stream.Mode = Pop3StreamMode.Line;
+					engine.Stream!.Mode = Pop3StreamMode.Line;
 				}
 			}
 
 			async Task OnDataReceivedAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 			{
 				try {
-					engine.Stream.Mode = Pop3StreamMode.Data;
+					engine.Stream!.Mode = Pop3StreamMode.Data;
 
 					var item = await ParseAsync (engine.Stream, cancellationToken).ConfigureAwait (false);
 
-					downloaded[idx++] = item;
+					downloaded![idx++] = item;
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 
-					await engine.Stream.CopyToAsync (Stream.Null, 4096, cancellationToken).ConfigureAwait (false);
+					await engine.Stream!.CopyToAsync (Stream.Null, 4096, cancellationToken).ConfigureAwait (false);
 				} finally {
-					engine.Stream.Mode = Pop3StreamMode.Line;
+					engine.Stream!.Mode = Pop3StreamMode.Line;
 				}
 			}
 
@@ -2440,7 +2442,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			const int BufferSize = 4096;
 
-			public DownloadStreamContext (Pop3Client client, ITransferProgress progress = null) : base (client, progress)
+			public DownloadStreamContext (Pop3Client client, ITransferProgress? progress = null) : base (client, progress)
 			{
 			}
 
@@ -2529,7 +2531,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			readonly MimeParser parser;
 
-			public DownloadMessageContext (Pop3Client client, MimeParser parser, ITransferProgress progress = null) : base (client, progress)
+			public DownloadMessageContext (Pop3Client client, MimeParser parser, ITransferProgress? progress = null) : base (client, progress)
 			{
 				this.parser = parser;
 			}
@@ -2782,7 +2784,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			CheckCanDownload (index);
 
@@ -2835,7 +2837,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (indexes))
 				return Array.Empty<MimeMessage> ();
@@ -2891,7 +2893,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (startIndex, count))
 				return Array.Empty<MimeMessage> ();
@@ -2936,7 +2938,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			CheckCanDownload (index);
 
@@ -2990,7 +2992,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (indexes))
 				return Array.Empty<Stream> ();
@@ -3044,7 +3046,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public override IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (startIndex, count))
 				return Array.Empty<Stream> ();

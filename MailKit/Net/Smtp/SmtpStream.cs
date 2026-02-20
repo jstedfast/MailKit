@@ -56,7 +56,7 @@ namespace MailKit.Net.Smtp {
 
 		readonly IProtocolLogger logger;
 		int inputIndex, inputEnd;
-		string lastResponse;
+		string? lastResponse;
 		bool disposed;
 
 		/// <summary>

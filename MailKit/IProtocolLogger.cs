@@ -45,7 +45,7 @@ namespace MailKit {
 		/// Gets or sets the authentication secret detector.
 		/// </remarks>
 		/// <value>The authentication secret detector.</value>
-		IAuthenticationSecretDetector AuthenticationSecretDetector { get; set; }
+		IAuthenticationSecretDetector? AuthenticationSecretDetector { get; set; }
 
 		/// <summary>
 		/// Logs a connection to the specified URI.

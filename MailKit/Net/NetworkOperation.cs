@@ -51,12 +51,12 @@ namespace MailKit.Net {
 
 		readonly NetworkOperationKind kind;
 		readonly ClientMetrics metrics;
-		readonly Activity activity;
+		readonly Activity? activity;
 		readonly long startTimestamp;
 		readonly Uri uri;
-		Exception ex;
+		Exception? ex;
 
-		NetworkOperation (NetworkOperationKind kind, Uri uri, Activity activity, ClientMetrics metrics)
+		NetworkOperation (NetworkOperationKind kind, Uri uri, Activity? activity, ClientMetrics metrics)
 		{
 			this.kind = kind;
 			this.uri = uri;
@@ -72,7 +72,7 @@ namespace MailKit.Net {
 			startTimestamp = Stopwatch.GetTimestamp ();
 		}
 #else
-		Exception ex;
+		Exception? ex;
 
 		NetworkOperation ()
 		{

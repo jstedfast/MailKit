@@ -63,7 +63,7 @@ namespace MailKit.Net.Smtp {
 		/// used instead.
 		/// </remarks>
 		/// <value>The local domain.</value>
-		string LocalDomain { get; set; }
+		string? LocalDomain { get; set; }
 
 		/// <summary>
 		/// Get the maximum message size supported by the server.

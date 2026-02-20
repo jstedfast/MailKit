@@ -165,7 +165,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_MailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
-		public CipherSuitesPolicy SslCipherSuitesPolicy {
+		public CipherSuitesPolicy? SslCipherSuitesPolicy {
 			get; set;
 		}
 
@@ -192,7 +192,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_MailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
-		public X509CertificateCollection ClientCertificates {
+		public X509CertificateCollection? ClientCertificates {
 			get; set;
 		}
 
@@ -229,7 +229,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\SslCertificateValidation.cs"/>
 		/// </example>
 		/// <value>The server certificate validation callback function.</value>
-		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
+		public RemoteCertificateValidationCallback? ServerCertificateValidationCallback {
 			get; set;
 		}
 
@@ -240,7 +240,7 @@ namespace MailKit {
 		/// Gets or sets the local IP end point to use when connecting to the remote host.
 		/// </remarks>
 		/// <value>The local IP end point or <see langword="null" /> to use the default end point.</value>
-		public IPEndPoint LocalEndPoint {
+		public IPEndPoint? LocalEndPoint {
 			get; set;
 		}
 
@@ -255,7 +255,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
 		/// </example>
 		/// <value>The proxy client.</value>
-		public IProxyClient ProxyClient {
+		public IProxyClient? ProxyClient {
 			get; set;
 		}
 
@@ -454,7 +454,7 @@ namespace MailKit {
 		/// <param name="certificate">The server's SSL certificate.</param>
 		/// <param name="chain">The server's SSL certificate chain.</param>
 		/// <param name="sslPolicyErrors">The SSL policy errors.</param>
-		protected static bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		protected static bool DefaultServerCertificateValidationCallback (object? sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
 		{
 			return sslPolicyErrors == SslPolicyErrors.None;
 		}
@@ -791,7 +791,7 @@ namespace MailKit {
 			if (!protocol.Equals (Protocol, StringComparison.OrdinalIgnoreCase))
 				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
 
-			if (query.TryGetValue ("starttls", out string value)) {
+			if (query.TryGetValue ("starttls", out string? value)) {
 				if (IsAny (value, "always", "true", "yes"))
 					return SecureSocketOptions.StartTls;
 
@@ -1617,7 +1617,7 @@ namespace MailKit {
 		/// The <see cref="Connected"/> event is raised when the client
 		/// successfully connects to the mail server.
 		/// </remarks>
-		public event EventHandler<ConnectedEventArgs> Connected;
+		public event EventHandler<ConnectedEventArgs>? Connected;
 
 		/// <summary>
 		/// Raise the connected event.
@@ -1640,7 +1640,7 @@ namespace MailKit {
 		/// The <see cref="Disconnected"/> event is raised whenever the client
 		/// gets disconnected.
 		/// </remarks>
-		public event EventHandler<DisconnectedEventArgs> Disconnected;
+		public event EventHandler<DisconnectedEventArgs>? Disconnected;
 
 		/// <summary>
 		/// Raise the disconnected event.
@@ -1664,7 +1664,7 @@ namespace MailKit {
 		/// The <see cref="Authenticated"/> event is raised whenever the client
 		/// has been authenticated.
 		/// </remarks>
-		public event EventHandler<AuthenticatedEventArgs> Authenticated;
+		public event EventHandler<AuthenticatedEventArgs>? Authenticated;
 
 		/// <summary>
 		/// Raise the authenticated event.
