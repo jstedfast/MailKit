@@ -103,12 +103,12 @@ namespace MailKit.Net
 
 		static void OnEndConnect (IAsyncResult ar)
 		{
-			var state = (SocketConnectState) ar.AsyncState;
+			var state = (SocketConnectState) ar.AsyncState!;
 
 			state.OnEndConnect (ar);
 		}
 
-		public static Socket Connect (string host, int port, IPEndPoint localEndPoint, CancellationToken cancellationToken)
+		public static Socket Connect (string host, int port, IPEndPoint? localEndPoint, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -171,7 +171,7 @@ namespace MailKit.Net
 			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 		}
 
-		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, CancellationToken cancellationToken)
+		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint? localEndPoint, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
@@ -218,7 +218,7 @@ namespace MailKit.Net
 			throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 		}
 
-		public static Socket Connect (string host, int port, IPEndPoint localEndPoint, int timeout, CancellationToken cancellationToken)
+		public static Socket Connect (string host, int port, IPEndPoint? localEndPoint, int timeout, CancellationToken cancellationToken)
 		{
 			using (var ts = new CancellationTokenSource (timeout)) {
 				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
@@ -233,7 +233,7 @@ namespace MailKit.Net
 			}
 		}
 
-		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint localEndPoint, int timeout, CancellationToken cancellationToken)
+		public static async Task<Socket> ConnectAsync (string host, int port, IPEndPoint? localEndPoint, int timeout, CancellationToken cancellationToken)
 		{
 			using (var ts = new CancellationTokenSource (timeout)) {
 				using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken, ts.Token)) {
