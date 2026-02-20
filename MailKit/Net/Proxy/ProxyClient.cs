@@ -50,7 +50,7 @@ namespace MailKit.Net.Proxy
 	public abstract class ProxyClient : IProxyClient
 	{
 #if NET6_0_OR_GREATER
-		static IProxyClient systemProxy;
+		static IProxyClient? systemProxy;
 
 		/// <summary>
 		/// Get a client for the default system proxy.
@@ -139,7 +139,7 @@ namespace MailKit.Net.Proxy
 		/// Gets the credentials to use when authenticating with the proxy server.
 		/// </remarks>
 		/// <value>The proxy credentials.</value>
-		public NetworkCredential ProxyCredentials {
+		public NetworkCredential? ProxyCredentials {
 			get; private set;
 		}
 
@@ -172,7 +172,7 @@ namespace MailKit.Net.Proxy
 		/// Gets or sets the local IP end point to use when connecting to a remote host.
 		/// </remarks>
 		/// <value>The local IP end point or <see langword="null" /> to use the default end point.</value>
-		public IPEndPoint LocalEndPoint {
+		public IPEndPoint? LocalEndPoint {
 			get; set;
 		}
 
@@ -196,9 +196,9 @@ namespace MailKit.Net.Proxy
 				throw new ArgumentOutOfRangeException (nameof (timeout));
 		}
 
-		static void AsyncOperationCompleted (object sender, SocketAsyncEventArgs args)
+		static void AsyncOperationCompleted (object? sender, SocketAsyncEventArgs args)
 		{
-			var tcs = (TaskCompletionSource<bool>) args.UserToken;
+			var tcs = (TaskCompletionSource<bool>) args.UserToken!;
 
 			if (args.SocketError == SocketError.Success) {
 				tcs.TrySetResult (true);

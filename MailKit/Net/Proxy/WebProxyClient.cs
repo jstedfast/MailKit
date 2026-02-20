@@ -76,7 +76,7 @@ namespace MailKit.Net.Proxy
 			return new Uri ($"{scheme}://{host}:{port}");
 		}
 
-		static NetworkCredential GetNetworkCredential (ICredentials credentials, Uri uri)
+		static NetworkCredential? GetNetworkCredential (ICredentials? credentials, Uri uri)
 		{
 			if (credentials == null)
 				return null;
@@ -87,7 +87,7 @@ namespace MailKit.Net.Proxy
 			return credentials.GetCredential (uri, "Basic");
 		}
 
-		internal static ProxyClient GetProxyClient (Uri proxyUri, ICredentials credentials)
+		internal static ProxyClient GetProxyClient (Uri proxyUri, ICredentials? credentials)
 		{
 			var credential = GetNetworkCredential (credentials, proxyUri);
 

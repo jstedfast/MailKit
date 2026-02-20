@@ -134,7 +134,7 @@ namespace MailKit.Net.Proxy {
 		/// changing this setting.
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
-		public CipherSuitesPolicy SslCipherSuitesPolicy {
+		public CipherSuitesPolicy? SslCipherSuitesPolicy {
 			get; set;
 		}
 #endif
@@ -149,7 +149,7 @@ namespace MailKit.Net.Proxy {
 		/// <a href="Overload_MailKit_Net_Proxy_ProxyClient_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
-		public X509CertificateCollection ClientCertificates {
+		public X509CertificateCollection? ClientCertificates {
 			get; set;
 		}
 
@@ -182,14 +182,14 @@ namespace MailKit.Net.Proxy {
 		/// <a href="Overload_MailKit_Net_Proxy_ProxyClient_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <value>The server certificate validation callback function.</value>
-		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
+		public RemoteCertificateValidationCallback? ServerCertificateValidationCallback {
 			get; set;
 		}
 
 		// Note: This is used by SslHandshakeException to build the exception message.
-		SslCertificateValidationInfo sslValidationInfo;
+		SslCertificateValidationInfo? sslValidationInfo;
 
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		bool ValidateRemoteCertificate (object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
 		{
 			bool valid;
 
