@@ -31,6 +31,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Net {
 	sealed class SocketMetrics
@@ -51,9 +52,9 @@ namespace MailKit.Net {
 				description: "The number of milliseconds taken for a socket to connect to a remote host.");
 		}
 
-		static SocketException GetSocketException (Exception exception)
+		static SocketException? GetSocketException (Exception exception)
 		{
-			Exception ex = exception;
+			Exception? ex = exception;
 
 			do {
 				if (ex is SocketException se)
@@ -65,7 +66,7 @@ namespace MailKit.Net {
 			return null;
 		}
 
-		internal static bool TryGetErrorType (Exception exception, bool exceptionTypeFallback, out string errorType)
+		internal static bool TryGetErrorType (Exception exception, bool exceptionTypeFallback, [NotNullWhen (true)] out string? errorType)
 		{
 			if (exception is OperationCanceledException) {
 				errorType = "cancelled";
@@ -89,17 +90,15 @@ namespace MailKit.Net {
 				}
 			}
 
-			if (exceptionTypeFallback) {
+			if (exceptionTypeFallback)
 				errorType = exception.GetType ().FullName;
-				return true;
-			}
+			else
+				errorType = null;
 
-			errorType = null;
-
-			return false;
+			return errorType != null;
 		}
 
-		static TagList GetTags (IPAddress ip, string host, int port, Exception ex = null)
+		static TagList GetTags (IPAddress ip, string host, int port, Exception? ex = null)
 		{
 			var tags = new TagList {
 				{ "network.peer.address", ip.ToString () },
@@ -129,7 +128,7 @@ namespace MailKit.Net {
 			}
 		}
 
-		public void RecordConnectFailed (long connectStartedTimestamp, IPAddress ip, string host, int port, bool cancelled, Exception ex = null)
+		public void RecordConnectFailed (long connectStartedTimestamp, IPAddress ip, string host, int port, bool cancelled, Exception? ex = null)
 		{
 			if (connectCounter.Enabled || connectDuration.Enabled) {
 				var tags = GetTags (ip, host, port, ex);

@@ -30,6 +30,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Diagnostics.Metrics;
+using System.Diagnostics.CodeAnalysis;
 
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -62,7 +63,7 @@ namespace MailKit.Net {
 				description: $"The amount of time it takes for the {protocol} server to perform an operation.");
 		}
 
-		static bool TryGetErrorType (Exception exception, out string errorType)
+		static bool TryGetErrorType (Exception exception, [NotNullWhen (true)] out string? errorType)
 		{
 			if (SocketMetrics.TryGetErrorType (exception, false, out errorType))
 				return true;
@@ -98,7 +99,7 @@ namespace MailKit.Net {
 			// Fall back to using the exception type name.
 			errorType = exception.GetType ().FullName;
 
-			return true;
+			return errorType != null;
 		}
 
 		internal static TagList GetTags (Uri uri, Exception? ex)

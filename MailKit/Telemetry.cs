@@ -65,9 +65,9 @@ namespace MailKit {
 			/// </remarks>
 			public const string MeterVersion = "0.1";
 
-			static Meter Meter;
+			static Meter? Meter;
 
-			internal static SocketMetrics Metrics { get; private set; }
+			internal static SocketMetrics? Metrics { get; private set; }
 
 			/// <summary>
 			/// Configure socket metering.
@@ -145,9 +145,9 @@ namespace MailKit {
 			/// </remarks>
 			public const string MeterVersion = "0.1";
 
-			static Meter Meter;
+			static Meter? Meter;
 
-			internal static ClientMetrics Metrics { get; private set; }
+			internal static ClientMetrics? Metrics { get; private set; }
 
 			internal static ClientMetrics CreateMetrics (Meter meter)
 			{
@@ -230,9 +230,9 @@ namespace MailKit {
 			/// </remarks>
 			public const string MeterVersion = "0.1";
 
-			static Meter Meter;
+			static Meter? Meter;
 
-			internal static ClientMetrics Metrics { get; private set; }
+			internal static ClientMetrics? Metrics { get; private set; }
 
 			internal static ClientMetrics CreateMetrics (Meter meter)
 			{
@@ -315,9 +315,9 @@ namespace MailKit {
 			/// </remarks>
 			public const string MeterVersion = "0.1";
 
-			static Meter Meter;
+			static Meter? Meter;
 
-			internal static ClientMetrics Metrics { get; private set; }
+			internal static ClientMetrics? Metrics { get; private set; }
 
 			internal static ClientMetrics CreateMetrics (Meter meter)
 			{
