@@ -4492,12 +4492,9 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("APPEND");
 
-			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid) as AppendUidResponseCode;
 
-			if (rc is AppendUidResponseCode append)
-				return append.UidSet[0];
-
-			return null;
+			return rc?.UidSet?[0];
 		}
 
 		/// <summary>
@@ -4695,10 +4692,10 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("APPEND");
 
-			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid) as AppendUidResponseCode;
 
-			if (rc is AppendUidResponseCode append)
-				return append.UidSet;
+			if (rc != null && rc.UidSet != null)
+				return rc.UidSet;
 
 			return Array.Empty<UniqueId> ();
 		}
@@ -4940,12 +4937,9 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("REPLACE");
 
-			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid);
+			var rc = ic.GetResponseCode (ImapResponseCodeType.AppendUid) as AppendUidResponseCode;
 
-			if (rc is AppendUidResponseCode append)
-				return append.UidSet[0];
-
-			return null;
+			return rc?.UidSet?[0];
 		}
 
 		/// <summary>
@@ -5366,7 +5360,7 @@ namespace MailKit.Net.Imap {
 		{
 			var rc = ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
-			if (rc is CopyUidResponseCode copy) {
+			if (rc is CopyUidResponseCode copy && copy.SrcUidSet != null && copy.DestUidSet != null) {
 				if (dest == null) {
 					dest = copy.DestUidSet;
 					src = copy.SrcUidSet;
@@ -5458,10 +5452,10 @@ namespace MailKit.Net.Imap {
 				ProcessCopyToResponse (ic, destination, ref src, ref dest);
 			}
 
-			if (dest == null)
+			if (src == null || dest == null)
 				return UniqueIdMap.Empty;
 
-			return new UniqueIdMap (src!, dest);
+			return new UniqueIdMap (src, dest);
 		}
 
 		/// <summary>
@@ -5538,10 +5532,10 @@ namespace MailKit.Net.Imap {
 				ProcessCopyToResponse (ic, destination, ref src, ref dest);
 			}
 
-			if (dest == null)
+			if (src == null || dest == null)
 				return UniqueIdMap.Empty;
 
-			return new UniqueIdMap (src!, dest);
+			return new UniqueIdMap (src, dest);
 		}
 
 		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)

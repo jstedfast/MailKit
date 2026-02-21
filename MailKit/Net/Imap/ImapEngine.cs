@@ -1716,7 +1716,9 @@ namespace MailKit.Net.Imap {
 					OnAlert (code.Message);
 					break;
 				case ImapResponseCodeType.WebAlert:
-					OnWebAlert (((WebAlertResponseCode) code).WebUri, code.Message);
+					var webAlert = (WebAlertResponseCode) code;
+					if (webAlert.WebUri != null)
+						OnWebAlert (webAlert.WebUri, code.Message);
 					break;
 				case ImapResponseCodeType.NotificationOverflow:
 					OnNotificationOverflow ();

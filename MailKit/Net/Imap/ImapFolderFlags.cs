@@ -44,7 +44,7 @@ namespace MailKit.Net.Imap
 		{
 			if (modseq.HasValue) {
 				foreach (var rc in ic.RespCodes.OfType<ModifiedResponseCode> ()) {
-					if (uids != null)
+					if (uids != null && rc.UidSet != null)
 						uids.AddRange (rc.UidSet);
 					else
 						uids = rc.UidSet;
@@ -64,7 +64,7 @@ namespace MailKit.Net.Imap
 			if (modseq.HasValue) {
 				var rc = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
 
-				if (rc != null) {
+				if (rc != null && rc.UidSet != null) {
 					var unmodified = new int[rc.UidSet.Count];
 					for (int i = 0; i < unmodified.Length; i++)
 						unmodified[i] = (int) (rc.UidSet[i].Id - 1);
