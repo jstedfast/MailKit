@@ -31,6 +31,7 @@
 
 using System;
 using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Security.Ntlm {
 	class NtlmNegotiateMessage : NtlmMessageBase
@@ -38,9 +39,9 @@ namespace MailKit.Security.Ntlm {
 		// System.Net.Mail seems to default to:           NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.NegotiateVersion | NtlmFlags.Negotiate128
 		internal const NtlmFlags DefaultFlags = NtlmFlags.Negotiate56 | NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.RequestTarget | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateExtendedSessionSecurity | NtlmFlags.Negotiate128;
 
-		byte[] cached;
+		byte[]? cached;
 
-		public NtlmNegotiateMessage (NtlmFlags flags, string domain, string workstation, Version osVersion = null) : base (1)
+		public NtlmNegotiateMessage (NtlmFlags flags, string? domain, string? workstation, Version? osVersion = null) : base (1)
 		{
 			Flags = flags & ~(NtlmFlags.NegotiateDomainSupplied | NtlmFlags.NegotiateWorkstationSupplied | NtlmFlags.NegotiateVersion);
 
@@ -55,21 +56,21 @@ namespace MailKit.Security.Ntlm {
 			} else {
 				if (!string.IsNullOrEmpty (workstation)) {
 					Flags |= NtlmFlags.NegotiateWorkstationSupplied;
-					Workstation = workstation.ToUpperInvariant ();
+					Workstation = workstation!.ToUpperInvariant ();
 				} else {
 					Workstation = string.Empty;
 				}
 
 				if (!string.IsNullOrEmpty (domain)) {
 					Flags |= NtlmFlags.NegotiateDomainSupplied;
-					Domain = domain.ToUpperInvariant ();
+					Domain = domain!.ToUpperInvariant ();
 				} else {
 					Domain = string.Empty;
 				}
 			}
 		}
 
-		public NtlmNegotiateMessage (string domain = null, string workstation = null, Version osVersion = null) : this (DefaultFlags, domain, workstation, osVersion)
+		public NtlmNegotiateMessage (string? domain = null, string? workstation = null, Version? osVersion = null) : this (DefaultFlags, domain, workstation, osVersion)
 		{
 		}
 
@@ -89,6 +90,7 @@ namespace MailKit.Security.Ntlm {
 			get; private set;
 		}
 
+		[MemberNotNull (nameof (Domain), nameof (Workstation))]
 		void Decode (byte[] message, int startIndex, int length)
 		{
 			ValidateArguments (message, startIndex, length);
@@ -148,10 +150,10 @@ namespace MailKit.Security.Ntlm {
 			message[29] = (byte)(workstationOffset >> 8);
 
 			if ((Flags & NtlmFlags.NegotiateVersion) != 0) {
-				message[32] = (byte) OSVersion.Major;
-				message[33] = (byte) OSVersion.Minor;
-				message[34] = (byte) OSVersion.Build;
-				message[35] = (byte)(OSVersion.Build >> 8);
+				message[32] = (byte) OSVersion!.Major;
+				message[33] = (byte) OSVersion!.Minor;
+				message[34] = (byte) OSVersion!.Build;
+				message[35] = (byte)(OSVersion!.Build >> 8);
 				message[36] = 0x00;
 				message[37] = 0x00;
 				message[38] = 0x00;

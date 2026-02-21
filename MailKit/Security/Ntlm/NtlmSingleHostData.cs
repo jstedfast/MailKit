@@ -27,6 +27,7 @@
 // https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-nlmp/b38c36ed-2804-4868-a9ff-8dd3182128e4
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Security.Ntlm {
 	/// <summary>
@@ -120,6 +121,7 @@ namespace MailKit.Security.Ntlm {
 			get; private set;
 		}
 
+		[MemberNotNull (nameof (CustomData), nameof (MachineId))]
 		void Decode (byte[] buffer, int startIndex, int length)
 		{
 			if (buffer == null)
