@@ -93,7 +93,7 @@ namespace MailKit {
 				return n1 ? 1 : (n2 ? -1  : 0);
 			}
 
-			public int Compare (T x, T y)
+			public int Compare (T? x, T? y)
 			{
 				int cmp = 0;
 
@@ -102,8 +102,8 @@ namespace MailKit {
 					case OrderByType.Annotation:
 						var annotation = (OrderByAnnotation) orderBy[i];
 
-						var xannotation = x.Annotations?.FirstOrDefault (a => a.Entry == annotation.Entry);
-						var yannotation = y.Annotations?.FirstOrDefault (a => a.Entry == annotation.Entry);
+						var xannotation = x!.Annotations?.FirstOrDefault (a => a.Entry == annotation.Entry);
+						var yannotation = y!.Annotations?.FirstOrDefault (a => a.Entry == annotation.Entry);
 
 						var xvalue = xannotation?.Properties[annotation.Attribute] ?? string.Empty;
 						var yvalue = yannotation?.Properties[annotation.Attribute] ?? string.Empty;
@@ -111,43 +111,43 @@ namespace MailKit {
 						cmp = string.Compare (xvalue, yvalue, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.Arrival:
-						cmp = x.Index.CompareTo (y.Index);
+						cmp = x!.Index.CompareTo (y!.Index);
 						break;
 					case OrderByType.Cc:
-						cmp = CompareMailboxAddresses (x.Envelope.Cc, y.Envelope.Cc);
+						cmp = CompareMailboxAddresses (x!.Envelope!.Cc, y!.Envelope!.Cc);
 						break;
 					case OrderByType.Date:
-						cmp = x.Date.CompareTo (y.Date);
+						cmp = x!.Date.CompareTo (y!.Date);
 						break;
 					case OrderByType.DisplayFrom:
-						cmp = CompareDisplayNames (x.Envelope.From, y.Envelope.From);
+						cmp = CompareDisplayNames (x!.Envelope!.From, y!.Envelope!.From);
 						break;
 					case OrderByType.From:
-						cmp = CompareMailboxAddresses (x.Envelope.From, y.Envelope.From);
+						cmp = CompareMailboxAddresses (x!.Envelope!.From, y!.Envelope!.From);
 						break;
 					case OrderByType.ModSeq:
-						var xmodseq = x.ModSeq ?? 0;
-						var ymodseq = y.ModSeq ?? 0;
+						var xmodseq = x!.ModSeq ?? 0;
+						var ymodseq = y!.ModSeq ?? 0;
 
 						cmp = xmodseq.CompareTo (ymodseq);
 						break;
 					case OrderByType.Size:
-						var xsize = x.Size ?? 0;
-						var ysize = y.Size ?? 0;
+						var xsize = x!.Size ?? 0;
+						var ysize = y!.Size ?? 0;
 
 						cmp = xsize.CompareTo (ysize);
 						break;
 					case OrderByType.Subject:
-						var xsubject = x.Envelope.Subject ?? string.Empty;
-						var ysubject = y.Envelope.Subject ?? string.Empty;
+						var xsubject = x!.Envelope!.Subject ?? string.Empty;
+						var ysubject = y!.Envelope!.Subject ?? string.Empty;
 
 						cmp = string.Compare (xsubject, ysubject, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.DisplayTo:
-						cmp = CompareDisplayNames (x.Envelope.To, y.Envelope.To);
+						cmp = CompareDisplayNames (x!.Envelope!.To, y!.Envelope!.To);
 						break;
 					case OrderByType.To:
-						cmp = CompareMailboxAddresses (x.Envelope.To, y.Envelope.To);
+						cmp = CompareMailboxAddresses (x!.Envelope!.To, y!.Envelope!.To);
 						break;
 					}
 

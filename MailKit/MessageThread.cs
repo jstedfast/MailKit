@@ -55,7 +55,7 @@ namespace MailKit {
 		/// Creates a new message thread node.
 		/// </remarks>
 		/// <param name="message">The message summary.</param>
-		public MessageThread (IMessageSummary message)
+		public MessageThread (IMessageSummary? message)
 		{
 			Children = new List<MessageThread> ();
 			if (message != null && message.UniqueId.IsValid)
@@ -76,7 +76,7 @@ namespace MailKit {
 		/// methods will always be <see langword="null" />.</note>
 		/// </remarks>
 		/// <value>The message summary.</value>
-		public IMessageSummary Message {
+		public IMessageSummary? Message {
 			get; private set;
 		}
 
