@@ -52,6 +52,10 @@ namespace MailKit.Net.Imap {
 		readonly FormatOptions format;
 		readonly Action<int> update;
 
+		static void DefaultUpdate (int value)
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapLiteral"/> class.
 		/// </summary>
@@ -61,7 +65,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="action">The progress update action.</param>
-		public ImapLiteral (FormatOptions options, MimeMessage message, Action<int> action = null)
+		public ImapLiteral (FormatOptions options, MimeMessage message, Action<int> action)
 		{
 			format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
@@ -84,6 +88,8 @@ namespace MailKit.Net.Imap {
 		{
 			format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
+
+			update = DefaultUpdate;
 
 			Type = ImapLiteralType.String;
 			Literal = literal;

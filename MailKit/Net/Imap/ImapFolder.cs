@@ -4624,7 +4624,8 @@ namespace MailKit.Net.Imap {
 				if (requests[i] == null)
 					throw new ArgumentException ("One or more of the requests is null.");
 
-				if (requests[i].Annotations != null && requests[i].Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				var annotations = requests[i].Annotations;
+				if (annotations != null && annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
 					throw new NotSupportedException ("One ore more requests included annotations but the IMAP server does not support annotations.");
 			}
 
@@ -4640,7 +4641,8 @@ namespace MailKit.Net.Imap {
 			};
 
 			for (int i = 0; i < requests.Count; i++) {
-				int numKeywords = requests[i].Keywords != null ? requests[i].Keywords.Count : 0;
+				var keywords = requests[i].Keywords;
+				int numKeywords = keywords != null ? keywords.Count : 0;
 
 				builder.Append (' ');
 
@@ -4649,8 +4651,8 @@ namespace MailKit.Net.Imap {
 					builder.Append (' ');
 				}
 
-				if (requests[i].Keywords != null) {
-					foreach (var keyword in requests[i].Keywords)
+				if (keywords != null) {
+					foreach (var keyword in keywords)
 						list.Add (keyword);
 				}
 
@@ -4661,8 +4663,9 @@ namespace MailKit.Net.Imap {
 					builder.Append ("\" ");
 				}
 
-				if (requests[i].Annotations != null && requests[i].Annotations.Count > 0) {
-					ImapUtils.FormatAnnotations (builder, requests[i].Annotations, list, false);
+				var annotations = requests[i].Annotations;
+				if (annotations != null && annotations.Count > 0) {
+					ImapUtils.FormatAnnotations (builder, annotations, list, false);
 
 					if (builder[builder.Length - 1] != ' ')
 						builder.Append (' ');

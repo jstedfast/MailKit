@@ -172,8 +172,12 @@ namespace MailKit {
 				throw new ArgumentException ("Invalid part-specifier.", nameof (partSpecifier));
 		}
 
-		AnnotationEntry ()
+		AnnotationEntry (string? partSpecifier, string entry, string path, AnnotationScope scope)
 		{
+			PartSpecifier = partSpecifier;
+			Entry = entry;
+			Path = path;
+			Scope = scope;
 		}
 
 		/// <summary>
@@ -199,6 +203,7 @@ namespace MailKit {
 			case AnnotationScope.Shared: Entry = path + ".shared"; break;
 			default: Entry = path; break;
 			}
+
 			PartSpecifier = null;
 			Path = path;
 			Scope = scope;
@@ -233,6 +238,7 @@ namespace MailKit {
 			case AnnotationScope.Shared: Entry = string.Format ("/{0}{1}.shared", partSpecifier, path); break;
 			default: Entry = string.Format ("/{0}{1}", partSpecifier, path); break;
 			}
+
 			PartSpecifier = partSpecifier;
 			Path = path;
 			Scope = scope;
@@ -267,6 +273,7 @@ namespace MailKit {
 			case AnnotationScope.Shared: Entry = string.Format ("/{0}{1}.shared", part.PartSpecifier, path); break;
 			default: Entry = string.Format ("/{0}{1}", part.PartSpecifier, path); break;
 			}
+
 			PartSpecifier = part.PartSpecifier;
 			Path = path;
 			Scope = scope;
@@ -290,7 +297,7 @@ namespace MailKit {
 		/// Gets the part-specifier component of the annotation entry.
 		/// </remarks>
 		/// <value>The part-specifier.</value>
-		public string PartSpecifier {
+		public string? PartSpecifier {
 			get; private set;
 		}
 
@@ -327,7 +334,7 @@ namespace MailKit {
 		/// <param name="other">The <see cref="MailKit.AnnotationEntry"/> to compare with the current <see cref="MailKit.AnnotationEntry"/>.</param>
 		/// <returns><see langword="true" /> if the specified <see cref="MailKit.AnnotationEntry"/> is equal to the current
 		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <see langword="false" />.</returns>
-		public bool Equals (AnnotationEntry other)
+		public bool Equals (AnnotationEntry? other)
 		{
 			return other?.Entry == Entry;
 		}
@@ -371,7 +378,7 @@ namespace MailKit {
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.AnnotationEntry"/>.</param>
 		/// <returns><see langword="true" /> if the specified <see cref="System.Object"/> is equal to the current
 		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <see langword="false" />.</returns>
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
 			return obj is AnnotationEntry entry && entry.Entry == Entry;
 		}
@@ -427,7 +434,7 @@ namespace MailKit {
 
 			var scope = AnnotationScope.Both;
 			int startIndex = 0, endIndex;
-			string partSpecifier = null;
+			string? partSpecifier = null;
 			var component = 0;
 			var pc = entry[0];
 			string path;
@@ -497,12 +504,7 @@ namespace MailKit {
 
 			path = entry.Substring (startIndex, endIndex - startIndex);
 
-			return new AnnotationEntry {
-				PartSpecifier = partSpecifier,
-				Entry = entry,
-				Path = path,
-				Scope = scope
-			};
+			return new AnnotationEntry (partSpecifier, entry, path, scope);
 		}
 
 		internal static AnnotationEntry Create (string entry)

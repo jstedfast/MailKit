@@ -1934,18 +1934,15 @@ namespace MailKit.Net.Imap
 		void FetchStream (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
-			var annotations = new AnnotationsChangedEventArgs (index);
-			var labels = new MessageLabelsChangedEventArgs (index);
-			var flags = new MessageFlagsChangedEventArgs (index);
-			var modSeq = new ModSeqChangedEventArgs (index);
 			var ctx = (FetchStreamContextBase) ic.UserData!;
 			var sectionBuilder = new StringBuilder ();
-			bool annotationsChanged = false;
-			bool modSeqChanged = false;
-			bool labelsChanged = false;
-			bool flagsChanged = false;
+			IList<Annotation>? annotations = null;
+			MessageFlags flags = MessageFlags.None;
+			HashSet<string>? keywords = null;
+			IList<string>? labels = null;
 			long nread = 0, size = 0;
 			UniqueId? uid = null;
+			ulong? modseq = null;
 			Stream stream;
 			string name;
 			byte[] buf;
@@ -1972,7 +1969,6 @@ namespace MailKit.Net.Imap
 
 				var atom = (string) token.Value;
 				int offset = 0, length;
-				ulong modseq;
 				uint value;
 
 				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
@@ -2117,11 +2113,6 @@ namespace MailKit.Net.Imap
 					uid = new UniqueId (UidValidity, value);
 
 					ctx.SetUniqueId (index, uid.Value, ic.CancellationToken);
-
-					annotations.UniqueId = uid.Value;
-					modSeq.UniqueId = uid.Value;
-					labels.UniqueId = uid.Value;
-					flags.UniqueId = uid.Value;
 				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					token = engine.ReadToken (ic.CancellationToken);
 
@@ -2136,15 +2127,11 @@ namespace MailKit.Net.Imap
 					// If we get an invalid value, just ignore it.
 					//
 					// See https://github.com/jstedfast/MailKit/issues/1686 for details.
-					if (ImapEngine.TryParseNumber64 (token, out modseq)) {
-						if (modseq > HighestModSeq)
-							UpdateHighestModSeq (modseq);
+					if (ImapEngine.TryParseNumber64 (token, out ulong n64)) {
+						if (n64 > HighestModSeq)
+							UpdateHighestModSeq (n64);
 
-						annotations.ModSeq = modseq;
-						modSeq.ModSeq = modseq;
-						labels.ModSeq = modseq;
-						flags.ModSeq = modseq;
-						modSeqChanged = true;
+						modseq = n64;
 					}
 
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2153,18 +2140,16 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					flags.Flags = ImapUtils.ParseFlagsList (engine, atom, (HashSet<string>) flags.Keywords, ic.CancellationToken);
-					flagsChanged = true;
+					keywords = new HashSet<string> (StringComparer.Ordinal);
+					flags = ImapUtils.ParseFlagsList (engine, atom, keywords, ic.CancellationToken);
 				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message labels.
-					labels.Labels = ImapUtils.ParseLabelsList (engine, ic.CancellationToken);
-					labelsChanged = true;
+					labels = ImapUtils.ParseLabelsList (engine, ic.CancellationToken);
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message annotations.
-					annotations.Annotations = ImapUtils.ParseAnnotations (engine, ic.CancellationToken);
-					annotationsChanged = true;
+					annotations = ImapUtils.ParseAnnotations (engine, ic.CancellationToken);
 				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2176,34 +2161,31 @@ namespace MailKit.Net.Imap
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
-			if (flagsChanged)
-				OnMessageFlagsChanged (flags);
+			if (keywords != null)
+				OnMessageFlagsChanged (new MessageFlagsChangedEventArgs (index, flags, keywords) { UniqueId = uid, ModSeq = modseq });
 
-			if (labelsChanged)
-				OnMessageLabelsChanged (labels);
+			if (labels != null)
+				OnMessageLabelsChanged (new MessageLabelsChangedEventArgs (index, labels) { UniqueId = uid, ModSeq = modseq });
 
-			if (annotationsChanged)
-				OnAnnotationsChanged (annotations);
+			if (annotations != null)
+				OnAnnotationsChanged (new AnnotationsChangedEventArgs (index, annotations) { UniqueId = uid, ModSeq = modseq });
 
-			if (modSeqChanged)
-				OnModSeqChanged (modSeq);
+			if (modseq.HasValue)
+				OnModSeqChanged (new ModSeqChangedEventArgs (index, modseq.Value) { UniqueId = uid });
 		}
 
 		async Task FetchStreamAsync (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
-			var annotations = new AnnotationsChangedEventArgs (index);
-			var labels = new MessageLabelsChangedEventArgs (index);
-			var flags = new MessageFlagsChangedEventArgs (index);
-			var modSeq = new ModSeqChangedEventArgs (index);
 			var ctx = (FetchStreamContextBase) ic.UserData!;
 			var sectionBuilder = new StringBuilder ();
-			bool annotationsChanged = false;
-			bool modSeqChanged = false;
-			bool labelsChanged = false;
-			bool flagsChanged = false;
+			IList<Annotation>? annotations = null;
+			MessageFlags flags = MessageFlags.None;
+			HashSet<string>? keywords = null;
+			IList<string>? labels = null;
 			long nread = 0, size = 0;
 			UniqueId? uid = null;
+			ulong? modseq = null;
 			Stream stream;
 			string name;
 			byte[] buf;
@@ -2230,7 +2212,6 @@ namespace MailKit.Net.Imap
 
 				var atom = (string) token.Value;
 				int offset = 0, length;
-				ulong modseq;
 				uint value;
 
 				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
@@ -2375,11 +2356,6 @@ namespace MailKit.Net.Imap
 					uid = new UniqueId (UidValidity, value);
 
 					await ctx.SetUniqueIdAsync (index, uid.Value, ic.CancellationToken).ConfigureAwait (false);
-
-					annotations.UniqueId = uid.Value;
-					modSeq.UniqueId = uid.Value;
-					labels.UniqueId = uid.Value;
-					flags.UniqueId = uid.Value;
 				} else if (atom.Equals ("MODSEQ", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 
@@ -2394,15 +2370,11 @@ namespace MailKit.Net.Imap
 					// If we get an invalid value, just ignore it.
 					//
 					// See https://github.com/jstedfast/MailKit/issues/1686 for details.
-					if (ImapEngine.TryParseNumber64 (token, out modseq)) {
-						if (modseq > HighestModSeq)
-							UpdateHighestModSeq (modseq);
+					if (ImapEngine.TryParseNumber64 (token, out ulong n64)) {
+						if (n64 > HighestModSeq)
+							UpdateHighestModSeq (n64);
 
-						annotations.ModSeq = modseq;
-						modSeq.ModSeq = modseq;
-						labels.ModSeq = modseq;
-						flags.ModSeq = modseq;
-						modSeqChanged = true;
+						modseq = n64;
 					}
 
 					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
@@ -2411,18 +2383,16 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					flags.Flags = await ImapUtils.ParseFlagsListAsync (engine, atom, (HashSet<string>) flags.Keywords, ic.CancellationToken).ConfigureAwait (false);
-					flagsChanged = true;
+					keywords = new HashSet<string> (StringComparer.Ordinal);
+					flags = await ImapUtils.ParseFlagsListAsync (engine, atom, keywords, ic.CancellationToken).ConfigureAwait (false);
 				} else if (atom.Equals ("X-GM-LABELS", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message labels.
-					labels.Labels = await ImapUtils.ParseLabelsListAsync (engine, ic.CancellationToken).ConfigureAwait (false);
-					labelsChanged = true;
+					labels = await ImapUtils.ParseLabelsListAsync (engine, ic.CancellationToken).ConfigureAwait (false);
 				} else if (atom.Equals ("ANNOTATION", StringComparison.OrdinalIgnoreCase)) {
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message annotations.
-					annotations.Annotations = await ImapUtils.ParseAnnotationsAsync (engine, ic.CancellationToken).ConfigureAwait (false);
-					annotationsChanged = true;
+					annotations = await ImapUtils.ParseAnnotationsAsync (engine, ic.CancellationToken).ConfigureAwait (false);
 				} else {
 					// Unexpected or unknown token (such as XAOL.SPAM.REASON or XAOL-MSGID). Simply read 1 more token (the argument) and ignore.
 					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
@@ -2434,17 +2404,17 @@ namespace MailKit.Net.Imap
 
 			ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
-			if (flagsChanged)
-				OnMessageFlagsChanged (flags);
+			if (keywords != null)
+				OnMessageFlagsChanged (new MessageFlagsChangedEventArgs (index, flags, keywords) { UniqueId = uid, ModSeq = modseq });
 
-			if (labelsChanged)
-				OnMessageLabelsChanged (labels);
+			if (labels != null)
+				OnMessageLabelsChanged (new MessageLabelsChangedEventArgs (index, labels) { UniqueId = uid, ModSeq = modseq });
 
-			if (annotationsChanged)
-				OnAnnotationsChanged (annotations);
+			if (annotations != null)
+				OnAnnotationsChanged (new AnnotationsChangedEventArgs (index, annotations) { UniqueId = uid, ModSeq = modseq });
 
-			if (modSeqChanged)
-				OnModSeqChanged (modSeq);
+			if (modseq.HasValue)
+				OnModSeqChanged (new ModSeqChangedEventArgs (index, modseq.Value) { UniqueId = uid });
 		}
 
 		Task FetchStreamHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)

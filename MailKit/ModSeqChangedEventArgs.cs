@@ -35,17 +35,6 @@ namespace MailKit
 	public class ModSeqChangedEventArgs : MessageEventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.ModSeqChangedEventArgs"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="ModSeqChangedEventArgs"/>.
-		/// </remarks>
-		/// <param name="index">The message index.</param>
-		internal ModSeqChangedEventArgs (int index) : base (index)
-		{
-		}
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MessageFlagsChangedEventArgs"/> class.
 		/// </summary>
 		/// <remarks>
@@ -80,7 +69,7 @@ namespace MailKit
 		/// </remarks>
 		/// <value>The mod-sequence value.</value>
 		public ulong ModSeq {
-			get; internal set;
+			get; private set;
 		}
 	}
 }

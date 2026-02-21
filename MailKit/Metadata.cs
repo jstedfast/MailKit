@@ -45,6 +45,7 @@ namespace MailKit {
 		/// <param name="value">The metadata value.</param>
 		public Metadata (MetadataTag tag, string value)
 		{
+			EncodedName = string.Empty;
 			Value = value;
 			Tag = tag;
 		}

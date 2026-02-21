@@ -39,17 +39,6 @@ namespace MailKit {
 	public class AnnotationsChangedEventArgs : MessageEventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.AnnotationsChangedEventArgs"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="AnnotationsChangedEventArgs"/>.
-		/// </remarks>
-		/// <param name="index">The message index.</param>
-		internal AnnotationsChangedEventArgs (int index) : base (index)
-		{
-		}
-
-		/// <summary>
 		/// Initializes a new instance of the <see cref="T:MailKit.AnnotationsChangedEventArgs"/> class.
 		/// </summary>
 		/// <remarks>

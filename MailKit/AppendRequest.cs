@@ -165,7 +165,7 @@ namespace MailKit {
 		/// Gets or sets the keywords that should be set on the message.
 		/// </remarks>
 		/// <value>The keywords.</value>
-		public ISet<string> Keywords {
+		public ISet<string>? Keywords {
 			get; set;
 		}
 
@@ -192,7 +192,7 @@ namespace MailKit {
 		/// </note>
 		/// </remarks>
 		/// <value>The list of annotations.</value>
-		public IList<Annotation> Annotations {
+		public IList<Annotation>? Annotations {
 			get; set;
 		}
 

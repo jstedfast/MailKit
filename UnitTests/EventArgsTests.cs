@@ -199,12 +199,6 @@ namespace UnitTests {
 			var uid = new UniqueId (5);
 			ulong modseq = 724;
 
-			args = new MessageLabelsChangedEventArgs (0);
-			Assert.That (args.Labels, Is.Null);
-			Assert.That (args.UniqueId.HasValue, Is.False);
-			Assert.That (args.ModSeq.HasValue, Is.False);
-			Assert.That (args.Index, Is.EqualTo (0));
-
 			args = new MessageLabelsChangedEventArgs (0, labels);
 			Assert.That (args.Labels, Has.Count.EqualTo (labels.Length));
 			Assert.That (args.UniqueId.HasValue, Is.False);
@@ -229,7 +223,6 @@ namespace UnitTests {
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));
 
-			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, labels));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, labels, modseq));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageLabelsChangedEventArgs (-1, uid, labels));
@@ -300,11 +293,6 @@ namespace UnitTests {
 			ModSeqChangedEventArgs args;
 			ulong modseq = 724;
 
-			args = new ModSeqChangedEventArgs (0);
-			Assert.That (args.UniqueId.HasValue, Is.False);
-			Assert.That (args.ModSeq, Is.EqualTo (0));
-			Assert.That (args.Index, Is.EqualTo (0));
-
 			args = new ModSeqChangedEventArgs (0, modseq);
 			Assert.That (args.UniqueId.HasValue, Is.False);
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
@@ -315,7 +303,6 @@ namespace UnitTests {
 			Assert.That (args.ModSeq, Is.EqualTo (modseq));
 			Assert.That (args.Index, Is.EqualTo (0));
 
-			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, modseq));
 			Assert.Throws<ArgumentOutOfRangeException> (() => new ModSeqChangedEventArgs (-1, UniqueId.MinValue, modseq));
 		}
