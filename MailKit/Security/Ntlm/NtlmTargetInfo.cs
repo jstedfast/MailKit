@@ -88,7 +88,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		internal NtlmAttributeValuePair GetAvPair (NtlmAttribute attr)
+		internal NtlmAttributeValuePair? GetAvPair (NtlmAttribute attr)
 		{
 			for (int i = 0; i < attributes.Count; i++) {
 				if (attributes[i].Attribute == attr)
@@ -98,14 +98,14 @@ namespace MailKit.Security.Ntlm {
 			return null;
 		}
 
-		string GetAvPairString (NtlmAttribute attr)
+		string? GetAvPairString (NtlmAttribute attr)
 		{
-			return ((NtlmAttributeStringValuePair) GetAvPair (attr))?.Value;
+			return ((NtlmAttributeStringValuePair?) GetAvPair (attr))?.Value;
 		}
 
-		void SetAvPairString (NtlmAttribute attr, string value)
+		void SetAvPairString (NtlmAttribute attr, string? value)
 		{
-			var pair = (NtlmAttributeStringValuePair) GetAvPair (attr);
+			var pair = (NtlmAttributeStringValuePair?) GetAvPair (attr);
 
 			if (pair == null) {
 				if (value != null)
@@ -117,14 +117,14 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		byte[] GetAvPairByteArray (NtlmAttribute attr)
+		byte[]? GetAvPairByteArray (NtlmAttribute attr)
 		{
-			return ((NtlmAttributeByteArrayValuePair) GetAvPair (attr))?.Value;
+			return ((NtlmAttributeByteArrayValuePair?) GetAvPair (attr))?.Value;
 		}
 
-		void SetAvPairByteArray (NtlmAttribute attr, byte[] value)
+		void SetAvPairByteArray (NtlmAttribute attr, byte[]? value)
 		{
-			var pair = (NtlmAttributeByteArrayValuePair) GetAvPair (attr);
+			var pair = (NtlmAttributeByteArrayValuePair?) GetAvPair (attr);
 
 			if (pair == null) {
 				if (value != null)
@@ -143,7 +143,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the server's NetBIOS computer name.
 		/// </remarks>
 		/// <value>The server's NetBIOS computer name if available; otherwise, <see langword="null" />.</value>
-		public string ServerName {
+		public string? ServerName {
 			get { return GetAvPairString (NtlmAttribute.ServerName); }
 			set { SetAvPairString (NtlmAttribute.ServerName, value); }
 		}
@@ -155,7 +155,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the server's NetBIOS domain name.
 		/// </remarks>
 		/// <value>The server's NetBIOS domain name if available; otherwise, <see langword="null" />.</value>
-		public string DomainName {
+		public string? DomainName {
 			get { return GetAvPairString (NtlmAttribute.DomainName); }
 			set { SetAvPairString (NtlmAttribute.DomainName, value); }
 		}
@@ -167,7 +167,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the fully qualified domain name (FQDN) of the server.
 		/// </remarks>
 		/// <value>The fully qualified domain name (FQDN) of the server if available; otherwise, <see langword="null" />.</value>
-		public string DnsServerName {
+		public string? DnsServerName {
 			get { return GetAvPairString (NtlmAttribute.DnsServerName); }
 			set { SetAvPairString (NtlmAttribute.DnsServerName, value); }
 		}
@@ -179,7 +179,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the fully qualified domain name (FQDN) of the domain.
 		/// </remarks>
 		/// <value>The fully qualified domain name (FQDN) of the domain if available; otherwise, <see langword="null" />.</value>
-		public string DnsDomainName {
+		public string? DnsDomainName {
 			get { return GetAvPairString (NtlmAttribute.DnsDomainName); }
 			set { SetAvPairString (NtlmAttribute.DnsDomainName, value); }
 		}
@@ -191,7 +191,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the fully qualified domain name (FQDN) of the forest.
 		/// </remarks>
 		/// <value>The fully qualified domain name (FQDN) of the forest if available; otherwise, <see langword="null" />.</value>
-		public string DnsTreeName {
+		public string? DnsTreeName {
 			get { return GetAvPairString (NtlmAttribute.DnsTreeName); }
 			set { SetAvPairString (NtlmAttribute.DnsTreeName, value); }
 		}
@@ -207,9 +207,9 @@ namespace MailKit.Security.Ntlm {
 		/// </remarks>
 		/// <value>The 32-bit flags value if available; otherwise, <see langword="null" />.</value>
 		public int? Flags {
-			get { return ((NtlmAttributeFlagsValuePair) GetAvPair (NtlmAttribute.Flags))?.Value; }
+			get { return ((NtlmAttributeFlagsValuePair?) GetAvPair (NtlmAttribute.Flags))?.Value; }
 			set {
-				var pair = (NtlmAttributeFlagsValuePair) GetAvPair (NtlmAttribute.Flags);
+				var pair = (NtlmAttributeFlagsValuePair?) GetAvPair (NtlmAttribute.Flags);
 
 				if (pair == null) {
 					if (value != null)
@@ -233,9 +233,9 @@ namespace MailKit.Security.Ntlm {
 		/// </remarks>
 		/// <value>The local time of the server, if available; otherwise <see langword="null" />.</value>
 		public long? Timestamp {
-			get { return ((NtlmAttributeTimestampValuePair) GetAvPair (NtlmAttribute.Timestamp))?.Value; }
+			get { return ((NtlmAttributeTimestampValuePair?) GetAvPair (NtlmAttribute.Timestamp))?.Value; }
 			set {
-				var pair = (NtlmAttributeTimestampValuePair) GetAvPair (NtlmAttribute.Timestamp);
+				var pair = (NtlmAttributeTimestampValuePair?) GetAvPair (NtlmAttribute.Timestamp);
 
 				if (pair == null) {
 					if (value != null)
@@ -257,7 +257,7 @@ namespace MailKit.Security.Ntlm {
 		/// <para>The Value field contains a platform-specific blob, as well as a MachineID created at computer startup to identify the calling machine.</para>
 		/// </remarks>
 		/// <value>The single host data structure, if available; otherwise, <see langword="null" />.</value>
-		public byte[] SingleHost {
+		public byte[]? SingleHost {
 			get { return GetAvPairByteArray (NtlmAttribute.SingleHost); }
 			set { SetAvPairByteArray (NtlmAttribute.SingleHost, value); }
 		}
@@ -269,7 +269,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the Service Principal Name (SPN) of the server.
 		/// </remarks>
 		/// <value>The Service Principal Name (SPN) of the server, if available; otherwise, <see langword="null" />.</value>
-		public string TargetName {
+		public string? TargetName {
 			get { return GetAvPairString (NtlmAttribute.TargetName); }
 			set { SetAvPairString (NtlmAttribute.TargetName, value); }
 		}
@@ -281,7 +281,7 @@ namespace MailKit.Security.Ntlm {
 		/// Gets or sets the channel binding hash.
 		/// </remarks>
 		/// <value>An MD5 hash of the channel binding data, if available; otherwise <see langword="null" />.</value>
-		public byte[] ChannelBinding {
+		public byte[]? ChannelBinding {
 			get { return GetAvPairByteArray (NtlmAttribute.ChannelBinding); }
 			set { SetAvPairByteArray (NtlmAttribute.ChannelBinding, value); }
 		}

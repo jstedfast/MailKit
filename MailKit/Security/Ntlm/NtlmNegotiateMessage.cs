@@ -150,10 +150,12 @@ namespace MailKit.Security.Ntlm {
 			message[29] = (byte)(workstationOffset >> 8);
 
 			if ((Flags & NtlmFlags.NegotiateVersion) != 0) {
-				message[32] = (byte) OSVersion!.Major;
-				message[33] = (byte) OSVersion!.Minor;
-				message[34] = (byte) OSVersion!.Build;
-				message[35] = (byte)(OSVersion!.Build >> 8);
+				if (OSVersion != null) {
+					message[32] = (byte) OSVersion.Major;
+					message[33] = (byte) OSVersion.Minor;
+					message[34] = (byte) OSVersion.Build;
+					message[35] = (byte)(OSVersion.Build >> 8);
+				}
 				message[36] = 0x00;
 				message[37] = 0x00;
 				message[38] = 0x00;

@@ -289,7 +289,7 @@ namespace UnitTests.Security {
 			var nonce = HexEncode (challenge.ServerChallenge);
 			Assert.That (nonce, Is.EqualTo ("0123456789abcdef"), "The expected nonce does not match.");
 
-			var targetInfo = HexEncode (challenge.GetEncodedTargetInfo ());
+			var targetInfo = HexEncode (challenge.GetEncodedTargetInfo () ?? Array.Empty<byte> ());
 			Assert.That (targetInfo, Is.EqualTo (expectedTargetInfo), "The expected TargetInfo does not match.");
 
 			Assert.That (challenge.TargetInfo.DomainName, Is.EqualTo ("DOMAIN"), "The expected TargetInfo domain name does not match.");
@@ -360,7 +360,7 @@ namespace UnitTests.Security {
 			var nonce = HexEncode (challenge.ServerChallenge);
 			Assert.That (nonce, Is.EqualTo ("0123456789abcdef"), "The expected nonce does not match.");
 
-			var targetInfo = HexEncode (challenge.GetEncodedTargetInfo ());
+			var targetInfo = HexEncode (challenge.GetEncodedTargetInfo () ?? Array.Empty<byte> ());
 			Assert.That (targetInfo, Is.EqualTo (expectedTargetInfo), "The expected TargetInfo does not match.");
 
 			Assert.That (challenge.TargetInfo.DomainName, Is.EqualTo ("DOMAIN"), "The expected TargetInfo domain name does not match.");

@@ -46,7 +46,7 @@ namespace MailKit.Security
 	{
 		static ReadOnlySpan<byte> SaslNoSecurityLayerToken => new byte[] { 1, 0, 0, 0 };
 
-		NegotiateAuthentication negotiate;
+		NegotiateAuthentication? negotiate;
 		bool negotiatedChannelBinding;
 		bool requestedChannelBinding;
 		bool negotiatedSecurityLayer;
@@ -212,7 +212,7 @@ namespace MailKit.Security
 		/// <note type="note">This value is optional.</note>
 		/// </remarks>
 		/// <value>The service principal name (SPN) of the service that the client wishes to authenticate with.</value>
-		public string ServicePrincipalName {
+		public string? ServicePrincipalName {
 			get; set;
 		}
 
@@ -236,7 +236,7 @@ namespace MailKit.Security
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
-		protected override byte[] Challenge (byte[] token, int startIndex, int length, CancellationToken cancellationToken = default)
+		protected override byte[]? Challenge (byte[]? token, int startIndex, int length, CancellationToken cancellationToken = default)
 		{
 			if (!SupportsSecurityLayer && IsAuthenticated)
 				return null;
@@ -285,9 +285,9 @@ namespace MailKit.Security
 			return options;
 		}
 
-		byte[] GetChallengeResponse (ReadOnlySpan<byte> challenge)
+		byte[]? GetChallengeResponse (ReadOnlySpan<byte> challenge)
 		{
-			var response = negotiate.GetOutgoingBlob (challenge, out NegotiateAuthenticationStatusCode statusCode);
+			var response = negotiate!.GetOutgoingBlob (challenge, out NegotiateAuthenticationStatusCode statusCode);
 
 			switch (statusCode) {
 			case NegotiateAuthenticationStatusCode.Completed:
@@ -309,13 +309,13 @@ namespace MailKit.Security
 		// Returns null for failure.
 		//
 		// Cloned from: https://github.com/dotnet/runtime/blob/4631ecec883a90ae9c29c058eea4527f9f2cb473/src/libraries/System.Net.Mail/src/System/Net/Mail/SmtpNegotiateAuthenticationModule.cs#L107
-		byte[] GetSecurityLayerNegotiationResponse (ReadOnlySpan<byte> challenge)
+		byte[]? GetSecurityLayerNegotiationResponse (ReadOnlySpan<byte> challenge)
 		{
 			NegotiateAuthenticationStatusCode statusCode;
 			byte[] input = challenge.ToArray ();
 			Span<byte> unwrapped;
 
-			statusCode = negotiate.UnwrapInPlace (input, out int unwrappedOffset, out int unwrappedLength, out _);
+			statusCode = negotiate!.UnwrapInPlace (input, out int unwrappedOffset, out int unwrappedLength, out _);
 			if (statusCode != NegotiateAuthenticationStatusCode.Completed)
 				return null;
 

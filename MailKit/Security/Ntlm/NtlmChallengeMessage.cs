@@ -34,16 +34,16 @@ namespace MailKit.Security.Ntlm {
 	{
 		const NtlmFlags DefaultFlags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateUnicode /*| NtlmFlags.NegotiateAlwaysSign*/;
 		byte[] serverChallenge;
-		byte[] cached;
+		byte[]? cached;
 
-		public NtlmChallengeMessage (NtlmFlags flags, Version osVersion = null) : base (2)
+		public NtlmChallengeMessage (NtlmFlags flags, Version? osVersion = null) : base (2)
 		{
 			serverChallenge = NtlmUtils.NONCE (8);
 			OSVersion = osVersion;
 			Flags = flags;
 		}
 
-		public NtlmChallengeMessage (Version osVersion = null) : this (DefaultFlags, osVersion)
+		public NtlmChallengeMessage (Version? osVersion = null) : this (DefaultFlags, osVersion)
 		{
 		}
 
@@ -76,15 +76,15 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public string TargetName {
+		public string? TargetName {
 			get; set;
 		}
 
-		public NtlmTargetInfo TargetInfo {
+		public NtlmTargetInfo? TargetInfo {
 			get; set;
 		}
 
-		public byte[] GetEncodedTargetInfo ()
+		public byte[]? GetEncodedTargetInfo ()
 		{
 			return TargetInfo?.Encode ((Flags & NtlmFlags.NegotiateUnicode) != 0);
 		}
@@ -134,7 +134,7 @@ namespace MailKit.Security.Ntlm {
 			var targetInfo = GetEncodedTargetInfo ();
 			int targetNameOffset = 48;
 			int targetInfoOffset = 56;
-			byte[] targetName = null;
+			byte[]? targetName = null;
 			int size = 48;
 
 			if (TargetName != null) {
@@ -193,10 +193,12 @@ namespace MailKit.Security.Ntlm {
 			}
 
 			if ((Flags & NtlmFlags.NegotiateVersion) != 0) {
-				message[48] = (byte) OSVersion.Major;
-				message[49] = (byte) OSVersion.Minor;
-				message[50] = (byte) OSVersion.Build;
-				message[51] = (byte)(OSVersion.Build >> 8);
+				if (OSVersion != null) {
+					message[48] = (byte) OSVersion.Major;
+					message[49] = (byte) OSVersion.Minor;
+					message[50] = (byte) OSVersion.Build;
+					message[51] = (byte)(OSVersion.Build >> 8);
+				}
 				message[52] = 0x00;
 				message[53] = 0x00;
 				message[54] = 0x00;

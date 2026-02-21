@@ -61,10 +61,10 @@ namespace MailKit.Security.Ntlm {
 				Domain = domain;
 			} else if ((challenge.Flags & NtlmFlags.TargetTypeDomain) != 0) {
 				// The server is domain-joined, so the TargetName will be the domain.
-				Domain = challenge.TargetName;
+				Domain = challenge.TargetName ?? string.Empty;
 			} else if (challenge.TargetInfo != null) {
 				// The server is not domain-joined, so the TargetName will be the machine name of the server.
-				Domain = challenge.TargetInfo.DomainName;
+				Domain = challenge.TargetInfo.DomainName ?? string.Empty;
 			} else {
 				Domain = string.Empty;
 			}
@@ -429,11 +429,13 @@ namespace MailKit.Security.Ntlm {
 			message[62] = (byte)((uint) Flags >> 16);
 			message[63] = (byte)((uint) Flags >> 24);
 
-			if (challenge != null && (challenge.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null) {
-				message[64] = (byte) OSVersion.Major;
-				message[65] = (byte) OSVersion.Minor;
-				message[66] = (byte) OSVersion.Build;
-				message[67] = (byte)(OSVersion.Build >> 8);
+			if (challenge != null && (challenge.Flags & NtlmFlags.NegotiateVersion) != 0) {
+				if (OSVersion != null) {
+					message[64] = (byte) OSVersion.Major;
+					message[65] = (byte) OSVersion.Minor;
+					message[66] = (byte) OSVersion.Build;
+					message[67] = (byte)(OSVersion.Build >> 8);
+				}
 				message[68] = 0x00;
 				message[69] = 0x00;
 				message[70] = 0x00;
