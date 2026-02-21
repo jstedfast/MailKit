@@ -75,26 +75,45 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="args"/> is <see langword="null" />.
 		/// </exception>
 		public ImapFolder (ImapFolderConstructorArgs args)
+			: base (args?.FullName ?? string.Empty, args?.DirectorySeparator ?? '.', args?.Attributes ?? FolderAttributes.None)
 		{
 			if (args == null)
 				throw new ArgumentNullException (nameof (args));
 
-			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
-			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
-
-			InitializeProperties (args);
-		}
-
-		[MemberNotNull ("Engine", "EncodedName")]
-		void InitializeProperties (ImapFolderConstructorArgs args)
-		{
-			DirectorySeparator = args.DirectorySeparator;
 			EncodedName = args.EncodedName;
-			Attributes = args.Attributes;
-			FullName = args.FullName;
 			Engine = args.Engine;
-			Name = args.Name;
 		}
+
+#if false
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
+		/// </summary>
+		/// <remarks>
+		/// <para>Creates a new <see cref="ImapFolder"/>.</para>
+		/// <para>If you subclass <see cref="ImapFolder"/>, you will also need to subclass
+		/// <see cref="ImapClient"/> and override the
+		/// <see cref="ImapClient.CreateImapFolder(ImapFolderConstructorArgs)"/>
+		/// method in order to return a new instance of your ImapFolder subclass.</para>
+		/// </remarks>
+		/// <param name="client">The IMAP client that the folder belongs to.</param>
+		/// <param name="fullName">The full anme of the IMAP folder.</param>
+		/// <param name="directorySeparator">The directory separator used by the IMAP folder.</param>
+		/// <param name="attributes">The attributes of the IMAP folder.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="client"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fullName"/> is <see langword="null" />.</para>
+		/// </exception>
+		public ImapFolder (ImapClient client, string fullName, char directorySeparator, FolderAttributes attributes)
+			: base (fullName, directorySeparator, attributes)
+		{
+			if (client == null)
+				throw new ArgumentNullException (nameof (client));
+
+			EncodedName = client.engine.EncodeMailboxName (fullName);
+			Engine = client.engine;
+		}
+#endif
 
 		/// <summary>
 		/// Get the IMAP command engine.
@@ -231,7 +250,7 @@ namespace MailKit.Net.Imap {
 		{
 			var oldEncodedName = EncodedName;
 
-			FullName = ParentFolder.FullName + DirectorySeparator + Name;
+			FullName = ParentFolder!.FullName + DirectorySeparator + Name;
 			EncodedName = Engine.EncodeMailboxName (FullName);
 			Engine.FolderCache.Remove (oldEncodedName);
 			Engine.FolderCache[EncodedName] = this;
@@ -6362,11 +6381,15 @@ namespace MailKit.Net.Imap {
 			OnUidValidityChanged ();
 		}
 
-		internal void OnRenamed (ImapFolderConstructorArgs args)
+		internal void OnRenamed (string encodedName, char delim, FolderAttributes attrs)
 		{
 			var oldFullName = FullName;
 
-			InitializeProperties (args);
+			EncodedName = encodedName;
+			FullName = Engine.DecodeMailboxName (encodedName);
+			Name = GetBaseName (FullName, delim);
+			DirectorySeparator = delim;
+			Attributes = attrs;
 
 			OnRenamed (oldFullName, FullName);
 		}

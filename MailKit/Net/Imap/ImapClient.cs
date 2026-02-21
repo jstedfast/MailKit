@@ -67,7 +67,7 @@ namespace MailKit.Net.Imap {
 		const string HexAlphabet = "0123456789ABCDEF";
 
 		readonly ImapAuthenticationSecretDetector detector = new ImapAuthenticationSecretDetector ();
-		readonly ImapEngine engine;
+		internal readonly ImapEngine engine;
 		SslCertificateValidationInfo? sslValidationInfo;
 		int timeout = 2 * 60 * 1000;
 		string? identifier;

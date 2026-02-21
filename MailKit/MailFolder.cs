@@ -59,7 +59,7 @@ namespace MailKit {
 		protected static readonly MessageFlags SettableFlags = MessageFlags.Answered | MessageFlags.Deleted |
 			MessageFlags.Draft | MessageFlags.Flagged | MessageFlags.Seen;
 
-		IMailFolder parent;
+		IMailFolder? parent;
 
 		/// <summary>
 		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
@@ -67,9 +67,51 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
 		/// </remarks>
+		[Obsolete ("Use MailFolder (string fullName, char directorySeparator, FolderAttributes attributes) instead.")]
 		protected MailFolder ()
 		{
+			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
+			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
+			FullName = string.Empty;
+			Name = string.Empty;
 			FirstUnread = -1;
+		}
+
+		/// <summary>
+		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// </remarks>
+		/// <param name="fullName">The full name (path) of the folder.</param>
+		/// <param name="directorySeparator">The directory separator used by the folder.</param>
+		/// <param name="attributes">The attributes of the folder.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <paramref name="fullName"/> is <see langword="null"/>.
+		/// </exception>
+		protected MailFolder (string fullName, char directorySeparator, FolderAttributes attributes)
+		{
+			if (fullName == null)
+				throw new ArgumentNullException (nameof (fullName));
+
+			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
+			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
+			Name = GetBaseName (fullName, directorySeparator);
+			DirectorySeparator = directorySeparator;
+			Attributes = attributes;
+			FullName = fullName;
+
+			FirstUnread = -1;
+		}
+
+		internal static string GetBaseName (string fullName, char delim)
+		{
+			int index;
+
+			if ((index = fullName.LastIndexOf (delim)) != -1)
+				return fullName.Substring (index + 1);
+
+			return fullName;
 		}
 
 		/// <summary>
@@ -90,7 +132,7 @@ namespace MailKit {
 		/// Root-level folders do not have a parent folder.
 		/// </remarks>
 		/// <value>The parent folder.</value>
-		public IMailFolder ParentFolder {
+		public IMailFolder? ParentFolder {
 			get { return parent; }
 			internal protected set {
 				if (value == parent)

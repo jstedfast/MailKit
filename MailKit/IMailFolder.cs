@@ -64,7 +64,7 @@ namespace MailKit {
 		/// Root-level folders do not have a parent folder.
 		/// </remarks>
 		/// <value>The parent folder.</value>
-		IMailFolder ParentFolder { get; }
+		IMailFolder? ParentFolder { get; }
 
 		/// <summary>
 		/// Get the folder attributes.

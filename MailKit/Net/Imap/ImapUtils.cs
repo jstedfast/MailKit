@@ -33,10 +33,10 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 using MimeKit;
 using MimeKit.Utils;
-using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -615,11 +615,9 @@ namespace MailKit.Net.Imap {
 				var oldEncodedName = value.TrimEnd (delim);
 
 				if (engine.FolderCache.TryGetValue (oldEncodedName, out ImapFolder? oldFolder)) {
-					var args = new ImapFolderConstructorArgs (engine, encodedName, attrs, delim);
-
 					engine.FolderCache.Remove (oldEncodedName);
 					engine.FolderCache[encodedName] = oldFolder;
-					oldFolder.OnRenamed (args);
+					oldFolder.OnRenamed (encodedName, delim, attrs);
 					folder = oldFolder;
 				}
 			}
