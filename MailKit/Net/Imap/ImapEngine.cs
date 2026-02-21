@@ -149,7 +149,7 @@ namespace MailKit.Net.Imap {
 		static int TagPrefixIndex;
 
 #if NET6_0_OR_GREATER
-		readonly ClientMetrics metrics;
+		readonly ClientMetrics? metrics;
 #endif
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;

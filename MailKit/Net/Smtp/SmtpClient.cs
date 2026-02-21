@@ -88,7 +88,7 @@ namespace MailKit.Net.Smtp {
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		SslCertificateValidationInfo? sslValidationInfo;
 #if NET6_0_OR_GREATER
-		readonly ClientMetrics metrics;
+		readonly ClientMetrics? metrics;
 #endif
 		long clientConnectedTimestamp;
 		SmtpCapabilities capabilities;

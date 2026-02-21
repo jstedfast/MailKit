@@ -50,13 +50,13 @@ namespace MailKit.Net {
 		};
 
 		readonly NetworkOperationKind kind;
-		readonly ClientMetrics metrics;
+		readonly ClientMetrics? metrics;
 		readonly Activity? activity;
 		readonly long startTimestamp;
 		readonly Uri uri;
 		Exception? ex;
 
-		NetworkOperation (NetworkOperationKind kind, Uri uri, Activity? activity, ClientMetrics metrics)
+		NetworkOperation (NetworkOperationKind kind, Uri uri, Activity? activity, ClientMetrics? metrics)
 		{
 			this.kind = kind;
 			this.uri = uri;
@@ -124,7 +124,7 @@ namespace MailKit.Net {
 		}
 
 #if NET6_0_OR_GREATER
-		public static NetworkOperation Start (NetworkOperationKind kind, Uri uri, ActivitySource source, ClientMetrics metrics)
+		public static NetworkOperation Start (NetworkOperationKind kind, Uri uri, ActivitySource source, ClientMetrics? metrics)
 		{
 
 			var activity = source?.StartActivity (ActivityNames[(int) kind], ActivityKind.Client);

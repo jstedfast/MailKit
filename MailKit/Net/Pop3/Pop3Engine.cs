@@ -60,7 +60,7 @@ namespace MailKit.Net.Pop3 {
 	class Pop3Engine
 	{
 #if NET6_0_OR_GREATER
-		readonly ClientMetrics metrics;
+		readonly ClientMetrics? metrics;
 #endif
 		readonly List<Pop3Command> queue;
 		long clientConnectedTimestamp;
