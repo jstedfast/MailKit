@@ -1133,6 +1133,18 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Unget a token.
+		/// </summary>
+		/// <remarks>
+		/// Ungets a token.
+		/// </remarks>
+		/// <param name="token">The token.</param>
+		public void UngetToken (ImapToken token)
+		{
+			Stream!.UngetToken (token);
+		}
+
+		/// <summary>
 		/// Reads the literal as a string.
 		/// </summary>
 		/// <returns>The literal.</returns>
@@ -1486,7 +1498,7 @@ namespace MailKit.Net.Imap {
 			AssertToken (token, sentinel, GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
 
 			// unget the sentinel
-			Stream!.UngetToken (token);
+			UngetToken (token);
 
 			StandardizeCapabilities ();
 		}
@@ -1513,7 +1525,7 @@ namespace MailKit.Net.Imap {
 			AssertToken (token, sentinel, GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
 
 			// unget the sentinel
-			Stream!.UngetToken (token);
+			UngetToken (token);
 
 			StandardizeCapabilities ();
 		}
@@ -1925,14 +1937,14 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case ImapResponseCodeType.Capability:
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
 				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				perm.Flags = ImapUtils.ParseFlagsList (this, "PERMANENTFLAGS", perm.Keywords, cancellationToken);
 				token = ReadToken (cancellationToken);
 				break;
@@ -2022,7 +2034,7 @@ namespace MailKit.Net.Imap {
 					copy.SrcUidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.SrcUidSet = new UniqueIdSet ();
-					Stream!.UngetToken (token);
+					UngetToken (token);
 				}
 
 				token = ReadToken (cancellationToken);
@@ -2031,7 +2043,7 @@ namespace MailKit.Net.Imap {
 					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.DestUidSet = new UniqueIdSet ();
-					Stream!.UngetToken (token);
+					UngetToken (token);
 				}
 
 				token = ReadToken (cancellationToken);
@@ -2251,14 +2263,14 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case ImapResponseCodeType.Capability:
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				await UpdateCapabilitiesAsync (ImapTokenType.CloseBracket, cancellationToken).ConfigureAwait (false);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				perm.Flags = await ImapUtils.ParseFlagsListAsync (this, "PERMANENTFLAGS", perm.Keywords, cancellationToken).ConfigureAwait (false);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 				break;
@@ -2348,7 +2360,7 @@ namespace MailKit.Net.Imap {
 					copy.SrcUidSet = ParseUidSet (token, validity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.SrcUidSet = new UniqueIdSet ();
-					Stream!.UngetToken (token);
+					UngetToken (token);
 				}
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2357,7 +2369,7 @@ namespace MailKit.Net.Imap {
 					copy.DestUidSet = ParseUidSet (token, copy.UidValidity, out _, out _, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				} else {
 					copy.DestUidSet = new UniqueIdSet ();
-					Stream!.UngetToken (token);
+					UngetToken (token);
 				}
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2761,11 +2773,11 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
 			if (token.Type == ImapTokenType.OpenBracket) {
 				// unget the '[' token and then pretend that we got an "OK"
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				atom = "OK";
 			} else if (token.Type != ImapTokenType.Atom) {
 				// if we get anything else here, just ignore it?
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				SkipLine (cancellationToken);
 				return;
 			} else {
@@ -2914,11 +2926,11 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/115#issuecomment-313684616 for details.
 			if (token.Type == ImapTokenType.OpenBracket) {
 				// unget the '[' token and then pretend that we got an "OK"
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				atom = "OK";
 			} else if (token.Type != ImapTokenType.Atom) {
 				// if we get anything else here, just ignore it?
-				Stream!.UngetToken (token);
+				UngetToken (token);
 				await SkipLineAsync (cancellationToken).ConfigureAwait (false);
 				return;
 			} else {

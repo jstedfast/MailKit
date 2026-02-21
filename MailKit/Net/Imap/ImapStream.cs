@@ -930,8 +930,11 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Ungets a token.
+		/// Unget a token.
 		/// </summary>
+		/// <remarks>
+		/// Ungets a token.
+		/// </remarks>
 		/// <param name="token">The token.</param>
 		public void UngetToken (ImapToken token)
 		{

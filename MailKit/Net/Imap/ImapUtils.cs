@@ -475,7 +475,7 @@ namespace MailKit.Net.Imap {
 					var line = engine.ReadLine (cancellationToken);
 
 					// unget the \r\n sequence
-					engine.Stream.UngetToken (ImapToken.Eoln);
+					engine.UngetToken (ImapToken.Eoln);
 
 					encodedName += line;
 				}
@@ -510,7 +510,7 @@ namespace MailKit.Net.Imap {
 					var line = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
 
 					// unget the \r\n sequence
-					engine.Stream.UngetToken (ImapToken.Eoln);
+					engine.UngetToken (ImapToken.Eoln);
 
 					encodedName += line;
 				}
@@ -709,7 +709,7 @@ namespace MailKit.Net.Imap {
 						if (token.Type == ImapTokenType.CloseParen)
 							break;
 
-						engine.Stream.UngetToken (token);
+						engine.UngetToken (token);
 
 						var value = ReadNStringToken (engine, format, false, cancellationToken);
 
@@ -795,7 +795,7 @@ namespace MailKit.Net.Imap {
 						if (token.Type == ImapTokenType.CloseParen)
 							break;
 
-						engine.Stream.UngetToken (token);
+						engine.UngetToken (token);
 
 						var value = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 
@@ -1722,10 +1722,10 @@ namespace MailKit.Net.Imap {
 
 					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.CloseParen || nextToken.Type == ImapTokenType.Nil) {
 						// Unget the multipart subtype.
-						engine.Stream.UngetToken (token);
+						engine.UngetToken (token);
 
 						// Now unget a fake NIL token that represents an empty set of children.
-						engine.Stream.UngetToken (ImapToken.Nil);
+						engine.UngetToken (ImapToken.Nil);
 
 						return true;
 					}
@@ -1734,11 +1734,11 @@ namespace MailKit.Net.Imap {
 				}
 
 				// We've got a string which normally means it's the first token of a mime-type.
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 				return false;
 			case ImapTokenType.OpenParen:
 				// We've got children, so this is definitely a multipart.
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 				return true;
 			case ImapTokenType.Nil:
 				// We've got a NIL token. Technically, this is illegal syntax, but we need to be able to handle it.
@@ -1762,7 +1762,7 @@ namespace MailKit.Net.Imap {
 				// https://github.com/jstedfast/MailKit/issues/1446
 				nextToken = engine.PeekToken (cancellationToken);
 
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 
 				if (nextToken.Type == ImapTokenType.Nil) {
 					// Looks like we've probably encountered the `(NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)` variant.
@@ -1772,7 +1772,7 @@ namespace MailKit.Net.Imap {
 				// Assume (NIL "alternative" ("boundary" "...
 				return true;
 			default:
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 				return false;
 			}
 		}
@@ -1812,10 +1812,10 @@ namespace MailKit.Net.Imap {
 
 					if (nextToken.Type == ImapTokenType.OpenParen || nextToken.Type == ImapTokenType.CloseParen || nextToken.Type == ImapTokenType.Nil) {
 						// Unget the multipart subtype.
-						engine.Stream.UngetToken (token);
+						engine.UngetToken (token);
 
 						// Now unget a fake NIL token that represents an empty set of children.
-						engine.Stream.UngetToken (ImapToken.Nil);
+						engine.UngetToken (ImapToken.Nil);
 
 						return true;
 					}
@@ -1824,11 +1824,11 @@ namespace MailKit.Net.Imap {
 				}
 
 				// We've got a string which normally means it's the first token of a mime-type.
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 				return false;
 			case ImapTokenType.OpenParen:
 				// We've got children, so this is definitely a multipart.
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 				return true;
 			case ImapTokenType.Nil:
 				// We've got a NIL token. Technically, this is illegal syntax, but we need to be able to handle it.
@@ -1852,7 +1852,7 @@ namespace MailKit.Net.Imap {
 				// https://github.com/jstedfast/MailKit/issues/1446
 				nextToken = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 
 				if (nextToken.Type == ImapTokenType.Nil) {
 					// Looks like we've probably encountered the `(NIL NIL NIL NIL NIL "7BIT" 0 NIL NIL NIL NIL)` variant.
@@ -1862,7 +1862,7 @@ namespace MailKit.Net.Imap {
 				// Assume (NIL "alternative" ("boundary" "...
 				return true;
 			default:
-				engine.Stream.UngetToken (token);
+				engine.UngetToken (token);
 				return false;
 			}
 		}

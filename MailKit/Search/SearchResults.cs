@@ -122,7 +122,7 @@ namespace MailKit.Search {
 		/// Gets or sets the relevancy scores of the messages that matched the search query.
 		/// </remarks>
 		/// <value>The relevancy scores.</value>
-		public IList<byte> Relevancy {
+		public IList<byte>? Relevancy {
 			get; set;
 		}
 	}

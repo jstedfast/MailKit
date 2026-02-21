@@ -306,7 +306,7 @@ namespace MailKit.Net.Imap
 										break;
 
 									// the header field names will generally be atoms or qstrings but may also be literals
-									engine.Stream!.UngetToken (token);
+									engine.UngetToken (token);
 
 									var field = ImapUtils.ReadStringToken (engine, format, cancellationToken);
 
@@ -550,7 +550,7 @@ namespace MailKit.Net.Imap
 										break;
 
 									// the header field names will generally be atoms or qstrings but may also be literals
-									engine.Stream!.UngetToken (token);
+									engine.UngetToken (token);
 
 									var field = await ImapUtils.ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
 
@@ -1994,7 +1994,7 @@ namespace MailKit.Net.Imap
 									break;
 
 								// the header field names will generally be atoms or qstrings but may also be literals
-								engine.Stream!.UngetToken (token);
+								engine.UngetToken (token);
 
 								var field = ImapUtils.ReadStringToken (engine, ImapEngine.FetchBodySyntaxErrorFormat, ic.CancellationToken);
 
@@ -2091,7 +2091,7 @@ namespace MailKit.Net.Imap
 						// See https://github.com/jstedfast/MailKit/issues/1708 for details.
 						//
 						// Unget the ')' token and pretend we got a NIL token.
-						engine.Stream!.UngetToken (token);
+						engine.UngetToken (token);
 						goto case ImapTokenType.Nil;
 					default:
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
@@ -2237,7 +2237,7 @@ namespace MailKit.Net.Imap
 									break;
 
 								// the header field names will generally be atoms or qstrings but may also be literals
-								engine.Stream!.UngetToken (token);
+								engine.UngetToken (token);
 
 								var field = await ImapUtils.ReadStringTokenAsync (engine, ImapEngine.FetchBodySyntaxErrorFormat, ic.CancellationToken).ConfigureAwait (false);
 
@@ -2334,7 +2334,7 @@ namespace MailKit.Net.Imap
 						// See https://github.com/jstedfast/MailKit/issues/1708 for details.
 						//
 						// Unget the ')' token and pretend we got a NIL token.
-						engine.Stream!.UngetToken (token);
+						engine.UngetToken (token);
 						goto case ImapTokenType.Nil;
 					default:
 						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);

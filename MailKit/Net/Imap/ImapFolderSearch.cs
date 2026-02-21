@@ -509,7 +509,7 @@ namespace MailKit.Net.Imap
 
 				if (token.Type == ImapTokenType.Eoln) {
 					// unget the eoln token
-					engine.Stream!.UngetToken (token);
+					engine.UngetToken (token);
 					break;
 				}
 
@@ -640,7 +640,7 @@ namespace MailKit.Net.Imap
 
 				if (token.Type == ImapTokenType.Eoln) {
 					// unget the eoln token
-					engine.Stream!.UngetToken (token);
+					engine.UngetToken (token);
 					break;
 				}
 

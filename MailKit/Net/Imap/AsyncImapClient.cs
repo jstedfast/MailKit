@@ -1255,7 +1255,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
+		public override async Task<string?> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueGetMetadataCommand (tag, cancellationToken);
 
