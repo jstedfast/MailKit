@@ -113,7 +113,7 @@ namespace MailKit {
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.MetadataTag"/>.</param>
 		/// <returns><see langword="true" /> if the specified <see cref="System.Object"/> is equal to the current
 		/// <see cref="MailKit.MetadataTag"/>; otherwise, <see langword="false" />.</returns>
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
 			return obj is MetadataTag tag && tag.Id == Id;
 		}

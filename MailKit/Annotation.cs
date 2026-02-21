@@ -50,7 +50,7 @@ namespace MailKit {
 		/// </exception>
 		public Annotation (AnnotationEntry entry)
 		{
-			if (entry == null)
+			if (entry is null)
 				throw new ArgumentNullException (nameof (entry));
 
 			Properties = new Dictionary<AnnotationAttribute, string> ();

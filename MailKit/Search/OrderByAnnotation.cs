@@ -56,10 +56,10 @@ namespace MailKit.Search {
 		/// </exception>
 		public OrderByAnnotation (AnnotationEntry entry, AnnotationAttribute attribute, SortOrder order) : base (OrderByType.Annotation, order)
 		{
-			if (entry == null)
+			if (entry is null)
 				throw new ArgumentNullException (nameof (entry));
 
-			if (attribute == null)
+			if (attribute is null)
 				throw new ArgumentNullException (nameof (attribute));
 
 			if (attribute.Name != "value" || attribute.Scope == AnnotationScope.Both)

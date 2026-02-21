@@ -55,10 +55,10 @@ namespace MailKit.Search
 		/// </exception>
 		public AnnotationSearchQuery (AnnotationEntry entry, AnnotationAttribute attribute, string value) : base (SearchTerm.Annotation)
 		{
-			if (entry == null)
+			if (entry is null)
 				throw new ArgumentNullException (nameof (entry));
 
-			if (attribute == null)
+			if (attribute is null)
 				throw new ArgumentNullException (nameof (attribute));
 
 			if (attribute.Name != "value")

@@ -181,7 +181,7 @@ namespace MailKit {
 		/// <param name="other">The <see cref="MailKit.AnnotationAttribute"/> to compare with the current <see cref="MailKit.AnnotationAttribute"/>.</param>
 		/// <returns><see langword="true" /> if the specified <see cref="MailKit.AnnotationAttribute"/> is equal to the current
 		/// <see cref="MailKit.AnnotationAttribute"/>; otherwise, <see langword="false" />.</returns>
-		public bool Equals (AnnotationAttribute other)
+		public bool Equals (AnnotationAttribute? other)
 		{
 			return other?.Specifier == Specifier;
 		}
@@ -225,7 +225,7 @@ namespace MailKit {
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.AnnotationAttribute"/>.</param>
 		/// <returns><see langword="true" /> if the specified <see cref="System.Object"/> is equal to the current
 		/// <see cref="MailKit.AnnotationAttribute"/>; otherwise, <see langword="false" />.</returns>
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
 			return obj is AnnotationAttribute attribute && attribute.Specifier == Specifier;
 		}
