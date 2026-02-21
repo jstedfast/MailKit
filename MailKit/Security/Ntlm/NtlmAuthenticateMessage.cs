@@ -28,14 +28,15 @@
 
 using System;
 using System.Text;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Security.Ntlm {
 	class NtlmAuthenticateMessage : NtlmMessageBase
 	{
 		static readonly byte[] Z16 = new byte[16];
 
-		readonly NtlmNegotiateMessage negotiate;
-		readonly NtlmChallengeMessage challenge;
+		readonly NtlmNegotiateMessage? negotiate;
+		readonly NtlmChallengeMessage? challenge;
 		byte[] clientChallenge;
 
 		public NtlmAuthenticateMessage (NtlmNegotiateMessage negotiate, NtlmChallengeMessage challenge, string userName, string password, string domain, string workstation) : base (3)
@@ -64,6 +65,8 @@ namespace MailKit.Security.Ntlm {
 			} else if (challenge.TargetInfo != null) {
 				// The server is not domain-joined, so the TargetName will be the machine name of the server.
 				Domain = challenge.TargetInfo.DomainName;
+			} else {
+				Domain = string.Empty;
 			}
 
 			Workstation = workstation;
@@ -95,16 +98,18 @@ namespace MailKit.Security.Ntlm {
 				OSVersion = negotiate.OSVersion ?? OSVersion;
 		}
 
+		// Note: This .ctor is for debugging purposes only. It allows us to decode an NTLM AUTHENTICATE_MESSAGE without having to go through the entire NTLM authentication process.
 		public NtlmAuthenticateMessage (byte[] message, int startIndex, int length) : base (3)
 		{
 			Decode (message, startIndex, length);
+			clientChallenge = Array.Empty<byte> ();
 			challenge = null;
+			Password = string.Empty;
 		}
 
 		~NtlmAuthenticateMessage ()
 		{
-			if (clientChallenge != null)
-				Array.Clear (clientChallenge, 0, clientChallenge.Length);
+			Array.Clear (clientChallenge, 0, clientChallenge.Length);
 
 			if (LmChallengeResponse != null)
 				Array.Clear (LmChallengeResponse, 0, LmChallengeResponse.Length);
@@ -122,7 +127,7 @@ namespace MailKit.Security.Ntlm {
 		/// <summary>
 		/// This is only used for unit testing purposes.
 		/// </summary>
-		internal byte[] ClientChallenge {
+		internal byte[]? ClientChallenge {
 			get { return clientChallenge; }
 			set {
 				if (value == null)
@@ -159,26 +164,27 @@ namespace MailKit.Security.Ntlm {
 			get; private set;
 		}
 
-		public byte[] Mic {
+		public byte[]? Mic {
 			get; private set;
 		}
 
-		public byte[] LmChallengeResponse {
+		public byte[]? LmChallengeResponse {
 			get; private set;
 		}
 
-		public byte[] NtChallengeResponse {
+		public byte[]? NtChallengeResponse {
 			get; private set;
 		}
 
-		public byte[] ExportedSessionKey {
+		public byte[]? ExportedSessionKey {
 			get; private set;
 		}
 
-		public byte[] EncryptedRandomSessionKey {
+		public byte[]? EncryptedRandomSessionKey {
 			get; private set;
 		}
 
+		[MemberNotNull (nameof (LmChallengeResponse), nameof (NtChallengeResponse), nameof (Domain), nameof (UserName), nameof (Workstation), nameof (EncryptedRandomSessionKey))]
 		void Decode (byte[] message, int startIndex, int length)
 		{
 			int payloadOffset = length;
@@ -259,8 +265,11 @@ namespace MailKit.Security.Ntlm {
 			return encoding.GetBytes (text);
 		}
 
-		public void ComputeNtlmV2 (string targetName, bool unverifiedTargetName, byte[] channelBinding)
+		public void ComputeNtlmV2 (string? targetName, bool unverifiedTargetName, byte[]? channelBinding)
 		{
+			if (challenge == null || negotiate == null)
+				return;
+
 			var targetInfo = new NtlmTargetInfo ();
 			int avFlags = 0;
 
@@ -420,7 +429,7 @@ namespace MailKit.Security.Ntlm {
 			message[62] = (byte)((uint) Flags >> 16);
 			message[63] = (byte)((uint) Flags >> 24);
 
-			if ((challenge.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null) {
+			if (challenge != null && (challenge.Flags & NtlmFlags.NegotiateVersion) != 0 && OSVersion != null) {
 				message[64] = (byte) OSVersion.Major;
 				message[65] = (byte) OSVersion.Minor;
 				message[66] = (byte) OSVersion.Build;

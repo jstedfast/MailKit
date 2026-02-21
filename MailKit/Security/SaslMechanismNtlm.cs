@@ -62,7 +62,7 @@ namespace MailKit.Security {
 			Challenge
 		}
 
-		NtlmNegotiateMessage negotiate;
+		NtlmNegotiateMessage? negotiate;
 		bool negotiatedChannelBinding;
 		LoginState state;
 
@@ -124,7 +124,7 @@ namespace MailKit.Security {
 		/// <summary>
 		/// This is only used for unit testing purposes.
 		/// </summary>
-		internal byte[] Nonce {
+		internal byte[]? Nonce {
 			get; set;
 		}
 
@@ -226,7 +226,7 @@ namespace MailKit.Security {
 		/// <note type="note">This value is optional.</note>
 		/// </remarks>
 		/// <value>The service principal name (SPN) of the service that the client wishes to authenticate with.</value>
-		public string ServicePrincipalName {
+		public string? ServicePrincipalName {
 			get; set;
 		}
 
@@ -308,7 +308,7 @@ namespace MailKit.Security {
 		NtlmAuthenticateMessage GetChallengeResponse (string domain, string userName, string password, byte[] token, int startIndex, int length)
 		{
 			var challenge = new NtlmChallengeMessage (token, startIndex, length);
-			var authenticate = new NtlmAuthenticateMessage (negotiate, challenge, userName, password, domain, Workstation) {
+			var authenticate = new NtlmAuthenticateMessage (negotiate!, challenge, userName, password, domain, Workstation) {
 				ClientChallenge = Nonce,
 				Timestamp = Timestamp
 			};
