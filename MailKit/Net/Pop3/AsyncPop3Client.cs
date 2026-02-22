@@ -139,12 +139,11 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override async Task AuthenticateAsync (SaslMechanism mechanism, CancellationToken cancellationToken = default)
 		{
-			CheckCanAuthenticate (mechanism, cancellationToken);
+			var saslUri = CheckCanAuthenticate (mechanism, cancellationToken);
 
 			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ("pop://" + engine.Uri!.Host);
 				var ctx = GetSaslAuthContext (mechanism, saslUri);
 
 				var pc = await ctx.AuthenticateAsync (cancellationToken).ConfigureAwait (false);
@@ -221,12 +220,11 @@ namespace MailKit.Net.Pop3
 		/// </exception>
 		public override async Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
 		{
-			CheckCanAuthenticate (encoding, credentials, cancellationToken);
+			var saslUri = CheckCanAuthenticate (encoding, credentials, cancellationToken);
 
 			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ("pop://" + engine.Uri!.Host);
 				string userName, password;
 				NetworkCredential? cred;
 				string? message = null;

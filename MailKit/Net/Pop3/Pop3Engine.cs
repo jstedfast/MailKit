@@ -209,7 +209,7 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		[MemberNotNull (nameof (Stream))]
-		void CheckConnected ()
+		internal void CheckConnected ()
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();

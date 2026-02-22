@@ -680,11 +680,13 @@ namespace MailKit.Net.Pop3 {
 
 			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text, CancellationToken cancellationToken)
 			{
+				pop3.CheckConnected ();
+
 				while (pc.Status == Pop3CommandStatus.Continue && !mechanism.IsAuthenticated) {
 					var challenge = mechanism.Challenge (text, cancellationToken);
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
-					pop3.Stream!.Write (buf, 0, buf.Length, cancellationToken);
+					pop3.Stream.Write (buf, 0, buf.Length, cancellationToken);
 					pop3.Stream.Flush (cancellationToken);
 
 					var response = pop3.ReadLine (cancellationToken).TrimEnd ();
@@ -700,11 +702,13 @@ namespace MailKit.Net.Pop3 {
 
 			async Task OnDataReceivedAsync (Pop3Engine pop3, Pop3Command pc, string text, CancellationToken cancellationToken)
 			{
+				pop3.CheckConnected ();
+
 				while (pc.Status == Pop3CommandStatus.Continue && !mechanism.IsAuthenticated) {
 					var challenge = await mechanism.ChallengeAsync (text, cancellationToken).ConfigureAwait (false);
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 
-					await pop3.Stream!.WriteAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
+					await pop3.Stream.WriteAsync (buf, 0, buf.Length, cancellationToken).ConfigureAwait (false);
 					await pop3.Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
 					var response = (await pop3.ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
@@ -764,12 +768,12 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		void CheckCanAuthenticate (SaslMechanism mechanism, CancellationToken cancellationToken)
+		Uri CheckCanAuthenticate (SaslMechanism mechanism, CancellationToken cancellationToken)
 		{
 			if (mechanism == null)
 				throw new ArgumentNullException (nameof (mechanism));
 
-			if (!IsConnected)
+			if (!engine.IsConnected)
 				throw new ServiceNotConnectedException ("The Pop3Client must be connected before you can authenticate.");
 
 			if (IsAuthenticated)
@@ -778,6 +782,8 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
+
+			return new Uri ("pop://" + engine.Uri.Host);
 		}
 
 		SaslAuthContext GetSaslAuthContext (SaslMechanism mechanism, Uri saslUri)
@@ -841,12 +847,11 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Authenticate (SaslMechanism mechanism, CancellationToken cancellationToken = default)
 		{
-			CheckCanAuthenticate (mechanism, cancellationToken);
+			var saslUri = CheckCanAuthenticate (mechanism, cancellationToken);
 
 			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ("pop://" + engine.Uri!.Host);
 				var ctx = GetSaslAuthContext (mechanism, saslUri);
 
 				var pc = ctx.Authenticate (cancellationToken);
@@ -863,7 +868,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		void CheckCanAuthenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken)
+		Uri CheckCanAuthenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken)
 		{
 			if (encoding == null)
 				throw new ArgumentNullException (nameof (encoding));
@@ -871,13 +876,17 @@ namespace MailKit.Net.Pop3 {
 			if (credentials == null)
 				throw new ArgumentNullException (nameof (credentials));
 
-			if (!IsConnected)
+			if (!engine.IsConnected)
 				throw new ServiceNotConnectedException ("The Pop3Client must be connected before you can authenticate.");
 
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("The Pop3Client is already authenticated.");
 
 			CheckDisposed ();
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			return new Uri ("pop://" + engine.Uri.Host);
 		}
 
 		string GetApopCommand (Encoding encoding, NetworkCredential cred)
@@ -956,12 +965,11 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default)
 		{
-			CheckCanAuthenticate (encoding, credentials, cancellationToken);
+			var saslUri = CheckCanAuthenticate (encoding, credentials, cancellationToken);
 
 			using var operation = engine.StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ("pop://" + engine.Uri!.Host);
 				string userName, password;
 				NetworkCredential? cred;
 				string? message = null;
@@ -2264,8 +2272,10 @@ namespace MailKit.Net.Pop3 {
 
 			void OnDataReceived (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 			{
+				engine.CheckConnected ();
+
 				try {
-					engine.Stream!.Mode = Pop3StreamMode.Data;
+					engine.Stream.Mode = Pop3StreamMode.Data;
 
 					var item = Parse (engine.Stream, cancellationToken);
 
@@ -2273,16 +2283,18 @@ namespace MailKit.Net.Pop3 {
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 
-					engine.Stream!.CopyTo (Stream.Null, 4096);
+					engine.Stream.CopyTo (Stream.Null, 4096);
 				} finally {
-					engine.Stream!.Mode = Pop3StreamMode.Line;
+					engine.Stream.Mode = Pop3StreamMode.Line;
 				}
 			}
 
 			async Task OnDataReceivedAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
 			{
+				engine.CheckConnected ();
+
 				try {
-					engine.Stream!.Mode = Pop3StreamMode.Data;
+					engine.Stream.Mode = Pop3StreamMode.Data;
 
 					var item = await ParseAsync (engine.Stream, cancellationToken).ConfigureAwait (false);
 
@@ -2290,9 +2302,9 @@ namespace MailKit.Net.Pop3 {
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 
-					await engine.Stream!.CopyToAsync (Stream.Null, 4096, cancellationToken).ConfigureAwait (false);
+					await engine.Stream.CopyToAsync (Stream.Null, 4096, cancellationToken).ConfigureAwait (false);
 				} finally {
-					engine.Stream!.Mode = Pop3StreamMode.Line;
+					engine.Stream.Mode = Pop3StreamMode.Line;
 				}
 			}
 
