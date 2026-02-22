@@ -461,6 +461,7 @@ namespace MailKit.Net.Imap
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 			UniqueId? minValue = null, maxValue = null;
+			var folder = ic.Folder!;
 			bool hasCount = false;
 			int parenDepth = 0;
 			//bool uid = false;
@@ -558,18 +559,17 @@ namespace MailKit.Net.Imap
 
 					var min = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					results.Min = new UniqueId (ic.Folder!.UidValidity, min);
+					results.Min = new UniqueId (folder.UidValidity, min);
 				} else if (atom.Equals ("MAX", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					var max = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					results.Max = new UniqueId (ic.Folder!.UidValidity, max);
+					results.Max = new UniqueId (folder.UidValidity, max);
 				} else if (atom.Equals ("ALL", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
-					var uids = ImapEngine.ParseUidSet (token, ic.Folder!.UidValidity, out minValue, out maxValue, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
+					var uids = ImapEngine.ParseUidSet (token, folder.UidValidity, out minValue, out maxValue, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					if (!hasCount)
 						results.Count = uids.Count;
 
@@ -592,6 +592,7 @@ namespace MailKit.Net.Imap
 		{
 			var token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 			UniqueId? minValue = null, maxValue = null;
+			var folder = ic.Folder!;
 			bool hasCount = false;
 			int parenDepth = 0;
 			//bool uid = false;
@@ -689,18 +690,17 @@ namespace MailKit.Net.Imap
 
 					var min = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					results.Min = new UniqueId (ic.Folder!.UidValidity, min);
+					results.Min = new UniqueId (folder.UidValidity, min);
 				} else if (atom.Equals ("MAX", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					var max = ImapEngine.ParseNumber (token, true, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
-					results.Max = new UniqueId (ic.Folder!.UidValidity, max);
+					results.Max = new UniqueId (folder.UidValidity, max);
 				} else if (atom.Equals ("ALL", StringComparison.OrdinalIgnoreCase)) {
 					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
-					var uids = ImapEngine.ParseUidSet (token, ic.Folder!.UidValidity, out minValue, out maxValue, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
-
+					var uids = ImapEngine.ParseUidSet (token, folder.UidValidity, out minValue, out maxValue, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					if (!hasCount)
 						results.Count = uids.Count;
 
@@ -733,6 +733,7 @@ namespace MailKit.Net.Imap
 
 		static void ParseSearchResults (ImapEngine engine, ImapCommand ic, SearchResults results)
 		{
+			var folder = ic.Folder!;
 			var uids = results.UniqueIds;
 			uint min = uint.MaxValue;
 			uint uid, max = 0;
@@ -748,7 +749,7 @@ namespace MailKit.Net.Imap
 				token = engine.ReadToken (ic.CancellationToken);
 
 				uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "SEARCH", token);
-				uids.Add (new UniqueId (ic.Folder!.UidValidity, uid));
+				uids.Add (new UniqueId (folder.UidValidity, uid));
 				min = Math.Min (min, uid);
 				max = Math.Max (max, uid);
 			} while (true);
@@ -779,13 +780,14 @@ namespace MailKit.Net.Imap
 			results.UniqueIds = uids;
 			results.Count = uids.Count;
 			if (uids.Count > 0) {
-				results.Min = new UniqueId (ic.Folder!.UidValidity, min);
-				results.Max = new UniqueId (ic.Folder!.UidValidity, max);
+				results.Min = new UniqueId (folder.UidValidity, min);
+				results.Max = new UniqueId (folder.UidValidity, max);
 			}
 		}
 
 		static async Task ParseSearchResultsAsync (ImapEngine engine, ImapCommand ic, SearchResults results)
 		{
+			var folder = ic.Folder!;
 			var uids = results.UniqueIds;
 			uint min = uint.MaxValue;
 			uint uid, max = 0;
@@ -801,7 +803,7 @@ namespace MailKit.Net.Imap
 				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 
 				uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "SEARCH", token);
-				uids.Add (new UniqueId (ic.Folder!.UidValidity, uid));
+				uids.Add (new UniqueId (folder.UidValidity, uid));
 				min = Math.Min (min, uid);
 				max = Math.Max (max, uid);
 			} while (true);
@@ -832,8 +834,8 @@ namespace MailKit.Net.Imap
 			results.UniqueIds = uids;
 			results.Count = uids.Count;
 			if (uids.Count > 0) {
-				results.Min = new UniqueId (ic.Folder!.UidValidity, min);
-				results.Max = new UniqueId (ic.Folder!.UidValidity, max);
+				results.Min = new UniqueId (folder.UidValidity, min);
+				results.Max = new UniqueId (folder.UidValidity, max);
 			}
 		}
 

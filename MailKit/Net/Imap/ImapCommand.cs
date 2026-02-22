@@ -597,8 +597,9 @@ namespace MailKit.Net.Imap {
 					var text = Engine.ReadLine (CancellationToken).Trim ();
 
 					// if we've got a Literal pending, the '+' means we can send it now...
-					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						parts[current].Literal!.WriteTo (Engine.Stream, CancellationToken);
+					var literal = parts[current].Literal;
+					if (!supportsLiteralPlus && literal != null) {
+						literal.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
 
@@ -739,8 +740,9 @@ namespace MailKit.Net.Imap {
 					var text = (await Engine.ReadLineAsync (CancellationToken).ConfigureAwait (false)).Trim ();
 
 					// if we've got a Literal pending, the '+' means we can send it now...
-					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						await parts[current].Literal!.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
+					var literal = parts[current].Literal;
+					if (!supportsLiteralPlus && literal != null) {
+						await literal.WriteToAsync (Engine.Stream, CancellationToken).ConfigureAwait (false);
 						break;
 					}
 

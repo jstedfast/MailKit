@@ -2847,7 +2847,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
 				var flags = ImapUtils.ParseFlagsList (this, atom, keywords, cancellationToken);
-				folder!.UpdateAcceptedFlags (flags, keywords);
+				folder?.UpdateAcceptedFlags (flags, keywords);
 				token = ReadToken (cancellationToken);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
@@ -3000,7 +3000,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
 				var flags = await ImapUtils.ParseFlagsListAsync (this, atom, keywords, cancellationToken).ConfigureAwait (false);
-				folder!.UpdateAcceptedFlags (flags, keywords);
+				folder?.UpdateAcceptedFlags (flags, keywords);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 				AssertToken (token, ImapTokenType.Eoln, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
@@ -3082,6 +3082,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		[MemberNotNull (nameof (current))]
 		void PopNextCommand ()
 		{
 			lock (queue) {
@@ -3133,7 +3134,7 @@ namespace MailKit.Net.Imap {
 		{
 			PopNextCommand ();
 
-			current!.Status = ImapCommandStatus.Active;
+			current.Status = ImapCommandStatus.Active;
 
 			try {
 				while (current.Step ()) {
@@ -3160,7 +3161,7 @@ namespace MailKit.Net.Imap {
 		{
 			PopNextCommand ();
 
-			current!.Status = ImapCommandStatus.Active;
+			current.Status = ImapCommandStatus.Active;
 
 			try {
 				while (await current.StepAsync ().ConfigureAwait (false)) {
