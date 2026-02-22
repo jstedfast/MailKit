@@ -64,7 +64,7 @@ namespace UnitTests.Security.Ntlm {
 			Assert.That (NtlmAuthenticate.Domain, Is.EqualTo ("URSA-MINOR"), "Domain");
 			Assert.That (NtlmAuthenticate.Workstation, Is.EqualTo ("LIGHTCITY"), "Workstation");
 			Assert.That (NtlmAuthenticate.UserName, Is.EqualTo ("Zaphod"), "UserName");
-			Assert.That (NtlmAuthenticate.Password, Is.Null, "Password");
+			Assert.That (NtlmAuthenticate.Password, Is.Empty, "Password");
 
 			Assert.That (BitConverter.ToString (NtlmAuthenticate.LmChallengeResponse), Is.EqualTo ("AD-87-CA-6D-EF-E3-46-85-B9-C4-3C-47-7A-8C-42-D6-00-66-7D-68-92-E7-E8-97"), "LmChallengeResponse");
 			Assert.That (BitConverter.ToString (NtlmAuthenticate.NtChallengeResponse), Is.EqualTo ("E0-E0-0D-E3-10-4A-1B-F2-05-3F-07-C7-DD-A8-2D-3C-48-9A-E9-89-E1-B0-00-D3"), "NtChallengeResponse");
@@ -82,7 +82,7 @@ namespace UnitTests.Security.Ntlm {
 			Assert.That (NtlmAuthenticate.Domain, Is.EqualTo ("DOMAIN"), "Domain");
 			Assert.That (NtlmAuthenticate.Workstation, Is.EqualTo ("WORKSTATION"), "Workstation");
 			Assert.That (NtlmAuthenticate.UserName, Is.EqualTo ("user"), "UserName");
-			Assert.That (NtlmAuthenticate.Password, Is.Null, "Password");
+			Assert.That (NtlmAuthenticate.Password, Is.Empty, "Password");
 
 			Assert.That (BitConverter.ToString (NtlmAuthenticate.LmChallengeResponse), Is.EqualTo ("C3-37-CD-5C-BD-44-FC-97-82-A6-67-AF-6D-42-7C-6D-E6-7C-20-C2-D3-E7-7C-56"), "LmChallengeResponse");
 			Assert.That (BitConverter.ToString (NtlmAuthenticate.NtChallengeResponse), Is.EqualTo ("25-A9-8C-1C-31-E8-18-47-46-6B-29-B2-DF-46-80-F3-99-58-FB-8C-21-3A-9C-C6"), "NtChallengeResponse");
