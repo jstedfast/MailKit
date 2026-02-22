@@ -65,7 +65,6 @@ namespace MailKit.Net.Pop3 {
 #endif
 		readonly List<Pop3Command> queue;
 		long clientConnectedTimestamp;
-		Pop3Stream? stream;
 		bool secure;
 
 		/// <summary>
@@ -126,7 +125,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value>The pop3 stream.</value>
 		public Pop3Stream? Stream {
-			get { return stream; }
+			get; private set;
 		}
 
 		/// <summary>
@@ -149,7 +148,7 @@ namespace MailKit.Net.Pop3 {
 		/// <value><see langword="true" /> if the engine is connected; otherwise, <see langword="false" />.</value>
 		[MemberNotNullWhen (true, new[] { nameof (Stream), nameof (Uri) })]
 		public bool IsConnected {
-			get { return stream != null && stream.IsConnected; }
+			get { return Stream != null && Stream.IsConnected; }
 		}
 
 		/// <summary>
@@ -209,16 +208,17 @@ namespace MailKit.Net.Pop3 {
 			get; private set;
 		}
 
+		[MemberNotNull (nameof (Stream))]
 		void CheckConnected ()
 		{
-			if (stream == null)
+			if (Stream == null)
 				throw new InvalidOperationException ();
 		}
 
-		[MemberNotNull (nameof (stream))]
+		[MemberNotNull (nameof (Stream))]
 		void Initialize (Pop3Stream pop3)
 		{
-			stream?.Dispose ();
+			Stream?.Dispose ();
 
 			clientConnectedTimestamp = Stopwatch.GetTimestamp ();
 			Capabilities = Pop3Capabilities.User;
@@ -227,7 +227,7 @@ namespace MailKit.Net.Pop3 {
 			ApopToken = null;
 
 			secure = pop3.Stream is SslStream;
-			stream = pop3;
+			Stream = pop3;
 		}
 
 		void ParseGreeting (string greeting)
@@ -251,8 +251,8 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			if (token != "+OK") {
-				stream!.Dispose ();
-				stream = null;
+				Stream!.Dispose ();
+				Stream = null;
 
 				throw new Pop3ProtocolException (string.Format ("Unexpected greeting from server: {0}", greeting));
 			}
@@ -341,9 +341,9 @@ namespace MailKit.Net.Pop3 {
 		{
 			RecordClientDisconnected (ex);
 
-			if (stream != null) {
-				stream.Dispose ();
-				stream = null;
+			if (Stream != null) {
+				Stream.Dispose ();
+				Stream = null;
 			}
 
 			secure = false;
@@ -376,7 +376,7 @@ namespace MailKit.Net.Pop3 {
 				bool complete;
 
 				do {
-					complete = stream!.ReadLine (builder, cancellationToken);
+					complete = Stream.ReadLine (builder, cancellationToken);
 				} while (!complete);
 
 				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
@@ -408,7 +408,7 @@ namespace MailKit.Net.Pop3 {
 				bool complete;
 
 				do {
-					complete = await stream!.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
+					complete = await Stream.ReadLineAsync (builder, cancellationToken).ConfigureAwait (false);
 				} while (!complete);
 
 				// FIXME: All callers expect CRLF to be trimmed, but many also want all trailing whitespace trimmed.
@@ -520,6 +520,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+		[MemberNotNull (nameof (Stream))]
 		void CheckCanRun (CancellationToken cancellationToken)
 		{
 			CheckConnected ();
@@ -548,10 +549,10 @@ namespace MailKit.Net.Pop3 {
 
 					pc.Status = Pop3CommandStatus.Active;
 
-					stream!.QueueCommand (pc.Encoding, pc.Command, cancellationToken);
+					Stream.QueueCommand (pc.Encoding, pc.Command, cancellationToken);
 				}
 
-				stream!.Flush (cancellationToken);
+				Stream.Flush (cancellationToken);
 
 				for (int i = 0; i < queue.Count; i++)
 					ReadResponse (queue[i], cancellationToken);
@@ -581,10 +582,10 @@ namespace MailKit.Net.Pop3 {
 
 					pc.Status = Pop3CommandStatus.Active;
 
-					await stream!.QueueCommandAsync (pc.Encoding, pc.Command, cancellationToken).ConfigureAwait (false);
+					await Stream.QueueCommandAsync (pc.Encoding, pc.Command, cancellationToken).ConfigureAwait (false);
 				}
 
-				await stream!.FlushAsync (cancellationToken).ConfigureAwait (false);
+				await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
 				for (int i = 0; i < queue.Count; i++)
 					await ReadResponseAsync (queue[i], cancellationToken).ConfigureAwait (false);
