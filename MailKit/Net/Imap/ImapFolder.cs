@@ -84,37 +84,6 @@ namespace MailKit.Net.Imap {
 			Engine = args.Engine;
 		}
 
-#if false
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
-		/// </summary>
-		/// <remarks>
-		/// <para>Creates a new <see cref="ImapFolder"/>.</para>
-		/// <para>If you subclass <see cref="ImapFolder"/>, you will also need to subclass
-		/// <see cref="ImapClient"/> and override the
-		/// <see cref="ImapClient.CreateImapFolder(ImapFolderConstructorArgs)"/>
-		/// method in order to return a new instance of your ImapFolder subclass.</para>
-		/// </remarks>
-		/// <param name="client">The IMAP client that the folder belongs to.</param>
-		/// <param name="fullName">The full anme of the IMAP folder.</param>
-		/// <param name="directorySeparator">The directory separator used by the IMAP folder.</param>
-		/// <param name="attributes">The attributes of the IMAP folder.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="client"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fullName"/> is <see langword="null" />.</para>
-		/// </exception>
-		public ImapFolder (ImapClient client, string fullName, char directorySeparator, FolderAttributes attributes)
-			: base (fullName, directorySeparator, attributes)
-		{
-			if (client == null)
-				throw new ArgumentNullException (nameof (client));
-
-			EncodedName = client.engine.EncodeMailboxName (fullName);
-			Engine = client.engine;
-		}
-#endif
-
 		/// <summary>
 		/// Get the IMAP command engine.
 		/// </summary>
