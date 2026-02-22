@@ -312,12 +312,12 @@ Welcome to Netscape
 			Assert.That (node.Body, Is.Null, "Body");
 			Assert.That (node.TextBody, Is.Null, "TextBody");
 			Assert.That (node.HtmlBody, Is.Null, "HtmlBody");
-			Assert.That (node.BodyParts, Is.Null, "BodyParts");
-			Assert.That (node.Attachments, Is.Null, "Attachments");
+			Assert.That (node.BodyParts, Is.Empty, "BodyParts");
+			Assert.That (node.Attachments, Is.Empty, "Attachments");
 			Assert.That (node.PreviewText, Is.Null, "PreviewText");
 			Assert.That (node.Envelope, Is.Null, "Envelope");
 			Assert.That (node.Flags.HasValue, Is.False, "Flags");
-			Assert.That (node.Keywords, Is.Null, "Keywords");
+			Assert.That (node.Keywords, Is.Empty, "Keywords");
 			Assert.That (node.Headers, Is.Null, "Headers");
 			Assert.That (node.InternalDate.HasValue, Is.False, "InternalDate");
 			Assert.That (node.EmailId, Is.Null, "EmailId");
