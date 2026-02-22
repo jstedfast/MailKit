@@ -126,11 +126,11 @@ namespace MailKit.Net.Imap {
 						break;
 					}
 				}
-			} else {
-				message = ic.ResponseText;
-			}
 
-			message ??= string.Empty;
+				message ??= string.Empty;
+			} else {
+				message = ic.ResponseText!;
+			}
 
 			return ic.Exception != null ? new ImapProtocolException (message, ic.Exception) : new ImapProtocolException (message);
 		}

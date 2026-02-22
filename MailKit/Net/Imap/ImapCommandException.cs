@@ -87,9 +87,11 @@ namespace MailKit.Net.Imap {
 						break;
 					}
 				}
-			}
 
-			reason ??= ic.ResponseText ?? string.Empty;
+				reason ??= string.Empty;
+			} else {
+				reason = ic.ResponseText!;
+			}
 
 			if (!string.IsNullOrEmpty (reason))
 				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response: {2}", command, result, reason);
