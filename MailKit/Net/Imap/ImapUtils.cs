@@ -2974,13 +2974,14 @@ namespace MailKit.Net.Imap {
 		public static Task UntaggedThreadHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
 			var threads = new List<MessageThread> ();
+			var folder = ic.Folder!;
 
 			ic.UserData = threads;
 
 			if (doAsync)
-				return ParseThreadsAsync (engine, ic.Folder!.UidValidity, threads, ic.CancellationToken);
+				return ParseThreadsAsync (engine, folder.UidValidity, threads, ic.CancellationToken);
 
-			ParseThreads (engine, ic.Folder!.UidValidity, threads, ic.CancellationToken);
+			ParseThreads (engine, folder.UidValidity, threads, ic.CancellationToken);
 
 			return Task.CompletedTask;
 		}

@@ -318,10 +318,12 @@ namespace MailKit.Net.Imap {
 
 		static Task UntaggedQResyncFetchHandler (ImapEngine engine, ImapCommand ic, int index, bool doAsync)
 		{
-			if (doAsync)
-				return ic.Folder!.OnUntaggedFetchResponseAsync (engine, index, ic.CancellationToken);
+			var folder = ic.Folder!;
 
-			ic.Folder!.OnUntaggedFetchResponse (engine, index, ic.CancellationToken);
+			if (doAsync)
+				return folder.OnUntaggedFetchResponseAsync (engine, index, ic.CancellationToken);
+
+			folder.OnUntaggedFetchResponse (engine, index, ic.CancellationToken);
 
 			return Task.CompletedTask;
 		}
