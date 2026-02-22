@@ -53,8 +53,36 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="MailKit.BodyPart"/>.
 		/// </remarks>
+		[Obsolete ("Use BodyPart (ContentType, string) instead.")]
 		protected BodyPart ()
 		{
+			ContentType = new ContentType ("application", "octet-stream");
+			PartSpecifier = string.Empty;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPart"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.BodyPart"/>.
+		/// </remarks>
+		/// <param name="contentType">The content type.</param>
+		/// <param name="partSpecifier">The part specifier.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <para><paramref name="contentType"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="partSpecifier"/> is <see langword="null" />.</para>
+		/// </exception>
+		protected BodyPart (ContentType contentType, string partSpecifier)
+		{
+			if (contentType == null)
+				throw new ArgumentNullException (nameof (contentType));
+
+			if (partSpecifier == null)
+				throw new ArgumentNullException (nameof (partSpecifier));
+
+			ContentType = contentType;
+			PartSpecifier = partSpecifier;
 		}
 
 		/// <summary>
@@ -350,7 +378,8 @@ namespace MailKit {
 				if (!TryParse (text, ref index, out string? value))
 					return false;
 
-				list.Add (value);
+				if (value != null)
+					list.Add (value);
 			} while (index < text.Length);
 
 			if (index >= text.Length || text[index] != ')')
@@ -500,17 +529,17 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, string prefix, [NotNullWhen (true)] out IList<BodyPart>? children)
+		static bool TryParse (string text, ref int index, string prefix, [NotNullWhen (true)] out BodyPartCollection? bodyParts)
 		{
 			string path;
 			int id = 1;
 
-			children = null;
+			bodyParts = null;
 
 			if (index >= text.Length)
 				return false;
 
-			children = new List<BodyPart> ();
+			bodyParts = new BodyPartCollection ();
 
 			do {
 				if (text[index] != '(')
@@ -524,7 +553,9 @@ namespace MailKit {
 				while (index < text.Length && text[index] == ' ')
 					index++;
 
-				children.Add (part);
+				if (part != null)
+					bodyParts.Add (part);
+
 				id++;
 			} while (index < text.Length);
 
@@ -559,14 +590,11 @@ namespace MailKit {
 
 			if (text[index] == '(' || IsNIL (text, index)) {
 				var prefix = path.Length > 0 ? path + "." : string.Empty;
-				var multipart = new BodyPartMultipart ();
+				BodyPartCollection? bodyParts = null;
 
 				if (text[index] == '(') {
-					if (!TryParse (text, ref index, prefix, out IList<BodyPart>? children))
+					if (!TryParse (text, ref index, prefix, out bodyParts))
 						return false;
-
-					foreach (var child in children)
-						multipart.BodyParts.Add (child);
 				} else {
 					index += "NIL".Length;
 				}
@@ -574,7 +602,7 @@ namespace MailKit {
 				if (!TryParse (text, ref index, true, out contentType))
 					return false;
 
-				multipart.ContentType = contentType;
+				var multipart = new BodyPartMultipart (contentType, path, bodyParts ?? new BodyPartCollection ());
 
 				if (!TryParse (text, ref index, out disposition))
 					return false;
@@ -602,13 +630,11 @@ namespace MailKit {
 					return false;
 
 				if (contentType.IsMimeType ("message", "rfc822"))
-					basic = message = new BodyPartMessage ();
+					basic = message = new BodyPartMessage (contentType, path);
 				else if (contentType.IsMimeType ("text", "*"))
-					basic = txt = new BodyPartText ();
+					basic = txt = new BodyPartText (contentType, path);
 				else
-					basic = new BodyPartBasic ();
-
-				basic.ContentType = contentType;
+					basic = new BodyPartBasic (contentType, path);
 
 				if (!TryParse (text, ref index, out nstring))
 					return false;
@@ -674,8 +700,6 @@ namespace MailKit {
 
 				part = basic;
 			}
-
-			part.PartSpecifier = path;
 
 			if (index >= text.Length || text[index] != ')')
 				return false;

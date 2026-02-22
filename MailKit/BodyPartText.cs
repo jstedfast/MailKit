@@ -27,6 +27,8 @@
 using System;
 using System.Text;
 
+using MimeKit;
+
 namespace MailKit {
 	/// <summary>
 	/// A textual body part.
@@ -45,7 +47,25 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="BodyPartText"/>.
 		/// </remarks>
-		public BodyPartText ()
+		[Obsolete ("Use BodyPartText (ContentType, string) instead.")]
+		public BodyPartText () : this (new ContentType ("text", "plain"), string.Empty)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartText"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartText"/>.
+		/// </remarks>
+		/// <param name="contentType">The content type.</param>
+		/// <param name="partSpecifier">The part specifier.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <para><paramref name="contentType"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="partSpecifier"/> is <see langword="null" />.</para>
+		/// </exception>
+		public BodyPartText (ContentType contentType, string partSpecifier) : base (contentType, partSpecifier)
 		{
 		}
 

@@ -43,13 +43,13 @@ namespace UnitTests {
 		{
 			var uri = new Uri ("https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/");
 			const string expected = "(\"image\" \"jpeg\" (\"name\" \"wallpaper.jpg\") \"id@localhost\" \"A majestic supercell storm approaching a house in Kansas, 2016.\" \"base64\" 0 \"8criUiOQmpfifOuOmYFtEQ==\" (\"attachment\" (\"filename\" \"wallpaper.jpg\")) (\"en\" \"fr\") \"https://www.nationalgeographic.com/travel/contests/photographer-of-the-year-2018/wallpapers/week-9-nature/2/\")";
+			var contentType = new ContentType ("image", "jpeg") {
+				Name = "wallpaper.jpg"
+			};
 			BodyPartBasic basic, parsed;
 			BodyPart body;
 
-			basic = new BodyPartBasic {
-				ContentType = new ContentType ("image", "jpeg") {
-					Name = "wallpaper.jpg"
-				},
+			basic = new BodyPartBasic (contentType, string.Empty) {
 				ContentId = "id@localhost",
 				ContentMd5 = "8criUiOQmpfifOuOmYFtEQ==",
 				ContentLanguage = new string[] { "en", "fr" },
@@ -104,11 +104,11 @@ namespace UnitTests {
 		public void TestSimplePlainTextBody ()
 		{
 			const string expected = "(\"text\" \"plain\" (\"charset\" \"us-ascii\" \"name\" \"body.txt\") NIL NIL \"7bit\" 3028 NIL NIL NIL NIL 92)";
+			var contentType = new ContentType ("text", "plain") { Charset = "us-ascii", Name = "body.txt" };
 			BodyPartText text, parsed;
 			BodyPart body;
 
-			text = new BodyPartText {
-				ContentType = new ContentType ("text", "plain") { Charset = "us-ascii", Name = "body.txt" },
+			text = new BodyPartText (contentType, string.Empty) {
 				ContentTransferEncoding = "7bit",
 				Octets = 3028,
 				Lines = 92,
@@ -135,9 +135,9 @@ namespace UnitTests {
 		[Test]
 		public void TestBodyPartCollection ()
 		{
-			var text = new BodyPartText { ContentType = new ContentType ("text", "plain"), ContentLocation = new Uri ("body", UriKind.Relative) };
-			var image1 = new BodyPartBasic { ContentType = new ContentType ("image", "jpeg"), ContentLocation = new Uri ("http://localhost/image1.jpg") };
-			var image2 = new BodyPartBasic { ContentType = new ContentType ("image", "jpeg"), ContentId = "image2@localhost" };
+			var text = new BodyPartText (new ContentType ("text", "plain"), string.Empty) { ContentLocation = new Uri ("body", UriKind.Relative) };
+			var image1 = new BodyPartBasic (new ContentType ("image", "jpeg"), string.Empty) { ContentLocation = new Uri ("http://localhost/image1.jpg") };
+			var image2 = new BodyPartBasic (new ContentType ("image", "jpeg"), string.Empty) { ContentId = "image2@localhost" };
 			var list = new BodyPartCollection ();
 			var parts = new BodyPart[3];
 			int i = 0;
@@ -225,12 +225,8 @@ namespace UnitTests {
 		[Test]
 		public void TestMultipartWithNoChildren ()
 		{
-			var original = new BodyPartMultipart {
-				ContentType = new ContentType ("multipart", "mixed") { Boundary = "----=_NextPart_000_001" }
-			};
-			original.BodyParts.Add (new BodyPartMultipart {
-				ContentType = new ContentType ("multipart", "alternative") { Boundary = "----=_AlternativePart_001_001" }
-			});
+			var original = new BodyPartMultipart (new ContentType ("multipart", "mixed") { Boundary = "----=_NextPart_000_001" }, string.Empty);
+			original.BodyParts.Add (new BodyPartMultipart (new ContentType ("multipart", "alternative") { Boundary = "----=_AlternativePart_001_001" }, string.Empty));
 
 			var serialized = original.ToString ();
 
@@ -258,8 +254,7 @@ namespace UnitTests {
 
 		static BodyPartMessage CreateMessage (string type, string subtype, string partSpecifier, BodyPart body)
 		{
-			var message = new BodyPartMessage {
-				ContentType = CreateContentType (type, subtype, partSpecifier),
+			var message = new BodyPartMessage (CreateContentType (type, subtype, partSpecifier), partSpecifier) {
 				Body = body
 			};
 			return message;
@@ -267,7 +262,7 @@ namespace UnitTests {
 
 		static BodyPartMultipart CreateMultipart (string type, string subtype, string partSpecifier, params BodyPart[] bodyParts)
 		{
-			var multipart = new BodyPartMultipart { ContentType = CreateContentType (type, subtype, partSpecifier) };
+			var multipart = new BodyPartMultipart (CreateContentType (type, subtype, partSpecifier), partSpecifier);
 			foreach (var bodyPart in bodyParts)
 				multipart.BodyParts.Add (bodyPart);
 			return multipart;
@@ -275,12 +270,12 @@ namespace UnitTests {
 
 		static BodyPartBasic CreateBasic (string type, string subtype, string partSpecifier)
 		{
-			return new BodyPartBasic { ContentType = CreateContentType (type, subtype, partSpecifier) };
+			return new BodyPartBasic (CreateContentType (type, subtype, partSpecifier), partSpecifier);
 		}
 
 		static BodyPartText CreateText (string type, string subtype, string partSpecifier)
 		{
-			return new BodyPartText { ContentType = CreateContentType (type, subtype, partSpecifier) };
+			return new BodyPartText (CreateContentType (type, subtype, partSpecifier), partSpecifier);
 		}
 
 		static void VerifyPartSpecifier (BodyPart part)
@@ -375,10 +370,10 @@ namespace UnitTests {
 			visitor.Visit (body);
 
 			Assert.That (visitor.ToString (), Is.EqualTo (expected));
-			Assert.Throws<ArgumentNullException> (() => new BodyPartText ().Accept (null));
-			Assert.Throws<ArgumentNullException> (() => new BodyPartBasic ().Accept (null));
-			Assert.Throws<ArgumentNullException> (() => new BodyPartMessage ().Accept (null));
-			Assert.Throws<ArgumentNullException> (() => new BodyPartMultipart ().Accept (null));
+			Assert.Throws<ArgumentNullException> (() => new BodyPartText (new ContentType ("text", "plain"), string.Empty).Accept (null));
+			Assert.Throws<ArgumentNullException> (() => new BodyPartBasic (new ContentType ("image", "jpeg"), string.Empty).Accept (null));
+			Assert.Throws<ArgumentNullException> (() => new BodyPartMessage (new ContentType ("message", "rfc822"), string.Empty).Accept (null));
+			Assert.Throws<ArgumentNullException> (() => new BodyPartMultipart (new ContentType ("multipart", "mixed"), string.Empty).Accept (null));
 
 			var encoded = body.ToString ();
 

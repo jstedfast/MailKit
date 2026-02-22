@@ -219,7 +219,7 @@ namespace MailKit {
 					if (cid) {
 						if (!string.IsNullOrEmpty (bodyPart.ContentId)) {
 							// Note: we might have a Content-Id in the form "<id@domain.com>", so attempt to decode it
-							var id = MimeUtils.EnumerateReferences (bodyPart.ContentId).FirstOrDefault () ?? bodyPart.ContentId;
+							var id = MimeUtils.EnumerateReferences (bodyPart.ContentId!).FirstOrDefault () ?? bodyPart.ContentId;
 
 							if (id == uri.AbsolutePath)
 								return index;

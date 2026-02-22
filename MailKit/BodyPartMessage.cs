@@ -27,6 +27,8 @@
 using System;
 using System.Text;
 
+using MimeKit;
+
 namespace MailKit {
 	/// <summary>
 	/// A message/rfc822 body part.
@@ -42,7 +44,25 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="BodyPartMessage"/>.
 		/// </remarks>
-		public BodyPartMessage ()
+		[Obsolete ("Use BodyPartMessage (ContentType, string) instead.")]
+		public BodyPartMessage () : this (new ContentType ("message", "rfc822"), string.Empty)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartMessage"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartMessage"/>.
+		/// </remarks>
+		/// <param name="contentType">The content type.</param>
+		/// <param name="partSpecifier">The part specifier.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <para><paramref name="contentType"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="partSpecifier"/> is <see langword="null" />.</para>
+		/// </exception>
+		public BodyPartMessage (ContentType contentType, string partSpecifier) : base (contentType, partSpecifier)
 		{
 		}
 

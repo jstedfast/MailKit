@@ -1512,7 +1512,7 @@ namespace MailKit.Net.Imap {
 		static BodyPart ParseMultipart (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
 		{
 			var prefix = path.Length > 0 ? path + "." : string.Empty;
-			var body = new BodyPartMultipart ();
+			var bodyParts = new BodyPartCollection ();
 			ImapToken token;
 			int index = 1;
 
@@ -1520,7 +1520,11 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.Nil) {
 				do {
-					body.BodyParts.Add (ParseBody (engine, format, prefix + index, cancellationToken));
+					var part = ParseBody (engine, format, prefix + index, cancellationToken);
+
+					if (part != null)
+						bodyParts.Add (part);
+
 					token = engine.PeekToken (cancellationToken);
 					index++;
 				} while (token.Type == ImapTokenType.OpenParen);
@@ -1535,9 +1539,8 @@ namespace MailKit.Net.Imap {
 			}
 
 			var subtype = ReadStringToken (engine, format, cancellationToken);
-
-			body.ContentType = new ContentType ("multipart", subtype);
-			body.PartSpecifier = path;
+			var contentType = new ContentType ("multipart", subtype);
+			var body = new BodyPartMultipart (contentType, path, bodyParts);
 
 			token = engine.PeekToken (cancellationToken);
 
@@ -1554,7 +1557,7 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.OpenParen)
 					ParseParameterList (builder, engine, format, cancellationToken);
 
-				if (ContentType.TryParse (builder.ToString (), out var contentType))
+				if (ContentType.TryParse (builder.ToString (), out contentType))
 					body.ContentType = contentType;
 
 				token = engine.PeekToken (cancellationToken);
@@ -1600,7 +1603,7 @@ namespace MailKit.Net.Imap {
 		static async Task<BodyPart> ParseMultipartAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
 		{
 			var prefix = path.Length > 0 ? path + "." : string.Empty;
-			var body = new BodyPartMultipart ();
+			var bodyParts = new BodyPartCollection ();
 			ImapToken token;
 			int index = 1;
 
@@ -1608,7 +1611,11 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.Nil) {
 				do {
-					body.BodyParts.Add (await ParseBodyAsync (engine, format, prefix + index, cancellationToken).ConfigureAwait (false));
+					var part = await ParseBodyAsync (engine, format, prefix + index, cancellationToken).ConfigureAwait (false);
+
+					if (part != null)
+						bodyParts.Add (part);
+
 					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 					index++;
 				} while (token.Type == ImapTokenType.OpenParen);
@@ -1623,9 +1630,8 @@ namespace MailKit.Net.Imap {
 			}
 
 			var subtype = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
-
-			body.ContentType = new ContentType ("multipart", subtype);
-			body.PartSpecifier = path;
+			var contentType = new ContentType ("multipart", subtype);
+			var body = new BodyPartMultipart (contentType, path, bodyParts);
 
 			token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -1642,7 +1648,7 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.OpenParen)
 					await ParseParameterListAsync (builder, engine, format, cancellationToken).ConfigureAwait (false);
 
-				if (ContentType.TryParse (builder.ToString (), out var contentType))
+				if (ContentType.TryParse (builder.ToString (), out contentType))
 					body.ContentType = contentType;
 
 				token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -1897,7 +1903,7 @@ namespace MailKit.Net.Imap {
 			BodyPartBasic body;
 
 			if (type.IsMimeType ("message", "rfc822")) {
-				var rfc822 = new BodyPartMessage ();
+				var rfc822 = new BodyPartMessage (type, path);
 
 				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
 				// expressions instead of body-part-msg expressions when they encounter
@@ -1922,19 +1928,17 @@ namespace MailKit.Net.Imap {
 
 				body = rfc822;
 			} else if (type.IsMimeType ("text", "*")) {
-				var text = new BodyPartText {
+				var text = new BodyPartText (type, path) {
 					Lines = ReadNumber (engine, format, cancellationToken)
 				};
 				body = text;
 			} else {
 				isMultipart = type.IsMimeType ("multipart", "*");
-				body = new BodyPartBasic ();
+				body = new BodyPartBasic (type, path);
 			}
 
 			body.ContentTransferEncoding = enc;
 			body.ContentDescription = desc;
-			body.PartSpecifier = path;
-			body.ContentType = type;
 			body.ContentId = id;
 			body.Octets = octets;
 
@@ -2006,7 +2010,7 @@ namespace MailKit.Net.Imap {
 			BodyPartBasic body;
 
 			if (type.IsMimeType ("message", "rfc822")) {
-				var rfc822 = new BodyPartMessage ();
+				var rfc822 = new BodyPartMessage (type, path);
 
 				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
 				// expressions instead of body-part-msg expressions when they encounter
@@ -2031,19 +2035,17 @@ namespace MailKit.Net.Imap {
 
 				body = rfc822;
 			} else if (type.IsMimeType ("text", "*")) {
-				var text = new BodyPartText {
+				var text = new BodyPartText (type, path) {
 					Lines = await ReadNumberAsync (engine, format, cancellationToken).ConfigureAwait (false)
 				};
 				body = text;
 			} else {
 				isMultipart = type.IsMimeType ("multipart", "*");
-				body = new BodyPartBasic ();
+				body = new BodyPartBasic (type, path);
 			}
 
 			body.ContentTransferEncoding = enc;
 			body.ContentDescription = desc;
-			body.PartSpecifier = path;
-			body.ContentType = type;
 			body.ContentId = id;
 			body.Octets = octets;
 
