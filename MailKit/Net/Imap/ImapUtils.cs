@@ -2087,12 +2087,12 @@ namespace MailKit.Net.Imap {
 
 		readonly struct EnvelopeAddress
 		{
-			public readonly string Name;
-			public readonly string Route;
-			public readonly string Mailbox;
-			public readonly string Domain;
+			public readonly string? Name;
+			public readonly string? Route;
+			public readonly string? Mailbox;
+			public readonly string? Domain;
 
-			public EnvelopeAddress (string[] values)
+			public EnvelopeAddress (string?[] values)
 			{
 				Name = values[0];
 				Route = values[1];
@@ -2166,7 +2166,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static bool TryAddEnvelopeAddressToken (ImapToken token, ref int index, string[] values, bool[] qstrings, string format)
+		static bool TryAddEnvelopeAddressToken (ImapToken token, ref int index, string?[] values, bool[] qstrings, string format)
 		{
 			// This is a work-around for mail servers which output too many tokens for an ENVELOPE address. In at least 1 case, this happened
 			// because the server sent a literal token as the name component and miscalculated the literal length as 38 when it was actually 69
@@ -2177,9 +2177,9 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/1369 for details.
 			if (index >= 4) {
 				if (qstrings[0])
-					values[0] = MimeUtils.Quote (values[0]);
+					values[0] = MimeUtils.Quote (values[0]!);
 				if (qstrings[1])
-					values[1] = MimeUtils.Quote (values[1]);
+					values[1] = MimeUtils.Quote (values[1]!);
 				values[0] = values[0] + ' ' + values[1];
 				qstrings[0] = false;
 				qstrings[1] = qstrings[2];
@@ -2215,7 +2215,7 @@ namespace MailKit.Net.Imap {
 
 		static EnvelopeAddress ParseEnvelopeAddress (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var values = new string[4];
+			var values = new string?[4];
 			var qstrings = new bool[4];
 			ImapToken token;
 			int index = 0;
@@ -2239,7 +2239,7 @@ namespace MailKit.Net.Imap {
 
 		static async Task<EnvelopeAddress> ParseEnvelopeAddressAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var values = new string[4];
+			var values = new string?[4];
 			var qstrings = new bool[4];
 			ImapToken token;
 			int index = 0;
