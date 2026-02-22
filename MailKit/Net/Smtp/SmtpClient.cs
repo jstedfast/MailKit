@@ -42,6 +42,7 @@ using System.Diagnostics.Metrics;
 using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 
 using MimeKit;
@@ -366,7 +367,7 @@ namespace MailKit.Net.Smtp {
 		public override int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected && Stream!.CanTimeout) {
+				if (IsConnected && Stream.CanTimeout) {
 					Stream.WriteTimeout = value;
 					Stream.ReadTimeout = value;
 				}
@@ -392,6 +393,7 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 		/// </example>
 		/// <value><see langword="true" /> if the client is connected; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, new[] { nameof (Stream), nameof (uri) })]
 		public override bool IsConnected {
 			get { return connected; }
 		}
@@ -403,6 +405,7 @@ namespace MailKit.Net.Smtp {
 		/// Gets whether or not the connection is secure (typically via SSL or TLS).
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, new[] { nameof (Stream), nameof (uri) })]
 		public override bool IsSecure {
 			get { return IsConnected && secure; }
 		}
@@ -415,7 +418,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public override bool IsEncrypted {
-			get { return IsSecure && (Stream!.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
+			get { return IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
 		}
 
 		/// <summary>
@@ -426,7 +429,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public override bool IsSigned {
-			get { return IsSecure && (Stream!.Stream is SslStream sslStream) && sslStream.IsSigned; }
+			get { return IsSecure && (Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
 		}
 
 		/// <summary>
@@ -441,7 +444,7 @@ namespace MailKit.Net.Smtp {
 		/// <value>The negotiated SSL or TLS protocol version.</value>
 		public override SslProtocols SslProtocol {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
 
 				return SslProtocols.None;
@@ -463,7 +466,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.CipherAlgorithm;
 
 				return null;
@@ -485,7 +488,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		public override int? SslCipherStrength {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.CipherStrength;
 
 				return null;
@@ -502,7 +505,7 @@ namespace MailKit.Net.Smtp {
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.NegotiatedCipherSuite;
 
 				return null;
@@ -525,7 +528,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.HashAlgorithm;
 
 				return null;
@@ -547,7 +550,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		public override int? SslHashStrength {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.HashStrength;
 
 				return null;
@@ -569,7 +572,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeAlgorithm;
 
 				return null;
@@ -591,7 +594,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		public override int? SslKeyExchangeStrength {
 			get {
-				if (IsSecure && (Stream!.Stream is SslStream sslStream))
+				if (IsSecure && (Stream.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeStrength;
 
 				return null;
@@ -1001,8 +1004,8 @@ namespace MailKit.Net.Smtp {
 			if ((capabilities & SmtpCapabilities.Authentication) == 0)
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
-			mechanism.ChannelBindingContext = Stream!.Stream as IChannelBindingContext;
-			mechanism.Uri = new Uri ($"smtp://{uri!.Host}");
+			mechanism.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
+			mechanism.Uri = new Uri ($"smtp://{uri.Host}");
 		}
 
 		/// <summary>
@@ -1112,6 +1115,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		[MemberNotNull (nameof (Stream), nameof (uri))]
 		void ValidateArguments (Encoding encoding, ICredentials credentials)
 		{
 			if (encoding == null)
@@ -1193,7 +1197,7 @@ namespace MailKit.Net.Smtp {
 			using var operation = StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ($"smtp://{uri!.Host}");
+				var saslUri = new Uri ($"smtp://{uri.Host}");
 				AuthenticationException? authException = null;
 				SaslException? saslException;
 				SmtpResponse response;
@@ -1208,7 +1212,7 @@ namespace MailKit.Net.Smtp {
 					if (cred == null || (sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 						continue;
 
-					sasl.ChannelBindingContext = Stream!.Stream as IChannelBindingContext;
+					sasl.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
 					sasl.Uri = saslUri;
 
 					tried = true;
@@ -1743,7 +1747,7 @@ namespace MailKit.Net.Smtp {
 
 			if (quit) {
 				try {
-					Stream!.SendCommand ("QUIT\r\n", cancellationToken);
+					Stream.SendCommand ("QUIT\r\n", cancellationToken);
 				} catch (OperationCanceledException) {
 				} catch (SmtpProtocolException) {
 				} catch (SmtpCommandException) {
@@ -1751,7 +1755,7 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			Disconnect (uri!.Host, uri.Port, GetSecureSocketOptions (uri), true);
+			Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), true);
 		}
 
 		/// <summary>
@@ -2364,6 +2368,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		[MemberNotNull (nameof (Stream), nameof (uri))]
 		FormatOptions Prepare (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, out SmtpExtensions extensions)
 		{
 			CheckDisposed ();
@@ -2476,7 +2481,7 @@ namespace MailKit.Net.Smtp {
 				if (bdat)
 					return Bdat (format, message, size, cancellationToken, progress);
 
-				var dataResponse = Stream!.SendCommand ("DATA\r\n", cancellationToken);
+				var dataResponse = Stream.SendCommand ("DATA\r\n", cancellationToken);
 
 				ParseDataResponse (dataResponse);
 
@@ -2496,7 +2501,7 @@ namespace MailKit.Net.Smtp {
 			} catch (Exception ex) {
 				operation.SetError (ex);
 
-				Disconnect (uri!.Host, uri.Port, GetSecureSocketOptions (uri), false);
+				Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), false);
 				throw;
 			}
 		}
@@ -2665,7 +2670,7 @@ namespace MailKit.Net.Smtp {
 			return Send (options, message, sender, rcpts, cancellationToken, progress);
 		}
 
-#endregion
+		#endregion
 
 		string CreateExpandCommand (string alias)
 		{

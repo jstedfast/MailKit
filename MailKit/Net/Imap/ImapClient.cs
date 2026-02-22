@@ -74,7 +74,6 @@ namespace MailKit.Net.Imap {
 		bool disconnecting;
 		bool connecting;
 		bool disposed;
-		bool secure;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
@@ -666,7 +665,7 @@ namespace MailKit.Net.Imap {
 		public override int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected && engine.Stream!.CanTimeout) {
+				if (engine.IsConnected && engine.Stream.CanTimeout) {
 					engine.Stream.WriteTimeout = value;
 					engine.Stream.ReadTimeout = value;
 				}
@@ -701,7 +700,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
 		public override bool IsSecure {
-			get { return IsConnected && secure; }
+			get { return engine.IsSecure; }
 		}
 
 		/// <summary>
@@ -712,7 +711,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public override bool IsEncrypted {
-			get { return IsSecure && (engine.Stream!.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
+			get { return engine.IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
 		}
 
 		/// <summary>
@@ -723,7 +722,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public override bool IsSigned {
-			get { return IsSecure && (engine.Stream!.Stream is SslStream sslStream) && sslStream.IsSigned; }
+			get { return engine.IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
 		}
 
 		/// <summary>
@@ -738,7 +737,7 @@ namespace MailKit.Net.Imap {
 		/// <value>The negotiated SSL or TLS protocol version.</value>
 		public override SslProtocols SslProtocol {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
 
 				return SslProtocols.None;
@@ -760,7 +759,7 @@ namespace MailKit.Net.Imap {
 #endif
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.CipherAlgorithm;
 
 				return null;
@@ -782,7 +781,7 @@ namespace MailKit.Net.Imap {
 #endif
 		public override int? SslCipherStrength {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.CipherStrength;
 
 				return null;
@@ -799,7 +798,7 @@ namespace MailKit.Net.Imap {
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.NegotiatedCipherSuite;
 
 				return null;
@@ -822,7 +821,7 @@ namespace MailKit.Net.Imap {
 #endif
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.HashAlgorithm;
 
 				return null;
@@ -844,7 +843,7 @@ namespace MailKit.Net.Imap {
 #endif
 		public override int? SslHashStrength {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.HashStrength;
 
 				return null;
@@ -866,7 +865,7 @@ namespace MailKit.Net.Imap {
 #endif
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeAlgorithm;
 
 				return null;
@@ -888,7 +887,7 @@ namespace MailKit.Net.Imap {
 #endif
 		public override int? SslKeyExchangeStrength {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeStrength;
 
 				return null;
@@ -1460,17 +1459,17 @@ namespace MailKit.Net.Imap {
 				ProtocolLogger.LogConnect (engine.Uri!);
 			} catch {
 				stream.Dispose ();
-				secure = false;
 				throw;
 			}
 
 			connecting = true;
 
+			var imap = new ImapStream (stream, ProtocolLogger);
+
 			try {
-				engine.Connect (new ImapStream (stream, ProtocolLogger), cancellationToken);
+				engine.Connect (imap, cancellationToken);
 			} catch {
 				connecting = false;
-				secure = false;
 				throw;
 			}
 
@@ -1490,14 +1489,14 @@ namespace MailKit.Net.Imap {
 					if (ic.Response == ImapCommandResponse.Ok) {
 						try {
 							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-							engine.Stream!.Stream = tls;
+							imap.Stream = tls;
 
 							SslHandshake (tls, host, cancellationToken);
 						} catch (Exception ex) {
 							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
 						}
 
-						secure = true;
+						engine.IsSecure = true;
 
 						// Query the CAPABILITIES again if the server did not include an
 						// untagged CAPABILITIES response to the STARTTLS command.
@@ -1508,7 +1507,6 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} catch (Exception ex) {
-				secure = false;
 				engine.Disconnect (ex);
 				throw;
 			} finally {
@@ -1611,10 +1609,7 @@ namespace MailKit.Net.Imap {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
 					}
 
-					secure = true;
 					stream = ssl;
-				} else {
-					secure = false;
 				}
 
 				PostConnect (stream, host, port, options, starttls, cancellationToken);
@@ -1795,10 +1790,8 @@ namespace MailKit.Net.Imap {
 					}
 
 					network = ssl;
-					secure = true;
 				} else {
 					network = stream;
-					secure = false;
 				}
 
 				if (network.CanTimeout) {
@@ -2810,7 +2803,6 @@ namespace MailKit.Net.Imap {
 			var uri = engine.Uri;
 
 			disconnecting = false;
-			secure = false;
 
 			OnDisconnected (uri!.Host, uri.Port, GetSecureSocketOptions (uri), requested);
 		}

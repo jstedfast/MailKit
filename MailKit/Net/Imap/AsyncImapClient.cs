@@ -518,17 +518,17 @@ namespace MailKit.Net.Imap
 				ProtocolLogger.LogConnect (engine.Uri!);
 			} catch {
 				stream.Dispose ();
-				secure = false;
 				throw;
 			}
 
 			connecting = true;
 
+			var imap = new ImapStream (stream, ProtocolLogger);
+
 			try {
-				await engine.ConnectAsync (new ImapStream (stream, ProtocolLogger), cancellationToken).ConfigureAwait (false);
+				await engine.ConnectAsync (imap, cancellationToken).ConfigureAwait (false);
 			} catch {
 				connecting = false;
-				secure = false;
 				throw;
 			}
 
@@ -548,14 +548,14 @@ namespace MailKit.Net.Imap
 					if (ic.Response == ImapCommandResponse.Ok) {
 						try {
 							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-							engine.Stream!.Stream = tls;
+							imap.Stream = tls;
 
 							await SslHandshakeAsync (tls, host, cancellationToken).ConfigureAwait (false);
 						} catch (Exception ex) {
 							throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "IMAP", host, port, 993, 143);
 						}
 
-						secure = true;
+						engine.IsSecure = true;
 
 						// Query the CAPABILITIES again if the server did not include an
 						// untagged CAPABILITIES response to the STARTTLS command.
@@ -566,7 +566,6 @@ namespace MailKit.Net.Imap
 					}
 				}
 			} catch (Exception ex) {
-				secure = false;
 				engine.Disconnect (ex);
 				throw;
 			} finally {
@@ -673,10 +672,7 @@ namespace MailKit.Net.Imap
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "IMAP", host, port, 993, 143);
 					}
 
-					secure = true;
 					stream = ssl;
-				} else {
-					secure = false;
 				}
 
 				await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
@@ -846,10 +842,8 @@ namespace MailKit.Net.Imap
 					}
 
 					network = ssl;
-					secure = true;
 				} else {
 					network = stream;
-					secure = false;
 				}
 
 				if (network.CanTimeout) {

@@ -331,7 +331,7 @@ namespace MailKit.Net.Smtp
 			using var operation = StartNetworkOperation (NetworkOperationKind.Authenticate);
 
 			try {
-				var saslUri = new Uri ($"smtp://{uri!.Host}");
+				var saslUri = new Uri ($"smtp://{uri.Host}");
 				AuthenticationException? authException = null;
 				SaslException? saslException;
 				SmtpResponse response;
@@ -346,7 +346,7 @@ namespace MailKit.Net.Smtp
 					if (cred == null || (sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
 						continue;
 
-					sasl.ChannelBindingContext = Stream!.Stream as IChannelBindingContext;
+					sasl.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
 					sasl.Uri = saslUri;
 
 					tried = true;
@@ -801,7 +801,7 @@ namespace MailKit.Net.Smtp
 
 			if (quit) {
 				try {
-					await Stream!.SendCommandAsync ("QUIT\r\n", cancellationToken).ConfigureAwait (false);
+					await Stream.SendCommandAsync ("QUIT\r\n", cancellationToken).ConfigureAwait (false);
 				} catch (OperationCanceledException) {
 				} catch (SmtpProtocolException) {
 				} catch (SmtpCommandException) {
@@ -809,7 +809,7 @@ namespace MailKit.Net.Smtp
 				}
 			}
 
-			Disconnect (uri!.Host, uri.Port, GetSecureSocketOptions (uri), true);
+			Disconnect (uri.Host, uri.Port, GetSecureSocketOptions (uri), true);
 		}
 
 		/// <summary>
@@ -1017,7 +1017,7 @@ namespace MailKit.Net.Smtp
 				if (bdat)
 					return await BdatAsync (format, message, size, cancellationToken, progress).ConfigureAwait (false);
 
-				var dataResponse = await Stream!.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
+				var dataResponse = await Stream.SendCommandAsync ("DATA\r\n", cancellationToken).ConfigureAwait (false);
 
 				ParseDataResponse (dataResponse);
 

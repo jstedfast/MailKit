@@ -163,6 +163,7 @@ namespace MailKit.Net.Imap {
 		MimeParser? parser;
 		internal int Tag;
 		bool disposed;
+		bool secure;
 
 		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{
@@ -395,8 +396,22 @@ namespace MailKit.Net.Imap {
 		/// Gets whether or not the engine is currently connected to a IMAP server.
 		/// </remarks>
 		/// <value><see langword="true" /> if the engine is connected; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, nameof (Stream))]
 		public bool IsConnected {
 			get { return Stream != null && Stream.IsConnected; }
+		}
+
+		/// <summary>
+		/// Get whether or not the connection is secure (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is secure (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, nameof (Stream))]
+		public bool IsSecure {
+			get { return IsConnected && secure; }
+			set { secure = value; }
 		}
 
 		/// <summary>
@@ -633,6 +648,7 @@ namespace MailKit.Net.Imap {
 #endif
 		}
 
+		[MemberNotNull (nameof (Stream))]
 		void Initialize (ImapStream stream)
 		{
 			clientConnectedTimestamp = Stopwatch.GetTimestamp ();
@@ -645,6 +661,7 @@ namespace MailKit.Net.Imap {
 			SupportedContexts.Clear ();
 			Rights.Clear ();
 
+			secure = stream.Stream is SslStream;
 			State = ImapEngineState.Connecting;
 			QuirksMode = ImapQuirksMode.None;
 			SupportedCharsets.Add ("US-ASCII");
@@ -863,6 +880,8 @@ namespace MailKit.Net.Imap {
 				Stream.Dispose ();
 				Stream = null;
 			}
+
+			secure = false;
 
 			if (State != ImapEngineState.Disconnected) {
 				State = ImapEngineState.Disconnected;

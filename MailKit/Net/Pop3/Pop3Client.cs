@@ -77,7 +77,7 @@ namespace MailKit.Net.Pop3 {
 		readonly Pop3Engine engine;
 		SslCertificateValidationInfo? sslValidationInfo;
 		ProbedCapabilities probed;
-		bool disposed, disconnecting, secure, utf8;
+		bool disposed, disconnecting, utf8;
 		int timeout = 2 * 60 * 1000;
 		long octets;
 		int total;
@@ -365,7 +365,7 @@ namespace MailKit.Net.Pop3 {
 		public override int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected && engine.Stream!.CanTimeout) {
+				if (engine.IsConnected && engine.Stream.CanTimeout) {
 					engine.Stream.WriteTimeout = value;
 					engine.Stream.ReadTimeout = value;
 				}
@@ -403,7 +403,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
 		public override bool IsSecure {
-			get { return IsConnected && secure; }
+			get { return engine.IsSecure; }
 		}
 
 		/// <summary>
@@ -414,7 +414,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is encrypted; otherwise, <see langword="false" />.</value>
 		public override bool IsEncrypted {
-			get { return IsSecure && (engine.Stream!.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
+			get { return engine.IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsEncrypted; }
 		}
 
 		/// <summary>
@@ -425,7 +425,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><see langword="true" /> if the connection is signed; otherwise, <see langword="false" />.</value>
 		public override bool IsSigned {
-			get { return IsSecure && (engine.Stream!.Stream is SslStream sslStream) && sslStream.IsSigned; }
+			get { return engine.IsSecure && (engine.Stream.Stream is SslStream sslStream) && sslStream.IsSigned; }
 		}
 
 		/// <summary>
@@ -440,7 +440,7 @@ namespace MailKit.Net.Pop3 {
 		/// <value>The negotiated SSL or TLS protocol version.</value>
 		public override SslProtocols SslProtocol {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.SslProtocol;
 
 				return SslProtocols.None;
@@ -462,7 +462,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.CipherAlgorithm;
 
 				return null;
@@ -484,7 +484,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override int? SslCipherStrength {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.CipherStrength;
 
 				return null;
@@ -501,7 +501,7 @@ namespace MailKit.Net.Pop3 {
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.NegotiatedCipherSuite;
 
 				return null;
@@ -524,7 +524,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.HashAlgorithm;
 
 				return null;
@@ -546,7 +546,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override int? SslHashStrength {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.HashStrength;
 
 				return null;
@@ -568,7 +568,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeAlgorithm;
 
 				return null;
@@ -590,7 +590,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		public override int? SslKeyExchangeStrength {
 			get {
-				if (IsSecure && (engine.Stream!.Stream is SslStream sslStream))
+				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
 					return sslStream.KeyExchangeStrength;
 
 				return null;
@@ -1110,7 +1110,6 @@ namespace MailKit.Net.Pop3 {
 				ProtocolLogger.LogConnect (engine.Uri!);
 			} catch {
 				stream.Dispose ();
-				secure = false;
 				throw;
 			}
 
@@ -1129,21 +1128,20 @@ namespace MailKit.Net.Pop3 {
 
 					try {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						engine.Stream!.Stream = tls;
+						pop3.Stream = tls;
 
 						SslHandshake (tls, host, cancellationToken);
 					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
 
-					secure = true;
+					engine.IsSecure = true;
 
 					// re-issue a CAPA command
 					engine.QueryCapabilities (cancellationToken);
 				}
 			} catch (Exception ex) {
 				engine.Disconnect (ex);
-				secure = false;
 				throw;
 			}
 
@@ -1241,10 +1239,7 @@ namespace MailKit.Net.Pop3 {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
 					}
 
-					secure = true;
 					stream = ssl;
-				} else {
-					secure = false;
 				}
 
 				PostConnect (stream, host, port, options, starttls, cancellationToken);
@@ -1431,10 +1426,8 @@ namespace MailKit.Net.Pop3 {
 					}
 
 					network = ssl;
-					secure = true;
 				} else {
 					network = stream;
-					secure = false;
 				}
 
 				if (network.CanTimeout) {
@@ -1571,7 +1564,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			engine.Disconnected -= OnEngineDisconnected;
-			disconnecting = secure = utf8 = false;
+			disconnecting = utf8 = false;
 			octets = total = 0;
 			engine.Uri = null;
 

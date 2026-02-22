@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -65,6 +66,7 @@ namespace MailKit.Net.Pop3 {
 		readonly List<Pop3Command> queue;
 		long clientConnectedTimestamp;
 		Pop3Stream? stream;
+		bool secure;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Engine"/> class.
@@ -145,8 +147,22 @@ namespace MailKit.Net.Pop3 {
 		/// Gets whether or not the engine is currently connected to a POP3 server.
 		/// </remarks>
 		/// <value><see langword="true" /> if the engine is connected; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, new[] { nameof (Stream), nameof (Uri) })]
 		public bool IsConnected {
 			get { return stream != null && stream.IsConnected; }
+		}
+
+		/// <summary>
+		/// Get whether or not the connection is secure (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is secure (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><see langword="true" /> if the connection is secure; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, new[] { nameof (Stream), nameof (Uri) })]
+		public bool IsSecure {
+			get { return IsConnected && secure; }
+			set { secure = value; }
 		}
 
 		/// <summary>
@@ -199,6 +215,7 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ();
 		}
 
+		[MemberNotNull (nameof (stream))]
 		void Initialize (Pop3Stream pop3)
 		{
 			stream?.Dispose ();
@@ -208,6 +225,8 @@ namespace MailKit.Net.Pop3 {
 			AuthenticationMechanisms.Clear ();
 			State = Pop3EngineState.Disconnected;
 			ApopToken = null;
+
+			secure = pop3.Stream is SslStream;
 			stream = pop3;
 		}
 
@@ -326,6 +345,8 @@ namespace MailKit.Net.Pop3 {
 				stream.Dispose ();
 				stream = null;
 			}
+
+			secure = false;
 
 			if (State != Pop3EngineState.Disconnected) {
 				State = Pop3EngineState.Disconnected;

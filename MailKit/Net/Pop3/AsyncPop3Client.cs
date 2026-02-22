@@ -316,7 +316,6 @@ namespace MailKit.Net.Pop3
 				ProtocolLogger.LogConnect (engine.Uri!);
 			} catch {
 				stream.Dispose ();
-				secure = false;
 				throw;
 			}
 
@@ -335,21 +334,20 @@ namespace MailKit.Net.Pop3
 
 					try {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						engine.Stream!.Stream = tls;
+						pop3.Stream = tls;
 
 						await SslHandshakeAsync (tls, host, cancellationToken).ConfigureAwait (false);
 					} catch (Exception ex) {
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, true, "POP3", host, port, 995, 110);
 					}
 
-					secure = true;
+					engine.IsSecure = true;
 
 					// re-issue a CAPA command
 					await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 				}
 			} catch (Exception ex) {
 				engine.Disconnect (ex);
-				secure = false;
 				throw;
 			}
 
@@ -448,10 +446,7 @@ namespace MailKit.Net.Pop3
 						throw SslHandshakeException.Create (ref sslValidationInfo, ex, false, "POP3", host, port, 995, 110);
 					}
 
-					secure = true;
 					stream = ssl;
-				} else {
-					secure = false;
 				}
 
 				await PostConnectAsync (stream, host, port, options, starttls, cancellationToken).ConfigureAwait (false);
@@ -621,10 +616,8 @@ namespace MailKit.Net.Pop3
 					}
 
 					network = ssl;
-					secure = true;
 				} else {
 					network = stream;
-					secure = false;
 				}
 
 				if (network.CanTimeout) {
