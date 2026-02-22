@@ -222,8 +222,13 @@ namespace MailKit.Net.Imap {
 
 				foreach (var property in annotation.Properties) {
 					command.Append (property.Key);
-					command.Append (" %S ");
-					args.Add (property.Value);
+
+					if (property.Value != null) {
+						command.Append (" %S ");
+						args.Add (property.Value);
+					} else {
+						command.Append (" NIL ");
+					}
 				}
 
 				command[command.Length - 1] = ')';

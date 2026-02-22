@@ -53,7 +53,7 @@ namespace MailKit {
 			if (entry is null)
 				throw new ArgumentNullException (nameof (entry));
 
-			Properties = new Dictionary<AnnotationAttribute, string> ();
+			Properties = new Dictionary<AnnotationAttribute, string?> ();
 			Entry = entry;
 		}
 
@@ -75,7 +75,7 @@ namespace MailKit {
 		/// Gets the annotation properties.
 		/// </remarks>
 		/// <value>The annotation properties.</value>
-		public Dictionary<AnnotationAttribute, string> Properties {
+		public Dictionary<AnnotationAttribute, string?> Properties {
 			get; private set;
 		}
 	}
