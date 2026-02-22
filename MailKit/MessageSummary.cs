@@ -95,7 +95,7 @@ namespace MailKit {
 			Folder = folder;
 		}
 
-		[MemberNotNull ("normalizedSubject")]
+		[MemberNotNull (nameof (normalizedSubject))]
 		void UpdateThreadableSubject ()
 		{
 			if (normalizedSubject != null)
