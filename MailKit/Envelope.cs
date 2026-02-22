@@ -397,7 +397,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, [NotNullWhen (true)] out InternetAddress? addr)
+		static bool TryParse (string text, ref int index, out InternetAddress? addr)
 		{
 			addr = null;
 
