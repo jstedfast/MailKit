@@ -136,6 +136,9 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				return null;
 
+			if (Uri is null)
+				throw new InvalidOperationException ();
+
 			switch (state) {
 			case LoginState.Auth:
 				if (token == null)
@@ -148,7 +151,7 @@ namespace MailKit.Security {
 				encoding = challenge.Charset != null ? Encoding.UTF8 : TextEncodings.Latin1;
 				cnonce ??= GenerateEntropy (15);
 
-				response = new DigestResponse (challenge, encoding, Uri!.Scheme, Uri!.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
+				response = new DigestResponse (challenge, encoding, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
 				state = LoginState.Final;
 
 				return response.Encode (encoding);

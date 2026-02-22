@@ -145,9 +145,12 @@ namespace MailKit.Security {
 		{
 			var options = base.CreateClientOptions ();
 
+			if (Uri is null)
+				throw new InvalidOperationException ();
+
 			// Provide a default TargetName (the base implementation already sets the
 			// TargetName to the ServicePrincipalName if the value was provided).
-			options.TargetName ??= $"SMTPSVC/{Uri!.Host}";
+			options.TargetName ??= $"SMTPSVC/{Uri.Host}";
 
 			return options;
 		}

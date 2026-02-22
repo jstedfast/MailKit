@@ -158,9 +158,12 @@ namespace MailKit.Security {
 			if (IsAuthenticated)
 				return ErrorResponse;
 
+			if (Uri is null)
+				throw new InvalidOperationException ();
+
 			var authzid = Encoding.UTF8.GetBytes (Credentials.UserName);
-			var port = Uri!.Port.ToString (CultureInfo.InvariantCulture);
-			var host = Encoding.UTF8.GetBytes (Uri!.Host);
+			var port = Uri.Port.ToString (CultureInfo.InvariantCulture);
+			var host = Encoding.UTF8.GetBytes (Uri.Host);
 			var authToken = Credentials.Password;
 
 			var buf = new byte[CalculateBufferSize (authzid, host, port, authToken)];

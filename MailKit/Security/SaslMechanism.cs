@@ -387,9 +387,6 @@ namespace MailKit.Security {
 		/// </exception>
 		public string Challenge (string? token, CancellationToken cancellationToken = default)
 		{
-			if (Uri == null)
-				throw new InvalidOperationException ();
-
 			cancellationToken.ThrowIfCancellationRequested ();
 
 			byte[]? decoded = Base64Decode (token?.Trim (), out int length);
