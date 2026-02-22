@@ -1975,16 +1975,16 @@ namespace MailKit.Net.Imap {
 
 			Engine.Run (ic);
 
-			folder = ProcessGetSubfolderResponse (ic, list, encodedName!);
+			folder = ProcessGetSubfolderResponse (ic, list, encodedName);
 
-			if (list!.Count > 1 || folder == null) {
+			if (list.Count > 1 || folder == null) {
 				// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 				// parent folders now so that they are not left in an inconsistent state.
 				Engine.LookupParentFolders (list, cancellationToken);
 			}
 
 			if (folder == null)
-				throw new FolderNotFoundException (fullName!);
+				throw new FolderNotFoundException (fullName);
 
 			return folder;
 		}
@@ -2035,16 +2035,16 @@ namespace MailKit.Net.Imap {
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			folder = ProcessGetSubfolderResponse (ic, list!, encodedName!);
+			folder = ProcessGetSubfolderResponse (ic, list, encodedName);
 
-			if (list!.Count > 1 || folder == null) {
+			if (list.Count > 1 || folder == null) {
 				// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 				// parent folders now so that they are not left in an inconsistent state.
 				await Engine.LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 			}
 
 			if (folder == null)
-				throw new FolderNotFoundException (fullName!);
+				throw new FolderNotFoundException (fullName);
 
 			return folder;
 		}
@@ -6135,8 +6135,8 @@ namespace MailKit.Net.Imap {
 			if ((message.Fields & MessageSummaryItems.UniqueId) != 0)
 				uid = message.UniqueId;
 
-			if ((message.Fields & MessageSummaryItems.Flags) != 0) {
-				var args = new MessageFlagsChangedEventArgs (index, message.Flags!.Value, (HashSet<string>) message.Keywords) {
+			if (message.Flags.HasValue) {
+				var args = new MessageFlagsChangedEventArgs (index, message.Flags.Value, (HashSet<string>) message.Keywords) {
 					ModSeq = message.ModSeq,
 					UniqueId = uid
 				};
