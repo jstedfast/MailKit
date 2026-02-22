@@ -88,7 +88,7 @@ namespace MailKit {
 		/// <param name="message">The body part representing the message/rfc822 message.</param>
 		protected virtual void VisitMessage (BodyPart message)
 		{
-			message?.Accept (this);
+			message.Accept (this);
 		}
 
 		/// <summary>
@@ -101,7 +101,9 @@ namespace MailKit {
 		protected internal virtual void VisitBodyPartMessage (BodyPartMessage entity)
 		{
 			VisitBodyPartBasic (entity);
-			VisitMessage (entity.Body);
+
+			if (entity.Body != null)
+				VisitMessage (entity.Body);
 		}
 
 		/// <summary>
