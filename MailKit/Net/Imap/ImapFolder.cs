@@ -1644,7 +1644,7 @@ namespace MailKit.Net.Imap {
 			ProcessUnsubscribeResponse (ic);
 		}
 
-		ImapCommand? QueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, out List<ImapFolder>? list, out bool status)
+		bool TryQueueGetSubfoldersCommand (StatusItems items, bool subscribedOnly, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out List<ImapFolder>? list, out bool status)
 		{
 			CheckState (false, false);
 
@@ -1652,7 +1652,8 @@ namespace MailKit.Net.Imap {
 			if (DirectorySeparator == '\0') {
 				status = false;
 				list = null;
-				return null;
+				ic = null;
+				return false;
 			}
 
 			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
@@ -1717,7 +1718,7 @@ namespace MailKit.Net.Imap {
 
 			command.Append ("\r\n");
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern.ToString ());
+			ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern.ToString ());
 			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.UntaggedListHandler);
 			ic.ListReturnsSubscribed = returnsSubscribed;
 			ic.UserData = list;
@@ -1725,7 +1726,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
 		IList<IMailFolder> ProcessGetSubfoldersResponse (ImapCommand ic, List<ImapFolder> list, out bool unparented)
@@ -1795,19 +1796,17 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var list, out var status);
-
-			if (ic == null)
+			if (!TryQueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var ic, out var list, out var status))
 				return Array.Empty<IMailFolder> ();
 
 			Engine.Run (ic);
 
-			var children = ProcessGetSubfoldersResponse (ic, list!, out var unparented);
+			var children = ProcessGetSubfoldersResponse (ic, list, out var unparented);
 
 			// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 			// parent folders now so that they are not left in an inconsistent state.
 			if (unparented)
-				Engine.LookupParentFolders (list!, cancellationToken);
+				Engine.LookupParentFolders (list, cancellationToken);
 
 			if (status) {
 				for (int i = 0; i < children.Count; i++) {
@@ -1852,19 +1851,17 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<IList<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var list, out var status);
-
-			if (ic == null)
+			if (!TryQueueGetSubfoldersCommand (items, subscribedOnly, cancellationToken, out var ic, out var list, out var status))
 				return Array.Empty<IMailFolder> ();
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			var children = ProcessGetSubfoldersResponse (ic, list!, out var unparented);
+			var children = ProcessGetSubfoldersResponse (ic, list, out var unparented);
 
 			// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
 			// parent folders now so that they are not left in an inconsistent state.
 			if (unparented)
-				await Engine.LookupParentFoldersAsync (list!, cancellationToken).ConfigureAwait (false);
+				await Engine.LookupParentFoldersAsync (list, cancellationToken).ConfigureAwait (false);
 
 			if (status) {
 				for (int i = 0; i < children.Count; i++) {
@@ -1876,7 +1873,7 @@ namespace MailKit.Net.Imap {
 			return children;
 		}
 
-		ImapCommand? QueueGetSubfolderCommand (string name, CancellationToken cancellationToken, out List<ImapFolder>? list, out string? fullName, out string? encodedName, out ImapFolder? folder)
+		bool TryQueueGetSubfolderCommand (string name, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out List<ImapFolder>? list, [NotNullWhen (true)] out string? fullName, [NotNullWhen (true)] out string? encodedName, out ImapFolder? folder)
 		{
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
@@ -1892,7 +1889,8 @@ namespace MailKit.Net.Imap {
 				fullName = null;
 				folder = null;
 				list = null;
-				return null;
+				ic = null;
+				return false;
 			}
 
 			fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
@@ -1900,20 +1898,21 @@ namespace MailKit.Net.Imap {
 
 			if (Engine.TryGetCachedFolder (encodedName, out folder)) {
 				list = null;
-				return null;
+				ic = null;
+				return false;
 			}
 
 			// Note: folder names can contain wildcards (including '*' and '%'), so replace '*' with '%'
 			// in order to reduce the list of folders returned by our LIST command.
 			var pattern = encodedName.Replace ('*', '%');
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", pattern);
+			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", pattern);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.UntaggedListHandler);
 			ic.UserData = list = new List<ImapFolder> ();
 
 			Engine.QueueCommand (ic);
 
-			return ic;
+			return true;
 		}
 
 		ImapFolder? ProcessGetSubfolderResponse (ImapCommand ic, List<ImapFolder> list, string encodedName)
@@ -1971,14 +1970,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfolderCommand (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
-
-			if (ic == null)
+			if (!TryQueueGetSubfolderCommand (name, cancellationToken, out var ic, out var list, out var fullName, out var encodedName, out var folder))
 				return folder ?? throw new FolderNotFoundException (name);
 
 			Engine.Run (ic);
 
-			folder = ProcessGetSubfolderResponse (ic, list!, encodedName!);
+			folder = ProcessGetSubfolderResponse (ic, list, encodedName!);
 
 			if (list!.Count > 1 || folder == null) {
 				// Note: if any folders returned in the LIST command are unparented, have the ImapEngine look up their
@@ -2033,9 +2030,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueGetSubfolderCommand (name, cancellationToken, out var list, out var fullName, out var encodedName, out var folder);
-
-			if (ic == null)
+			if (!TryQueueGetSubfolderCommand (name, cancellationToken, out var ic, out var list, out var fullName, out var encodedName, out var folder))
 				return folder ?? throw new FolderNotFoundException (name);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
