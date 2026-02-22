@@ -375,9 +375,9 @@ namespace MailKit.Security
 		public readonly X509ChainStatus[] ChainStatus;
 		public readonly SslPolicyErrors SslPolicyErrors;
 		public readonly X509Certificate2? Certificate;
-		public readonly string? Host;
+		public readonly string Host;
 
-		public SslCertificateValidationInfo (object? sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
+		public SslCertificateValidationInfo (string host, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
 		{
 #if NET10_0_OR_GREATER
 			Certificate = certificate != null ? X509CertificateLoader.LoadCertificate (certificate.Export (X509ContentType.Cert)) : null;
@@ -386,7 +386,7 @@ namespace MailKit.Security
 #endif
 			ChainElements = new List<SslChainElement> ();
 			SslPolicyErrors = sslPolicyErrors;
-			Host = sender as string;
+			Host = host;
 
 			// Note: we need to copy the ChainElements because the chain will be destroyed
 			if (chain != null) {

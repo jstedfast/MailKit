@@ -260,24 +260,25 @@ namespace MailKit.Net.Imap {
 
 		bool ValidateRemoteCertificate (object? sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
 		{
+			var host = engine.Uri!.Host;
 			bool valid;
 
 			sslValidationInfo?.Dispose ();
 			sslValidationInfo = null;
 
 			if (ServerCertificateValidationCallback != null) {
-				valid = ServerCertificateValidationCallback (engine.Uri!.Host, certificate, chain, sslPolicyErrors);
+				valid = ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
 #if NETFRAMEWORK
 			} else if (ServicePointManager.ServerCertificateValidationCallback != null) {
-				valid = ServicePointManager.ServerCertificateValidationCallback (engine.Uri!.Host, certificate, chain, sslPolicyErrors);
+				valid = ServicePointManager.ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
 #endif
 			} else {
-				valid = DefaultServerCertificateValidationCallback (engine.Uri!.Host, certificate, chain, sslPolicyErrors);
+				valid = DefaultServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
 			}
 
 			if (!valid) {
 				// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
-				sslValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+				sslValidationInfo = new SslCertificateValidationInfo (host, certificate, chain, sslPolicyErrors);
 			}
 
 			return valid;
