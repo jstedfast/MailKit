@@ -221,10 +221,7 @@ namespace MailKit {
 		static void EncodeGroup (StringBuilder builder, GroupAddress group)
 		{
 			builder.Append ("(NIL NIL ");
-			if (group.Name != null)
-				MimeUtils.AppendQuoted (builder, group.Name);
-			else
-				builder.Append ("NIL");
+			MimeUtils.AppendQuoted (builder, group.Name ?? string.Empty);
 			builder.Append (" NIL)");
 			EncodeInternetAddressListAddresses (builder, group.Members);
 			builder.Append ("(NIL NIL NIL NIL)");
@@ -438,7 +435,7 @@ namespace MailKit {
 					addr = new MailboxAddress (name, domains, address);
 				else
 					addr = new MailboxAddress (name, address);
-			} else {
+			} else if (user != null) {
 				addr = new GroupAddress (user);
 			}
 
