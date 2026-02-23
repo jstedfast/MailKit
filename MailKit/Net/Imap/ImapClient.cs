@@ -1032,9 +1032,9 @@ namespace MailKit.Net.Imap {
 		string GetSessionIdentifier (string userName)
 		{
 			var builder = new StringBuilder ();
-			var uri = engine.Uri;
+			var uri = engine.Uri!;
 
-			builder.Append (uri!.Scheme);
+			builder.Append (uri.Scheme);
 			builder.Append ("://");
 			EscapeUserName (builder, userName);
 			builder.Append ('@');
@@ -2801,11 +2801,11 @@ namespace MailKit.Net.Imap {
 				return;
 
 			var requested = disconnecting;
-			var uri = engine.Uri;
+			var uri = engine.Uri!;
 
 			disconnecting = false;
 
-			OnDisconnected (uri!.Host, uri.Port, GetSecureSocketOptions (uri), requested);
+			OnDisconnected (uri.Host, uri.Port, GetSecureSocketOptions (uri), requested);
 		}
 
 		/// <summary>

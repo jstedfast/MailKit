@@ -122,9 +122,9 @@ namespace MailKit.Net.Imap {
 
 		void IdleComplete ()
 		{
-			if (Engine.State == ImapEngineState.Idle) {
+			if (Engine.IsIdle) {
 				try {
-					Engine.Stream!.Write (DoneCommand, 0, DoneCommand.Length, CancellationToken);
+					Engine.Stream.Write (DoneCommand, 0, DoneCommand.Length, CancellationToken);
 					Engine.Stream.Flush (CancellationToken);
 				} catch {
 					return;

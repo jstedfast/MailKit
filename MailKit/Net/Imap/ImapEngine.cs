@@ -402,6 +402,18 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get whether or not the client is currently in the IDLE state.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the client is currently in the IDLE state.
+		/// </remarks>
+		/// <value><see langword="true" /> if an IDLE command is active; otherwise, <see langword="false" />.</value>
+		[MemberNotNullWhen (true, nameof (Stream))]
+		public bool IsIdle {
+			get { return IsConnected && State == ImapEngineState.Idle; }
+		}
+
+		/// <summary>
 		/// Get whether or not the connection is secure (typically via SSL or TLS).
 		/// </summary>
 		/// <remarks>
@@ -3105,10 +3117,17 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void OnImapProtocolException (ImapProtocolException ex)
+		/// <summary>
+		/// Handles an IMAP protocol exception by disconnecting and then potentially throwing a replacement exception.
+		/// </summary>
+		/// <param name="ic">The current <see cref="ImapCommand"/> being processed.</param>
+		/// <param name="ex">THe <see cref="ImapProtocolException"/> that was thrown.</param>
+		/// <exception cref="ImapProtocolException">
+		/// An ALERT or some resp-text was found that would enhance the exception message
+		/// of the <paramref name="ex"/> provided.
+		/// </exception>
+		void OnImapProtocolException (ImapCommand ic, ImapProtocolException ex)
 		{
-			var ic = current!;
-
 			Disconnect (ex);
 
 			if (ic.Bye) {
@@ -3118,12 +3137,12 @@ namespace MailKit.Net.Imap {
 					if (code.Type == ImapResponseCodeType.Alert) {
 						OnAlert (code.Message);
 
-						throw new ImapProtocolException (code.Message);
+						throw new ImapProtocolException (code.Message, ex);
 					}
 				}
 
 				if (!string.IsNullOrEmpty (ic.ResponseText))
-					throw new ImapProtocolException (ic.ResponseText!);
+					throw new ImapProtocolException (ic.ResponseText!, ex);
 			}
 		}
 
@@ -3144,7 +3163,7 @@ namespace MailKit.Net.Imap {
 				if (current.Bye && !current.Logout)
 					throw new ImapProtocolException ("Bye.");
 			} catch (ImapProtocolException ex) {
-				OnImapProtocolException (ex);
+				OnImapProtocolException (current, ex);
 				throw;
 			} catch (Exception ex) {
 				Disconnect (ex);
@@ -3171,7 +3190,7 @@ namespace MailKit.Net.Imap {
 				if (current.Bye && !current.Logout)
 					throw new ImapProtocolException ("Bye.");
 			} catch (ImapProtocolException ex) {
-				OnImapProtocolException (ex);
+				OnImapProtocolException (current, ex);
 				throw;
 			} catch (Exception ex) {
 				Disconnect (ex);
