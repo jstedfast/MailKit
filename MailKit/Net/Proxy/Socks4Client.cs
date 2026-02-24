@@ -164,7 +164,7 @@ namespace MailKit.Net.Proxy
 			return Resolve (host, ipAddresses);
 		}
 
-		byte[] GetConnectCommand (byte[] domain, byte[] addr, int port)
+		byte[] GetConnectCommand (byte[]? domain, byte[] addr, int port)
 		{
 			// +----+-----+----------+----------+----------+-------+--------------+-------+
 			// |VER | CMD | DST.PORT | DST.ADDR |  USERID  | NULL  |  DST.DOMAIN  | NULL  |
@@ -225,7 +225,8 @@ namespace MailKit.Net.Proxy
 		/// </exception>
 		public override Stream Connect (string host, int port, CancellationToken cancellationToken = default)
 		{
-			byte[] addr, domain = null;
+			byte[]? domain = null;
+			byte[] addr;
 
 			ValidateArguments (host, port);
 
@@ -310,7 +311,8 @@ namespace MailKit.Net.Proxy
 		/// </exception>
 		public override async Task<Stream> ConnectAsync (string host, int port, CancellationToken cancellationToken = default)
 		{
-			byte[] addr, domain = null;
+			byte[]? domain = null;
+			byte[] addr;
 
 			ValidateArguments (host, port);
 

@@ -134,7 +134,7 @@ namespace MailKit {
 		/// Gets the set of headers that will be fetched.
 		/// </remarks>
 		/// <value>The set of headers to be fetched.</value>
-		public HeaderSet Headers { get; set; }
+		public HeaderSet? Headers { get; set; }
 
 #if ENABLE_LAZY_PREVIEW_API
 		/// <summary>

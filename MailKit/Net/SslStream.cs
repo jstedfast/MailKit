@@ -27,14 +27,15 @@
 using System;
 using System.IO;
 using System.Net.Security;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication.ExtendedProtection;
 
 namespace MailKit.Net
 {
 	class SslStream : System.Net.Security.SslStream, IChannelBindingContext
 	{
-		ChannelBinding tlsServerEndPoint;
-		ChannelBinding tlsUnique;
+		ChannelBinding? tlsServerEndPoint;
+		ChannelBinding? tlsUnique;
 
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback) : base (innerStream, leaveInnerStreamOpen, userCertificateValidationCallback)
 		{
@@ -44,9 +45,9 @@ namespace MailKit.Net
 			get { return base.InnerStream; }
 		}
 
-		ChannelBinding GetChannelBinding (ChannelBindingKind kind)
+		ChannelBinding? GetChannelBinding (ChannelBindingKind kind)
 		{
-			ChannelBinding channelBinding;
+			ChannelBinding? channelBinding;
 
 			try {
 				// Note: Documentation for TransportContext.GetChannelBinding() states that it will return null if the
@@ -72,7 +73,7 @@ namespace MailKit.Net
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="channelBinding">The channel-binding.</param>
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
-		public bool TryGetChannelBinding (ChannelBindingKind kind, out ChannelBinding channelBinding)
+		public bool TryGetChannelBinding (ChannelBindingKind kind, [NotNullWhen (true)] out ChannelBinding? channelBinding)
 		{
 			int identifierLength;
 
@@ -102,7 +103,7 @@ namespace MailKit.Net
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="token">The channel-binding token.</param>
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
-		public bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token)
+		public bool TryGetChannelBindingToken (ChannelBindingKind kind, [NotNullWhen (true)] out byte[]? token)
 		{
 			token = null;
 

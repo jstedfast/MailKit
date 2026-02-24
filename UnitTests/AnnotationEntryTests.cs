@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using MimeKit;
 using MailKit;
 
 namespace UnitTests {
@@ -60,9 +61,7 @@ namespace UnitTests {
 		[Test]
 		public void TestBasicFunctionality ()
 		{
-			var body = new BodyPartBasic {
-				PartSpecifier = "1.2.3.4"
-			};
+			var body = new BodyPartBasic (new ContentType ("image", "jpeg"), "1.2.3.4");
 			AnnotationEntry entry;
 
 			entry = new AnnotationEntry ("/comment");

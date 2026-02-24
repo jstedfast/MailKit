@@ -63,7 +63,7 @@ namespace MailKit {
 		/// Gets or sets the keywords that should be set on the message.
 		/// </remarks>
 		/// <value>The keywords.</value>
-		ISet<string> Keywords { get; set; }
+		ISet<string>? Keywords { get; set; }
 
 		/// <summary>
 		/// Get or set the timestamp that should be used by folder as the <see cref="MessageSummaryItems.InternalDate"/>.
@@ -86,7 +86,7 @@ namespace MailKit {
 		/// </note>
 		/// </remarks>
 		/// <value>The list of annotations.</value>
-		IList<Annotation> Annotations { get; set; }
+		IList<Annotation>? Annotations { get; set; }
 
 		/// <summary>
 		/// Get or set the transfer progress reporting mechanism.
@@ -95,6 +95,6 @@ namespace MailKit {
 		/// Gets or sets the transfer progress reporting mechanism.
 		/// </remarks>
 		/// <value>The transfer progress mechanism.</value>
-		ITransferProgress TransferProgress { get; set; }
+		ITransferProgress? TransferProgress { get; set; }
 	}
 }

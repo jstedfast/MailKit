@@ -44,20 +44,6 @@ namespace MailKit {
 		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
 		/// </remarks>
 		/// <param name="index">The message index.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		internal MessageLabelsChangedEventArgs (int index) : base (index)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MessageLabelsChangedEventArgs"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
-		/// </remarks>
-		/// <param name="index">The message index.</param>
 		/// <param name="labels">The message labels.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="labels"/> is <see langword="null" />.

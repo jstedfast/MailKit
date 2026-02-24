@@ -200,7 +200,7 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 		/// </example>
 		/// <value>The mailbox.</value>
-		public MailboxAddress Mailbox {
+		public MailboxAddress? Mailbox {
 			get; private set;
 		}
 

@@ -79,7 +79,7 @@ namespace MailKit.Net.Pop3 {
 		/// information details provided by the server.
 		/// </remarks>
 		/// <value>The implementation details.</value>
-		string Implementation { get; }
+		string? Implementation { get; }
 
 		/// <summary>
 		/// Gets the minimum delay, in milliseconds, between logins.

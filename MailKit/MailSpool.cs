@@ -712,7 +712,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message at the specified index.
@@ -748,7 +748,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the messages at the specified indexes.
@@ -789,7 +789,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages at the specified indexes.
@@ -830,7 +830,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the messages within the specified range.
@@ -871,7 +871,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages within the specified range.
@@ -909,7 +909,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the message or header stream at the specified index.
@@ -946,7 +946,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header stream at the specified index.
@@ -983,7 +983,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the message or header streams at the specified indexes.
@@ -1028,7 +1028,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams at the specified indexes.
@@ -1070,7 +1070,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the message or header streams within the specified range.
@@ -1112,7 +1112,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams within the specified range.
@@ -1151,7 +1151,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Mark the specified message for deletion.

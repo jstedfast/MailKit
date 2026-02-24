@@ -59,7 +59,7 @@ namespace MailKit {
 		protected static readonly MessageFlags SettableFlags = MessageFlags.Answered | MessageFlags.Deleted |
 			MessageFlags.Draft | MessageFlags.Flagged | MessageFlags.Seen;
 
-		IMailFolder parent;
+		IMailFolder? parent;
 
 		/// <summary>
 		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
@@ -67,9 +67,51 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
 		/// </remarks>
+		[Obsolete ("Use MailFolder (string fullName, char directorySeparator, FolderAttributes attributes) instead.")]
 		protected MailFolder ()
 		{
+			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
+			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
+			FullName = string.Empty;
+			Name = string.Empty;
 			FirstUnread = -1;
+		}
+
+		/// <summary>
+		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// </remarks>
+		/// <param name="fullName">The full name (path) of the folder.</param>
+		/// <param name="directorySeparator">The directory separator used by the folder.</param>
+		/// <param name="attributes">The attributes of the folder.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <paramref name="fullName"/> is <see langword="null"/>.
+		/// </exception>
+		protected MailFolder (string fullName, char directorySeparator, FolderAttributes attributes)
+		{
+			if (fullName == null)
+				throw new ArgumentNullException (nameof (fullName));
+
+			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
+			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
+			Name = GetBaseName (fullName, directorySeparator);
+			DirectorySeparator = directorySeparator;
+			Attributes = attributes;
+			FullName = fullName;
+
+			FirstUnread = -1;
+		}
+
+		internal static string GetBaseName (string fullName, char delim)
+		{
+			int index;
+
+			if ((index = fullName.LastIndexOf (delim)) != -1)
+				return fullName.Substring (index + 1);
+
+			return fullName;
 		}
 
 		/// <summary>
@@ -90,7 +132,7 @@ namespace MailKit {
 		/// Root-level folders do not have a parent folder.
 		/// </remarks>
 		/// <value>The parent folder.</value>
-		public IMailFolder ParentFolder {
+		public IMailFolder? ParentFolder {
 			get { return parent; }
 			internal protected set {
 				if (value == parent)
@@ -271,7 +313,7 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The unique folder identifier.</value>
-		public string Id {
+		public string? Id {
 			get; protected set;
 		}
 
@@ -746,7 +788,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
+		public abstract IMailFolder? Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -788,7 +830,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
+		public abstract Task<IMailFolder?> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -835,7 +877,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
+		public abstract IMailFolder? Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -882,7 +924,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
+		public abstract Task<IMailFolder?> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -927,7 +969,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IMailFolder Create (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default)
+		public virtual IMailFolder? Create (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default)
 		{
 			return Create (name, new [] { specialUse }, cancellationToken);
 		}
@@ -975,7 +1017,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default)
+		public virtual Task<IMailFolder?> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default)
 		{
 			return CreateAsync (name, new [] { specialUse }, cancellationToken);
 		}
@@ -2360,7 +2402,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
+		public abstract string? GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -2395,7 +2437,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
+		public abstract Task<string?> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the specified metadata.
@@ -4801,7 +4843,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message headers.
@@ -4843,7 +4885,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -4889,7 +4931,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part headers.
@@ -4935,7 +4977,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message headers.
@@ -4977,7 +5019,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message headers.
@@ -5019,7 +5061,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -5065,7 +5107,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part headers.
@@ -5111,7 +5153,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -5156,7 +5198,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5201,7 +5243,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -5246,7 +5288,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5291,7 +5333,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -5340,7 +5382,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -5386,7 +5428,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -5432,7 +5474,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -5478,7 +5520,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a message stream.
@@ -5523,7 +5565,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Stream GetStream (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return GetStream (uid, string.Empty, cancellationToken, progress);
 		}
@@ -5571,7 +5613,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return GetStreamAsync (uid, string.Empty, cancellationToken, progress);
 		}
@@ -5619,7 +5661,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Stream GetStream (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return GetStream (index, string.Empty, cancellationToken, progress);
 		}
@@ -5667,7 +5709,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return GetStreamAsync (index, string.Empty, cancellationToken, progress);
 		}
@@ -5722,7 +5764,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -5774,7 +5816,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -5825,7 +5867,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -5876,7 +5918,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a body part as a stream.
@@ -5925,7 +5967,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Stream GetStream (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -5983,7 +6025,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -6038,7 +6080,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Stream GetStream (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -6093,7 +6135,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -6158,7 +6200,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -6229,7 +6271,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -6299,7 +6341,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -6369,7 +6411,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -6435,7 +6477,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6486,7 +6528,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6544,7 +6586,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6602,7 +6644,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6650,7 +6692,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -6698,7 +6740,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6755,7 +6797,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -6812,7 +6854,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		public abstract Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Store message flags and keywords for a message.
@@ -9349,7 +9391,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Opened"/> event is emitted when the folder is opened.
 		/// </remarks>
-		public event EventHandler<EventArgs> Opened;
+		public event EventHandler<EventArgs>? Opened;
 
 		/// <summary>
 		/// Raise the opened event.
@@ -9368,7 +9410,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Closed"/> event is emitted when the folder is closed.
 		/// </remarks>
-		public event EventHandler<EventArgs> Closed;
+		public event EventHandler<EventArgs>? Closed;
 
 		/// <summary>
 		/// Raise the closed event.
@@ -9396,7 +9438,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Deleted"/> event is emitted when the folder is deleted.
 		/// </remarks>
-		public event EventHandler<EventArgs> Deleted;
+		public event EventHandler<EventArgs>? Deleted;
 
 		/// <summary>
 		/// Raise the deleted event.
@@ -9415,7 +9457,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Renamed"/> event is emitted when the folder is renamed.
 		/// </remarks>
-		public event EventHandler<FolderRenamedEventArgs> Renamed;
+		public event EventHandler<FolderRenamedEventArgs>? Renamed;
 
 		/// <summary>
 		/// Raise the renamed event.
@@ -9442,7 +9484,7 @@ namespace MailKit {
 		{
 		}
 
-		void OnParentFolderRenamed (object sender, FolderRenamedEventArgs e)
+		void OnParentFolderRenamed (object? sender, FolderRenamedEventArgs e)
 		{
 			var oldFullName = FullName;
 
@@ -9458,7 +9500,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Subscribed"/> event is emitted when the folder is subscribed.
 		/// </remarks>
-		public event EventHandler<EventArgs> Subscribed;
+		public event EventHandler<EventArgs>? Subscribed;
 
 		/// <summary>
 		/// Raise the subscribed event.
@@ -9477,7 +9519,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="Unsubscribed"/> event is emitted when the folder is unsubscribed.
 		/// </remarks>
-		public event EventHandler<EventArgs> Unsubscribed;
+		public event EventHandler<EventArgs>? Unsubscribed;
 
 		/// <summary>
 		/// Raise the unsubscribed event.
@@ -9499,7 +9541,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
 		/// </example>
-		public event EventHandler<MessageEventArgs> MessageExpunged;
+		public event EventHandler<MessageEventArgs>? MessageExpunged;
 
 		/// <summary>
 		/// Raise the message expunged event.
@@ -9519,7 +9561,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MessagesVanished"/> event is emitted when messages vanish from the folder.
 		/// </remarks>
-		public event EventHandler<MessagesVanishedEventArgs> MessagesVanished;
+		public event EventHandler<MessagesVanishedEventArgs>? MessagesVanished;
 
 		/// <summary>
 		/// Raise the messages vanished event.
@@ -9542,7 +9584,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
 		/// </example>
-		public event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
+		public event EventHandler<MessageFlagsChangedEventArgs>? MessageFlagsChanged;
 
 		/// <summary>
 		/// Raise the message flags changed event.
@@ -9562,7 +9604,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MessageLabelsChanged"/> event is emitted when the labels for a message are changed.
 		/// </remarks>
-		public event EventHandler<MessageLabelsChangedEventArgs> MessageLabelsChanged;
+		public event EventHandler<MessageLabelsChangedEventArgs>? MessageLabelsChanged;
 
 		/// <summary>
 		/// Raise the message labels changed event.
@@ -9582,7 +9624,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="AnnotationsChanged"/> event is emitted when the annotations for a message are changed.
 		/// </remarks>
-		public event EventHandler<AnnotationsChangedEventArgs> AnnotationsChanged;
+		public event EventHandler<AnnotationsChangedEventArgs>? AnnotationsChanged;
 
 		/// <summary>
 		/// Raise the message annotations changed event.
@@ -9617,7 +9659,7 @@ namespace MailKit {
 		/// property to determine which f<see cref="IMessageSummary"/> properties have
 		/// been populated.</note>
 		/// </remarks>
-		public event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
+		public event EventHandler<MessageSummaryFetchedEventArgs>? MessageSummaryFetched;
 
 		/// <summary>
 		/// Raise the message summary fetched event.
@@ -9652,7 +9694,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MetadataChanged"/> event is emitted when metadata changes.
 		/// </remarks>
-		public event EventHandler<MetadataChangedEventArgs> MetadataChanged;
+		public event EventHandler<MetadataChangedEventArgs>? MetadataChanged;
 
 		/// <summary>
 		/// Raise the metadata changed event.
@@ -9672,7 +9714,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="ModSeqChanged"/> event is emitted when the mod-sequence for a message is changed.
 		/// </remarks>
-		public event EventHandler<ModSeqChangedEventArgs> ModSeqChanged;
+		public event EventHandler<ModSeqChangedEventArgs>? ModSeqChanged;
 
 		/// <summary>
 		/// Raise the message mod-sequence changed event.
@@ -9692,7 +9734,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="HighestModSeqChanged"/> event is emitted whenever the <see cref="HighestModSeq"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> HighestModSeqChanged;
+		public event EventHandler<EventArgs>? HighestModSeqChanged;
 
 		/// <summary>
 		/// Raise the highest mod-sequence changed event.
@@ -9711,7 +9753,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="UidNextChanged"/> event is emitted whenever the <see cref="UidNext"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> UidNextChanged;
+		public event EventHandler<EventArgs>? UidNextChanged;
 
 		/// <summary>
 		/// Raise the next UID changed event.
@@ -9730,7 +9772,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="UidValidityChanged"/> event is emitted whenever the <see cref="UidValidity"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> UidValidityChanged;
+		public event EventHandler<EventArgs>? UidValidityChanged;
 
 		/// <summary>
 		/// Raise the uid validity changed event.
@@ -9749,7 +9791,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="IdChanged"/> event is emitted whenever the <see cref="Id"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> IdChanged;
+		public event EventHandler<EventArgs>? IdChanged;
 
 		/// <summary>
 		/// Raise the ID changed event.
@@ -9768,7 +9810,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="SizeChanged"/> event is emitted whenever the <see cref="Size"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> SizeChanged;
+		public event EventHandler<EventArgs>? SizeChanged;
 
 		/// <summary>
 		/// Raise the size changed event.
@@ -9790,7 +9832,7 @@ namespace MailKit {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
 		/// </example>
-		public event EventHandler<EventArgs> CountChanged;
+		public event EventHandler<EventArgs>? CountChanged;
 
 		/// <summary>
 		/// Raise the message count changed event.
@@ -9809,7 +9851,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="RecentChanged"/> event is emitted whenever the <see cref="Recent"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> RecentChanged;
+		public event EventHandler<EventArgs>? RecentChanged;
 
 		/// <summary>
 		/// Raise the recent message count changed event.
@@ -9828,7 +9870,7 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="UnreadChanged"/> event is emitted whenever the <see cref="Unread"/> value changes.
 		/// </remarks>
-		public event EventHandler<EventArgs> UnreadChanged;
+		public event EventHandler<EventArgs>? UnreadChanged;
 
 		/// <summary>
 		/// Raise the unread message count changed event.

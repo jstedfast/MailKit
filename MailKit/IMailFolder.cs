@@ -64,7 +64,7 @@ namespace MailKit {
 		/// Root-level folders do not have a parent folder.
 		/// </remarks>
 		/// <value>The parent folder.</value>
-		IMailFolder ParentFolder { get; }
+		IMailFolder? ParentFolder { get; }
 
 		/// <summary>
 		/// Get the folder attributes.
@@ -205,7 +205,7 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc8474">OBJECTID</a> extension.</note>
 		/// </remarks>
 		/// <value>The unique folder identifier.</value>
-		string Id { get; }
+		string? Id { get; }
 
 		/// <summary>
 		/// Get whether or not the folder is subscribed.
@@ -650,7 +650,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
+		IMailFolder? Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -692,7 +692,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
+		Task<IMailFolder?> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -739,7 +739,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
+		IMailFolder? Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -786,7 +786,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
+		Task<IMailFolder?> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Create a new subfolder with the given name.
@@ -831,7 +831,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMailFolder Create (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default);
+		IMailFolder? Create (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -876,7 +876,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IMailFolder> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default);
+		Task<IMailFolder?> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Rename the folder.
@@ -2262,7 +2262,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
+		string? GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -2297,7 +2297,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
+		Task<string?> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets the specified metadata.
@@ -4617,7 +4617,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		HeaderList GetHeaders (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message headers.
@@ -4659,7 +4659,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<HeaderList> GetHeadersAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -4705,7 +4705,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		HeaderList GetHeaders (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part headers.
@@ -4751,7 +4751,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<HeaderList> GetHeadersAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message headers.
@@ -4793,7 +4793,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		HeaderList GetHeaders (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message headers.
@@ -4835,7 +4835,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<HeaderList> GetHeadersAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part headers.
@@ -4881,7 +4881,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		HeaderList GetHeaders (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part headers.
@@ -4927,7 +4927,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<HeaderList> GetHeadersAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -4972,7 +4972,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5017,7 +5017,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -5062,7 +5062,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5107,7 +5107,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -5156,7 +5156,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -5205,7 +5205,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -5251,7 +5251,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -5297,7 +5297,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a message stream.
@@ -5342,7 +5342,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a message stream.
@@ -5387,7 +5387,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a message stream.
@@ -5432,7 +5432,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a message stream.
@@ -5477,7 +5477,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -5529,7 +5529,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -5581,7 +5581,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -5632,7 +5632,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -5683,7 +5683,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a body part as a stream.
@@ -5732,7 +5732,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a body part as a stream.
@@ -5781,7 +5781,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a body part as a stream.
@@ -5827,7 +5827,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a body part as a stream.
@@ -5873,7 +5873,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, BodyPart part, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified body part.
@@ -5929,7 +5929,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -5985,7 +5985,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified body part.
@@ -6040,7 +6040,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -6095,7 +6095,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6146,7 +6146,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6197,7 +6197,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6255,7 +6255,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6313,7 +6313,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6361,7 +6361,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6409,7 +6409,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -6466,7 +6466,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -6523,7 +6523,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Store message flags and keywords for a message.

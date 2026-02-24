@@ -95,7 +95,7 @@ namespace MailKit.Net.Proxy
 		{
 		}
 
-		internal static byte[] GetConnectCommand (string host, int port, NetworkCredential proxyCredentials)
+		internal static byte[] GetConnectCommand (string host, int port, NetworkCredential? proxyCredentials)
 		{
 			var builder = new StringBuilder ();
 

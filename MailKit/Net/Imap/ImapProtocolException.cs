@@ -106,5 +106,33 @@ namespace MailKit.Net.Imap {
 		internal bool UnexpectedToken {
 			get; set;
 		}
+
+		/// <summary>
+		/// Create a new <see cref="ImapProtocolException"/> based on the <see cref="ImapCommand"/> state.
+		/// </summary>
+		/// <remarks>
+		/// Create a new <see cref="ImapProtocolException"/> based on the <see cref="ImapCommand"/> state.
+		/// </remarks>
+		/// <returns>A new protocol exception.</returns>
+		/// <param name="ic">The command state.</param>
+		internal static ImapProtocolException Create (ImapCommand ic)
+		{
+			string? message = null;
+
+			if (string.IsNullOrEmpty (ic.ResponseText)) {
+				for (int i = ic.RespCodes.Count - 1; i >= 0; i--) {
+					if (ic.RespCodes[i].IsError && !string.IsNullOrEmpty (ic.RespCodes[i].Message)) {
+						message = ic.RespCodes[i].Message;
+						break;
+					}
+				}
+
+				message ??= string.Empty;
+			} else {
+				message = ic.ResponseText!;
+			}
+
+			return ic.Exception != null ? new ImapProtocolException (message, ic.Exception) : new ImapProtocolException (message);
+		}
 	}
 }

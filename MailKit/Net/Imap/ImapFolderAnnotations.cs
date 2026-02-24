@@ -30,6 +30,7 @@ using System.Threading;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MailKit.Net.Imap
 {
@@ -249,7 +250,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<UniqueId> Store (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			UniqueIdSet unmodified = null;
+			UniqueIdSet? unmodified = null;
 
 			foreach (var ic in QueueStoreCommands (uids, modseq, annotations, cancellationToken)) {
 				Engine.Run (ic);
@@ -318,7 +319,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			UniqueIdSet unmodified = null;
+			UniqueIdSet? unmodified = null;
 
 			foreach (var ic in QueueStoreCommands (uids, modseq, annotations, cancellationToken)) {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -334,7 +335,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		ImapCommand QueueStoreCommand (IList<int> indexes, ulong? modseq, IList<Annotation> annotations, CancellationToken cancellationToken)
+		bool TryQueueStoreCommand (IList<int> indexes, ulong? modseq, IList<Annotation> annotations, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -350,8 +351,10 @@ namespace MailKit.Net.Imap
 			if (AnnotationAccess == AnnotationAccess.None)
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
-			if (indexes.Count == 0 || annotations.Count == 0)
-				return null;
+			if (indexes.Count == 0 || annotations.Count == 0) {
+				ic = null;
+				return false;
+			}
 
 			var command = new StringBuilder ("STORE ");
 			var args = new List<object> ();
@@ -368,7 +371,9 @@ namespace MailKit.Net.Imap
 			ImapUtils.FormatAnnotations (command, annotations, args, true);
 			command.Append ("\r\n");
 
-			return Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
+			ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
+
+			return true;
 		}
 
 		/// <summary>
@@ -420,9 +425,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override void Store (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, null, annotations, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, null, annotations, cancellationToken, out var ic))
 				return;
 
 			Engine.Run (ic);
@@ -480,9 +483,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, null, annotations, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, null, annotations, cancellationToken, out var ic))
 				return;
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
@@ -543,9 +544,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<int> Store (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, modseq, annotations, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, modseq, annotations, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
 			Engine.Run (ic);
@@ -608,9 +607,7 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueStoreCommand (indexes, modseq, annotations, cancellationToken);
-
-			if (ic == null)
+			if (!TryQueueStoreCommand (indexes, modseq, annotations, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);

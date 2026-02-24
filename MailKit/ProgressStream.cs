@@ -34,7 +34,7 @@ using MimeKit.IO;
 namespace MailKit {
 	class ProgressStream : Stream, ICancellableStream
 	{
-		readonly ICancellableStream cancellable;
+		readonly ICancellableStream? cancellable;
 
 		public ProgressStream (Stream source, Action<int> update)
 		{

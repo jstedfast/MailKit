@@ -43,7 +43,7 @@ namespace MailKit.Security.Ntlm {
 			get; protected set;
 		}
 
-		public Version OSVersion {
+		public Version? OSVersion {
 			get; protected set;
 		}
 

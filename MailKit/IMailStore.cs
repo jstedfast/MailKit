@@ -97,7 +97,7 @@ namespace MailKit {
 		/// where all new messages are delivered.
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		IMailFolder Inbox { get; }
+		IMailFolder? Inbox { get; }
 
 		/// <summary>
 		/// Enable the quick resynchronization feature.
@@ -198,7 +198,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="folder"/> is out of range.
 		/// </exception>
-		IMailFolder GetFolder (SpecialFolder folder);
+		IMailFolder? GetFolder (SpecialFolder folder);
 
 		/// <summary>
 		/// Get the folder for the specified namespace.
@@ -442,7 +442,7 @@ namespace MailKit {
 		/// <returns>The requested metadata value.</returns>
 		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
+		string? GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously gets the specified metadata.
@@ -453,7 +453,7 @@ namespace MailKit {
 		/// <returns>The requested metadata value.</returns>
 		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<string> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
+		Task<string?> GetMetadataAsync (MetadataTag tag, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Gets the specified metadata.

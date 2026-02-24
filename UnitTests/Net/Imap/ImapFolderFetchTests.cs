@@ -252,7 +252,7 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.GetHeaders (UniqueId.Invalid));
 				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.GetHeadersAsync (UniqueId.Invalid));
 
-				var bodyPart = new BodyPartText ();
+				var bodyPart = new BodyPartText (new ContentType ("text", "plain"), "1.2");
 
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.GetHeaders (-1, bodyPart));
 				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await inbox.GetHeadersAsync (-1, bodyPart));
@@ -2624,10 +2624,7 @@ namespace UnitTests.Net.Imap {
 				//var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
 				//Assert.That (messages, Has.Count.EqualTo (74), "Count");
 
-				var bodyPart = new BodyPartBasic {
-					PartSpecifier = "2",
-				};
-
+				var bodyPart = new BodyPartBasic (new ContentType ("application", "pdf"), "2");
 				var body = client.Inbox.GetBodyPart (new UniqueId (3016), bodyPart);
 				Assert.That (body, Is.Not.Null);
 				Assert.That (body, Is.InstanceOf<MimePart> ());
@@ -2675,10 +2672,7 @@ namespace UnitTests.Net.Imap {
 				//var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq);
 				//Assert.That (messages, Has.Count.EqualTo (74), "Count");
 
-				var bodyPart = new BodyPartBasic {
-					PartSpecifier = "2",
-				};
-
+				var bodyPart = new BodyPartBasic (new ContentType ("application", "pdf"), "2");
 				var body = await client.Inbox.GetBodyPartAsync (new UniqueId (3016), bodyPart);
 				Assert.That (body, Is.Not.Null);
 				Assert.That (body, Is.InstanceOf<MimePart> ());

@@ -24,11 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Collections.Generic;
-
-using MimeKit;
-
 namespace MailKit {
 	/// <summary>
 	/// A request for replacing a message in a folder.
@@ -47,6 +42,6 @@ namespace MailKit {
 		/// appended to the original folder.</para>
 		/// </remarks>
 		/// <value>The destination folder.</value>
-		IMailFolder Destination { get; set; }
+		IMailFolder? Destination { get; set; }
 	}
 }

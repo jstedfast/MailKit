@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Authentication.ExtendedProtection;
 
 namespace MailKit.Net {
@@ -44,7 +45,7 @@ namespace MailKit.Net {
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="channelBinding">The channel-binding.</param>
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
-		bool TryGetChannelBinding (ChannelBindingKind kind, out ChannelBinding channelBinding);
+		bool TryGetChannelBinding (ChannelBindingKind kind, [NotNullWhen (true)] out ChannelBinding? channelBinding);
 
 		/// <summary>
 		/// Try to get a channel-binding token.
@@ -55,6 +56,6 @@ namespace MailKit.Net {
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="token">The channel-binding token.</param>
 		/// <returns><see langword="true" /> if the channel-binding token was acquired; otherwise, <see langword="false" />.</returns>
-		bool TryGetChannelBindingToken (ChannelBindingKind kind, out byte[] token);
+		bool TryGetChannelBindingToken (ChannelBindingKind kind, [NotNullWhen (true)] out byte[]? token);
 	}
 }

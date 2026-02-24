@@ -43,7 +43,7 @@ namespace MailKit {
 		/// Creates a new <see cref="FolderQuota"/> with the specified root.
 		/// </remarks>
 		/// <param name="quotaRoot">The quota root.</param>
-		public FolderQuota (IMailFolder quotaRoot)
+		public FolderQuota (IMailFolder? quotaRoot)
 		{
 			QuotaRoot = quotaRoot;
 		}
@@ -59,7 +59,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The quota root.</value>
-		public IMailFolder QuotaRoot {
+		public IMailFolder? QuotaRoot {
 			get; private set;
 		}
 

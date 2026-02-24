@@ -55,12 +55,6 @@ namespace MailKit {
 		bool clientMidline;
 		bool serverMidline;
 
-		ProtocolLogger ()
-		{
-			TimestampFormat = DefaultTimestampFormat;
-			RedactSecrets = true;
-		}
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
 		/// </summary>
@@ -72,9 +66,11 @@ namespace MailKit {
 		/// </example>
 		/// <param name="fileName">The file name.</param>
 		/// <param name="append"><see langword="true" /> if the file should be appended to; otherwise, <see langword="false" />. Defaults to <see langword="true" />.</param>
-		public ProtocolLogger (string fileName, bool append = true) : this ()
+		public ProtocolLogger (string fileName, bool append = true)
 		{
 			stream = File.Open (fileName, append ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.Read);
+			TimestampFormat = DefaultTimestampFormat;
+			RedactSecrets = true;
 		}
 
 		/// <summary>
@@ -85,10 +81,13 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="stream">The stream.</param>
 		/// <param name="leaveOpen"><see langword="true" /> if the stream should be left open after the protocol logger is disposed.</param>
-		public ProtocolLogger (Stream stream, bool leaveOpen = false) : this ()
+		public ProtocolLogger (Stream stream, bool leaveOpen = false)
 		{
 			if (stream == null)
 				throw new ArgumentNullException (nameof (stream));
+
+			TimestampFormat = DefaultTimestampFormat;
+			RedactSecrets = true;
 
 			this.leaveOpen = leaveOpen;
 			this.stream = stream;
@@ -212,7 +211,7 @@ namespace MailKit {
 		/// Gets or sets the authentication secret detector.
 		/// </remarks>
 		/// <value>The authentication secret detector.</value>
-		public IAuthenticationSecretDetector AuthenticationSecretDetector { get; set; }
+		public IAuthenticationSecretDetector? AuthenticationSecretDetector { get; set; }
 
 		static void ValidateArguments (byte[] buffer, int offset, int count)
 		{
@@ -255,7 +254,7 @@ namespace MailKit {
 					midline = true;
 				}
 
-				if (isClient && RedactSecrets) {
+				if (isClient && RedactSecrets && AuthenticationSecretDetector != null) {
 					var secrets = AuthenticationSecretDetector.DetectSecrets (buffer, start, index - start);
 
 					foreach (var secret in secrets) {

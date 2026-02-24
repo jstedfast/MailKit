@@ -43,6 +43,7 @@ namespace MailKit.Security.Ntlm {
 		//static readonly byte[] SealKeySuffix56 = new byte[] { 0xa0 };
 		static readonly byte[] Responserversion = new byte[] { 1 };
 		static readonly byte[] HiResponserversion = new byte[] { 1 };
+		static readonly byte[] Z0 = Array.Empty<byte> ();
 		static readonly byte[] Z24 = new byte[24];
 		static readonly byte[] Z6 = new byte[6];
 		static readonly byte[] Z4 = new byte[4];
@@ -104,7 +105,7 @@ namespace MailKit.Security.Ntlm {
 
 				md5.TransformFinalBlock (values[i], 0, values[i].Length);
 
-				return md5.Hash;
+				return md5.Hash!;
 			}
 		}
 
@@ -204,13 +205,13 @@ namespace MailKit.Security.Ntlm {
 			return responseKey;
 		}
 
-		public static void ComputeNtlmV2 (NtlmChallengeMessage type2, string domain, string userName, string password, byte[] targetInfo, byte[] clientChallenge, long? time, out byte[] ntChallengeResponse, out byte[] lmChallengeResponse, out byte[] sessionBaseKey)
+		public static void ComputeNtlmV2 (NtlmChallengeMessage type2, string domain, string userName, string password, byte[] targetInfo, byte[] clientChallenge, long? time, out byte[]? ntChallengeResponse, out byte[] lmChallengeResponse, out byte[] sessionBaseKey)
 		{
 			if (userName.Length == 0 && password.Length == 0) {
 				// Special case for anonymous authentication
 				ntChallengeResponse = null;
 				lmChallengeResponse = Z1;
-				sessionBaseKey = null;
+				sessionBaseKey = Z0;
 				return;
 			}
 

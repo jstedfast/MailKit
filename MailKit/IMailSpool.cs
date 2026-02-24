@@ -252,7 +252,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message at the specified index.
@@ -264,7 +264,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the messages at the specified indexes.
@@ -276,7 +276,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages at the specified indexes.
@@ -288,7 +288,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the messages within the specified range.
@@ -301,7 +301,7 @@ namespace MailKit {
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages within the specified range.
@@ -314,7 +314,7 @@ namespace MailKit {
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the message or header stream at the specified index.
@@ -327,7 +327,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Stream GetStream (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header stream at the specified index.
@@ -340,7 +340,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<Stream> GetStreamAsync (int index, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the message or header streams at the specified index.
@@ -353,7 +353,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		IList<Stream> GetStreams (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams at the specified indexes.
@@ -366,7 +366,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the message or header streams within the specified range.
@@ -380,7 +380,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		IList<Stream> GetStreams (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams within the specified range.
@@ -394,7 +394,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><see langword="true" /> if only the headers should be retrieved; otherwise, <see langword="false" />.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress progress = null);
+		Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly = false, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Mark the specified message for deletion.

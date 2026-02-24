@@ -75,7 +75,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static UniqueId? Append (this IMailFolder folder, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Append (this IMailFolder folder, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Append (folder, FormatOptions.Default, message, flags, cancellationToken, progress);
 		}
@@ -119,7 +119,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return AppendAsync (folder, FormatOptions.Default, message, flags, cancellationToken, progress);
 		}
@@ -164,7 +164,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static UniqueId? Append (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Append (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Append (folder, FormatOptions.Default, message, flags, date, cancellationToken, progress);
 		}
@@ -209,7 +209,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return AppendAsync (folder, FormatOptions.Default, message, flags, date, cancellationToken, progress);
 		}
@@ -258,7 +258,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static UniqueId? Append (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Append (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Append (folder, FormatOptions.Default, message, flags, date, annotations, cancellationToken, progress);
 		}
@@ -307,7 +307,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return AppendAsync (folder, FormatOptions.Default, message, flags, date, annotations, cancellationToken, progress);
 		}
@@ -360,7 +360,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new AppendRequest (message, flags) {
 				TransferProgress = progress
@@ -417,7 +417,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new AppendRequest (message, flags) {
 				TransferProgress = progress
@@ -475,7 +475,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new AppendRequest (message, flags, date) {
 				TransferProgress = progress
@@ -533,7 +533,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new AppendRequest (message, flags, date) {
 				TransferProgress = progress
@@ -592,7 +592,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Append (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new AppendRequest (message, flags) {
 				TransferProgress = progress,
@@ -653,7 +653,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> AppendAsync (this IMailFolder folder, FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, IList<Annotation> annotations, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new AppendRequest (message, flags) {
 				TransferProgress = progress,
@@ -710,7 +710,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> Append (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static IList<UniqueId> Append (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Append (folder, FormatOptions.Default, messages, flags, cancellationToken, progress);
 		}
@@ -761,7 +761,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return AppendAsync (folder, FormatOptions.Default, messages, flags, cancellationToken, progress);
 		}
@@ -815,7 +815,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> Append (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static IList<UniqueId> Append (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Append (folder, FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
 		}
@@ -869,7 +869,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return AppendAsync (folder, FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
 		}
@@ -929,7 +929,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> Append (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static IList<UniqueId> Append (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -1013,7 +1013,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -1100,7 +1100,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static IList<UniqueId> Append (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static IList<UniqueId> Append (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -1193,7 +1193,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<IList<UniqueId>> AppendAsync (this IMailFolder folder, FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -1281,7 +1281,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Replace (folder, FormatOptions.Default, uid, message, flags, cancellationToken, progress);
 		}
@@ -1335,7 +1335,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return ReplaceAsync (folder, FormatOptions.Default, uid, message, flags, cancellationToken, progress);
 		}
@@ -1387,7 +1387,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Replace (folder, FormatOptions.Default, uid, message, flags, date, cancellationToken, progress);
 		}
@@ -1439,7 +1439,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return ReplaceAsync (folder, FormatOptions.Default, uid, message, flags, date, cancellationToken, progress);
 		}
@@ -1499,7 +1499,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags) {
 				TransferProgress = progress
@@ -1563,7 +1563,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags) {
 				TransferProgress = progress
@@ -1628,7 +1628,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags, date) {
 				TransferProgress = progress
@@ -1693,7 +1693,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, UniqueId uid, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags, date) {
 				TransferProgress = progress
@@ -1751,7 +1751,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Replace (folder, FormatOptions.Default, index, message, flags, cancellationToken, progress);
 		}
@@ -1805,7 +1805,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return ReplaceAsync (folder, FormatOptions.Default, index, message, flags, cancellationToken, progress);
 		}
@@ -1857,7 +1857,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return Replace (folder, FormatOptions.Default, index, message, flags, date, cancellationToken, progress);
 		}
@@ -1909,7 +1909,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			return ReplaceAsync (folder, FormatOptions.Default, index, message, flags, date, cancellationToken, progress);
 		}
@@ -1969,7 +1969,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags) {
 				TransferProgress = progress
@@ -2033,7 +2033,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags) {
 				TransferProgress = progress
@@ -2098,7 +2098,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static UniqueId? Replace (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags, date) {
 				TransferProgress = progress
@@ -2163,7 +2163,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress progress = null)
+		public static Task<UniqueId?> ReplaceAsync (this IMailFolder folder, FormatOptions options, int index, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var request = new ReplaceRequest (message, flags, date) {
 				TransferProgress = progress

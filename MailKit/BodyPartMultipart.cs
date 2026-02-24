@@ -44,9 +44,51 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="BodyPartMultipart"/>.
 		/// </remarks>
-		public BodyPartMultipart ()
+		[Obsolete ("Use BodyPartMultipart (ContentType, string) instead.")]
+		public BodyPartMultipart () : this (new ContentType ("multipart", "mixed"), string.Empty)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartMultipart"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartMultipart"/>.
+		/// </remarks>
+		/// <param name="contentType">The content type.</param>
+		/// <param name="partSpecifier">The part specifier.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <para><paramref name="contentType"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="partSpecifier"/> is <see langword="null" />.</para>
+		/// </exception>
+		public BodyPartMultipart (ContentType contentType, string partSpecifier) : base (contentType, partSpecifier)
 		{
 			BodyParts = new BodyPartCollection ();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartMultipart"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartMultipart"/>.
+		/// </remarks>
+		/// <param name="contentType">The content type.</param>
+		/// <param name="partSpecifier">The part specifier.</param>
+		/// <param name="bodyParts">The child body parts of the multipart.</param>
+		/// <exception cref="ArgumentNullException">
+		/// <para><paramref name="contentType"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="partSpecifier"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="bodyParts"/> is <see langword="null" />.</para>
+		/// </exception>
+		public BodyPartMultipart (ContentType contentType, string partSpecifier, BodyPartCollection bodyParts) : base (contentType, partSpecifier)
+		{
+			if (bodyParts is null)
+				throw new ArgumentNullException (nameof (bodyParts));
+
+			BodyParts = bodyParts;
 		}
 
 		/// <summary>
@@ -67,7 +109,7 @@ namespace MailKit {
 		/// Gets the Content-Disposition of the body part, if available.
 		/// </remarks>
 		/// <value>The content disposition.</value>
-		public ContentDisposition ContentDisposition {
+		public ContentDisposition? ContentDisposition {
 			get; set;
 		}
 
@@ -78,7 +120,7 @@ namespace MailKit {
 		/// Gets the Content-Language of the body part, if available.
 		/// </remarks>
 		/// <value>The content language.</value>
-		public string[] ContentLanguage {
+		public string[]? ContentLanguage {
 			get; set;
 		}
 
@@ -89,7 +131,7 @@ namespace MailKit {
 		/// Gets the Content-Location of the body part, if available.
 		/// </remarks>
 		/// <value>The content location.</value>
-		public Uri ContentLocation {
+		public Uri? ContentLocation {
 			get; set;
 		}
 

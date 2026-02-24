@@ -34,7 +34,7 @@ namespace MailKit {
 	{
 		#region Store Flags Extensions
 
-		static StoreFlagsRequest GetStoreFlagsRequest (StoreAction action, bool silent, MessageFlags flags, HashSet<string> keywords = null, ulong? modseq = null)
+		static StoreFlagsRequest GetStoreFlagsRequest (StoreAction action, bool silent, MessageFlags flags, HashSet<string>? keywords = null, ulong? modseq = null)
 		{
 			if (keywords != null) {
 				return new StoreFlagsRequest (action, flags, keywords) {

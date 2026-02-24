@@ -47,12 +47,12 @@ namespace MailKit.Security.Ntlm {
 		const int S33 = 11;
 		const int S34 = 15;
 
+		readonly byte[] buffered;
+		readonly uint[] state;
+		readonly uint[] count;
+		readonly uint[] x;
+		byte[]? hashValue;
 		bool disposed;
-		byte[] hashValue;
-		byte[] buffered;
-		uint[] state;
-		uint[] count;
-		uint[] x;
 
 		public MD4 ()
 		{
@@ -155,7 +155,7 @@ namespace MailKit.Security.Ntlm {
 				return padding;
 			}
 
-			return null;
+			return Array.Empty<byte> ();
 		}
 
 		// F, G and H are basic MD4 functions.
@@ -379,26 +379,12 @@ namespace MailKit.Security.Ntlm {
 
 		void Dispose (bool disposing)
 		{
-			if (disposing) {
-				if (buffered != null) {
-					Array.Clear (buffered, 0, buffered.Length);
-					buffered = null;
-				}
-
-				if (state != null) {
-					Array.Clear (state, 0, state.Length);
-					state = null;
-				}
-
-				if (count != null) {
-					Array.Clear (count, 0, count.Length);
-					count = null;
-				}
-
-				if (x != null) {
-					Array.Clear (x, 0, x.Length);
-					x = null;
-				}
+			if (disposing && !disposed) {
+				Array.Clear (buffered, 0, buffered.Length);
+				Array.Clear (state, 0, state.Length);
+				Array.Clear (count, 0, count.Length);
+				Array.Clear (x, 0, x.Length);
+				disposed = true;
 			}
 		}
 
@@ -406,7 +392,6 @@ namespace MailKit.Security.Ntlm {
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
-			disposed = true;
 		}
 	}
 }

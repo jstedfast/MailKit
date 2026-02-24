@@ -138,6 +138,7 @@ namespace MailKit.Net.Imap {
 
 		internal ImapResponseCode (ImapResponseCodeType type, bool isError)
 		{
+			Message = string.Empty;
 			IsError = isError;
 			Type = type;
 		}
@@ -209,8 +210,8 @@ namespace MailKit.Net.Imap {
 
 	class NewNameResponseCode : ImapResponseCode
 	{
-		public string OldName;
-		public string NewName;
+		public string? OldName;
+		public string? NewName;
 
 		internal NewNameResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
@@ -257,7 +258,7 @@ namespace MailKit.Net.Imap {
 
 	class AppendUidResponseCode : UidValidityResponseCode
 	{
-		public UniqueIdSet UidSet;
+		public UniqueIdSet? UidSet;
 
 		internal AppendUidResponseCode (ImapResponseCodeType type) : base (type)
 		{
@@ -266,7 +267,7 @@ namespace MailKit.Net.Imap {
 
 	class CopyUidResponseCode : UidValidityResponseCode
 	{
-		public UniqueIdSet SrcUidSet, DestUidSet;
+		public UniqueIdSet? SrcUidSet, DestUidSet;
 
 		internal CopyUidResponseCode (ImapResponseCodeType type) : base (type)
 		{
@@ -275,7 +276,7 @@ namespace MailKit.Net.Imap {
 
 	class BadUrlResponseCode : ImapResponseCode
 	{
-		public string BadUrl;
+		public string? BadUrl;
 
 		internal BadUrlResponseCode (ImapResponseCodeType type) : base (type, true)
 		{
@@ -293,7 +294,7 @@ namespace MailKit.Net.Imap {
 
 	class ModifiedResponseCode : ImapResponseCode
 	{
-		public UniqueIdSet UidSet;
+		public UniqueIdSet? UidSet;
 
 		internal ModifiedResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
@@ -311,7 +312,7 @@ namespace MailKit.Net.Imap {
 
 	class NoUpdateResponseCode : ImapResponseCode
 	{
-		public string Tag;
+		public string? Tag;
 
 		internal NoUpdateResponseCode (ImapResponseCodeType type) : base (type, true)
 		{
@@ -364,7 +365,7 @@ namespace MailKit.Net.Imap {
 
 	class UndefinedFilterResponseCode : ImapResponseCode
 	{
-		public string Name;
+		public string? Name;
 
 		internal UndefinedFilterResponseCode (ImapResponseCodeType type) : base (type, true)
 		{
@@ -373,7 +374,7 @@ namespace MailKit.Net.Imap {
 
 	class MailboxIdResponseCode : ImapResponseCode
 	{
-		public string MailboxId;
+		public string? MailboxId;
 
 		internal MailboxIdResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
@@ -382,7 +383,7 @@ namespace MailKit.Net.Imap {
 
 	class WebAlertResponseCode : ImapResponseCode
 	{
-		public Uri WebUri;
+		public Uri? WebUri;
 
 		internal WebAlertResponseCode (ImapResponseCodeType type) : base (type, false)
 		{

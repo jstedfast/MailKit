@@ -234,7 +234,7 @@ namespace UnitTests.Security {
 
 				if (!valid) {
 					// Note: The SslHandshakeException.Create() method will nullify this once it's done using it.
-					sslValidationInfo = new SslCertificateValidationInfo (sender, certificate, chain, sslPolicyErrors);
+					sslValidationInfo = new SslCertificateValidationInfo (hostName, certificate, chain, sslPolicyErrors);
 				}
 
 				return valid;

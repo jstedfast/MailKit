@@ -88,7 +88,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
-		CipherSuitesPolicy SslCipherSuitesPolicy { get; set; }
+		CipherSuitesPolicy? SslCipherSuitesPolicy { get; set; }
 
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher suite.
@@ -111,7 +111,7 @@ namespace MailKit {
 		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
-		X509CertificateCollection ClientCertificates { get; set; }
+		X509CertificateCollection? ClientCertificates { get; set; }
 
 		/// <summary>
 		/// Get or set whether connecting via SSL/TLS should check certificate revocation.
@@ -144,7 +144,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\SslCertificateValidation.cs"/>
 		/// </example>
 		/// <value>The server certificate validation callback function.</value>
-		RemoteCertificateValidationCallback ServerCertificateValidationCallback { get; set; }
+		RemoteCertificateValidationCallback? ServerCertificateValidationCallback { get; set; }
 
 		/// <summary>
 		/// Get or set the local IP end point to use when connecting to a remote host.
@@ -153,7 +153,7 @@ namespace MailKit {
 		/// Gets or sets the local IP end point to use when connecting to a remote host.
 		/// </remarks>
 		/// <value>The local IP end point or <see langword="null" /> to use the default end point.</value>
-		IPEndPoint LocalEndPoint { get; set; }
+		IPEndPoint? LocalEndPoint { get; set; }
 
 		/// <summary>
 		/// Get or set the proxy client to use when connecting to a remote host.
@@ -166,7 +166,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient" />
 		/// </example>
 		/// <value>The proxy client.</value>
-		IProxyClient ProxyClient { get; set; }
+		IProxyClient? ProxyClient { get; set; }
 
 		/// <summary>
 		/// Get the authentication mechanisms supported by the message service.
@@ -1230,7 +1230,7 @@ namespace MailKit {
 		/// The <see cref="Connected"/> event is raised when the client
 		/// successfully connects to the mail server.
 		/// </remarks>
-		event EventHandler<ConnectedEventArgs> Connected;
+		event EventHandler<ConnectedEventArgs>? Connected;
 
 		/// <summary>
 		/// Occurs when the client has been disconnected.
@@ -1239,7 +1239,7 @@ namespace MailKit {
 		/// The <see cref="Disconnected"/> event is raised whenever the client
 		/// has been disconnected.
 		/// </remarks>
-		event EventHandler<DisconnectedEventArgs> Disconnected;
+		event EventHandler<DisconnectedEventArgs>? Disconnected;
 
 		/// <summary>
 		/// Occurs when the client has been successfully authenticated.
@@ -1248,6 +1248,6 @@ namespace MailKit {
 		/// The <see cref="Authenticated"/> event is raised whenever the client
 		/// has been authenticated.
 		/// </remarks>
-		event EventHandler<AuthenticatedEventArgs> Authenticated;
+		event EventHandler<AuthenticatedEventArgs>? Authenticated;
 	}
 }

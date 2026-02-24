@@ -52,7 +52,7 @@ namespace MailKit.Net.Proxy
 		/// Gets the credentials to use when authenticating with the proxy server.
 		/// </remarks>
 		/// <value>The proxy credentials.</value>
-		NetworkCredential ProxyCredentials { get; }
+		NetworkCredential? ProxyCredentials { get; }
 
 		/// <summary>
 		/// Get the proxy host.
@@ -79,7 +79,7 @@ namespace MailKit.Net.Proxy
 		/// Gets or sets the local IP end point to use when connecting to a remote host.
 		/// </remarks>
 		/// <value>The local IP end point or <see langword="null" /> to use the default end point.</value>
-		IPEndPoint LocalEndPoint { get; set; }
+		IPEndPoint? LocalEndPoint { get; set; }
 
 		/// <summary>
 		/// Connect to the target host.
