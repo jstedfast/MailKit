@@ -2792,11 +2792,12 @@ namespace MailKit.Net.Imap {
 		/// Processes an untagged response.
 		/// </summary>
 		/// <returns>The untagged response.</returns>
+		/// <param name="ic">The IMAP command that is currently being processed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		internal void ProcessUntaggedResponse (CancellationToken cancellationToken)
+		internal void ProcessUntaggedResponse (ImapCommand ic, CancellationToken cancellationToken)
 		{
 			var token = ReadToken (cancellationToken);
-			var folder = current!.Folder ?? Selected;
+			var folder = ic.Folder ?? Selected;
 			ImapUntaggedHandler? handler;
 			string atom;
 
@@ -2820,13 +2821,13 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = ParseResponseCode (false, cancellationToken);
-					current.RespCodes.Add (code);
+					ic.RespCodes.Add (code);
 				} else {
 					var text = ReadLine (cancellationToken).TrimEnd ();
-					current.ResponseText = token.Value.ToString () + text;
+					ic.ResponseText = token.Value.ToString () + text;
 				}
 
-				current.Bye = true;
+				ic.Bye = true;
 
 				// Note: Yandex IMAP is broken and will continue sending untagged BYE responses until the client closes
 				// the connection. In order to avoid this scenario, consider this command complete as soon as we receive
@@ -2834,8 +2835,8 @@ namespace MailKit.Net.Imap {
 				// untagged BYE.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/938 for details.
-				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
-					current.Status = ImapCommandStatus.Complete;
+				if (QuirksMode == ImapQuirksMode.Yandex && !ic.Logout)
+					ic.Status = ImapCommandStatus.Complete;
 			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
 				UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
 
@@ -2872,10 +2873,10 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = ParseResponseCode (false, cancellationToken);
-					current.RespCodes.Add (code);
+					ic.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					var text = ReadLine (cancellationToken).TrimEnd ();
-					current.ResponseText = token.Value.ToString () + text;
+					ic.ResponseText = token.Value.ToString () + text;
 				}
 			} else {
 				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {
@@ -2886,9 +2887,9 @@ namespace MailKit.Net.Imap {
 
 					atom = (string) token.Value;
 
-					if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+					if (ic.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
-						handler (this, current, (int) number - 1, false).GetAwaiter ().GetResult ();
+						handler (this, ic, (int) number - 1, false).GetAwaiter ().GetResult ();
 					} else if (folder != null) {
 						if (atom.Equals ("EXISTS", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnExists ((int) number);
@@ -2914,9 +2915,9 @@ namespace MailKit.Net.Imap {
 					}
 
 					SkipLine (cancellationToken);
-				} else if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+				} else if (ic.UntaggedHandlers.TryGetValue (atom, out handler)) {
 					// the command registered an untagged handler for this atom...
-					handler (this, current, -1, false).GetAwaiter ().GetResult ();
+					handler (this, ic, -1, false).GetAwaiter ().GetResult ();
 					SkipLine (cancellationToken);
 				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event
@@ -2945,11 +2946,12 @@ namespace MailKit.Net.Imap {
 		/// Processes an untagged response.
 		/// </summary>
 		/// <returns>The untagged response.</returns>
+		/// <param name="ic">The IMAP command that is currently being processed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		internal async Task ProcessUntaggedResponseAsync (CancellationToken cancellationToken)
+		internal async Task ProcessUntaggedResponseAsync (ImapCommand ic, CancellationToken cancellationToken)
 		{
 			var token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-			var folder = current!.Folder ?? Selected;
+			var folder = ic.Folder ?? Selected;
 			ImapUntaggedHandler? handler;
 			string atom;
 
@@ -2973,13 +2975,13 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = await ParseResponseCodeAsync (false, cancellationToken).ConfigureAwait (false);
-					current.RespCodes.Add (code);
+					ic.RespCodes.Add (code);
 				} else {
 					var text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
-					current.ResponseText = token.Value.ToString () + text;
+					ic.ResponseText = token.Value.ToString () + text;
 				}
 
-				current.Bye = true;
+				ic.Bye = true;
 
 				// Note: Yandex IMAP is broken and will continue sending untagged BYE responses until the client closes
 				// the connection. In order to avoid this scenario, consider this command complete as soon as we receive
@@ -2987,8 +2989,8 @@ namespace MailKit.Net.Imap {
 				// untagged BYE.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/938 for details.
-				if (QuirksMode == ImapQuirksMode.Yandex && !current.Logout)
-					current.Status = ImapCommandStatus.Complete;
+				if (QuirksMode == ImapQuirksMode.Yandex && !ic.Logout)
+					ic.Status = ImapCommandStatus.Complete;
 			} else if (atom.Equals ("CAPABILITY", StringComparison.OrdinalIgnoreCase)) {
 				await UpdateCapabilitiesAsync (ImapTokenType.Eoln, cancellationToken).ConfigureAwait (false);
 
@@ -3025,10 +3027,10 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenBracket) {
 					var code = await ParseResponseCodeAsync (false, cancellationToken).ConfigureAwait (false);
-					current.RespCodes.Add (code);
+					ic.RespCodes.Add (code);
 				} else if (token.Type != ImapTokenType.Eoln) {
 					var text = (await ReadLineAsync (cancellationToken).ConfigureAwait (false)).TrimEnd ();
-					current.ResponseText = token.Value.ToString () + text;
+					ic.ResponseText = token.Value.ToString () + text;
 				}
 			} else {
 				if (uint.TryParse (atom, NumberStyles.None, CultureInfo.InvariantCulture, out uint number)) {
@@ -3039,9 +3041,9 @@ namespace MailKit.Net.Imap {
 
 					atom = (string) token.Value;
 
-					if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+					if (ic.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
-						await handler (this, current, (int) number - 1, doAsync: true).ConfigureAwait (false);
+						await handler (this, ic, (int) number - 1, doAsync: true).ConfigureAwait (false);
 					} else if (folder != null) {
 						if (atom.Equals ("EXISTS", StringComparison.OrdinalIgnoreCase)) {
 							folder.OnExists ((int) number);
@@ -3067,9 +3069,9 @@ namespace MailKit.Net.Imap {
 					}
 
 					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
-				} else if (current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+				} else if (ic.UntaggedHandlers.TryGetValue (atom, out handler)) {
 					// the command registered an untagged handler for this atom...
-					await handler (this, current, -1, doAsync: true).ConfigureAwait (false);
+					await handler (this, ic, -1, doAsync: true).ConfigureAwait (false);
 					await SkipLineAsync (cancellationToken).ConfigureAwait (false);
 				} else if (atom.Equals ("LIST", StringComparison.OrdinalIgnoreCase)) {
 					// unsolicited LIST response - probably due to NOTIFY MailboxName or MailboxSubscribe event

@@ -611,7 +611,7 @@ namespace MailKit.Net.Imap {
 					}
 				} else if (token.Type == ImapTokenType.Asterisk) {
 					// we got an untagged response, let the engine handle this...
-					Engine.ProcessUntaggedResponse (CancellationToken);
+					Engine.ProcessUntaggedResponse (this, CancellationToken);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
 					token = Engine.ReadToken (CancellationToken);
@@ -754,7 +754,7 @@ namespace MailKit.Net.Imap {
 					}
 				} else if (token.Type == ImapTokenType.Asterisk) {
 					// we got an untagged response, let the engine handle this...
-					await Engine.ProcessUntaggedResponseAsync (CancellationToken).ConfigureAwait (false);
+					await Engine.ProcessUntaggedResponseAsync (this, CancellationToken).ConfigureAwait (false);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
 					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
