@@ -328,7 +328,6 @@ namespace MailKit.Net.Pop3 {
 			AlignReadAheadBuffer (out int start, out int end);
 
 			try {
-				var network = Stream as NetworkStream;
 				int nread;
 
 				cancellationToken.ThrowIfCancellationRequested ();
