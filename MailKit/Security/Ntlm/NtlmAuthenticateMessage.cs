@@ -128,9 +128,12 @@ namespace MailKit.Security.Ntlm {
 		/// <summary>
 		/// This is only used for unit testing purposes.
 		/// </summary>
-		internal byte[] ClientChallenge {
+		internal byte[]? ClientChallenge {
 			get { return clientChallenge; }
 			set {
+				if (value == null)
+					return;
+
 				if (value.Length != 8)
 					throw new ArgumentException ("Invalid nonce length (should be 8 bytes).", nameof (value));
 

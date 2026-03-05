@@ -48,6 +48,7 @@ namespace UnitTests.Security.Ntlm {
 			Assert.Throws<ArgumentOutOfRangeException> (() => new NtlmAuthenticateMessage (new byte[8], -1, 8));
 			Assert.Throws<ArgumentException> (() => new NtlmAuthenticateMessage (badMessageData, 0, badMessageData.Length));
 
+			Assert.DoesNotThrow (() => NtlmAuthenticate.ClientChallenge = null);
 			Assert.Throws<ArgumentException> (() => NtlmAuthenticate.ClientChallenge = new byte[9]);
 		}
 
