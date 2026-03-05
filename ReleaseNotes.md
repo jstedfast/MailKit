@@ -1,5 +1,11 @@
 # Release Notes
 
+## MailKit 4.15.1 (2026-03-04)
+
+* SECURITY: Bumped MimeKit to 4.15.1 for a security fix that prevents mailbox addresses from being allowed
+  to contain CRLF sequences which can be used to inject SMTP commands in the SmtpClient when it sends
+  `MAIL FROM` or `RCPT TO` commands.
+
 ## MailKit 4.15.0 (2026-02-15)
 
 * Default the SmtpClient/Pop3Client/ImapClient.SslProtocols to the ServicePointManager.SecurityProtocol

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>4.15.0</version>
+    <version>4.15.1</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,10 +26,7 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Default the SmtpClient/Pop3Client/ImapClient.SslProtocols to the ServicePointManager.SecurityProtocol value in .NET Framework (net4x). (issue #1952)
-* Added support for.NET 10.
-* Marked IMailService.SslCipherAlgorithm, SslCipherStrength, SslHashAlgorithm, SslHashStrength, SslKeyExchangeAlgorithm, and SslKeyExchangeStrength as Obsolete in .NET 10 in favor of the IMailService.SslCipherSuite property (.NET 10 only).
-* Bumped MimeKit dependency to 4.15.0.
+* SECURITY: Bumped MimeKit to 4.15.1 for a security fix that prevents mailbox addresses from being allowed to contain CRLF sequences which can be used to inject SMTP commands in the SmtpClient when it sends `MAIL FROM` or `RCPT TO` commands.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -53,34 +50,34 @@ Features include:
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
       <group targetFramework="net8.0">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
       <group targetFramework="net10.0">
         <dependency id="System.Formats.Asn1" version="10.0.2" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.0" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
       <group targetFramework="netstandard2.1">
         <dependency id="System.Formats.Asn1" version="8.0.1" />
-        <dependency id="MimeKitLite" version="4.15.0" />
+        <dependency id="MimeKitLite" version="4.15.1" />
       </group>
     </dependencies>
   </metadata>
