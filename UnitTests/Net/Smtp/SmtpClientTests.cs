@@ -779,7 +779,7 @@ namespace UnitTests.Net.Smtp {
 #endif
 			Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
 			Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
-			Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+			Assert.That (client.SslKeyExchangeStrength, Is.AnyOf (0, 255, 256, 384), $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
 			Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 		}
 
@@ -1105,7 +1105,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
 					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
 					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
-					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.SslKeyExchangeStrength, Is.AnyOf (0, 255, 256, 384), $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
 					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
@@ -1154,7 +1154,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
 					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
 					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
-					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.SslKeyExchangeStrength, Is.AnyOf (0, 255, 256, 384), $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
 					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
@@ -1203,7 +1203,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
 					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
 					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
-					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.SslKeyExchangeStrength, Is.AnyOf (0, 255, 256, 384), $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
 					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
@@ -1252,7 +1252,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.SslHashAlgorithm, Is.EqualTo (YahooHashAlgorithm));
 					Assert.That (client.SslHashStrength, Is.EqualTo (0), $"Unexpected SslHashStrength: {client.SslHashStrength}");
 					Assert.That (client.SslKeyExchangeAlgorithm == ExchangeAlgorithmType.None || client.SslKeyExchangeAlgorithm == EcdhEphemeral, Is.True, $"Unexpected SslKeyExchangeAlgorithm: {client.SslKeyExchangeAlgorithm}");
-					Assert.That (client.SslKeyExchangeStrength == 0 || client.SslKeyExchangeStrength == 255, Is.True, $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
+					Assert.That (client.SslKeyExchangeStrength, Is.AnyOf (0, 255, 256, 384), $"Unexpected SslKeyExchangeStrength: {client.SslKeyExchangeStrength}");
 					Assert.That (client.IsAuthenticated, Is.False, "Expected the client to not be authenticated");
 					Assert.That (connected, Is.EqualTo (1), "ConnectedEvent");
 
