@@ -105,7 +105,8 @@ namespace MailKit.Security.Ntlm {
 		public override void GenerateKey ()
 		{
 			key = new byte[KeySizeValue >> 3];
-			RandomNumberGenerator.Create ().GetBytes (key);
+			using (var rng = RandomNumberGenerator.Create ())
+				rng.GetBytes (key);
 			KeySetup (key);
 		}
 
