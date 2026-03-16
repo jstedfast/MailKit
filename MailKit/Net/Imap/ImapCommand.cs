@@ -538,7 +538,6 @@ namespace MailKit.Net.Imap {
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			var response = ImapCommandResponse.None;
-			var idle = UserData as ImapIdleContext;
 			ImapToken token;
 
 			// construct and write the command tag if this is the initial state
@@ -681,7 +680,6 @@ namespace MailKit.Net.Imap {
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			var response = ImapCommandResponse.None;
-			var idle = UserData as ImapIdleContext;
 			ImapToken token;
 
 			// construct and write the command tag if this is the initial state
