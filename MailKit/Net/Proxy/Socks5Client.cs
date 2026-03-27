@@ -353,7 +353,7 @@ namespace MailKit.Net.Proxy
 			var addrType = (Socks5AddressType) buffer[3];
 
 			switch (addrType) {
-			case Socks5AddressType.Domain: return 4 + buffer[4] + 2;
+			case Socks5AddressType.Domain: return 4 + 1 + buffer[4] + 2;
 			case Socks5AddressType.IPv6: return 4 + 16 + 2;
 			case Socks5AddressType.IPv4: return 4 + 4 + 2;
 			default: throw new ProxyProtocolException ("Proxy server returned unknown address type.");
