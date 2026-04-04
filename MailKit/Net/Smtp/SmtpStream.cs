@@ -262,8 +262,6 @@ namespace MailKit.Net.Smtp {
 			AlignReadAheadBuffer (out int offset, out int count);
 
 			try {
-				var network = Stream as NetworkStream;
-
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				int nread = await Stream.ReadAsync (input, offset, count, cancellationToken).ConfigureAwait (false);
