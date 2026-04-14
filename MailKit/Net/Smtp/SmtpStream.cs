@@ -75,14 +75,23 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Get or sets the underlying network stream.
+		/// Get the underlying network stream.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the underlying network stream.
+		/// Gets the underlying network stream.
 		/// </remarks>
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
-			get; internal set;
+			get; private set;
+		}
+
+		internal void SetStream (Stream stream)
+		{
+			Stream = stream;
+
+			// reset internal buffering
+			inputIndex = 0;
+			inputEnd = 0;
 		}
 
 		/// <summary>

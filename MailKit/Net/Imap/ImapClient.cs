@@ -314,7 +314,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("COMPRESS", ic);
 			}
 
-			engine.Stream!.Stream = new CompressedStream (engine.Stream.Stream);
+			engine.Stream!.SetStream (new CompressedStream (engine.Stream.Stream));
 #endif
 		}
 
@@ -1490,7 +1490,7 @@ namespace MailKit.Net.Imap {
 					if (ic.Response == ImapCommandResponse.Ok) {
 						try {
 							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-							imap.Stream = tls;
+							imap.SetStream (tls);
 
 							SslHandshake (tls, host, cancellationToken);
 						} catch (Exception ex) {

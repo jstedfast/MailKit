@@ -1376,7 +1376,7 @@ namespace MailKit.Net.Smtp {
 
 					try {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						Stream.Stream = tls;
+						Stream.SetStream (tls);
 
 						SslHandshake (tls, host, cancellationToken);
 					} catch (Exception ex) {

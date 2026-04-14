@@ -332,7 +332,7 @@ namespace MailKit.Net.Pop3
 
 					try {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						pop3.Stream = tls;
+						pop3.SetStream (tls);
 
 						await SslHandshakeAsync (tls, host, cancellationToken).ConfigureAwait (false);
 					} catch (Exception ex) {

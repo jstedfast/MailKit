@@ -101,14 +101,23 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Get or sets the underlying network stream.
+		/// Get the underlying network stream.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the underlying network stream.
+		/// Gets the underlying network stream.
 		/// </remarks>
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
-			get; internal set;
+			get; private set;
+		}
+
+		internal void SetStream (Stream stream)
+		{
+			Stream = stream;
+
+			// reset internal buffering
+			inputIndex = ReadAheadSize;
+			inputEnd = ReadAheadSize;
 		}
 
 		/// <summary>

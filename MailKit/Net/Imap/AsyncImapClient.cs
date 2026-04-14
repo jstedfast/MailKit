@@ -548,7 +548,7 @@ namespace MailKit.Net.Imap
 					if (ic.Response == ImapCommandResponse.Ok) {
 						try {
 							var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-							imap.Stream = tls;
+							imap.SetStream (tls);
 
 							await SslHandshakeAsync (tls, host, cancellationToken).ConfigureAwait (false);
 						} catch (Exception ex) {
