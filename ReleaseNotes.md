@@ -1,5 +1,13 @@
 # Release Notes
 
+## MailKit 4.16.0 (2026-04-15)
+
+* SECURITY: Fixed protocol streams to reset internal buffers after upgrading to SSL/TLS.
+* Dispose of the RandomNumberGenerator used in RC4.GenerateKey().
+  (issue [#1989](https://github.com/jstedfast/MailKit/issues/1989))
+* Fixed calculation for number of needed bytes in SOCKS5 connect response.
+  (issue [#1993](https://github.com/jstedfast/MailKit/issues/1993))
+
 ## MailKit 4.15.1 (2026-03-04)
 
 * SECURITY: Bumped MimeKit to 4.15.1 for a security fix that prevents mailbox addresses from being allowed
