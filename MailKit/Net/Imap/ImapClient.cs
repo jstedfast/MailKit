@@ -2247,13 +2247,22 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
+		// Declared as IMailFolder? to match the nullable underlying ImapEngine.Inbox field, but this
+		// property never returns null in practice. CheckAuthenticated() throws ServiceNotAuthenticatedException
+		// before engine.Inbox is reached if the client is not authenticated:
+		//   https://github.com/jstedfast/MailKit/blob/33f045be0f64a255fe153acd640af37d80c0ede3/MailKit/Net/Imap/ImapClient.cs#L2250-L2257
+		// engine.Inbox is guaranteed non-null by the time authentication completes — QuerySpecialFolders()
+		// always assigns it before Authenticate() returns, creating a placeholder if the server never reported one:
+		//   https://github.com/jstedfast/MailKit/blob/33f045be0f64a255fe153acd640af37d80c0ede3/MailKit/Net/Imap/ImapEngine.cs#L3762-L3768
+		// engine.Inbox is never reassigned null after that point, so it remains non-null for the session lifetime.
+		[NotNull]
 		public override IMailFolder? Inbox {
 			get {
 				CheckDisposed ();
 				CheckConnected ();
 				CheckAuthenticated ();
 
-				return engine.Inbox;
+				return engine.Inbox!;
 			}
 		}
 
