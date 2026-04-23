@@ -2247,13 +2247,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
-		public override IMailFolder? Inbox {
+		public override IMailFolder Inbox {
 			get {
 				CheckDisposed ();
 				CheckConnected ();
 				CheckAuthenticated ();
 
-				return engine.Inbox;
+				return engine.Inbox!;
 			}
 		}
 

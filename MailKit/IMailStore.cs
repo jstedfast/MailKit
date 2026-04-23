@@ -97,7 +97,7 @@ namespace MailKit {
 		/// where all new messages are delivered.
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		IMailFolder? Inbox { get; }
+		IMailFolder Inbox { get; }
 
 		/// <summary>
 		/// Enable the quick resynchronization feature.
