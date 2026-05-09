@@ -27,17 +27,26 @@ namespace MimeKit.Examples
 			#region SaveAttachments
 			foreach (var attachment in message.Attachments) {
 				if (attachment is MessagePart) {
-					var fileName = attachment.ContentDisposition?.FileName;
+					var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
 					var rfc822 = (MessagePart) attachment;
 
 					if (string.IsNullOrEmpty (fileName))
 						fileName = "attached-message.eml";
+
+					// make sure that the filename value does not contain a full path or invalid path characters
+					fileName = Path.GetFileName (fileName);
 
 					using (var stream = File.Create (fileName))
 						rfc822.Message.WriteTo (stream);
 				} else {
 					var part = (MimePart) attachment;
 					var fileName = part.FileName;
+
+					if (string.IsNullOrEmpty (fileName))
+						fileName = "untitled.dat";
+
+					// make sure that the filename value does not contain a full path or invalid path characters
+					fileName = Path.GetFileName (fileName);
 
 					using (var stream = File.Create (fileName))
 						part.Content.DecodeTo (stream);
@@ -54,17 +63,26 @@ namespace MimeKit.Examples
 					continue;
 
 				if (bodyPart is MessagePart) {
-					var fileName = attachment.ContentDisposition?.FileName;
+					var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
 					var rfc822 = (MessagePart) attachment;
 
 					if (string.IsNullOrEmpty (fileName))
 						fileName = "attached-message.eml";
+
+					// make sure that the filename value does not contain a full path or invalid path characters
+					fileName = Path.GetFileName (fileName);
 
 					using (var stream = File.Create (fileName))
 						rfc822.Message.WriteTo (stream);
 				} else {
 					var part = (MimePart) attachment;
 					var fileName = part.FileName;
+
+					if (string.IsNullOrEmpty (fileName))
+						fileName = "untitled.dat";
+
+					// make sure that the filename value does not contain a full path or invalid path characters
+					fileName = Path.GetFileName (fileName);
 
 					using (var stream = File.Create (fileName))
 						part.Content.DecodeTo (stream);

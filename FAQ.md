@@ -968,6 +968,12 @@ If you are iterating over all of the attachments in a message, you might do some
 foreach (var attachment in message.Attachments) {
     var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
 
+    if (string.IsNullOrEmpty (fileName))
+        fileName = "untitled.dat";
+
+    // make sure that the filename value does not contain a full path or invalid path characters
+    fileName = Path.GetFileName (fileName);
+
     using (var stream = File.Create (fileName)) {
         if (attachment is MessagePart) {
             var rfc822 = (MessagePart) attachment;
