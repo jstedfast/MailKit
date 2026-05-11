@@ -69,7 +69,10 @@ namespace ImapClientDemo
 						// Note: we could also save the related MIME part content to disk and use
 						// file:// urls instead.
 						var ctx = new MultipartRelatedImageContext (related);
-						var converter = new HtmlToHtml () { HtmlTagCallback = ctx.HtmlTagCallback };
+						var converter = new HtmlToHtml () {
+							HtmlTagCallback = ctx.HtmlTagCallback,
+							FilterHtml = true
+						};
 						var html = converter.Convert (text.Text);
 
 						documentText = html;

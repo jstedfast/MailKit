@@ -187,18 +187,6 @@ namespace MimeKit.Examples
 						htmlWriter.WriteAttribute (attribute);
 					}
 				}
-			} else if (ctx.TagId == HtmlTagId.Body && !ctx.IsEndTag) {
-				ctx.WriteTag (htmlWriter, false);
-
-				// add and/or replace oncontextmenu="return false;"
-				foreach (var attribute in ctx.Attributes) {
-					if (attribute.Name.Equals ("oncontextmenu", StringComparison.OrdinalIgnoreCase))
-						continue;
-
-					htmlWriter.WriteAttribute (attribute);
-				}
-
-				htmlWriter.WriteAttribute ("oncontextmenu", "return false;");
 			} else {
 				// pass the tag through to the output
 				ctx.WriteTag (htmlWriter, true);
