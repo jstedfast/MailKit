@@ -120,7 +120,7 @@ namespace MailKit {
 		/// <note type="note">This property will only be available after the client has been authenticated.</note>
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		public abstract IMailFolder? Inbox {
+		public abstract IMailFolder Inbox {
 			get;
 		}
 
