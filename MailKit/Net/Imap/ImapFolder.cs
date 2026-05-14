@@ -2274,7 +2274,7 @@ namespace MailKit.Net.Imap {
 			ImapToken token;
 
 			// read the mailbox name
-			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+			ImapUtils.ReadFolderName (engine, format, false, ic.CancellationToken);
 
 			do {
 				name = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
@@ -2294,7 +2294,7 @@ namespace MailKit.Net.Imap {
 			ImapToken token;
 
 			// read the mailbox name
-			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+			await ImapUtils.ReadFolderNameAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
 
 			do {
 				name = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
@@ -2430,7 +2430,7 @@ namespace MailKit.Net.Imap {
 			ImapToken token;
 
 			// read the mailbox name
-			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+			ImapUtils.ReadFolderName (engine, format, false, ic.CancellationToken);
 
 			// read the identity name
 			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
@@ -2451,7 +2451,7 @@ namespace MailKit.Net.Imap {
 			ImapToken token;
 
 			// read the mailbox name
-			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+			await ImapUtils.ReadFolderNameAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
 
 			// read the identity name
 			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
@@ -2599,7 +2599,7 @@ namespace MailKit.Net.Imap {
 			var access = (AccessRights) ic.UserData!;
 
 			// read the mailbox name
-			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+			ImapUtils.ReadFolderName (engine, format, false, ic.CancellationToken);
 
 			// read the access rights
 			access.AddRange (ImapUtils.ReadStringToken (engine, format, ic.CancellationToken));
@@ -2611,7 +2611,7 @@ namespace MailKit.Net.Imap {
 			var access = (AccessRights) ic.UserData!;
 
 			// read the mailbox name
-			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+			await ImapUtils.ReadFolderNameAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
 
 			// read the access rights
 			access.AddRange (await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false));
@@ -3640,16 +3640,16 @@ namespace MailKit.Net.Imap {
 			var ctx = (QuotaContext) ic.UserData!;
 
 			// The first token should be the mailbox name
-			ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+			ImapUtils.ReadFolderName (engine, format, false, ic.CancellationToken);
 
 			// ...followed by 0 or more quota roots
-			var token = engine.PeekToken (ic.CancellationToken);
+			var token = engine.PeekToken (ImapStream.AtomSpecials, ic.CancellationToken);
 
 			while (token.Type != ImapTokenType.Eoln) {
-				var root = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+				var root = ImapUtils.ReadFolderName (engine, format, false, ic.CancellationToken);
 				ctx.QuotaRoots.Add (root);
 
-				token = engine.PeekToken (ic.CancellationToken);
+				token = engine.PeekToken (ImapStream.AtomSpecials, ic.CancellationToken);
 			}
 		}
 
@@ -3659,16 +3659,16 @@ namespace MailKit.Net.Imap {
 			var ctx = (QuotaContext) ic.UserData!;
 
 			// The first token should be the mailbox name
-			await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+			await ImapUtils.ReadFolderNameAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
 
 			// ...followed by 0 or more quota roots
-			var token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+			var token = await engine.PeekTokenAsync (ImapStream.AtomSpecials, ic.CancellationToken).ConfigureAwait (false);
 
 			while (token.Type != ImapTokenType.Eoln) {
-				var root = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+				var root = await ImapUtils.ReadFolderNameAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
 				ctx.QuotaRoots.Add (root);
 
-				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+				token = await engine.PeekTokenAsync (ImapStream.AtomSpecials, ic.CancellationToken).ConfigureAwait (false);
 			}
 		}
 
@@ -3693,7 +3693,7 @@ namespace MailKit.Net.Imap {
 		static void ParseQuota (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
-			var quotaRoot = ImapUtils.ReadStringToken (engine, format, ic.CancellationToken);
+			var quotaRoot = ImapUtils.ReadFolderName (engine, format, false, ic.CancellationToken);
 			var ctx = (QuotaContext) ic.UserData!;
 			var quota = new Quota ();
 
@@ -3743,7 +3743,7 @@ namespace MailKit.Net.Imap {
 		static async Task ParseQuotaAsync (ImapEngine engine, ImapCommand ic)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
-			var quotaRoot = await ImapUtils.ReadStringTokenAsync (engine, format, ic.CancellationToken).ConfigureAwait (false);
+			var quotaRoot = await ImapUtils.ReadFolderNameAsync (engine, format, false, ic.CancellationToken).ConfigureAwait (false);
 			var ctx = (QuotaContext) ic.UserData!;
 			var quota = new Quota ();
 

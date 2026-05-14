@@ -460,7 +460,15 @@ namespace MailKit.Net.Imap {
 			return string.Compare (mailboxName, "INBOX", StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
-		static string ReadFolderName (ImapEngine engine, char delim, string format, CancellationToken cancellationToken)
+		/// <summary>
+		/// Reads a folder name.
+		/// </summary>
+		/// <param name="engine">The IMAP engine</param>
+		/// <param name="format">The exception format string.</param>
+		/// <param name="isList">Whether or not this is a LIST (or LSUB) response.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The folder name.</returns>
+		public static string ReadFolderName (ImapEngine engine, string format, bool isList, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (ImapStream.AtomSpecials, cancellationToken);
 			string encodedName;
@@ -473,16 +481,18 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
 
-				// Note: Exchange (Office365 and potentially 2016/2019/other versions) has a bug where it doesn't quote folder names that contain CTRL characters (including tab).
-				//
-				// See https://github.com/jstedfast/MailKit/issues/945 for details.
-				if (token.Type == ImapTokenType.Atom && engine.QuirksMode == ImapQuirksMode.Exchange) {
-					var line = engine.ReadLine (cancellationToken);
+				if (isList) {
+					// Note: Exchange (Office365 and potentially 2016/2019/other versions) has a bug where it doesn't quote folder names that contain CTRL characters (including tab).
+					//
+					// See https://github.com/jstedfast/MailKit/issues/945 for details.
+					if (token.Type == ImapTokenType.Atom && engine.QuirksMode == ImapQuirksMode.Exchange) {
+						var line = engine.ReadLine (cancellationToken);
 
-					// unget the \r\n sequence
-					engine.UngetToken (ImapToken.Eoln);
+						// unget the \r\n sequence
+						engine.UngetToken (ImapToken.Eoln);
 
-					encodedName += line;
+						encodedName += line;
+					}
 				}
 				break;
 			case ImapTokenType.Nil:
@@ -492,10 +502,18 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			return encodedName.TrimEnd (delim);
+			return encodedName;
 		}
 
-		static async Task<string> ReadFolderNameAsync (ImapEngine engine, char delim, string format, CancellationToken cancellationToken)
+		/// <summary>
+		/// Asynchronously reads a folder name.
+		/// </summary>
+		/// <param name="engine">The IMAP engine</param>
+		/// <param name="format">The exception format string.</param>
+		/// <param name="isList">Whether or not this is a LIST (or LSUB) response.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>The folder name.</returns>
+		public static async Task<string> ReadFolderNameAsync (ImapEngine engine, string format, bool isList, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (ImapStream.AtomSpecials, cancellationToken).ConfigureAwait (false);
 			string encodedName;
@@ -508,16 +526,18 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom:
 				encodedName = (string) token.Value;
 
-				// Note: Exchange (Office365 and potentially 2016/2019/other versions) has a bug where it doesn't quote folder names that contain CTRL characters (including tab).
-				//
-				// See https://github.com/jstedfast/MailKit/issues/945 for details.
-				if (token.Type == ImapTokenType.Atom && engine.QuirksMode == ImapQuirksMode.Exchange) {
-					var line = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
+				if (isList) {
+					// Note: Exchange (Office365 and potentially 2016/2019/other versions) has a bug where it doesn't quote folder names that contain CTRL characters (including tab).
+					//
+					// See https://github.com/jstedfast/MailKit/issues/945 for details.
+					if (token.Type == ImapTokenType.Atom && engine.QuirksMode == ImapQuirksMode.Exchange) {
+						var line = await engine.ReadLineAsync (cancellationToken).ConfigureAwait (false);
 
-					// unget the \r\n sequence
-					engine.UngetToken (ImapToken.Eoln);
+						// unget the \r\n sequence
+						engine.UngetToken (ImapToken.Eoln);
 
-					encodedName += line;
+						encodedName += line;
+					}
 				}
 				break;
 			case ImapTokenType.Nil:
@@ -527,7 +547,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			return encodedName.TrimEnd (delim);
+			return encodedName;
 		}
 
 		static void AddFolderAttribute (ref FolderAttributes attrs, string atom)
@@ -678,7 +698,8 @@ namespace MailKit.Net.Imap {
 
 			delim = ParseFolderSeparator (token, format);
 
-			encodedName = ReadFolderName (engine, delim, format, cancellationToken);
+			encodedName = ReadFolderName (engine, format, true, cancellationToken);
+			encodedName = encodedName.TrimEnd (delim);
 
 			if (IsInbox (encodedName))
 				attrs |= FolderAttributes.Inbox;
@@ -764,7 +785,8 @@ namespace MailKit.Net.Imap {
 
 			delim = ParseFolderSeparator (token, format);
 
-			encodedName = await ReadFolderNameAsync (engine, delim, format, cancellationToken).ConfigureAwait (false);
+			encodedName = await ReadFolderNameAsync (engine, format, true, cancellationToken).ConfigureAwait (false);
+			encodedName = encodedName.TrimEnd (delim);
 
 			if (IsInbox (encodedName))
 				attrs |= FolderAttributes.Inbox;
@@ -841,7 +863,7 @@ namespace MailKit.Net.Imap {
 		public static void ParseMetadata (ImapEngine engine, MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
-			var encodedName = ReadStringToken (engine, format, cancellationToken);
+			var encodedName = ReadFolderName (engine, format, false, cancellationToken);
 
 			var token = engine.ReadToken (cancellationToken);
 
@@ -870,7 +892,7 @@ namespace MailKit.Net.Imap {
 		public static async Task ParseMetadataAsync (ImapEngine engine, MetadataCollection metadata, CancellationToken cancellationToken)
 		{
 			var format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
-			var encodedName = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+			var encodedName = await ReadFolderNameAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
