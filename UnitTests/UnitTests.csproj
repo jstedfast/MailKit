@@ -24,10 +24,10 @@
 
   <ItemGroup>
     <PackageReference Include="AltCover" Version="9.0.102" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="nunit" Version="4.5.1" />
-    <PackageReference Include="NUnit.Analyzers" Version="4.12.0">
+    <PackageReference Include="NUnit.Analyzers" Version="4.13.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
