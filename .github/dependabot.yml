@@ -3,7 +3,7 @@
 version: 2
 updates:
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/MailKit"
     schedule:
       interval: "weekly"
       day: "monday"
