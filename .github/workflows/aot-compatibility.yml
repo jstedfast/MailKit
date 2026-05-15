@@ -20,16 +20,19 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
+    - name: Setup/Install the .NET SDKs
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
+
+    - name: Checkout repository
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0 # fetching all
         submodules: true
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-
-    - name: publish AOT testApp, assert static analysis warning count, and run the app
+    - name: Publish AOT testApp, assert static analysis warning count, and run the app
       shell: pwsh
       run: .\scripts\test-aot-compatibility.ps1 ${{ matrix.mailkitlite }}
