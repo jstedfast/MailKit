@@ -21,26 +21,22 @@ jobs:
       PUBLISH: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && matrix.os == 'windows-latest' && matrix.build-configuration == 'Release' }}
 
     steps:
-      - name: Setup/Install the .NET 8 SDK
-        id: install-netsdk8
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Setup/Install the .NET 10 SDK
+      - name: Setup/Install the .NET SDKs
         id: install-netsdk
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            8.0.x
+            10.0.x
 
       - if: runner.os == 'Windows'
         name: Setup MSBuild
         id: setup_msbuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Checkout repository
         id: checkout_repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           submodules: recursive
@@ -109,7 +105,7 @@ jobs:
       - name: Upload unit test results
         id: upload_test_results
         continue-on-error: true
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}-${{ matrix.os }}-${{ matrix.build-configuration }}-TestResults.xml
           path: TestResult.xml
@@ -151,7 +147,7 @@ jobs:
       - if: ${{ env.PUBLISH == 'true' }}
         name: Upload NuGet package as artifact
         id: upload_nuget_package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}.nupkg
           path: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}.nupkg
