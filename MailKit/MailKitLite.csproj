@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.0" />
+    <PackageReference Include="System.Formats.Asn1" Version="10.0.8" />
   </ItemGroup>
 
   <ItemGroup>
