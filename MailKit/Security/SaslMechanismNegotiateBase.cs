@@ -398,7 +398,8 @@ namespace MailKit.Security
 				using (var negotiate = new NegotiateAuthentication (options))
 					negotiate.GetOutgoingBlob (Array.Empty<byte> (), out statusCode);
 
-				return statusCode == NegotiateAuthenticationStatusCode.Completed;
+				return statusCode == NegotiateAuthenticationStatusCode.ContinueNeeded
+					|| statusCode == NegotiateAuthenticationStatusCode.Completed;
 			} catch {
 				return false;
 			}
