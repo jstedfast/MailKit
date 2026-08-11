@@ -8577,6 +8577,142 @@ namespace MailKit {
 		public abstract Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// Search the folder for messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the oldest matching
+		/// message while negative positions are relative to the newest matching message. For example, a range of
+		/// <c>1:500</c> will return the oldest 500 results while a range of <c>-1:-500</c> will return the newest
+		/// 500 results.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The folder does not support partial searches.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="MailFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual SearchResults Search (SearchOptions options, SearchQuery query, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			throw new NotSupportedException ("The folder does not support partial searches.");
+		}
+
+		/// <summary>
+		/// Asynchronously search the folder for messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the oldest matching
+		/// message while negative positions are relative to the newest matching message. For example, a range of
+		/// <c>1:500</c> will return the oldest 500 results while a range of <c>-1:-500</c> will return the newest
+		/// 500 results.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The folder does not support partial searches.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="MailFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			throw new NotSupportedException ("The folder does not support partial searches.");
+		}
+
+		/// <summary>
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
@@ -9041,6 +9177,162 @@ namespace MailKit {
 		/// The command failed.
 		/// </exception>
 		public abstract Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Sort messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range in the specified sort order.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the first result
+		/// in the sort order while negative positions are relative to the last result. For example, a range of
+		/// <c>1:50</c> will return the first 50 results in the specified sort order.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The folder does not support partial sorts.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="MailFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			if (orderBy == null)
+				throw new ArgumentNullException (nameof (orderBy));
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
+
+			throw new NotSupportedException ("The folder does not support partial sorts.");
+		}
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range in the specified sort order.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the first result
+		/// in the sort order while negative positions are relative to the last result. For example, a range of
+		/// <c>1:50</c> will return the first 50 results in the specified sort order.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the specified search options.</para>
+		/// <para>-or-</para>
+		/// <para>The folder does not support partial sorts.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="MailFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			if (query == null)
+				throw new ArgumentNullException (nameof (query));
+
+			if (orderBy == null)
+				throw new ArgumentNullException (nameof (orderBy));
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
+
+			throw new NotSupportedException ("The folder does not support partial sorts.");
+		}
 
 		/// <summary>
 		/// Sort messages matching the specified query.

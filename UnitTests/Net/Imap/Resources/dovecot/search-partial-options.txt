@@ -1,0 +1,2 @@
+* ESEARCH (TAG "A########") UID COUNT 14 MIN 1 MAX 14 PARTIAL (1:10 1:10)
+A######## OK Search completed (0.001 + 0.000 secs).

@@ -1095,6 +1095,9 @@ namespace MailKit.Net.Imap
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
+			if (request.Partial.HasValue && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
+
 			CheckState (true, false);
 
 			return uids.Count > 0 && !IsEmptyFetchRequest (request);
@@ -1103,15 +1106,50 @@ namespace MailKit.Net.Imap
 		string CreateFetchCommand (IList<UniqueId> uids, IFetchRequest request, out bool previewText)
 		{
 			var query = FormatSummaryItems (Engine, request, out previewText);
-			var changedSince = string.Empty;
+			var command = new StringBuilder ("UID FETCH %s ");
 
-			if (request.ChangedSince.HasValue) {
-				var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
+			command.Append (query);
 
-				changedSince = string.Format (CultureInfo.InvariantCulture, " (CHANGEDSINCE {0}{1})", request.ChangedSince.Value, vanished);
+			if (request.ChangedSince.HasValue || request.Partial.HasValue) {
+				command.Append (" (");
+
+				if (request.ChangedSince.HasValue) {
+					command.AppendFormat (CultureInfo.InvariantCulture, "CHANGEDSINCE {0}", request.ChangedSince.Value);
+
+					if (Engine.QResyncEnabled)
+						command.Append (" VANISHED");
+
+					if (request.Partial.HasValue)
+						command.Append (' ');
+				}
+
+				if (request.Partial.HasValue)
+					command.Append ("PARTIAL ").Append (request.Partial.Value);
+
+				command.Append (')');
 			}
 
-			return string.Format ("UID FETCH %s {0}{1}\r\n", query, changedSince);
+			command.Append ("\r\n");
+
+			return command.ToString ();
+		}
+
+		IEnumerable<ImapCommand> CreateFetchCommands (IList<UniqueId> uids, IFetchRequest request, string command, CancellationToken cancellationToken)
+		{
+			var commands = Engine.CreateCommands (cancellationToken, this, command, uids);
+
+			if (request.Partial.HasValue) {
+				// Note: The PARTIAL fetch modifier applies to each FETCH command individually, so splitting the
+				// set of UIDs into multiple FETCH commands would change the semantics of the request.
+				var list = new List<ImapCommand> (commands);
+
+				if (list.Count > 1)
+					throw new NotSupportedException ("The set of unique identifiers is too large to fetch with a partial range.");
+
+				return list;
+			}
+
+			return commands;
 		}
 
 		static int EstimateInitialCapacity (IList<UniqueId> uids)
@@ -1170,7 +1208,11 @@ namespace MailKit.Net.Imap
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the PARTIAL extension.</para>
+		/// <para>-or-</para>
+		/// <para>The set of unique identifiers is too large to fetch with a partial range.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1192,7 +1234,7 @@ namespace MailKit.Net.Imap
 			MessageExpunged += ctx.OnMessageExpunged;
 
 			try {
-				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+				foreach (var ic in CreateFetchCommands (uids, request, command, cancellationToken)) {
 					ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 					ic.UserData = ctx;
 
@@ -1255,7 +1297,11 @@ namespace MailKit.Net.Imap
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the PARTIAL extension.</para>
+		/// <para>-or-</para>
+		/// <para>The set of unique identifiers is too large to fetch with a partial range.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1277,7 +1323,7 @@ namespace MailKit.Net.Imap
 			MessageExpunged += ctx.OnMessageExpunged;
 
 			try {
-				foreach (var ic in Engine.CreateCommands (cancellationToken, this, command, uids)) {
+				foreach (var ic in CreateFetchCommands (uids, request, command, cancellationToken)) {
 					ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 					ic.UserData = ctx;
 
@@ -1307,6 +1353,9 @@ namespace MailKit.Net.Imap
 
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
+
+			if (request.Partial.HasValue)
+				throw new NotSupportedException ("The PARTIAL extension only supports UID-based FETCH requests.");
 
 			CheckState (true, false);
 			CheckAllowIndexes ();
@@ -1375,7 +1424,9 @@ namespace MailKit.Net.Imap
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>-or-</para>
+		/// <para>The fetch request included a partial range, which is only supported for UID-based FETCH requests.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1444,7 +1495,9 @@ namespace MailKit.Net.Imap
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>-or-</para>
+		/// <para>The fetch request included a partial range, which is only supported for UID-based FETCH requests.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1498,6 +1551,9 @@ namespace MailKit.Net.Imap
 
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
+
+			if (request.Partial.HasValue)
+				throw new NotSupportedException ("The PARTIAL extension only supports UID-based FETCH requests.");
 
 			CheckState (true, false);
 			CheckAllowIndexes ();
@@ -1569,7 +1625,9 @@ namespace MailKit.Net.Imap
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>-or-</para>
+		/// <para>The fetch request included a partial range, which is only supported for UID-based FETCH requests.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1640,7 +1698,9 @@ namespace MailKit.Net.Imap
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>-or-</para>
+		/// <para>The fetch request included a partial range, which is only supported for UID-based FETCH requests.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.

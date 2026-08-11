@@ -1,0 +1,5 @@
+* VANISHED (EARLIER) 5
+* 6 FETCH (UID 6 FLAGS (\Seen) MODSEQ (4))
+* 7 FETCH (UID 7 FLAGS (\Seen) MODSEQ (4))
+* 8 FETCH (UID 8 FLAGS (\Seen) MODSEQ (4))
+A######## OK Fetch completed (0.001 + 0.000 secs).

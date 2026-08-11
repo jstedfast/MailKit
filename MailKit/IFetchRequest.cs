@@ -54,6 +54,26 @@ namespace MailKit {
 		ulong? ChangedSince { get; set; }
 
 		/// <summary>
+		/// Get or set the range of messages to fetch.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets the range of messages to fetch.</para>
+		/// <para>If this property is set, the results returned by
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;, IFetchRequest, System.Threading.CancellationToken)"/>
+		/// or <see cref="IMailFolder.FetchAsync(System.Collections.Generic.IList&lt;UniqueId&gt;, IFetchRequest, System.Threading.CancellationToken)"/>
+		/// will only include the message summaries for the specified range of messages. Positive positions within the range are
+		/// relative to the oldest message in the set of unique identifiers while negative positions are relative to the newest
+		/// message. For example, a range of <c>-1:-100</c> will fetch the requested items for the newest 100 messages in the set.</para>
+		/// <para>This property is useful when the set of unique identifiers references an unknown number of messages, such as a
+		/// <see cref="UniqueIdRange"/> that spans unknown or expunged unique identifiers.</para>
+		/// <note type="note">This feature is only supported by IMAP servers that advertise support for the
+		/// <a href="https://tools.ietf.org/html/rfc9394">PARTIAL</a> extension and can only be used when fetching
+		/// messages by unique identifiers.</note>
+		/// </remarks>
+		/// <value>The range of messages to fetch.</value>
+		PartialRange? Partial { get; set; }
+
+		/// <summary>
 		/// Get or set the message summary items to fetch.
 		/// </summary>
 		/// <remarks>

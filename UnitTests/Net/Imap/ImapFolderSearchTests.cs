@@ -94,6 +94,13 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<ArgumentException> (() => inbox.Search (string.Empty));
 				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SearchAsync (string.Empty));
 
+				Assert.Throws<ArgumentNullException> (() => inbox.Search (SearchOptions.None, (SearchQuery) null, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SearchAsync (SearchOptions.None, (SearchQuery) null, new PartialRange (1, 10)));
+				Assert.Throws<ArgumentException> (() => inbox.Search (SearchOptions.All, SearchQuery.All, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SearchAsync (SearchOptions.All, SearchQuery.All, new PartialRange (1, 10)));
+				Assert.Throws<ArgumentException> (() => inbox.Search (searchOptions, SearchQuery.All, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SearchAsync (searchOptions, SearchQuery.All, new PartialRange (1, 10)));
+
 				// Sort
 				Assert.Throws<ArgumentNullException> (() => inbox.Sort ((SearchQuery) null, orderBy));
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SortAsync ((SearchQuery) null, orderBy));
@@ -131,6 +138,15 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SortAsync ((string) null));
 				Assert.Throws<ArgumentException> (() => inbox.Sort (string.Empty));
 				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SortAsync (string.Empty));
+
+				Assert.Throws<ArgumentNullException> (() => inbox.Sort (SearchOptions.None, (SearchQuery) null, orderBy, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SortAsync (SearchOptions.None, (SearchQuery) null, orderBy, new PartialRange (1, 10)));
+				Assert.Throws<ArgumentNullException> (() => inbox.Sort (SearchOptions.None, SearchQuery.All, null, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentNullException> (async () => await inbox.SortAsync (SearchOptions.None, SearchQuery.All, null, new PartialRange (1, 10)));
+				Assert.Throws<ArgumentException> (() => inbox.Sort (SearchOptions.None, SearchQuery.All, emptyOrderBy, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SortAsync (SearchOptions.None, SearchQuery.All, emptyOrderBy, new PartialRange (1, 10)));
+				Assert.Throws<ArgumentException> (() => inbox.Sort (SearchOptions.All, SearchQuery.All, orderBy, new PartialRange (1, 10)));
+				Assert.ThrowsAsync<ArgumentException> (async () => await inbox.SortAsync (SearchOptions.All, SearchQuery.All, orderBy, new PartialRange (1, 10)));
 
 				// Thread
 				Assert.Throws<ArgumentOutOfRangeException> (() => inbox.Thread ((ThreadingAlgorithm) 500, SearchQuery.All));
@@ -636,6 +652,363 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedBefore (new DateTime (2016, 10, 12))));
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedOn (new DateTime (2016, 10, 12))));
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedSince (new DateTime (2016, 10, 12))));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateSearchPartialCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+partial.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SEARCH RETURN (PARTIAL 1:10) UNDELETED\r\n", "dovecot.search-partial.txt"),
+				new ImapReplayCommand ("A00000006 UID SEARCH RETURN (PARTIAL -1:-10) UNDELETED\r\n", "dovecot.search-partial-negative.txt"),
+				new ImapReplayCommand ("A00000007 UID SEARCH RETURN (COUNT MIN MAX PARTIAL 1:10) UNDELETED\r\n", "dovecot.search-partial-options.txt"),
+				new ImapReplayCommand ("A00000008 UID SEARCH RETURN (PARTIAL 100:110) UNDELETED\r\n", "dovecot.search-partial-nil.txt"),
+			};
+		}
+
+		[Test]
+		public void TestSearchPartial ()
+		{
+			var commands = CreateSearchPartialCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// Search for the oldest 10 results. Note: the server only has 8 matches within the requested range.
+				var matches = inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (1, 10));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 10)), "Partial");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (8), "Unexpected number of UIDs");
+				Assert.That (matches.Count, Is.EqualTo (0), "Count should not be set by a PARTIAL result");
+				Assert.That (matches.Min, Is.Null, "Min");
+				Assert.That (matches.Max, Is.Null, "Max");
+
+				// Search for the newest 10 results.
+				matches = inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (-1, -10));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (-1, -10)), "Partial (negative)");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (10), "Unexpected number of UIDs (negative)");
+				Assert.That (matches.UniqueIds[0].Id, Is.EqualTo (5), "Unexpected first UID (negative)");
+
+				// Combine PARTIAL with COUNT, MIN and MAX.
+				matches = inbox.Search (SearchOptions.Count | SearchOptions.Min | SearchOptions.Max, SearchQuery.NotDeleted, new PartialRange (1, 10));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 10)), "Partial (options)");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (10), "Unexpected number of UIDs (options)");
+				Assert.That (matches.Count, Is.EqualTo (14), "Count");
+				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Min");
+				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Max");
+
+				// Search for a range that is beyond the end of the results.
+				matches = inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (100, 110));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (100, 110)), "Partial (nil)");
+				Assert.That (matches.UniqueIds, Is.Empty, "UniqueIds (nil)");
+
+				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
+				// no longer be supported even though CONTEXT=SEARCH is still advertised...
+				client.Capabilities &= ~ImapCapabilities.Partial;
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (-1, -10)));
+
+				// Now disable the CONTEXT extension as well and try again...
+				client.Capabilities &= ~ImapCapabilities.Context;
+				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (1, 10)));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSearchPartialAsync ()
+		{
+			var commands = CreateSearchPartialCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// Search for the oldest 10 results. Note: the server only has 8 matches within the requested range.
+				var matches = await inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (1, 10));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 10)), "Partial");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (8), "Unexpected number of UIDs");
+				Assert.That (matches.Count, Is.EqualTo (0), "Count should not be set by a PARTIAL result");
+				Assert.That (matches.Min, Is.Null, "Min");
+				Assert.That (matches.Max, Is.Null, "Max");
+
+				// Search for the newest 10 results.
+				matches = await inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (-1, -10));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (-1, -10)), "Partial (negative)");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (10), "Unexpected number of UIDs (negative)");
+				Assert.That (matches.UniqueIds[0].Id, Is.EqualTo (5), "Unexpected first UID (negative)");
+
+				// Combine PARTIAL with COUNT, MIN and MAX.
+				matches = await inbox.SearchAsync (SearchOptions.Count | SearchOptions.Min | SearchOptions.Max, SearchQuery.NotDeleted, new PartialRange (1, 10));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 10)), "Partial (options)");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (10), "Unexpected number of UIDs (options)");
+				Assert.That (matches.Count, Is.EqualTo (14), "Count");
+				Assert.That (matches.Min.Value.Id, Is.EqualTo (1), "Min");
+				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Max");
+
+				// Search for a range that is beyond the end of the results.
+				matches = await inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (100, 110));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (100, 110)), "Partial (nil)");
+				Assert.That (matches.UniqueIds, Is.Empty, "UniqueIds (nil)");
+
+				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
+				// no longer be supported even though CONTEXT=SEARCH is still advertised...
+				client.Capabilities &= ~ImapCapabilities.Partial;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (-1, -10)));
+
+				// Now disable the CONTEXT extension as well and try again...
+				client.Capabilities &= ~ImapCapabilities.Context;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (1, 10)));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateSortPartialCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+partial.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SORT RETURN (PARTIAL 1:5) (REVERSE DATE) US-ASCII UNDELETED\r\n", "dovecot.sort-partial.txt"),
+				new ImapReplayCommand ("A00000006 UID SORT RETURN (COUNT PARTIAL 1:5) (REVERSE DATE) US-ASCII UNDELETED\r\n", "dovecot.sort-partial-count.txt"),
+			};
+		}
+
+		[Test]
+		public void TestSortPartial ()
+		{
+			var commands = CreateSortPartialCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var orderBy = new OrderBy[] { OrderBy.ReverseDate };
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// Sort by reverse date, returning only the first 5 results.
+				var matches = inbox.Sort (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 5)), "Partial");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (5), "Unexpected number of UIDs");
+				Assert.That (matches.UniqueIds[0].Id, Is.EqualTo (14), "Unexpected first UID");
+				Assert.That (matches.UniqueIds[4].Id, Is.EqualTo (6), "Unexpected last UID");
+
+				// Combine PARTIAL with COUNT.
+				matches = inbox.Sort (SearchOptions.Count, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 5)), "Partial (count)");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (5), "Unexpected number of UIDs (count)");
+				Assert.That (matches.Count, Is.EqualTo (14), "Count");
+
+				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
+				// no longer be supported even though CONTEXT=SEARCH is still advertised...
+				client.Capabilities &= ~ImapCapabilities.Partial;
+				Assert.Throws<NotSupportedException> (() => inbox.Sort (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (-1, -5)));
+
+				// Now disable the CONTEXT extension as well and try again...
+				client.Capabilities &= ~ImapCapabilities.Context;
+				Assert.Throws<NotSupportedException> (() => inbox.Sort (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5)));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSortPartialAsync ()
+		{
+			var commands = CreateSortPartialCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var orderBy = new OrderBy[] { OrderBy.ReverseDate };
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// Sort by reverse date, returning only the first 5 results.
+				var matches = await inbox.SortAsync (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 5)), "Partial");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (5), "Unexpected number of UIDs");
+				Assert.That (matches.UniqueIds[0].Id, Is.EqualTo (14), "Unexpected first UID");
+				Assert.That (matches.UniqueIds[4].Id, Is.EqualTo (6), "Unexpected last UID");
+
+				// Combine PARTIAL with COUNT.
+				matches = await inbox.SortAsync (SearchOptions.Count, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5));
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 5)), "Partial (count)");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (5), "Unexpected number of UIDs (count)");
+				Assert.That (matches.Count, Is.EqualTo (14), "Count");
+
+				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
+				// no longer be supported even though CONTEXT=SEARCH is still advertised...
+				client.Capabilities &= ~ImapCapabilities.Partial;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SortAsync (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (-1, -5)));
+
+				// Now disable the CONTEXT extension as well and try again...
+				client.Capabilities &= ~ImapCapabilities.Context;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SortAsync (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5)));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateSearchRawPartialResponseCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID SEARCH RETURN (PARTIAL 1:10) ALL\r\n", "dovecot.search-partial.txt"),
+			};
+		}
+
+		[Test]
+		public void TestSearchRawPartialResponse ()
+		{
+			var commands = CreateSearchRawPartialResponseCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// Note: even though the server does not advertise the PARTIAL extension, the ESEARCH
+				// response parser should be able to handle a PARTIAL result for a raw search query.
+				var matches = inbox.Search ("RETURN (PARTIAL 1:10) ALL");
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 10)), "Partial");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (8), "Unexpected number of UIDs");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestSearchRawPartialResponseAsync ()
+		{
+			var commands = CreateSearchRawPartialResponseCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// Note: even though the server does not advertise the PARTIAL extension, the ESEARCH
+				// response parser should be able to handle a PARTIAL result for a raw search query.
+				var matches = await inbox.SearchAsync ("RETURN (PARTIAL 1:10) ALL");
+				Assert.That (matches.Partial, Is.EqualTo (new PartialRange (1, 10)), "Partial");
+				Assert.That (matches.UniqueIds, Has.Count.EqualTo (8), "Unexpected number of UIDs");
 
 				await client.DisconnectAsync (false);
 			}

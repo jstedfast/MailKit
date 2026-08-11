@@ -25,7 +25,7 @@
 //
 
 // https://datatracker.ietf.org/doc/search/?name=IMAP&rfcs=on&activedrafts=on&by=group
-// TODO: rfc9208 and rfc9394
+// TODO: rfc9208
 
 using System;
 
@@ -343,6 +343,11 @@ namespace MailKit.Net.Imap {
 		/// The server supports the <a href="https://tools.ietf.org/html/rfc8970">PREVIEW</a> extension.
 		/// </summary>
 		Preview          = 1L << 58,
+
+		/// <summary>
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc9394">PARTIAL</a> extension.
+		/// </summary>
+		Partial          = 1L << 59,
 
 		#region GMail Extensions
 

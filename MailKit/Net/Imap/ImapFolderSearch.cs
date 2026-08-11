@@ -574,6 +574,28 @@ namespace MailKit.Net.Imap
 						results.Count = uids.Count;
 
 					results.UniqueIds = uids;
+				} else if (atom.Equals ("PARTIAL", StringComparison.OrdinalIgnoreCase)) {
+					// RFC 9394: PARTIAL (<range> <uid-set or NIL>)
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+					if (!PartialRange.TryParse ((string) token.Value, out var range))
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					results.Partial = range;
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					// Note: a NIL token indicates that no results correspond to the requested range.
+					if (token.Type != ImapTokenType.Nil)
+						results.UniqueIds = ImapEngine.ParseUidSet (token, folder.UidValidity, out _, out _, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 				} else {
 					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 				}
@@ -705,6 +727,28 @@ namespace MailKit.Net.Imap
 						results.Count = uids.Count;
 
 					results.UniqueIds = uids;
+				} else if (atom.Equals ("PARTIAL", StringComparison.OrdinalIgnoreCase)) {
+					// RFC 9394: PARTIAL (<range> <uid-set or NIL>)
+					ImapEngine.AssertToken (token, ImapTokenType.OpenParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+					if (!PartialRange.TryParse ((string) token.Value, out var range))
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					results.Partial = range;
+
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					// Note: a NIL token indicates that no results correspond to the requested range.
+					if (token.Type != ImapTokenType.Nil)
+						results.UniqueIds = ImapEngine.ParseUidSet (token, folder.UidValidity, out _, out _, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+
+					token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
+					ImapEngine.AssertToken (token, ImapTokenType.CloseParen, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 				} else {
 					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 				}
@@ -990,7 +1034,7 @@ namespace MailKit.Net.Imap
 			return ProcessSearchResponse (ic);
 		}
 
-		ImapCommand QueueSearchCommand (SearchOptions options, SearchQuery query, CancellationToken cancellationToken, out string? charset)
+		ImapCommand QueueSearchCommand (SearchOptions options, SearchQuery query, PartialRange? partial, CancellationToken cancellationToken, out string? charset)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -1000,12 +1044,24 @@ namespace MailKit.Net.Imap
 			if (options != SearchOptions.None && (Engine.Capabilities & ImapCapabilities.ESearch) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ESEARCH extension.");
 
+			if (partial.HasValue) {
+				// Note: RFC 9394 advertises the "PARTIAL" capability while RFC 5267 defines the same PARTIAL
+				// search return option under the "CONTEXT=SEARCH" capability.
+				if ((Engine.Capabilities & ImapCapabilities.Partial) == 0 &&
+					((Engine.Capabilities & ImapCapabilities.Context) == 0 || !Engine.SupportedContexts.Contains ("SEARCH")))
+					throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
+
+				// Note: Negative partial ranges were introduced in RFC 9394 and are not defined by RFC 5267.
+				if (partial.Value.First < 0 && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+					throw new NotSupportedException ("The IMAP server does not support negative partial ranges.");
+			}
+
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH ";
 
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0) {
+			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0 || partial.HasValue) {
 				command += "RETURN (";
 
 				if (options != SearchOptions.All && options != SearchOptions.None) {
@@ -1019,7 +1075,15 @@ namespace MailKit.Net.Imap
 						command += "MIN ";
 					if ((options & SearchOptions.Max) != 0)
 						command += "MAX ";
-					command = command.TrimEnd ();
+
+					if (partial.HasValue)
+						command += "PARTIAL " + partial.Value;
+					else
+						command = command.TrimEnd ();
+				} else if (partial.HasValue) {
+					// Note: A single command MUST NOT contain more than one PARTIAL or ALL search return
+					// option; the SearchOptions.All flag is rejected before we get this far.
+					command += "PARTIAL " + partial.Value;
 				} else {
 					command += "ALL";
 				}
@@ -1036,7 +1100,7 @@ namespace MailKit.Net.Imap
 				UserData = new SearchResults (UidValidity, SortOrder.Ascending)
 			};
 
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0 || partial.HasValue)
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 
 			// Note: always register the untagged SEARCH handler because some servers will brokenly
@@ -1067,16 +1131,16 @@ namespace MailKit.Net.Imap
 			return true;
 		}
 
-		SearchResults Search (SearchOptions options, SearchQuery query, bool retry, CancellationToken cancellationToken)
+		SearchResults Search (SearchOptions options, SearchQuery query, PartialRange? partial, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSearchCommand (options, query, cancellationToken, out string? charset);
+			var ic = QueueSearchCommand (options, query, partial, cancellationToken, out string? charset);
 
 			Engine.Run (ic);
 
 			if (TryProcessSearchResponse (ic, charset, retry, out var results))
 				return results;
 
-			return Search (options, query, false, cancellationToken);
+			return Search (options, query, partial, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -1124,19 +1188,19 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default)
 		{
-			return Search (options, query, true, cancellationToken);
+			return Search (options, query, null, true, cancellationToken);
 		}
 
-		async Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, bool retry, CancellationToken cancellationToken)
+		async Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, PartialRange? partial, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSearchCommand (options, query, cancellationToken, out string? charset);
+			var ic = QueueSearchCommand (options, query, partial, cancellationToken, out string? charset);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			if (TryProcessSearchResponse (ic, charset, retry, out var results))
 				return results;
 
-			return await SearchAsync (options, query, false, cancellationToken).ConfigureAwait (false);
+			return await SearchAsync (options, query, partial, false, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -1184,7 +1248,137 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default)
 		{
-			return SearchAsync (options, query, true, cancellationToken);
+			return SearchAsync (options, query, null, true, cancellationToken);
+		}
+
+		/// <summary>
+		/// Search the folder for messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the oldest matching
+		/// message while negative positions are relative to the newest matching message. For example, a range of
+		/// <c>1:500</c> will return the oldest 500 results while a range of <c>-1:-500</c> will return the newest
+		/// 500 results.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the ESEARCH extension.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the PARTIAL extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override SearchResults Search (SearchOptions options, SearchQuery query, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			return Search (options, query, partial, true, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously search the folder for messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the oldest matching
+		/// message while negative positions are relative to the newest matching message. For example, a range of
+		/// <c>1:500</c> will return the oldest 500 results while a range of <c>-1:-500</c> will return the newest
+		/// 500 results.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the ESEARCH extension.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the PARTIAL extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			return SearchAsync (options, query, partial, true, cancellationToken);
 		}
 
 		ImapCommand QueueSortCommand (string query, CancellationToken cancellationToken)
@@ -1520,7 +1714,7 @@ namespace MailKit.Net.Imap
 			return SortAsync (query, orderBy, true, cancellationToken);
 		}
 
-		ImapCommand QueueSortCommand (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken, out string? charset)
+		ImapCommand QueueSortCommand (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange? partial, CancellationToken cancellationToken, out string? charset)
 		{
 			if (query == null)
 				throw new ArgumentNullException (nameof (query));
@@ -1536,13 +1730,26 @@ namespace MailKit.Net.Imap
 			if (options != SearchOptions.None && (Engine.Capabilities & ImapCapabilities.ESort) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ESORT extension.");
 
+			if (partial.HasValue) {
+				// Note: RFC 5267 strictly defines the PARTIAL sort return option under the "CONTEXT=SORT"
+				// capability. In practice, however, servers such as Dovecot share their search return option
+				// implementation between the SEARCH and SORT commands and advertise only "CONTEXT=SEARCH"
+				// and/or "PARTIAL" while accepting the PARTIAL return option for both commands.
+				if ((Engine.Capabilities & (ImapCapabilities.Partial | ImapCapabilities.Context)) == 0)
+					throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
+
+				// Note: Negative partial ranges were introduced in RFC 9394 and are not defined by RFC 5267.
+				if (partial.Value.First < 0 && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+					throw new NotSupportedException ("The IMAP server does not support negative partial ranges.");
+			}
+
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
 			var command = "UID SORT ";
 
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0) {
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0 || partial.HasValue) {
 				command += "RETURN (";
 
 				if (options != SearchOptions.All && options != SearchOptions.None) {
@@ -1556,7 +1763,15 @@ namespace MailKit.Net.Imap
 						command += "MIN ";
 					if ((options & SearchOptions.Max) != 0)
 						command += "MAX ";
-					command = command.TrimEnd ();
+
+					if (partial.HasValue)
+						command += "PARTIAL " + partial.Value;
+					else
+						command = command.TrimEnd ();
+				} else if (partial.HasValue) {
+					// Note: A single command MUST NOT contain more than one PARTIAL or ALL search return
+					// option; the SearchOptions.All flag is rejected before we get this far.
+					command += "PARTIAL " + partial.Value;
 				} else {
 					command += "ALL";
 				}
@@ -1570,7 +1785,7 @@ namespace MailKit.Net.Imap
 				UserData = new SearchResults (UidValidity)
 			};
 
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0 || partial.HasValue)
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 			else
 				ic.RegisterUntaggedHandler ("SORT", UntaggedSearchHandler);
@@ -1598,16 +1813,16 @@ namespace MailKit.Net.Imap
 			return true;
 		}
 
-		SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, bool retry, CancellationToken cancellationToken)
+		SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange? partial, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSortCommand (options, query, orderBy, cancellationToken, out string? charset);
+			var ic = QueueSortCommand (options, query, orderBy, partial, cancellationToken, out string? charset);
 
 			Engine.Run (ic);
 
 			if (TryProcessSortResponse (ic, charset, retry, out SearchResults? results))
 				return results;
 
-			return Sort (options, query, orderBy, false, cancellationToken);
+			return Sort (options, query, orderBy, partial, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -1660,19 +1875,19 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
-			return Sort (options, query, orderBy, true, cancellationToken);
+			return Sort (options, query, orderBy, null, true, cancellationToken);
 		}
 
-		async Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, bool retry, CancellationToken cancellationToken)
+		async Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange? partial, bool retry, CancellationToken cancellationToken)
 		{
-			var ic = QueueSortCommand (options, query, orderBy, cancellationToken, out string? charset);
+			var ic = QueueSortCommand (options, query, orderBy, partial, cancellationToken, out string? charset);
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			if (TryProcessSortResponse (ic, charset, retry, out SearchResults? results))
 				return results;
 
-			return await SortAsync (options, query, orderBy, false, cancellationToken).ConfigureAwait (false);
+			return await SortAsync (options, query, orderBy, partial, false, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>
@@ -1725,7 +1940,145 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default)
 		{
-			return SortAsync (options, query, orderBy, true, cancellationToken);
+			return SortAsync (options, query, orderBy, null, true, cancellationToken);
+		}
+
+		/// <summary>
+		/// Sort messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range in the specified sort order.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the first result
+		/// in the sort order while negative positions are relative to the last result. For example, a range of
+		/// <c>1:50</c> will return the first 50 results in the specified sort order.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the ESORT extension.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the PARTIAL extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			return Sort (options, query, orderBy, partial, true, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously sort messages matching the specified query, returning only the specified range of results.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously searches the folder for messages matching the specified query, returning only the
+		/// search results within the specified range in the specified sort order.</para>
+		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the first result
+		/// in the sort order while negative positions are relative to the last result. For example, a range of
+		/// <c>1:50</c> will return the first 50 results in the specified sort order.</para>
+		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
+		/// fall within the range (if any).</note>
+		/// </remarks>
+		/// <returns>The search results.</returns>
+		/// <param name="options">The search options.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
+		/// with a partial range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <see langword="null" />.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the ESORT extension.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the PARTIAL extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partial, CancellationToken cancellationToken = default)
+		{
+			if ((options & SearchOptions.All) != 0)
+				throw new ArgumentException ("The SearchOptions.All flag cannot be combined with a partial range.", nameof (options));
+
+			return SortAsync (options, query, orderBy, partial, true, cancellationToken);
 		}
 
 		ImapCommand QueueThreadCommand (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken, out string? charset)
