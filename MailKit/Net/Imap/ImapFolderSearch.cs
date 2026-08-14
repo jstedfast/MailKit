@@ -1059,44 +1059,51 @@ namespace MailKit.Net.Imap
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID SEARCH ";
+			var command = new StringBuilder ("UID SEARCH ");
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0 || partialRange.HasValue) {
-				command += "RETURN (";
+				command.Append ("RETURN (");
 
 				if (options != SearchOptions.All && options != SearchOptions.None) {
 					if ((options & SearchOptions.All) != 0)
-						command += "ALL ";
+						command.Append ("ALL ");
 					if ((options & SearchOptions.Relevancy) != 0)
-						command += "RELEVANCY ";
+						command.Append ("RELEVANCY ");
 					if ((options & SearchOptions.Count) != 0)
-						command += "COUNT ";
+						command.Append ("COUNT ");
 					if ((options & SearchOptions.Min) != 0)
-						command += "MIN ";
+						command.Append ("MIN ");
 					if ((options & SearchOptions.Max) != 0)
-						command += "MAX ";
+						command.Append ("MAX ");
 
-					if (partialRange.HasValue)
-						command += "PARTIAL " + partialRange.Value;
-					else
-						command = command.TrimEnd ();
+					if (partialRange.HasValue) {
+						command.Append ("PARTIAL ");
+						command.Append (partialRange.Value);
+					} else if (command[command.Length - 1] == ' ') {
+						command.Length--;
+					}
 				} else if (partialRange.HasValue) {
 					// Note: A single command MUST NOT contain more than one PARTIAL or ALL search return
 					// option; the SearchOptions.All flag is rejected before we get this far.
-					command += "PARTIAL " + partialRange.Value;
+					command.Append ("PARTIAL ");
+					command.Append (partialRange.Value);
 				} else {
-					command += "ALL";
+					command.Append ("ALL");
 				}
 
-				command += ") ";
+				command.Append (") ");
 			}
 
-			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
-				command += "CHARSET " + charset + " ";
+			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled) {
+				command.Append ("CHARSET ");
+				command.Append (charset);
+				command.Append (' ');
+			}
 
-			command += expr + "\r\n";
+			command.Append (expr);
+			command.Append ("\r\n");
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ()) {
+			var ic = new ImapCommand (Engine, cancellationToken, this, command.ToString (), args.ToArray ()) {
 				UserData = new SearchResults (UidValidity, SortOrder.Ascending)
 			};
 
@@ -1545,14 +1552,19 @@ namespace MailKit.Net.Imap
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
-			var command = "UID SORT ";
+			var command = new StringBuilder ("UID SORT ");
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
-				command += "RETURN (ALL) ";
+				command.Append ("RETURN (ALL) ");
 
-			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
+			command.Append (order);
+			command.Append (' ');
+			command.Append (charset ?? "US-ASCII");
+			command.Append (' ');
+			command.Append (expr);
+			command.Append ("\r\n");
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ()) {
+			var ic = new ImapCommand (Engine, cancellationToken, this, command.ToString (), args.ToArray ()) {
 				UserData = new SearchResults (UidValidity)
 			};
 
@@ -1747,41 +1759,49 @@ namespace MailKit.Net.Imap
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
-			var command = "UID SORT ";
+			var command = new StringBuilder ("UID SORT ");
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0 || partialRange.HasValue) {
-				command += "RETURN (";
+				command.Append ("RETURN (");
 
 				if (options != SearchOptions.All && options != SearchOptions.None) {
 					if ((options & SearchOptions.All) != 0)
-						command += "ALL ";
+						command.Append ("ALL ");
 					if ((options & SearchOptions.Relevancy) != 0)
-						command += "RELEVANCY ";
+						command.Append ("RELEVANCY ");
 					if ((options & SearchOptions.Count) != 0)
-						command += "COUNT ";
+						command.Append ("COUNT ");
 					if ((options & SearchOptions.Min) != 0)
-						command += "MIN ";
+						command.Append ("MIN ");
 					if ((options & SearchOptions.Max) != 0)
-						command += "MAX ";
+						command.Append ("MAX ");
 
-					if (partialRange.HasValue)
-						command += "PARTIAL " + partialRange.Value;
-					else
-						command = command.TrimEnd ();
+					if (partialRange.HasValue) {
+						command.Append ("PARTIAL ");
+						command.Append (partialRange.Value);
+					} else if (command[command.Length - 1] == ' ') {
+						command.Length--;
+					}
 				} else if (partialRange.HasValue) {
 					// Note: A single command MUST NOT contain more than one PARTIAL or ALL search return
 					// option; the SearchOptions.All flag is rejected before we get this far.
-					command += "PARTIAL " + partialRange.Value;
+					command.Append ("PARTIAL ");
+					command.Append (partialRange.Value);
 				} else {
-					command += "ALL";
+					command.Append ("ALL");
 				}
 
-				command += ") ";
+				command.Append (") ");
 			}
 
-			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
+			command.Append (order);
+			command.Append (' ');
+			command.Append (charset ?? "US-ASCII");
+			command.Append (' ');
+			command.Append (expr);
+			command.Append ("\r\n");
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ()) {
+			var ic = new ImapCommand (Engine, cancellationToken, this, command.ToString (), args.ToArray ()) {
 				UserData = new SearchResults (UidValidity)
 			};
 
@@ -2098,9 +2118,7 @@ namespace MailKit.Net.Imap
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID THREAD " + method + " " + (charset ?? "US-ASCII") + " ";
-
-			command += expr + "\r\n";
+			var command = $"UID THREAD {method} {charset ?? "US-ASCII"} {expr}\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("THREAD", ImapUtils.UntaggedThreadHandler);
@@ -2280,9 +2298,7 @@ namespace MailKit.Net.Imap
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID THREAD " + method + " " + (charset ?? "US-ASCII") + " ";
-
-			command += "UID " + set + " " + expr + "\r\n";
+			var command = $"UID THREAD {method} {charset ?? "US-ASCII"} UID {set} {expr}\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("THREAD", ImapUtils.UntaggedThreadHandler);
