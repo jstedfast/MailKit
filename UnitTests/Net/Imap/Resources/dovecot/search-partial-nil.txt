@@ -1,0 +1,2 @@
+* ESEARCH (TAG "A########") UID PARTIAL (100:110 NIL)
+A######## OK Search completed (0.000 + 0.000 secs).

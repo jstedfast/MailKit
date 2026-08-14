@@ -466,7 +466,341 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => inbox.Fetch (uids, modseq, MessageSummaryItems.All, fields));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.FetchAsync (uids, modseq, MessageSummaryItems.All, fields));
 
+				var partialRequest = new FetchRequest (MessageSummaryItems.Flags) { Partial = new PartialRange (1, 10) };
+				Assert.Throws<NotSupportedException> (() => inbox.Fetch (uids, partialRequest));
+				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.FetchAsync (uids, partialRequest));
+				Assert.Throws<NotSupportedException> (() => inbox.Fetch (indexes, partialRequest));
+				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.FetchAsync (indexes, partialRequest));
+				Assert.Throws<NotSupportedException> (() => inbox.Fetch (0, -1, partialRequest));
+				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.FetchAsync (0, -1, partialRequest));
+
 				client.Disconnect (false);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateFetchPartialCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+partial.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000005 UID FETCH 1:* (UID FLAGS) (PARTIAL -1:-3)\r\n", "dovecot.fetch-partial.txt"),
+				new ImapReplayCommand ("A00000006 UID FETCH 1:* (UID FLAGS MODSEQ) (CHANGEDSINCE 2 PARTIAL 1:3)\r\n", "dovecot.fetch-partial-changedsince.txt"),
+			};
+		}
+
+		[Test]
+		public void TestFetchPartial ()
+		{
+			var commands = CreateFetchPartialCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// Fetch the summary information for the newest 3 messages.
+				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
+					Partial = new PartialRange (-1, -3)
+				};
+				var messages = inbox.Fetch (UniqueIdRange.All, request);
+				Assert.That (messages, Has.Count.EqualTo (3), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (6), "UniqueId");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (8), "UniqueId");
+
+				// Fetch the summary information for the oldest 3 messages that have changed since MODSEQ 2.
+				request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
+					ChangedSince = 2,
+					Partial = new PartialRange (1, 3)
+				};
+				messages = inbox.Fetch (UniqueIdRange.All, request);
+				Assert.That (messages, Has.Count.EqualTo (3), "Count (changedsince)");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId (changedsince)");
+
+				// Now disable the PARTIAL extension and try again...
+				client.Capabilities &= ~ImapCapabilities.Partial;
+				Assert.Throws<NotSupportedException> (() => inbox.Fetch (UniqueIdRange.All, request));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchPartialAsync ()
+		{
+			var commands = CreateFetchPartialCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// Fetch the summary information for the newest 3 messages.
+				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
+					Partial = new PartialRange (-1, -3)
+				};
+				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
+				Assert.That (messages, Has.Count.EqualTo (3), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (6), "UniqueId");
+				Assert.That (messages[2].UniqueId.Id, Is.EqualTo (8), "UniqueId");
+
+				// Fetch the summary information for the oldest 3 messages that have changed since MODSEQ 2.
+				request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
+					ChangedSince = 2,
+					Partial = new PartialRange (1, 3)
+				};
+				messages = await inbox.FetchAsync (UniqueIdRange.All, request);
+				Assert.That (messages, Has.Count.EqualTo (3), "Count (changedsince)");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId (changedsince)");
+
+				// Now disable the PARTIAL extension and try again...
+				client.Capabilities &= ~ImapCapabilities.Partial;
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.FetchAsync (UniqueIdRange.All, request));
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateFetchPartialQresyncCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+partial.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 ENABLE QRESYNC CONDSTORE\r\n", "dovecot.enable-qresync.txt"),
+				new ImapReplayCommand ("A00000005 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 UID FETCH 1:* (UID FLAGS MODSEQ) (CHANGEDSINCE 2 VANISHED PARTIAL -1:-3)\r\n", "dovecot.fetch-partial-vanished.txt"),
+			};
+		}
+
+		[Test]
+		public void TestFetchPartialQresync ()
+		{
+			var commands = CreateFetchPartialQresyncCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				client.EnableQuickResync ();
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				int vanished = 0;
+				inbox.MessagesVanished += (sender, e) => {
+					vanished += e.UniqueIds.Count;
+				};
+
+				// Fetch the summary information for the newest 3 messages that have changed since MODSEQ 2.
+				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
+					ChangedSince = 2,
+					Partial = new PartialRange (-1, -3)
+				};
+				var messages = inbox.Fetch (UniqueIdRange.All, request);
+				Assert.That (messages, Has.Count.EqualTo (3), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (6), "UniqueId");
+				Assert.That (vanished, Is.EqualTo (1), "Vanished");
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchPartialQresyncAsync ()
+		{
+			var commands = CreateFetchPartialQresyncCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				await client.EnableQuickResyncAsync ();
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				int vanished = 0;
+				inbox.MessagesVanished += (sender, e) => {
+					vanished += e.UniqueIds.Count;
+				};
+
+				// Fetch the summary information for the newest 3 messages that have changed since MODSEQ 2.
+				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
+					ChangedSince = 2,
+					Partial = new PartialRange (-1, -3)
+				};
+				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
+				Assert.That (messages, Has.Count.EqualTo (3), "Count");
+				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (6), "UniqueId");
+				Assert.That (vanished, Is.EqualTo (1), "Vanished");
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateFetchPartialTooManyUidsCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+partial.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+			};
+		}
+
+		[Test]
+		public void TestFetchPartialTooManyUids ()
+		{
+			var commands = CreateFetchPartialTooManyUidsCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				// Note: use a huge list of non-contiguous UIDs so that the UID set cannot fit within
+				// a single FETCH command.
+				var uids = new List<UniqueId> ();
+				for (uint id = 1; id < 40000; id += 2)
+					uids.Add (new UniqueId (id));
+
+				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
+					Partial = new PartialRange (1, 100)
+				};
+
+				Assert.Throws<NotSupportedException> (() => inbox.Fetch (uids, request));
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestFetchPartialTooManyUidsAsync ()
+		{
+			var commands = CreateFetchPartialTooManyUidsCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var credentials = new NetworkCredential ("username", "password");
+
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync (credentials);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				// Note: use a huge list of non-contiguous UIDs so that the UID set cannot fit within
+				// a single FETCH command.
+				var uids = new List<UniqueId> ();
+				for (uint id = 1; id < 40000; id += 2)
+					uids.Add (new UniqueId (id));
+
+				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
+					Partial = new PartialRange (1, 100)
+				};
+
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.FetchAsync (uids, request));
+
+				await client.DisconnectAsync (false);
 			}
 		}
 

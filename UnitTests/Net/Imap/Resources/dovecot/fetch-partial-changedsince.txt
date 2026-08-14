@@ -1,0 +1,4 @@
+* 1 FETCH (UID 1 FLAGS (\Seen) MODSEQ (4))
+* 2 FETCH (UID 2 FLAGS (\Seen) MODSEQ (4))
+* 3 FETCH (UID 3 FLAGS (\Seen) MODSEQ (4))
+A######## OK Fetch completed (0.001 + 0.000 secs).

@@ -1,0 +1,4 @@
+* 6 FETCH (UID 6 FLAGS (\Seen))
+* 7 FETCH (UID 7 FLAGS (\Seen))
+* 8 FETCH (UID 8 FLAGS (\Seen))
+A######## OK Fetch completed (0.001 + 0.000 secs).

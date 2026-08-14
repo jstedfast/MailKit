@@ -125,5 +125,22 @@ namespace MailKit.Search {
 		public IList<byte>? Relevancy {
 			get; set;
 		}
+
+		/// <summary>
+		/// Get or set the range of results that the search results were limited to.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets the range of results that the search results were limited to.</para>
+		/// <para>If a partial range was requested and the server supports the
+		/// <a href="https://tools.ietf.org/html/rfc9394">PARTIAL</a> extension, then this property
+		/// will be set to the requested range as echoed back by the server and <see cref="UniqueIds"/>
+		/// will only contain the unique identifiers within that range. If the range references results
+		/// beyond the end of the complete set of matching messages, then <see cref="UniqueIds"/> may
+		/// contain fewer results than the extent of the range (or none at all).</para>
+		/// </remarks>
+		/// <value>The range of results if the <c>PARTIAL</c> search return option was used; otherwise, <see langword="null" />.</value>
+		public PartialRange? Partial {
+			get; set;
+		}
 	}
 }
