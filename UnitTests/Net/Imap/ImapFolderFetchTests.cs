@@ -466,7 +466,7 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => inbox.Fetch (uids, modseq, MessageSummaryItems.All, fields));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.FetchAsync (uids, modseq, MessageSummaryItems.All, fields));
 
-				var partialRequest = new FetchRequest (MessageSummaryItems.Flags) { Partial = new PartialRange (1, 10) };
+				var partialRequest = new FetchRequest (MessageSummaryItems.Flags) { PartialRange = new PartialRange (1, 10) };
 				Assert.Throws<NotSupportedException> (() => inbox.Fetch (uids, partialRequest));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await inbox.FetchAsync (uids, partialRequest));
 				Assert.Throws<NotSupportedException> (() => inbox.Fetch (indexes, partialRequest));
@@ -522,7 +522,7 @@ namespace UnitTests.Net.Imap {
 
 				// Fetch the summary information for the newest 3 messages.
 				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
-					Partial = new PartialRange (-1, -3)
+					PartialRange = new PartialRange (-1, -3)
 				};
 				var messages = inbox.Fetch (UniqueIdRange.All, request);
 				Assert.That (messages, Has.Count.EqualTo (3), "Count");
@@ -532,7 +532,7 @@ namespace UnitTests.Net.Imap {
 				// Fetch the summary information for the oldest 3 messages that have changed since MODSEQ 2.
 				request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
 					ChangedSince = 2,
-					Partial = new PartialRange (1, 3)
+					PartialRange = new PartialRange (1, 3)
 				};
 				messages = inbox.Fetch (UniqueIdRange.All, request);
 				Assert.That (messages, Has.Count.EqualTo (3), "Count (changedsince)");
@@ -576,7 +576,7 @@ namespace UnitTests.Net.Imap {
 
 				// Fetch the summary information for the newest 3 messages.
 				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
-					Partial = new PartialRange (-1, -3)
+					PartialRange = new PartialRange (-1, -3)
 				};
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
 				Assert.That (messages, Has.Count.EqualTo (3), "Count");
@@ -586,7 +586,7 @@ namespace UnitTests.Net.Imap {
 				// Fetch the summary information for the oldest 3 messages that have changed since MODSEQ 2.
 				request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
 					ChangedSince = 2,
-					Partial = new PartialRange (1, 3)
+					PartialRange = new PartialRange (1, 3)
 				};
 				messages = await inbox.FetchAsync (UniqueIdRange.All, request);
 				Assert.That (messages, Has.Count.EqualTo (3), "Count (changedsince)");
@@ -650,7 +650,7 @@ namespace UnitTests.Net.Imap {
 				// Fetch the summary information for the newest 3 messages that have changed since MODSEQ 2.
 				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
 					ChangedSince = 2,
-					Partial = new PartialRange (-1, -3)
+					PartialRange = new PartialRange (-1, -3)
 				};
 				var messages = inbox.Fetch (UniqueIdRange.All, request);
 				Assert.That (messages, Has.Count.EqualTo (3), "Count");
@@ -697,7 +697,7 @@ namespace UnitTests.Net.Imap {
 				// Fetch the summary information for the newest 3 messages that have changed since MODSEQ 2.
 				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.ModSeq) {
 					ChangedSince = 2,
-					Partial = new PartialRange (-1, -3)
+					PartialRange = new PartialRange (-1, -3)
 				};
 				var messages = await inbox.FetchAsync (UniqueIdRange.All, request);
 				Assert.That (messages, Has.Count.EqualTo (3), "Count");
@@ -753,7 +753,7 @@ namespace UnitTests.Net.Imap {
 					uids.Add (new UniqueId (id));
 
 				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
-					Partial = new PartialRange (1, 100)
+					PartialRange = new PartialRange (1, 100)
 				};
 
 				Assert.Throws<NotSupportedException> (() => inbox.Fetch (uids, request));
@@ -795,7 +795,7 @@ namespace UnitTests.Net.Imap {
 					uids.Add (new UniqueId (id));
 
 				var request = new FetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags) {
-					Partial = new PartialRange (1, 100)
+					PartialRange = new PartialRange (1, 100)
 				};
 
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.FetchAsync (uids, request));

@@ -8173,18 +8173,18 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Searches the folder for messages matching the specified query, returning only the
 		/// search results within the specified range.</para>
-		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the oldest matching
+		/// <para>Positive positions within the <paramref name="partialRange"/> range are relative to the oldest matching
 		/// message while negative positions are relative to the newest matching message. For example, a range of
 		/// <c>1:500</c> will return the oldest 500 results while a range of <c>-1:-500</c> will return the newest
 		/// 500 results.</para>
-		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// <note type="note">If the range specified by <paramref name="partialRange"/> references results beyond the end
 		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
 		/// fall within the range (if any).</note>
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
 		/// <param name="query">The search query.</param>
-		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="partialRange">The partial range of search results to return.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
@@ -8224,7 +8224,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		SearchResults Search (SearchOptions options, SearchQuery query, PartialRange partial, CancellationToken cancellationToken = default);
+		SearchResults Search (SearchOptions options, SearchQuery query, PartialRange partialRange, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query, returning only the specified range of results.
@@ -8232,18 +8232,18 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Asynchronously searches the folder for messages matching the specified query, returning only the
 		/// search results within the specified range.</para>
-		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the oldest matching
+		/// <para>Positive positions within the <paramref name="partialRange"/> range are relative to the oldest matching
 		/// message while negative positions are relative to the newest matching message. For example, a range of
 		/// <c>1:500</c> will return the oldest 500 results while a range of <c>-1:-500</c> will return the newest
 		/// 500 results.</para>
-		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// <note type="note">If the range specified by <paramref name="partialRange"/> references results beyond the end
 		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
 		/// fall within the range (if any).</note>
 		/// </remarks>
 		/// <returns>The search results.</returns>
 		/// <param name="options">The search options.</param>
 		/// <param name="query">The search query.</param>
-		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="partialRange">The partial range of search results to return.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
@@ -8283,7 +8283,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, PartialRange partial, CancellationToken cancellationToken = default);
+		Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, PartialRange partialRange, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
@@ -8715,10 +8715,10 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Searches the folder for messages matching the specified query, returning only the
 		/// search results within the specified range in the specified sort order.</para>
-		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the first result
+		/// <para>Positive positions within the <paramref name="partialRange"/> range are relative to the first result
 		/// in the sort order while negative positions are relative to the last result. For example, a range of
 		/// <c>1:50</c> will return the first 50 results in the specified sort order.</para>
-		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// <note type="note">If the range specified by <paramref name="partialRange"/> references results beyond the end
 		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
 		/// fall within the range (if any).</note>
 		/// </remarks>
@@ -8726,7 +8726,7 @@ namespace MailKit {
 		/// <param name="options">The search options.</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
-		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="partialRange">The partial range of search results to return.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
@@ -8770,7 +8770,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partial, CancellationToken cancellationToken = default);
+		SearchResults Sort (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partialRange, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously sort messages matching the specified query, returning only the specified range of results.
@@ -8778,10 +8778,10 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Asynchronously searches the folder for messages matching the specified query, returning only the
 		/// search results within the specified range in the specified sort order.</para>
-		/// <para>Positive positions within the <paramref name="partial"/> range are relative to the first result
+		/// <para>Positive positions within the <paramref name="partialRange"/> range are relative to the first result
 		/// in the sort order while negative positions are relative to the last result. For example, a range of
 		/// <c>1:50</c> will return the first 50 results in the specified sort order.</para>
-		/// <note type="note">If the range specified by <paramref name="partial"/> references results beyond the end
+		/// <note type="note">If the range specified by <paramref name="partialRange"/> references results beyond the end
 		/// of the complete set of matching messages, then the results will only contain the unique identifiers that
 		/// fall within the range (if any).</note>
 		/// </remarks>
@@ -8789,7 +8789,7 @@ namespace MailKit {
 		/// <param name="options">The search options.</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
-		/// <param name="partial">The range of search results to return.</param>
+		/// <param name="partialRange">The partial range of search results to return.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="options"/> contains the <see cref="SearchOptions.All"/> flag, which cannot be combined
@@ -8833,7 +8833,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partial, CancellationToken cancellationToken = default);
+		Task<SearchResults> SortAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, PartialRange partialRange, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Sort messages matching the specified query.

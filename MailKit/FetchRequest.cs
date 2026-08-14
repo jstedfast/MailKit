@@ -119,10 +119,10 @@ namespace MailKit {
 		public ulong? ChangedSince { get; set; }
 
 		/// <summary>
-		/// Get or set the range of messages to fetch.
+		/// Get or set the partial range of messages to fetch.
 		/// </summary>
 		/// <remarks>
-		/// <para>Gets or sets the range of messages to fetch.</para>
+		/// <para>Gets or sets the partial range of messages to fetch.</para>
 		/// <para>If this property is set, the results returned by
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;, IFetchRequest, System.Threading.CancellationToken)"/>
 		/// or <see cref="IMailFolder.FetchAsync(System.Collections.Generic.IList&lt;UniqueId&gt;, IFetchRequest, System.Threading.CancellationToken)"/>
@@ -135,8 +135,8 @@ namespace MailKit {
 		/// <a href="https://tools.ietf.org/html/rfc9394">PARTIAL</a> extension and can only be used when fetching
 		/// messages by unique identifiers.</note>
 		/// </remarks>
-		/// <value>The range of messages to fetch.</value>
-		public PartialRange? Partial { get; set; }
+		/// <value>The partial range of messages to fetch.</value>
+		public PartialRange? PartialRange { get; set; }
 
 		/// <summary>
 		/// Get or set the message summary items to fetch.

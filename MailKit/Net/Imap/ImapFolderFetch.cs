@@ -1095,7 +1095,7 @@ namespace MailKit.Net.Imap
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
-			if (request.Partial.HasValue && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+			if (request.PartialRange.HasValue && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
 
 			CheckState (true, false);
@@ -1110,7 +1110,7 @@ namespace MailKit.Net.Imap
 
 			command.Append (query);
 
-			if (request.ChangedSince.HasValue || request.Partial.HasValue) {
+			if (request.ChangedSince.HasValue || request.PartialRange.HasValue) {
 				command.Append (" (");
 
 				if (request.ChangedSince.HasValue) {
@@ -1119,12 +1119,12 @@ namespace MailKit.Net.Imap
 					if (Engine.QResyncEnabled)
 						command.Append (" VANISHED");
 
-					if (request.Partial.HasValue)
+					if (request.PartialRange.HasValue)
 						command.Append (' ');
 				}
 
-				if (request.Partial.HasValue)
-					command.Append ("PARTIAL ").Append (request.Partial.Value);
+				if (request.PartialRange.HasValue)
+					command.Append ("PARTIAL ").Append (request.PartialRange.Value);
 
 				command.Append (')');
 			}
@@ -1138,7 +1138,7 @@ namespace MailKit.Net.Imap
 		{
 			var commands = Engine.CreateCommands (cancellationToken, this, command, uids);
 
-			if (request.Partial.HasValue) {
+			if (request.PartialRange.HasValue) {
 				// Note: The PARTIAL fetch modifier applies to each FETCH command individually, so splitting the
 				// set of UIDs into multiple FETCH commands would change the semantics of the request.
 				var list = new List<ImapCommand> (commands);
@@ -1354,7 +1354,7 @@ namespace MailKit.Net.Imap
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
-			if (request.Partial.HasValue)
+			if (request.PartialRange.HasValue)
 				throw new NotSupportedException ("The PARTIAL extension only supports UID-based FETCH requests.");
 
 			CheckState (true, false);
@@ -1552,7 +1552,7 @@ namespace MailKit.Net.Imap
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
-			if (request.Partial.HasValue)
+			if (request.PartialRange.HasValue)
 				throw new NotSupportedException ("The PARTIAL extension only supports UID-based FETCH requests.");
 
 			CheckState (true, false);
