@@ -43,5 +43,14 @@ namespace MailKit {
 				Latin1 = Encoding.ASCII;
 			}
 		}
+
+		public static string GetString (byte[] buffer, int index, int count)
+		{
+			try {
+				return UTF8.GetString (buffer, index, count);
+			} catch {
+				return Latin1.GetString (buffer, index, count);
+			}
+		}
 	}
 }

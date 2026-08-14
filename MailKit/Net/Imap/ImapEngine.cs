@@ -1202,15 +1202,13 @@ namespace MailKit.Net.Imap {
 				int n, nread = 0;
 
 				do {
-					if ((n = Stream.Read (buf, nread, literalLength - nread, cancellationToken)) > 0)
-						nread += n;
+					if ((n = Stream.Read (buf, nread, literalLength - nread, cancellationToken)) == 0)
+						break;
+
+					nread += n;
 				} while (nread < literalLength);
 
-				try {
-					return TextEncodings.UTF8.GetString (buf, 0, nread);
-				} catch {
-					return TextEncodings.Latin1.GetString (buf, 0, nread);
-				}
+				return TextEncodings.GetString (buf, 0, nread);
 			} finally {
 				ArrayPool<byte>.Shared.Return (buf);
 			}
@@ -1242,15 +1240,13 @@ namespace MailKit.Net.Imap {
 				int n, nread = 0;
 
 				do {
-					if ((n = await Stream.ReadAsync (buf, nread, literalLength - nread, cancellationToken).ConfigureAwait (false)) > 0)
-						nread += n;
+					if ((n = await Stream.ReadAsync (buf, nread, literalLength - nread, cancellationToken).ConfigureAwait (false)) == 0)
+						break;
+
+					nread += n;
 				} while (nread < literalLength);
 
-				try {
-					return TextEncodings.UTF8.GetString (buf, 0, nread);
-				} catch {
-					return TextEncodings.Latin1.GetString (buf, 0, nread);
-				}
+				return TextEncodings.GetString (buf, 0, nread);
 			} finally {
 				ArrayPool<byte>.Shared.Return (buf);
 			}
