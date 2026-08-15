@@ -145,6 +145,7 @@ namespace MailKit.Net.Imap {
 		internal const string FetchBodySyntaxErrorFormat = "Syntax error in BODY. {0}";
 		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. {1}";
 		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. {0}";
+		const int MaxLiteralTokenLength = 4096;
 		const int BufferSize = 4096;
 
 		static int TagPrefixIndex;
@@ -1206,6 +1207,10 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ();
 
 			int literalLength = Stream.LiteralLength;
+
+			if (literalLength > MaxLiteralTokenLength)
+				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).");
+
 			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
 
 			try {
@@ -1244,6 +1249,10 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ();
 
 			int literalLength = Stream.LiteralLength;
+
+			if (literalLength > MaxLiteralTokenLength)
+				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).");
+
 			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
 
 			try {
