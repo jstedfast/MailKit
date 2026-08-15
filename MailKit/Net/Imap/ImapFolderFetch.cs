@@ -1757,6 +1757,7 @@ namespace MailKit.Net.Imap
 		/// <param name="length">The length of the stream being fetched, measured in bytes.</param>
 		protected virtual Stream CreateStream (UniqueId? uid, string section, int offset, int length)
 		{
+			// FIXME: 'length' needs to be changed to a 'long' in order to support >2GB messages, but that requires an API/ABI break.
 			if (length > 4096)
 				return new MemoryBlockStream ();
 
