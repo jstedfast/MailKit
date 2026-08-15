@@ -82,18 +82,9 @@ namespace MailKit
 			return array;
 		}
 
-		public string ToString (Encoding encoding, Encoding fallback)
-		{
-			try {
-				return encoding.GetString (buffer, 0, length);
-			} catch (DecoderFallbackException) {
-				return fallback.GetString (buffer, 0, length);
-			}
-		}
-
 		public override string ToString ()
 		{
-			return ToString (TextEncodings.UTF8, TextEncodings.Latin1);
+			return TextEncodings.GetString (buffer, 0, length);
 		}
 
 		public bool Equals (string value, bool ignoreCase = false)

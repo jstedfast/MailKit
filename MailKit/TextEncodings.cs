@@ -48,7 +48,7 @@ namespace MailKit {
 		{
 			try {
 				return UTF8.GetString (buffer, index, count);
-			} catch {
+			} catch (DecoderFallbackException) {
 				return Latin1.GetString (buffer, index, count);
 			}
 		}
