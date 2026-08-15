@@ -154,7 +154,7 @@ namespace MailKit {
 		/// otherwise, <see langword="false" />.</returns>
 		public override bool Equals (object? obj)
 		{
-			return obj is PartialRange range && Equals (range);
+			return obj != null && obj.GetType () == typeof (PartialRange) && Equals ((PartialRange) obj);
 		}
 
 		/// <summary>

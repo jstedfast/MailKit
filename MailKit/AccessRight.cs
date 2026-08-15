@@ -202,7 +202,7 @@ namespace MailKit {
 		/// otherwise, <see langword="false" />.</returns>
 		public override bool Equals (object? obj)
 		{
-			return obj is AccessRight right && right.Right == Right;
+			return obj != null && obj.GetType () == typeof (AccessRight) && ((AccessRight) obj).Right == Right;
 		}
 
 		/// <summary>

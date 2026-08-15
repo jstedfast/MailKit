@@ -380,7 +380,7 @@ namespace MailKit {
 		/// <see cref="MailKit.AnnotationEntry"/>; otherwise, <see langword="false" />.</returns>
 		public override bool Equals (object? obj)
 		{
-			return obj is AnnotationEntry entry && entry.Entry == Entry;
+			return obj != null && obj.GetType () == typeof (AnnotationEntry) && ((AnnotationEntry) obj).Entry == Entry;
 		}
 
 		/// <summary>

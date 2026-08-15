@@ -296,7 +296,7 @@ namespace MailKit {
 		/// otherwise, <see langword="false" />.</returns>
 		public override bool Equals (object? obj)
 		{
-			return obj is UniqueId uid && uid.Id == Id;
+			return obj != null && obj.GetType () == typeof (UniqueId) && ((UniqueId) obj).Id == Id;
 		}
 
 		/// <summary>
