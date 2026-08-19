@@ -479,7 +479,7 @@ namespace MailKit.Net.Imap
 
 					atom = (string) token.Value;
 
-					if (atom == "TAG") {
+					if (atom.Equals ("TAG", StringComparison.OrdinalIgnoreCase)) {
 						token = engine.ReadToken (ic.CancellationToken);
 
 						ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
@@ -494,7 +494,7 @@ namespace MailKit.Net.Imap
 				token = engine.ReadToken (ic.CancellationToken);
 			}
 
-			if (token.Type == ImapTokenType.Atom && ((string) token.Value) == "UID") {
+			if (token.Type == ImapTokenType.Atom && ((string) token.Value).Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
 				token = engine.ReadToken (ic.CancellationToken);
 				//uid = true;
 			}
@@ -632,7 +632,7 @@ namespace MailKit.Net.Imap
 
 					atom = (string) token.Value;
 
-					if (atom == "TAG") {
+					if (atom.Equals ("TAG", StringComparison.OrdinalIgnoreCase)) {
 						token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 
 						ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapTokenType.QString, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
@@ -647,7 +647,7 @@ namespace MailKit.Net.Imap
 				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 			}
 
-			if (token.Type == ImapTokenType.Atom && ((string) token.Value) == "UID") {
+			if (token.Type == ImapTokenType.Atom && ((string) token.Value).Equals ("UID", StringComparison.OrdinalIgnoreCase)) {
 				token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 				//uid = true;
 			}
