@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 
 namespace MailKit.Net.Imap {
@@ -50,7 +51,7 @@ namespace MailKit.Net.Imap {
 		/// </example>
 		public ImapImplementation ()
 		{
-			Properties = new Dictionary<string, string?> ();
+			Properties = new Dictionary<string, string?> (StringComparer.OrdinalIgnoreCase);
 		}
 
 		string? GetProperty (string property)
