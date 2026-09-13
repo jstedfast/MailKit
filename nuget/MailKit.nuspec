@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKit</id>
-    <version>4.17.0</version>
+    <version>4.18.0</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,12 +26,13 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Updated nullability of ImapClient.Inbox (which will never return null). (issue #1996)
-* Fixed IMAP's logic for ACL, LISTRIGHTS, MYRIGHTS, QUOTAROOT, QUOTA, and METADATA response parsers to properly handle []'s in the folder name. (issue #2002)
-* Updated System.Threading.Tasks.Extensions to v4.6.3.
-* Updated System.Formats.Asn1 to v10.0.0 (instead of 10.0.2) for .NET 10.
-* Bumped MimeKit dependency to 4.17.0.
-* Code quality improvements.
+* Fixed SaslMechanismNativeNtlm on systems that need a multi-stage auth. (issue #2007)
+* Added support for the IMAP PARTIAL extension (rfc9294) for paged SEARCH/SORT and FETCH commands. (issue #1687)
+* Significantly improved IMAP performance by reusing internal buffers for building commands and reading responses.
+* Fixed a few cases where IMAP did not properly use case-insenstive string comparisons when parsing some command responses. (issue #2013)
+* Do not default the ImapClient connection to IMAP4rev2 unless it is the only supported protocol version. (issue #2016)
+* Bumped System.Formats.Asn1 dependency from 8.0.1 to 10.0.0.
+* Bumped MimeKit dependency from 4.17.0 to 4.18.0.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
@@ -59,34 +60,34 @@ Features include:
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
       <group targetFramework="net8.0">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
       <group targetFramework="net10.0">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
       <group targetFramework="netstandard2.1">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
-        <dependency id="MimeKit" version="4.17.0" />
+        <dependency id="MimeKit" version="4.18.0" />
       </group>
     </dependencies>
   </metadata>
@@ -98,7 +99,6 @@ Features include:
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll.config" target="lib\netstandard2.0\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.dll" target="lib\netstandard2.1\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.pdb" target="lib\netstandard2.1\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.1\MailKit.xml" target="lib\netstandard2.1\MailKit.xml" />
@@ -106,15 +106,12 @@ Features include:
     <file src="..\MailKit\bin\Release\net462\MailKit.dll" target="lib\net462\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net462\MailKit.pdb" target="lib\net462\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net462\MailKit.xml" target="lib\net462\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\net462\MailKit.dll.config" target="lib\net462\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net47\MailKit.dll" target="lib\net47\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net47\MailKit.pdb" target="lib\net47\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net47\MailKit.xml" target="lib\net47\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\net47\MailKit.dll.config" target="lib\net47\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net48\MailKit.dll" target="lib\net48\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net48\MailKit.pdb" target="lib\net48\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net48\MailKit.xml" target="lib\net48\MailKit.xml" />
-    <file src="..\MailKit\bin\Release\net48\MailKit.dll.config" target="lib\net48\MailKit.dll.config" />
     <file src="..\MailKit\bin\Release\net8.0\MailKit.dll" target="lib\net8.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\net8.0\MailKit.pdb" target="lib\net8.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\net8.0\MailKit.xml" target="lib\net8.0\MailKit.xml" />

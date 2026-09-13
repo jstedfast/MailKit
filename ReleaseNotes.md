@@ -1,5 +1,20 @@
 # Release Notes
 
+## MailKit 4.18.0 (2026-09-13)
+
+* Fixed SaslMechanismNativeNtlm on systems that need a multi-stage auth.
+  (issue [#2007](https://github.com/jstedfast/MailKit/issues/2007))
+* Added support for the IMAP PARTIAL extension (rfc9294) for paged SEARCH/SORT and FETCH commands.
+  (issue [#1687](https://github.com/jstedfast/MailKit/issues/1687))
+* Significantly improved IMAP performance by reusing internal buffers for building commands and
+  reading responses.
+* Fixed a few cases where IMAP did not properly use case-insenstive string comparisons when parsing
+  some command responses. (issue [#2013](https://github.com/jstedfast/MailKit/issues/2013))
+* Do not default the ImapClient connection to IMAP4rev2 unless it is the only supported protocol version.
+  (issue [#2016](https://github.com/jstedfast/MailKit/issues/2016))
+* Bumped System.Formats.Asn1 dependency from 8.0.1 to 10.0.0.
+* Bumped MimeKit dependency from 4.17.0 to 4.18.0.
+
 ## MailKit 4.17.0 (2026-05-26)
 
 * Updated nullability of ImapClient.Inbox (which will never return null).
