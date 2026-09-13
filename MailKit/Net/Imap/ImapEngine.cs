@@ -100,6 +100,7 @@ namespace MailKit.Net.Imap {
 		Exchange,
 		Exchange2003,
 		Exchange2007,
+		ExchangeTcpProxy,
 		GMail,
 		hMailServer,
 		iCloud,
@@ -735,6 +736,8 @@ namespace MailKit.Net.Imap {
 				QuirksMode = ImapQuirksMode.Exchange2007;
 			else if (text.StartsWith ("The Microsoft Exchange IMAP4 service is ready.", StringComparison.Ordinal))
 				QuirksMode = ImapQuirksMode.Exchange;
+			else if (text.StartsWith ("Microsoft Exchange IMAP4 service ready.", StringComparison.Ordinal))
+				QuirksMode = ImapQuirksMode.ExchangeTcpProxy;
 			else if (text.StartsWith ("Gimap ready", StringComparison.Ordinal))
 				QuirksMode = ImapQuirksMode.GMail;
 			else if (text.Contains ("QQMail "))
@@ -1500,6 +1503,9 @@ namespace MailKit.Net.Imap {
 		void StandardizeCapabilities ()
 		{
 			if ((Capabilities & ImapCapabilities.IMAP4rev2) != 0) {
+				// TODO: This is the wrong place to set the protocol version - it should only happen when the
+				// client issues an "ENABLE IMAP4rev2" command. Until then, this is an IMAP4rev1 connection.
+#if false
 				ProtocolVersion = ImapProtocolVersion.IMAP4rev2;
 
 				// Rfc9051, Appendix E defines the capabilities that IMAP4rev2 should be assumed to implement:
@@ -1511,6 +1517,7 @@ namespace MailKit.Net.Imap {
 				// Note: IMAP4rev2 also supports the FETCH portion of the 'BINARY' extension but not the APPEND portion. Since
 				// we currently have no way to distinguish between them using the ImapCapabilities enum, we do not enable the
 				// ImapCapabilities.Binary extension flag.
+#endif
 			} else if ((Capabilities & ImapCapabilities.IMAP4rev1) != 0) {
 				ProtocolVersion = ImapProtocolVersion.IMAP4rev1;
 				Capabilities |= ImapCapabilities.Status;
