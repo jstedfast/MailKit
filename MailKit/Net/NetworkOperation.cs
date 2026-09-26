@@ -103,7 +103,7 @@ namespace MailKit.Net {
 				var tags = GetTags ();
 
 				if (metrics.OperationDuration.Enabled) {
-					var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - startTimestamp).TotalMilliseconds;
+					var duration = Stopwatch.GetElapsedTime (startTimestamp).TotalMilliseconds;
 
 					metrics.OperationDuration.Record (duration, tags);
 				}

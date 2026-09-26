@@ -119,7 +119,7 @@ namespace MailKit.Net {
 		public void RecordClientDisconnected (long startTimestamp, Uri uri, Exception? ex = null)
 		{
 			if (ConnectionDuration.Enabled) {
-				var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - startTimestamp).TotalSeconds;
+				var duration = Stopwatch.GetElapsedTime (startTimestamp).TotalSeconds;
 				var tags = GetTags (uri, ex);
 
 				ConnectionDuration.Record (duration, tags);
