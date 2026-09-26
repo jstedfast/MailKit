@@ -118,7 +118,7 @@ namespace MailKit.Net {
 				var tags = GetTags (ip, host, port);
 
 				if (connectDuration.Enabled) {
-					var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - connectStartedTimestamp).TotalMilliseconds;
+					var duration = Stopwatch.GetElapsedTime (connectStartedTimestamp).TotalMilliseconds;
 
 					connectDuration.Record (duration, tags);
 				}
@@ -134,7 +134,7 @@ namespace MailKit.Net {
 				var tags = GetTags (ip, host, port, ex);
 
 				if (connectDuration.Enabled) {
-					var duration = TimeSpan.FromTicks (Stopwatch.GetTimestamp () - connectStartedTimestamp).TotalMilliseconds;
+					var duration = Stopwatch.GetElapsedTime (connectStartedTimestamp).TotalMilliseconds;
 
 					connectDuration.Record (duration, tags);
 				}
