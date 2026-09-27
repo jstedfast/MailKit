@@ -73,6 +73,7 @@ namespace MailKit.Net.Imap {
 
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
+		bool dirty;
 
 		readonly ByteArrayBuilder tokenBuilder;
 		readonly Stack<ImapToken> tokens;
@@ -1110,6 +1111,7 @@ namespace MailKit.Net.Imap {
 
 						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
+						dirty = true;
 					}
 
 					if (outputIndex == 0) {
@@ -1121,6 +1123,7 @@ namespace MailKit.Net.Imap {
 							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
+							dirty = true;
 						}
 					}
 				}
@@ -1218,6 +1221,7 @@ namespace MailKit.Net.Imap {
 						await Stream.WriteAsync (output, 0, BlockSize, cancellationToken).ConfigureAwait (false);
 						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
+						dirty = true;
 					}
 
 					if (outputIndex == 0) {
@@ -1227,6 +1231,7 @@ namespace MailKit.Net.Imap {
 							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
+							dirty = true;
 						}
 					}
 				}
@@ -1263,18 +1268,28 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			if (outputIndex == 0)
+			// Note: We cannot simply return when outputIndex is 0 because Write() may have already
+			// drained the output buffer directly to the underlying stream. When the underlying stream
+			// buffers data of its own (e.g. CompressedStream), skipping Stream.Flush() would leave
+			// that data stuck in its buffer and the command would never reach the server.
+			if (outputIndex == 0 && !dirty)
 				return;
 
 			try {
 				var network = NetworkStream.Get (Stream);
 
 				network?.Poll (SelectMode.SelectWrite, cancellationToken);
-				Stream.Write (output, 0, outputIndex);
+
+				if (outputIndex > 0)
+					Stream.Write (output, 0, outputIndex);
+
 				Stream.Flush ();
 
-				logger.LogClient (output, 0, outputIndex);
+				if (outputIndex > 0)
+					logger.LogClient (output, 0, outputIndex);
+
 				outputIndex = 0;
+				dirty = false;
 			} catch (Exception ex) {
 				IsConnected = false;
 				if (ex is not OperationCanceledException)
@@ -1331,15 +1346,21 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			if (outputIndex == 0)
+			// Note: See the comment in Flush(CancellationToken) as to why we also check dirty.
+			if (outputIndex == 0 && !dirty)
 				return;
 
 			try {
-				await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
+				if (outputIndex > 0)
+					await Stream.WriteAsync (output, 0, outputIndex, cancellationToken).ConfigureAwait (false);
+
 				await Stream.FlushAsync (cancellationToken).ConfigureAwait (false);
 
-				logger.LogClient (output, 0, outputIndex);
+				if (outputIndex > 0)
+					logger.LogClient (output, 0, outputIndex);
+
 				outputIndex = 0;
+				dirty = false;
 			} catch (Exception ex) {
 				IsConnected = false;
 				if (ex is not OperationCanceledException)
