@@ -157,15 +157,6 @@ namespace UnitTests.Net.Imap {
 
 			if (compressed) {
 				using (var memory = new MemoryStream ()) {
-					using (var compress = new CompressedStream (memory)) {
-						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
-						compress.Flush ();
-
-						CommandBuffer = memory.ToArray ();
-					}
-				}
-
-				using (var memory = new MemoryStream ()) {
 					using (Stream compress = new CompressedStream (memory)) {
 						compress.Write (response, 0, response.Length);
 						compress.Flush ();
@@ -204,21 +195,14 @@ namespace UnitTests.Net.Imap {
 							filtered.Flush ();
 						}
 
+						if (compressed)
+							compress.Flush ();
+
 						Response = memory.ToArray ();
 					}
 				}
 			}
 
-			if (compressed) {
-				using (var memory = new MemoryStream ()) {
-					using (var compress = new CompressedStream (memory)) {
-						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
-						compress.Flush ();
-
-						CommandBuffer = memory.ToArray ();
-					}
-				}
-			}
 		}
 
 		public ImapReplayCommand (string tag, string command, string resource, bool compressed = false) : this (Latin1, tag, command, resource, compressed)
@@ -242,21 +226,14 @@ namespace UnitTests.Net.Imap {
 							filtered.Flush ();
 						}
 
+						if (compressed)
+							compress.Flush ();
+
 						Response = memory.ToArray ();
 					}
 				}
 			}
 
-			if (compressed) {
-				using (var memory = new MemoryStream ()) {
-					using (var compress = new CompressedStream (memory)) {
-						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
-						compress.Flush ();
-
-						CommandBuffer = memory.ToArray ();
-					}
-				}
-			}
 		}
 
 		public ImapReplayCommand (string command, ImapReplayCommandResponse response, bool compressed = false) : this (Latin1, command, response, compressed)
@@ -293,15 +270,6 @@ namespace UnitTests.Net.Imap {
 						Response = memory.ToArray ();
 					}
 				}
-
-				using (var memory = new MemoryStream ()) {
-					using (var compress = new CompressedStream (memory)) {
-						compress.Write (CommandBuffer, 0, CommandBuffer.Length);
-						compress.Flush ();
-
-						CommandBuffer = memory.ToArray ();
-					}
-				}
 			} else {
 				Response = encoding.GetBytes (text);
 			}
@@ -315,10 +283,18 @@ namespace UnitTests.Net.Imap {
 
 	class ImapReplayStream : Stream
 	{
+		// Note: `sent` holds the *decoded* bytes of the command currently being received. When the
+		// session is compressed, the client uses a single DEFLATE stream for the entire session
+		// (Z_SYNC_FLUSH between commands), which means each command is not independently
+		// decompressible. We therefore have to keep a single persistent decompressor alive for the
+		// duration of the session, exactly like a real IMAP server would.
 		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<ImapReplayCommand> commands;
 		readonly bool testUnixFormat;
 		readonly bool asyncIO;
+		MemoryStream compressedInput;
+		CompressedStream decompressor;
+		byte[] decodeBuffer;
 		ImapReplayState state;
 		int timeout = 100000;
 		Stream stream;
@@ -443,18 +419,29 @@ namespace UnitTests.Net.Imap {
 
 		string GetSentCommand ()
 		{
-			if (!commands[index].Compressed)
-				return commands[index].Encoding.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+			return commands[index].Encoding.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+		}
 
-			using (var memory = new MemoryStream (sent.GetBuffer (), 0, (int) sent.Length)) {
-				using (var compressed = new CompressedStream (memory)) {
-					using (var decompressed = new MemoryStream ()) {
-						compressed.CopyTo (decompressed, 4096);
-
-						return commands[index].Encoding.GetString (decompressed.GetBuffer (), 0, (int) decompressed.Length);
-					}
-				}
+		// Appends newly received bytes to the persistent decompressor's input and drains whatever
+		// the inflater is able to produce into `sent`.
+		void DecompressSentBytes (byte[] buffer, int offset, int count)
+		{
+			if (decompressor == null) {
+				compressedInput = new MemoryStream ();
+				decompressor = new CompressedStream (compressedInput);
+				decodeBuffer = new byte[4096];
 			}
+
+			// Append without disturbing the inflater's read position.
+			long position = compressedInput.Position;
+			compressedInput.Position = compressedInput.Length;
+			compressedInput.Write (buffer, offset, count);
+			compressedInput.Position = position;
+
+			int n;
+
+			while ((n = decompressor.Read (decodeBuffer, 0, decodeBuffer.Length)) > 0)
+				sent.Write (decodeBuffer, 0, n);
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)
@@ -475,7 +462,10 @@ namespace UnitTests.Net.Imap {
 
 			Assert.That (state, Is.EqualTo (ImapReplayState.WaitForCommand), "Trying to write when a command has already been given.");
 
-			sent.Write (buffer, offset, count);
+			if (commands[index].Compressed)
+				DecompressSentBytes (buffer, offset, count);
+			else
+				sent.Write (buffer, offset, count);
 
 			if (sent.Length >= commands[index].CommandBuffer.Length) {
 				var command = GetSentCommand ();
@@ -535,6 +525,9 @@ namespace UnitTests.Net.Imap {
 		protected override void Dispose (bool disposing)
 		{
 			stream?.Dispose ();
+			decompressor?.Dispose ();
+			compressedInput?.Dispose ();
+			sent.Dispose ();
 
 			base.Dispose (disposing);
 			disposed = true;
