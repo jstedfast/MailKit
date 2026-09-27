@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata minClientVersion="2.12">
     <id>MailKitLite</id>
-    <version>4.18.0</version>
+    <version>4.18.1</version>
     <title>MailKit</title>
     <authors>Jeffrey Stedfast</authors>
     <owners>Jeffrey Stedfast</owners>
@@ -26,13 +26,8 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed SaslMechanismNativeNtlm on systems that need a multi-stage auth. (issue #2007)
-* Added support for the IMAP PARTIAL extension (rfc9294) for paged SEARCH/SORT and FETCH commands. (issue #1687)
-* Significantly improved IMAP performance by reusing internal buffers for building commands and reading responses.
-* Fixed a few cases where IMAP did not properly use case-insenstive string comparisons when parsing some command responses. (issue #2013)
-* Do not default the ImapClient connection to IMAP4rev2 unless it is the only supported protocol version. (issue #2016)
-* Bumped System.Formats.Asn1 dependency from 8.0.1 to 10.0.0.
-* Bumped MimeKit dependency from 4.17.0 to 4.18.0.
+* Fixed telemetry duration histograms being 100x too large on Linux/macOS. (issue #2020)
+* Bumped MimeKit dependency from 4.18.0 to 4.18.1.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>

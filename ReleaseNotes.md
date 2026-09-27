@@ -1,5 +1,11 @@
 # Release Notes
 
+## MailKit 4.18.1 (2026-09-27)
+
+* Fixed telemetry duration histograms being 100x too large on Linux/macOS.
+  (issue [#2020](https://github.com/jstedfast/MailKit/issues/2020))
+* Bumped MimeKit dependency from 4.18.0 to 4.18.1.
+
 ## MailKit 4.18.0 (2026-09-13)
 
 * Fixed SaslMechanismNativeNtlm on systems that need a multi-stage auth.
