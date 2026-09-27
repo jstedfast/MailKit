@@ -294,16 +294,16 @@ namespace MailKit.Net.Imap {
 			if (engine.State >= ImapEngineState.Selected)
 				throw new InvalidOperationException ("Compression must be enabled before selecting a folder.");
 
-#if MAILKIT_LITE
-			throw new NotSupportedException ("MailKitLite does not support the COMPRESS extension.");
-#else
+#if NET8_0_OR_GREATER
 			return engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
+#else
+			throw new NotSupportedException ("The COMPRESS extension is only supported on .NET 8.0 and later.");
 #endif
 		}
 
 		void ProcessCompressResponse (ImapCommand ic)
 		{
-#if !MAILKIT_LITE
+#if NET8_0_OR_GREATER
 			if (ic.Response != ImapCommandResponse.Ok) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)

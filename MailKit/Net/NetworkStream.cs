@@ -269,7 +269,7 @@ namespace MailKit.Net
 
 		public static NetworkStream? Get (Stream stream)
 		{
-#if !MAILKIT_LITE
+#if NET8_0_OR_GREATER
 			if (stream is CompressedStream compressed)
 				stream = compressed.InnerStream;
 #endif
