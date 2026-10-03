@@ -90,7 +90,6 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The unique identifier.</value>
 		public UniqueId? UniqueId {
-			// FIXME: this shouldn't be a nullable since we can just use UniqueId.Invalid
 			get; private set;
 		}
 
