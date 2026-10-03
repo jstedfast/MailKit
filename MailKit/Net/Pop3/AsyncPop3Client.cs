@@ -255,7 +255,7 @@ namespace MailKit.Net.Pop3
 
 						cred = credentials.GetCredential (saslUri, authmech);
 
-						if (cred == null || (sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
+						if (cred == null || !SaslMechanism.TryCreate (authmech, encoding, cred, out sasl))
 							continue;
 
 						cancellationToken.ThrowIfCancellationRequested ();

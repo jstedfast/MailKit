@@ -501,16 +501,16 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Create an instance of the specified SASL mechanism using the supplied credentials.
+		/// Try to create an instance of the specified SASL mechanism using the supplied credentials.
 		/// </summary>
 		/// <remarks>
-		/// If unsure that a particular SASL mechanism is supported, you should first call
-		/// <see cref="IsSupported"/>.
+		/// Tries to create an instance of the specified SASL mechanism using the supplied credentials.
 		/// </remarks>
-		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <see langword="null" />.</returns>
+		/// <returns><see langword="true" /> if the SASL mechanism is supported; otherwise, <see langword="false" />.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
 		/// <param name="encoding">The text encoding to use for the credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="sasl">The SASL mechanism if supported; otherwise, <see langword="null" />.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="mechanism"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
@@ -518,10 +518,8 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
-		public static SaslMechanism? Create (string mechanism, Encoding encoding, NetworkCredential credentials)
+		public static bool TryCreate (string mechanism, Encoding encoding, NetworkCredential credentials, [NotNullWhen (true)] out SaslMechanism? sasl)
 		{
-			// FIXME: This API should throw NotSupportedException rather than returning null if the mechanism is not supported.
-
 			if (mechanism == null)
 				throw new ArgumentNullException (nameof (mechanism));
 
@@ -532,27 +530,87 @@ namespace MailKit.Security {
 				throw new ArgumentNullException (nameof (credentials));
 
 			switch (mechanism) {
-			//case "KERBEROS_V4":      return null;
-			case "SCRAM-SHA-512-PLUS": return new SaslMechanismScramSha512Plus (credentials);
-			case "SCRAM-SHA-512":      return new SaslMechanismScramSha512 (credentials);
-			case "SCRAM-SHA-256-PLUS": return new SaslMechanismScramSha256Plus (credentials);
-			case "SCRAM-SHA-256":      return new SaslMechanismScramSha256 (credentials);
-			case "SCRAM-SHA-1-PLUS":   return new SaslMechanismScramSha1Plus (credentials);
-			case "SCRAM-SHA-1":        return new SaslMechanismScramSha1 (credentials);
-			case "DIGEST-MD5":         return Md5Supported ? new SaslMechanismDigestMd5 (credentials) : null;
-			case "CRAM-MD5":           return Md5Supported ? new SaslMechanismCramMd5 (credentials) : null;
-			case "OAUTHBEARER":        return new SaslMechanismOAuthBearer (credentials);
-			case "XOAUTH2":            return new SaslMechanismOAuth2 (credentials);
-			case "PLAIN":              return new SaslMechanismPlain (encoding, credentials);
-			case "LOGIN":              return new SaslMechanismLogin (encoding, credentials);
+			//case "KERBEROS_V4":      sasl = null; break;
+			case "SCRAM-SHA-512-PLUS": sasl = new SaslMechanismScramSha512Plus (credentials); break;
+			case "SCRAM-SHA-512":      sasl = new SaslMechanismScramSha512 (credentials); break;
+			case "SCRAM-SHA-256-PLUS": sasl = new SaslMechanismScramSha256Plus (credentials); break;
+			case "SCRAM-SHA-256":      sasl = new SaslMechanismScramSha256 (credentials); break;
+			case "SCRAM-SHA-1-PLUS":   sasl = new SaslMechanismScramSha1Plus (credentials); break;
+			case "SCRAM-SHA-1":        sasl = new SaslMechanismScramSha1 (credentials); break;
+			case "DIGEST-MD5":         sasl = Md5Supported ? new SaslMechanismDigestMd5 (credentials) : null; break;
+			case "CRAM-MD5":           sasl = Md5Supported ? new SaslMechanismCramMd5 (credentials) : null; break;
+			case "OAUTHBEARER":        sasl = new SaslMechanismOAuthBearer (credentials); break;
+			case "XOAUTH2":            sasl = new SaslMechanismOAuth2 (credentials); break;
+			case "PLAIN":              sasl = new SaslMechanismPlain (encoding, credentials); break;
+			case "LOGIN":              sasl = new SaslMechanismLogin (encoding, credentials); break;
 #if NET7_0_OR_GREATER
-			case "GSSAPI":             return GssapiSupported.Value ? new SaslMechanismGssapi (credentials) : null;
-			case "NTLM":               return NativeNtlmSupported.Value ? new SaslMechanismNtlmNative (credentials) : new SaslMechanismNtlm (credentials);
+			case "GSSAPI":             sasl = GssapiSupported.Value ? new SaslMechanismGssapi (credentials) : null; break;
+			case "NTLM":               sasl = NativeNtlmSupported.Value ? new SaslMechanismNtlmNative (credentials) : new SaslMechanismNtlm (credentials); break;
 #else
-			case "NTLM":               return new SaslMechanismNtlm (credentials);
+			case "NTLM":               sasl = new SaslMechanismNtlm (credentials); break;
 #endif
-			case "ANONYMOUS":          return new SaslMechanismAnonymous (encoding, credentials);
-			default:                   return null;
+			case "ANONYMOUS":          sasl = new SaslMechanismAnonymous (encoding, credentials); break;
+			default:                   sasl = null; break;
+			}
+
+			return sasl != null;
+		}
+
+		/// <summary>
+		/// Try to create an instance of the specified SASL mechanism using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// Tries to create an instance of the specified SASL mechanism using the supplied credentials.
+		/// </remarks>
+		/// <returns><see langword="true" /> if the SASL mechanism is supported; otherwise, <see langword="false" />.</returns>
+		/// <param name="mechanism">The name of the SASL mechanism.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="sasl">The SASL mechanism if supported; otherwise, <see langword="null" />.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="mechanism"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
+		/// </exception>
+		public static bool TryCreate (string mechanism, NetworkCredential credentials, [NotNullWhen (true)] out SaslMechanism? sasl)
+		{
+			return TryCreate (mechanism, Encoding.UTF8, credentials, out sasl);
+		}
+
+		/// <summary>
+		/// Create an instance of the specified SASL mechanism using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// If unsure that a particular SASL mechanism is supported, you should first call
+		/// <see cref="IsSupported"/> or use
+		/// <see cref="TryCreate(string,Encoding,NetworkCredential,out SaslMechanism)"/> instead.
+		/// </remarks>
+		/// <returns>An instance of the requested SASL mechanism.</returns>
+		/// <param name="mechanism">The name of the SASL mechanism.</param>
+		/// <param name="encoding">The text encoding to use for the credentials.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="mechanism"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="encoding"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The specified SASL mechanism is not supported.
+		/// </exception>
+		public static SaslMechanism Create (string mechanism, Encoding encoding, NetworkCredential credentials)
+		{
+			if (TryCreate (mechanism, encoding, credentials, out var sasl))
+				return sasl;
+
+			switch (mechanism) {
+			case "DIGEST-MD5":
+			case "CRAM-MD5":
+				throw new NotSupportedException ($"The {mechanism} SASL mechanism is not supported because MD5 is not available (e.g. because FIPS mode is enabled).");
+			case "GSSAPI":
+				throw new NotSupportedException ("The GSSAPI SASL mechanism is not supported on this platform.");
+			default:
+				throw new NotSupportedException ($"The {mechanism} SASL mechanism is not supported.");
 			}
 		}
 
@@ -561,9 +619,10 @@ namespace MailKit.Security {
 		/// </summary>
 		/// <remarks>
 		/// If unsure that a particular SASL mechanism is supported, you should first call
-		/// <see cref="IsSupported"/>.
+		/// <see cref="IsSupported"/> or use
+		/// <see cref="TryCreate(string,NetworkCredential,out SaslMechanism)"/> instead.
 		/// </remarks>
-		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <see langword="null" />.</returns>
+		/// <returns>An instance of the requested SASL mechanism.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -571,7 +630,10 @@ namespace MailKit.Security {
 		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <see langword="null" />.</para>
 		/// </exception>
-		public static SaslMechanism? Create (string mechanism, NetworkCredential credentials)
+		/// <exception cref="System.NotSupportedException">
+		/// The specified SASL mechanism is not supported.
+		/// </exception>
+		public static SaslMechanism Create (string mechanism, NetworkCredential credentials)
 		{
 			return Create (mechanism, Encoding.UTF8, credentials);
 		}

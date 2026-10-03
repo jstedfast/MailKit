@@ -45,6 +45,13 @@ namespace UnitTests.Security {
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create (null, credentials));
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.Create ("PLAIN", null));
 
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.TryCreate (null, Encoding.UTF8, credentials, out _));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.TryCreate ("PLAIN", null, credentials, out _));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.TryCreate ("PLAIN", Encoding.UTF8, null, out _));
+
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.TryCreate (null, credentials, out _));
+			Assert.Throws<ArgumentNullException> (() => SaslMechanism.TryCreate ("PLAIN", null, out _));
+
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.IsSupported (null));
 
 			Assert.Throws<ArgumentNullException> (() => SaslMechanism.SaslPrep (null));
@@ -69,6 +76,37 @@ namespace UnitTests.Security {
 
 			foreach (var mechanism in unsupported)
 				Assert.That (SaslMechanism.IsSupported (mechanism), Is.False, mechanism);
+		}
+
+		[Test]
+		public void TestCreateUnsupported ()
+		{
+			var unsupported = new [] { "EXTERNAL", "KERBEROS_V4", "X-UNKNOWN" };
+			var credentials = new NetworkCredential ("username", "password");
+
+			foreach (var mechanism in unsupported) {
+				Assert.Throws<NotSupportedException> (() => SaslMechanism.Create (mechanism, credentials), mechanism);
+				Assert.Throws<NotSupportedException> (() => SaslMechanism.Create (mechanism, Encoding.UTF8, credentials), mechanism);
+
+				Assert.That (SaslMechanism.TryCreate (mechanism, credentials, out var sasl), Is.False, mechanism);
+				Assert.That (sasl, Is.Null, mechanism);
+
+				Assert.That (SaslMechanism.TryCreate (mechanism, Encoding.UTF8, credentials, out sasl), Is.False, mechanism);
+				Assert.That (sasl, Is.Null, mechanism);
+			}
+		}
+
+		[Test]
+		public void TestTryCreate ()
+		{
+			var supported = new [] { "PLAIN", "LOGIN", "CRAM-MD5", "DIGEST-MD5", "SCRAM-SHA-1", "SCRAM-SHA-1-PLUS", "SCRAM-SHA-256", "SCRAM-SHA-256-PLUS", "SCRAM-SHA-512", "SCRAM-SHA-512-PLUS", "NTLM", "OAUTHBEARER", "XOAUTH2", "ANONYMOUS" };
+			var credentials = new NetworkCredential ("username", "password");
+
+			foreach (var mechanism in supported) {
+				Assert.That (SaslMechanism.TryCreate (mechanism, credentials, out var sasl), Is.True, mechanism);
+				Assert.That (sasl, Is.Not.Null, mechanism);
+				Assert.That (sasl.MechanismName, Is.EqualTo (mechanism), "MechanismName");
+			}
 		}
 
 		[Test]

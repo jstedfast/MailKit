@@ -1217,7 +1217,7 @@ namespace MailKit.Net.Smtp {
 				foreach (var authmech in SaslMechanism.Rank (AuthenticationMechanisms)) {
 					var cred = credentials.GetCredential (uri, authmech);
 
-					if (cred == null || (sasl = SaslMechanism.Create (authmech, encoding, cred)) == null)
+					if (cred == null || !SaslMechanism.TryCreate (authmech, encoding, cred, out sasl))
 						continue;
 
 					sasl.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
