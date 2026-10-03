@@ -1,5 +1,5 @@
 ﻿//
-// DeliveryStatusNotificationReturnType.cs
+// DeliveryStatusNotificationType.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,8 +24,7 @@
 // THE SOFTWARE.
 //
 
-// FIXME: Move this to the MailKit namespace. It wasn't ever supposed to be in MailKit.Net.Smtp!
-namespace MailKit.Net.Smtp
+namespace MailKit
 {
 	/// <summary>
 	/// Delivery status notification type.
