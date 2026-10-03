@@ -40,6 +40,6 @@ namespace ImapClientDemo
 
 		public static IMailFolder CurrentFolder { get;set; }
 
-		public static MimeKit.MimeMessage CurrentMessage { get; set; }
+		public static MimeKit.IMimeMessage CurrentMessage { get; set; }
 	}
 }

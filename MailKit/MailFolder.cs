@@ -5198,7 +5198,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		public abstract IMimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5243,7 +5243,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		public abstract Task<IMimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -5288,7 +5288,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		public abstract IMimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -5333,7 +5333,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		public abstract Task<IMimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -10175,7 +10175,7 @@ namespace MailKit {
 			UnreadChanged?.Invoke (this, EventArgs.Empty);
 		}
 
-		#region IEnumerable<MimeMessage> implementation
+		#region IEnumerable<IMimeMessage> implementation
 
 		/// <summary>
 		/// Get an enumerator for the messages in the folder.
@@ -10196,7 +10196,7 @@ namespace MailKit {
 		/// <exception cref="FolderNotOpenException">
 		/// The folder is not currently open.
 		/// </exception>
-		public abstract IEnumerator<MimeMessage> GetEnumerator ();
+		public abstract IEnumerator<IMimeMessage> GetEnumerator ();
 
 		/// <summary>
 		/// Get an enumerator for the messages in the folder.
