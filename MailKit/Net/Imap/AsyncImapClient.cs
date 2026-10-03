@@ -40,6 +40,7 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapClient
 	{
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// Asynchronously enable compression over the IMAP connection.
 		/// </summary>
@@ -83,6 +84,7 @@ namespace MailKit.Net.Imap
 
 			ProcessCompressResponse (ic);
 		}
+#endif
 
 		/// <summary>
 		/// Asynchronously enable the QRESYNC feature.

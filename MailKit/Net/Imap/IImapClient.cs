@@ -100,6 +100,7 @@ namespace MailKit.Net.Imap {
 		/// <value><see langword="true" /> if an IDLE command is active; otherwise, <see langword="false" />.</value>
 		bool IsIdle { get; }
 
+#if NET8_0_OR_GREATER
 		/// <summary>
 		/// Enable compression over the IMAP connection.
 		/// </summary>
@@ -172,6 +173,7 @@ namespace MailKit.Net.Imap {
 		/// An IMAP protocol error occurred.
 		/// </exception>
 		Task CompressAsync (CancellationToken cancellationToken = default);
+#endif
 
 		/// <summary>
 		/// Enable the UTF8=ACCEPT extension.

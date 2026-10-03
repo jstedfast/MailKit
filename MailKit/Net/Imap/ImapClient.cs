@@ -283,6 +283,7 @@ namespace MailKit.Net.Imap {
 			return valid;
 		}
 
+#if NET8_0_OR_GREATER
 		ImapCommand QueueCompressCommand (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
@@ -294,16 +295,11 @@ namespace MailKit.Net.Imap {
 			if (engine.State >= ImapEngineState.Selected)
 				throw new InvalidOperationException ("Compression must be enabled before selecting a folder.");
 
-#if NET8_0_OR_GREATER
 			return engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
-#else
-			throw new NotSupportedException ("The COMPRESS extension is only supported on .NET 8.0 and later.");
-#endif
 		}
 
 		void ProcessCompressResponse (ImapCommand ic)
 		{
-#if NET8_0_OR_GREATER
 			if (ic.Response != ImapCommandResponse.Ok) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)
@@ -314,7 +310,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			engine.Stream!.SetStream (new CompressedStream (engine.Stream.Stream));
-#endif
 		}
 
 		/// <summary>
@@ -359,6 +354,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessCompressResponse (ic);
 		}
+#endif
 
 		bool TryQueueEnableQuickResyncCommand (CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
