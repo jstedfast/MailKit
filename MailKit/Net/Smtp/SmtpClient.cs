@@ -450,6 +450,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher algorithm.
 		/// </summary>
@@ -460,9 +461,6 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
@@ -471,7 +469,9 @@ namespace MailKit.Net.Smtp {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher algorithm strength.
 		/// </summary>
@@ -482,9 +482,6 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override int? SslCipherStrength {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
@@ -493,6 +490,7 @@ namespace MailKit.Net.Smtp {
 				return null;
 			}
 		}
+#endif
 
 #if NET5_0_OR_GREATER
 		/// <summary>
@@ -512,6 +510,7 @@ namespace MailKit.Net.Smtp {
 		}
 #endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm.
 		/// </summary>
@@ -522,9 +521,6 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
@@ -533,7 +529,9 @@ namespace MailKit.Net.Smtp {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm strength.
 		/// </summary>
@@ -544,9 +542,6 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override int? SslHashStrength {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
@@ -555,7 +550,9 @@ namespace MailKit.Net.Smtp {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS key exchange algorithm.
 		/// </summary>
@@ -566,9 +563,6 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
@@ -577,7 +571,9 @@ namespace MailKit.Net.Smtp {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS key exchange algorithm strength.
 		/// </summary>
@@ -588,9 +584,6 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override int? SslKeyExchangeStrength {
 			get {
 				if (IsSecure && (Stream.Stream is SslStream sslStream))
@@ -599,6 +592,7 @@ namespace MailKit.Net.Smtp {
 				return null;
 			}
 		}
+#endif
 
 		/// <summary>
 		/// Get whether or not the client is currently authenticated with the SMTP server.

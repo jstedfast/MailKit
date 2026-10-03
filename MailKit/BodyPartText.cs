@@ -47,17 +47,6 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="BodyPartText"/>.
 		/// </remarks>
-		[Obsolete ("Use BodyPartText (ContentType, string) instead.")]
-		public BodyPartText () : this (new ContentType ("text", "plain"), string.Empty)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.BodyPartText"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="BodyPartText"/>.
-		/// </remarks>
 		/// <param name="contentType">The content type.</param>
 		/// <param name="partSpecifier">The part specifier.</param>
 		/// <exception cref="ArgumentNullException">

@@ -53,19 +53,6 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="MailKit.BodyPart"/>.
 		/// </remarks>
-		[Obsolete ("Use BodyPart (ContentType, string) instead.")]
-		protected BodyPart ()
-		{
-			ContentType = new ContentType ("application", "octet-stream");
-			PartSpecifier = string.Empty;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.BodyPart"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="MailKit.BodyPart"/>.
-		/// </remarks>
 		/// <param name="contentType">The content type.</param>
 		/// <param name="partSpecifier">The part specifier.</param>
 		/// <exception cref="ArgumentNullException">

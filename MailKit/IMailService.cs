@@ -242,6 +242,7 @@ namespace MailKit {
 		/// <value>The negotiated SSL or TLS protocol version.</value>
 		SslProtocols SslProtocol { get; }
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher algorithm.
 		/// </summary>
@@ -249,11 +250,10 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		CipherAlgorithmType? SslCipherAlgorithm { get; }
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher algorithm strength.
 		/// </summary>
@@ -261,11 +261,10 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		int? SslCipherStrength { get; }
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm.
 		/// </summary>
@@ -273,11 +272,10 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		HashAlgorithmType? SslHashAlgorithm { get; }
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm strength.
 		/// </summary>
@@ -285,11 +283,10 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		int? SslHashStrength { get; }
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS key exchange algorithm.
 		/// </summary>
@@ -297,11 +294,10 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		ExchangeAlgorithmType? SslKeyExchangeAlgorithm { get; }
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS key exchange algorithm strength.
 		/// </summary>
@@ -309,10 +305,8 @@ namespace MailKit {
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		int? SslKeyExchangeStrength { get; }
+#endif
 
 		/// <summary>
 		/// Get or set the timeout for network streaming operations, in milliseconds.

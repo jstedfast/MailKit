@@ -88,17 +88,5 @@ namespace MailKit.Net.Imap {
 		public string FullName {
 			get; private set;
 		}
-
-		/// <summary>
-		/// Get the name of the folder.
-		/// </summary>
-		/// <remarks>
-		/// This is the equivalent of the file name of a file on the file system.
-		/// </remarks>
-		/// <value>The name of the folder.</value>
-		[Obsolete]
-		public string Name {
-			get { return MailFolder.GetBaseName (FullName, DirectorySeparator); }
-		}
 	}
 }

@@ -57,7 +57,6 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
-		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
 		protected FolderNotOpenException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			var value = info.GetString ("FolderAccess");
@@ -172,9 +171,6 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="info"/> is <see langword="null" />.
 		/// </exception>
-#if NET8_0_OR_GREATER
-		[Obsolete ("This API supports obsolete formatter-based serialization. It should not be called or extended by application code.")]
-#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

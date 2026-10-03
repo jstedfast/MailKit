@@ -447,6 +447,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher algorithm.
 		/// </summary>
@@ -457,9 +458,6 @@ namespace MailKit.Net.Pop3 {
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override CipherAlgorithmType? SslCipherAlgorithm {
 			get {
 				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
@@ -468,7 +466,9 @@ namespace MailKit.Net.Pop3 {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS cipher algorithm strength.
 		/// </summary>
@@ -479,9 +479,6 @@ namespace MailKit.Net.Pop3 {
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override int? SslCipherStrength {
 			get {
 				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
@@ -490,6 +487,7 @@ namespace MailKit.Net.Pop3 {
 				return null;
 			}
 		}
+#endif
 
 #if NET5_0_OR_GREATER
 		/// <summary>
@@ -509,6 +507,7 @@ namespace MailKit.Net.Pop3 {
 		}
 #endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm.
 		/// </summary>
@@ -519,9 +518,6 @@ namespace MailKit.Net.Pop3 {
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override HashAlgorithmType? SslHashAlgorithm {
 			get {
 				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
@@ -530,7 +526,9 @@ namespace MailKit.Net.Pop3 {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS hash algorithm strength.
 		/// </summary>
@@ -541,9 +539,6 @@ namespace MailKit.Net.Pop3 {
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override int? SslHashStrength {
 			get {
 				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
@@ -552,7 +547,9 @@ namespace MailKit.Net.Pop3 {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS key exchange algorithm.
 		/// </summary>
@@ -563,9 +560,6 @@ namespace MailKit.Net.Pop3 {
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
 			get {
 				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
@@ -574,7 +568,9 @@ namespace MailKit.Net.Pop3 {
 				return null;
 			}
 		}
+#endif
 
+#if !NET10_0_OR_GREATER
 		/// <summary>
 		/// Get the negotiated SSL or TLS key exchange algorithm strength.
 		/// </summary>
@@ -585,9 +581,6 @@ namespace MailKit.Net.Pop3 {
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
 		/// </example>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
-#if NET10_0_OR_GREATER
-		[Obsolete ("Use SslCipherSuite instead.")]
-#endif
 		public override int? SslKeyExchangeStrength {
 			get {
 				if (engine.IsSecure && (engine.Stream.Stream is SslStream sslStream))
@@ -596,6 +589,7 @@ namespace MailKit.Net.Pop3 {
 				return null;
 			}
 		}
+#endif
 
 		/// <summary>
 		/// Get whether or not the client is currently authenticated with the POP3 server.

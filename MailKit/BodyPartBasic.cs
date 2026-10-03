@@ -48,17 +48,6 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="BodyPartBasic"/>.
 		/// </remarks>
-		[Obsolete ("Use BodyPartBasic (ContentType, string) instead.")]
-		public BodyPartBasic () : base ()
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.BodyPartBasic"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="BodyPartBasic"/>.
-		/// </remarks>
 		/// <param name="contentType">The content type.</param>
 		/// <param name="partSpecifier">The part specifier.</param>
 		/// <exception cref="ArgumentNullException">

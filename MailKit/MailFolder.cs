@@ -67,22 +67,6 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
 		/// </remarks>
-		[Obsolete ("Use MailFolder (string fullName, char directorySeparator, FolderAttributes attributes) instead.")]
-		protected MailFolder ()
-		{
-			PermanentKeywords = new HashSet<string> (StringComparer.Ordinal);
-			AcceptedKeywords = new HashSet<string> (StringComparer.Ordinal);
-			FullName = string.Empty;
-			Name = string.Empty;
-			FirstUnread = -1;
-		}
-
-		/// <summary>
-		/// Initialize a new instance of the <see cref="MailKit.MailFolder"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
-		/// </remarks>
 		/// <param name="fullName">The full name (path) of the folder.</param>
 		/// <param name="directorySeparator">The directory separator used by the folder.</param>
 		/// <param name="attributes">The attributes of the folder.</param>
