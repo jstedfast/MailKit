@@ -119,7 +119,7 @@ namespace MailKit {
 
 			public DateTimeOffset? SaveDate => null;
 
-			public uint? Size {
+			public long? Size {
 				get { return Message != null ? Message.Size : Children[0].Size; }
 			}
 

@@ -303,13 +303,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>The maximum message size will not be known until a successful connection has
 		/// been made and may change once the client is authenticated.</para>
 		/// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
-		/// the <see cref="SmtpCapabilities.Size"/> flag.</note>
+		/// the <see cref="SmtpCapabilities.Size"/> flag. The value will never be negative.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The maximum message size supported by the server.</value>
-		public uint MaxSize {
+		public long MaxSize {
 			get; private set;
 		}
 
@@ -873,18 +873,32 @@ namespace MailKit.Net.Smtp {
 		void SetMaxSize (string capability, int startIndex, int endIndex)
 		{
 			int index = startIndex;
+			long size = 0;
 
 			while (index < endIndex && char.IsWhiteSpace (capability[index]))
 				index++;
 
-#if NETSTANDARD2_1_OR_GREATER || NET5_0_OR_GREATER
-			var value = capability.AsSpan (index, endIndex - index);
-#else
-			var value = capability.Substring (index, endIndex - index);
-#endif
+			if (index == endIndex)
+				return;
 
-			if (index < endIndex && uint.TryParse (value, NumberStyles.None, CultureInfo.InvariantCulture, out uint size))
-				MaxSize = size;
+			// Note: RFC 1870 allows up to 20 digits which can exceed long.MaxValue, so clamp to long.MaxValue.
+			do {
+				char c = capability[index];
+
+				if (c < '0' || c > '9')
+					return;
+
+				int digit = c - '0';
+
+				if (size > (long.MaxValue - digit) / 10)
+					size = long.MaxValue;
+				else
+					size = (size * 10) + digit;
+
+				index++;
+			} while (index < endIndex);
+
+			MaxSize = size;
 		}
 
 		void UpdateCapabilities (SmtpResponse response)

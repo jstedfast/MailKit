@@ -316,6 +316,75 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		const string LargeLinesBodyStructure = "(\"MESSAGE\" \"RFC822\" NIL NIL NIL \"7BIT\" 3028 (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL) (\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 9223372036854775807) 4294967296)\r\n";
+
+		static void AssertLargeLinesBodyStructure (BodyPart body)
+		{
+			Assert.That (body, Is.InstanceOf<BodyPartMessage> (), "Body types did not match.");
+			var message = (BodyPartMessage) body;
+
+			Assert.That (message.Lines, Is.EqualTo (4294967296L), "message/rfc822 line count did not match.");
+			Assert.That (message.Body, Is.InstanceOf<BodyPartText> (), "Nested body types did not match.");
+			Assert.That (((BodyPartText) message.Body).Lines, Is.EqualTo (long.MaxValue), "text/plain line count did not match.");
+		}
+
+		[Test]
+		public void TestParseBodyStructureWithLargeLineCounts ()
+		{
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (LargeLinesBodyStructure), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						engine.SetStream (tokenizer);
+
+						var body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
+
+						AssertLargeLinesBodyStructure (body);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParseBodyStructureWithLargeLineCountsAsync ()
+		{
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (LargeLinesBodyStructure), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						engine.SetStream (tokenizer);
+
+						var body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+						var token = await engine.ReadTokenAsync (CancellationToken.None);
+						Assert.That (token.Type, Is.EqualTo (ImapTokenType.Eoln), $"Expected new-line, but got: {token}");
+
+						AssertLargeLinesBodyStructure (body);
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestBodyPartLargeLineCountsRoundTrip ()
+		{
+			var memory = new MemoryStream (Encoding.ASCII.GetBytes (LargeLinesBodyStructure), false);
+			BodyPart body;
+
+			using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+				using (var engine = new ImapEngine (null)) {
+					engine.SetStream (tokenizer);
+					body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+				}
+			}
+
+			var serialized = body.ToString ();
+
+			Assert.That (BodyPart.TryParse (serialized, out var parsed), Is.True, "Failed to parse serialized body.");
+			AssertLargeLinesBodyStructure (parsed!);
+		}
+
 		[Test]
 		public void TestParseExampleEnvelopeRfc3501 ()
 		{

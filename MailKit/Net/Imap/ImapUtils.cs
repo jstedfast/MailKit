@@ -1044,6 +1044,38 @@ namespace MailKit.Net.Imap {
 			return ParseNumberToken (token, format);
 		}
 
+		static long ParseNumber64Token (ImapToken token, string format)
+		{
+			// Note: this is a work-around for broken IMAP servers that return negative integer values for things
+			// like octet counts and line counts.
+			if (token.Type == ImapTokenType.Atom) {
+				var atom = (string) token.Value;
+
+				if (atom.Length > 0 && atom[0] == '-') {
+					if (!long.TryParse (atom, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out _))
+						throw ImapEngine.UnexpectedToken (format, token);
+
+					return 0;
+				}
+			}
+
+			return ImapEngine.ParseNumber63 (token, false, format, token);
+		}
+
+		static long ReadNumber64 (ImapEngine engine, string format, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+
+			return ParseNumber64Token (token, format);
+		}
+
+		static async ValueTask<long> ReadNumber64Async (ImapEngine engine, string format, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			return ParseNumber64Token (token, format);
+		}
+
 		static bool NeedsQuoting (string value)
 		{
 			for (int i = 0; i < value.Length; i++) {
@@ -1950,13 +1982,13 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.OpenParen) {
 					rfc822.Envelope = ParseEnvelope (engine, cancellationToken);
 					rfc822.Body = ParseBody (engine, format, path, cancellationToken);
-					rfc822.Lines = ReadNumber (engine, format, cancellationToken);
+					rfc822.Lines = ReadNumber64 (engine, format, cancellationToken);
 				}
 
 				body = rfc822;
 			} else if (type.IsMimeType ("text", "*")) {
 				var text = new BodyPartText (type, path) {
-					Lines = ReadNumber (engine, format, cancellationToken)
+					Lines = ReadNumber64 (engine, format, cancellationToken)
 				};
 				body = text;
 			} else {
@@ -2057,13 +2089,13 @@ namespace MailKit.Net.Imap {
 				if (token.Type == ImapTokenType.OpenParen) {
 					rfc822.Envelope = await ParseEnvelopeAsync (engine, cancellationToken).ConfigureAwait (false);
 					rfc822.Body = await ParseBodyAsync (engine, format, path, cancellationToken).ConfigureAwait (false);
-					rfc822.Lines = await ReadNumberAsync (engine, format, cancellationToken).ConfigureAwait (false);
+					rfc822.Lines = await ReadNumber64Async (engine, format, cancellationToken).ConfigureAwait (false);
 				}
 
 				body = rfc822;
 			} else if (type.IsMimeType ("text", "*")) {
 				var text = new BodyPartText (type, path) {
-					Lines = await ReadNumberAsync (engine, format, cancellationToken).ConfigureAwait (false)
+					Lines = await ReadNumber64Async (engine, format, cancellationToken).ConfigureAwait (false)
 				};
 				body = text;
 			} else {

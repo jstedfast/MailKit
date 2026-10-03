@@ -2071,7 +2071,7 @@ namespace MailKit.Net.Pop3 {
 				return Task.CompletedTask;
 			}
 
-			if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out int size) || size < 0) {
+			if (!long.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out long size)) {
 				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
 				return Task.CompletedTask;
 			}
@@ -2126,19 +2126,19 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override int GetMessageSize (int index, CancellationToken cancellationToken = default)
+		public override long GetMessageSize (int index, CancellationToken cancellationToken = default)
 		{
 			var pc = QueueListCommand (index);
 
 			engine.Run (true, cancellationToken);
 
-			return (int) pc.UserData!;
+			return (long) pc.UserData!;
 		}
 
 		static void ParseListAllResponse (Pop3Command pc, string response)
 		{
 			var tokens = response.Split (Space, StringSplitOptions.RemoveEmptyEntries);
-			var sizes = (List<int>) pc.UserData!;
+			var sizes = (List<long>) pc.UserData!;
 
 			if (tokens.Length < 2) {
 				pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command: {0}", response);
@@ -2150,7 +2150,7 @@ namespace MailKit.Net.Pop3 {
 				return;
 			}
 
-			if (!int.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out int size) || size < 0) {
+			if (!long.TryParse (tokens[1], NumberStyles.None, CultureInfo.InvariantCulture, out long size)) {
 				pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command: {0}", tokens[1]);
 				return;
 			}
@@ -2186,14 +2186,14 @@ namespace MailKit.Net.Pop3 {
 			return Task.CompletedTask;
 		}
 
-		List<int> QueueListCommand ()
+		List<long> QueueListCommand ()
 		{
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
 
 			var pc = engine.QueueCommand (ProcessListAllResponse, "LIST\r\n");
-			var sizes = new List<int> ();
+			var sizes = new List<long> ();
 			pc.UserData = sizes;
 
 			return sizes;
@@ -2228,7 +2228,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<int> GetMessageSizes (CancellationToken cancellationToken = default)
+		public override IList<long> GetMessageSizes (CancellationToken cancellationToken = default)
 		{
 			var sizes = QueueListCommand ();
 

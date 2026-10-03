@@ -576,9 +576,10 @@ namespace MailKit {
 		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
 		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
 		/// methods.</para>
+		/// <para>When set, this value will never be negative.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
-		public uint? Size {
+		public long? Size {
 			get; set;
 		}
 

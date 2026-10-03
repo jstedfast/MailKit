@@ -3723,7 +3723,7 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
-		static void AssertFolder (IMailFolder folder, string fullName, string id, FolderAttributes attributes, bool subscribed, ulong highestmodseq, int count, int recent, uint uidnext, uint validity, int unread, ulong size)
+		static void AssertFolder (IMailFolder folder, string fullName, string id, FolderAttributes attributes, bool subscribed, ulong highestmodseq, int count, int recent, uint uidnext, uint validity, int unread, long size)
 		{
 			if (subscribed)
 				attributes |= FolderAttributes.Subscribed;
@@ -3737,7 +3737,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (folder.Unread, Is.EqualTo (unread), "Unread");
 			Assert.That (folder.UidNext.HasValue ? folder.UidNext.Value.Id : (uint) 0, Is.EqualTo (uidnext), "UidNext");
 			Assert.That (folder.UidValidity, Is.EqualTo (validity), "UidValidity");
-			Assert.That (folder.Size ?? (ulong) 0, Is.EqualTo (size), "Size");
+			Assert.That (folder.Size ?? 0, Is.EqualTo (size), "Size");
 			Assert.That (folder.Id, Is.EqualTo (id), "MailboxId");
 		}
 

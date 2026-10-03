@@ -630,6 +630,18 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
+		internal static long ParseNumber63 (ImapToken token, bool nonZero, string format, params object[] args)
+		{
+			AssertToken (token, ImapTokenType.Atom, format, args);
+
+			// Note: Broken IMAP servers such as mail.ru sometimes incorrectly format integers as numbers with decimals and exponents. (e.g. 9.3736e+06)
+			// See https://github.com/jstedfast/MailKit/issues/1838 and https://github.com/jstedfast/MailKit/issues/1840 for details.
+			if (!long.TryParse ((string) token.Value, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out var value) || (nonZero && value == 0))
+				throw UnexpectedToken (format, args);
+
+			return value;
+		}
+
 		internal static ulong ParseNumber64 (ImapToken token, bool nonZero, string format, params object[] args)
 		{
 			AssertToken (token, ImapTokenType.Atom, format, args);
@@ -1209,18 +1221,18 @@ namespace MailKit.Net.Imap {
 			if (Stream!.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
 
-			int literalLength = Stream.LiteralLength;
+			long literalLength = Stream.LiteralLength;
 
 			if (literalLength > MaxLiteralTokenLength)
 				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).");
 
-			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
+			var buf = ArrayPool<byte>.Shared.Rent ((int) literalLength);
 
 			try {
 				int n, nread = 0;
 
 				do {
-					if ((n = Stream.Read (buf, nread, literalLength - nread, cancellationToken)) == 0)
+					if ((n = Stream.Read (buf, nread, (int) literalLength - nread, cancellationToken)) == 0)
 						break;
 
 					nread += n;
@@ -1251,18 +1263,18 @@ namespace MailKit.Net.Imap {
 			if (Stream!.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
 
-			int literalLength = Stream.LiteralLength;
+			long literalLength = Stream.LiteralLength;
 
 			if (literalLength > MaxLiteralTokenLength)
 				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).");
 
-			var buf = ArrayPool<byte>.Shared.Rent (literalLength);
+			var buf = ArrayPool<byte>.Shared.Rent ((int) literalLength);
 
 			try {
 				int n, nread = 0;
 
 				do {
-					if ((n = await Stream.ReadAsync (buf, nread, literalLength - nread, cancellationToken).ConfigureAwait (false)) == 0)
+					if ((n = await Stream.ReadAsync (buf, nread, (int) literalLength - nread, cancellationToken).ConfigureAwait (false)) == 0)
 						break;
 
 					nread += n;
@@ -2656,7 +2668,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("SIZE", StringComparison.OrdinalIgnoreCase)) {
 				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-				var size = ParseNumber64 (token, false, GenericItemSyntaxErrorFormat, atom, token);
+				var size = ParseNumber63 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 				folder?.UpdateSize (size);
 			} else {

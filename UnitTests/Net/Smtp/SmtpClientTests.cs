@@ -1825,6 +1825,27 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		[TestCase ("ehlo-size-large.txt", 10000000000L)]
+		[TestCase ("ehlo-size-overflow.txt", long.MaxValue)]
+		public void TestLargeMaxSize (string ehloResource, long expected)
+		{
+			var commands = new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", ehloResource),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+
+			using (var client = new SmtpClient ()) {
+				client.LocalDomain = "unit-tests.mimekit.org";
+				client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
+
+				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.MaxSize, Is.EqualTo (expected), "Failed to parse SIZE correctly");
+
+				client.Disconnect (true);
+			}
+		}
+
 		static List<SmtpReplayCommand> CreateHeloFallbackCommands ()
 		{
 			return new List<SmtpReplayCommand> {

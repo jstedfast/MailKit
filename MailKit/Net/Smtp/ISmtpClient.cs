@@ -72,13 +72,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>The maximum message size will not be known until a successful connection has
 		/// been made and may change once the client is authenticated.</para>
 		/// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
-		/// the <see cref="SmtpCapabilities.Size"/> flag.</note>
+		/// the <see cref="SmtpCapabilities.Size"/> flag. The value will never be negative.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The maximum message size supported by the server.</value>
-		uint MaxSize { get; }
+		long MaxSize { get; }
 
 		/// <summary>
 		/// Get or set whether the client should use the REQUIRETLS extension if it is available.

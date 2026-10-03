@@ -118,7 +118,7 @@ namespace MailKit.Net.Imap {
 			return new ImapToken (type, c);
 		}
 
-		public static ImapToken Create (ImapTokenType type, int literalLength)
+		public static ImapToken Create (ImapTokenType type, long literalLength)
 		{
 			return new ImapToken (type, literalLength);
 		}
@@ -201,7 +201,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Atom:         return (string) Value;
 			case ImapTokenType.Flag:         return (string) Value;
 			case ImapTokenType.QString:      return MimeUtils.Quote ((string) Value);
-			case ImapTokenType.Literal:      return string.Format (CultureInfo.InvariantCulture, "{{{0}}}", (int) Value);
+			case ImapTokenType.Literal:      return string.Format (CultureInfo.InvariantCulture, "{{{0}}}", (long) Value);
 			case ImapTokenType.Eoln:         return "'\\n'";
 			case ImapTokenType.OpenParen:    return "'('";
 			case ImapTokenType.CloseParen:   return "')'";

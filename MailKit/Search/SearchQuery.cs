@@ -692,7 +692,7 @@ namespace MailKit.Search {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="octets"/> is a negative value.
 		/// </exception>
-		public static NumericSearchQuery LargerThan (int octets)
+		public static NumericSearchQuery LargerThan (long octets)
 		{
 			if (octets < 0)
 				throw new ArgumentOutOfRangeException (nameof (octets));
@@ -1025,7 +1025,7 @@ namespace MailKit.Search {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="octets"/> is a negative value.
 		/// </exception>
-		public static NumericSearchQuery SmallerThan (int octets)
+		public static NumericSearchQuery SmallerThan (long octets)
 		{
 			if (octets < 0)
 				throw new ArgumentOutOfRangeException (nameof (octets));

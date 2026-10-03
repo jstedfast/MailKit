@@ -2551,6 +2551,78 @@ namespace UnitTests.Net.Imap {
 			};
 		}
 
+		const long LargeOffset = 5000000000;
+		const long LargeSize = 6000000000;
+
+		static List<ImapReplayCommand> CreateLargeOffsetsAndSizesCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK Domino IMAP4 Server Release 10.0.1FP3 ready Wed, 30 Oct 2019 09:28:06 +0100\r\n")),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "domino.capability.txt"),
+				new ImapReplayCommand ("A00000001 LOGIN username password\r\n", ImapReplayCommandResponse.OK),
+				new ImapReplayCommand ("A00000002 CAPABILITY\r\n", "domino.capability.txt"),
+				new ImapReplayCommand ("A00000003 NAMESPACE\r\n", "domino.namespace.txt"),
+				new ImapReplayCommand ("A00000004 LIST \"\" \"INBOX\"\r\n", "domino.list-inbox.txt"),
+				new ImapReplayCommand ("A00000005 SELECT Inbox\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ("A00000006 UID FETCH 1:* (UID RFC822.SIZE)\r\n", Encoding.ASCII.GetBytes ("* 1 FETCH (UID 1 RFC822.SIZE 6000000000)\r\nA00000006 OK FETCH completed.\r\n")),
+				new ImapReplayCommand ("A00000007 UID FETCH 1 (BODY.PEEK[]<5000000000.16>)\r\n", Encoding.ASCII.GetBytes ("* 1 FETCH (UID 1 BODY[]<5000000000> {16}\r\n0123456789abcdef)\r\nA00000007 OK FETCH completed.\r\n"))
+			};
+		}
+
+		static void AssertLargeOffsetStream (Stream stream)
+		{
+			using (var reader = new StreamReader (stream, Encoding.ASCII))
+				Assert.That (reader.ReadToEnd (), Is.EqualTo ("0123456789abcdef"));
+		}
+
+		[Test]
+		public void TestLargeOffsetsAndSizes ()
+		{
+			var commands = CreateLargeOffsetsAndSizesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				client.Authenticate ("username", "password");
+
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				var messages = inbox.Fetch (UniqueIdRange.All, MessageSummaryItems.UniqueId | MessageSummaryItems.Size);
+				Assert.That (messages, Has.Count.EqualTo (1), "Count");
+				Assert.That (messages[0].Size, Is.EqualTo (LargeSize), "Size");
+
+				using (var stream = inbox.GetStream (new UniqueId (1), LargeOffset, 16))
+					AssertLargeOffsetStream (stream);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestLargeOffsetsAndSizesAsync ()
+		{
+			var commands = CreateLargeOffsetsAndSizesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				await client.AuthenticateAsync ("username", "password");
+
+				var inbox = client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				var messages = await inbox.FetchAsync (UniqueIdRange.All, MessageSummaryItems.UniqueId | MessageSummaryItems.Size);
+				Assert.That (messages, Has.Count.EqualTo (1), "Count");
+				Assert.That (messages[0].Size, Is.EqualTo (LargeSize), "Size");
+
+				using (var stream = await inbox.GetStreamAsync (new UniqueId (1), LargeOffset, 16))
+					AssertLargeOffsetStream (stream);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		[Test]
 		public void TestDominoParenthesisWorkaround ()
 		{

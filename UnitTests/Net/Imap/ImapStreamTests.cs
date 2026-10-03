@@ -370,6 +370,68 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestReadLargeLiteralToken ()
+		{
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var data = Encoding.ASCII.GetBytes ("{9223372036854775807}\r\n");
+
+				stream.Stream.Write (data, 0, data.Length);
+				stream.Stream.Position = 0;
+
+				var token = stream.ReadToken (CancellationToken.None);
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Literal));
+				Assert.That (token.Value, Is.EqualTo (long.MaxValue));
+				Assert.That (token.ToString (), Is.EqualTo ("{9223372036854775807}"));
+				Assert.That (stream.LiteralLength, Is.EqualTo (long.MaxValue));
+			}
+		}
+
+		[Test]
+		public async Task TestReadLargeLiteralTokenAsync ()
+		{
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var data = Encoding.ASCII.GetBytes ("{9223372036854775807}\r\n");
+
+				stream.Stream.Write (data, 0, data.Length);
+				stream.Stream.Position = 0;
+
+				var token = await stream.ReadTokenAsync (CancellationToken.None);
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Literal));
+				Assert.That (token.Value, Is.EqualTo (long.MaxValue));
+				Assert.That (token.ToString (), Is.EqualTo ("{9223372036854775807}"));
+				Assert.That (stream.LiteralLength, Is.EqualTo (long.MaxValue));
+			}
+		}
+
+		[Test]
+		public void TestReadOverflowLiteralToken ()
+		{
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var data = Encoding.ASCII.GetBytes ("{9223372036854775808}\r\n");
+
+				stream.Stream.Write (data, 0, data.Length);
+				stream.Stream.Position = 0;
+
+				var token = stream.ReadToken (CancellationToken.None);
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Error));
+			}
+		}
+
+		[Test]
+		public async Task TestReadOverflowLiteralTokenAsync ()
+		{
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var data = Encoding.ASCII.GetBytes ("{9223372036854775808}\r\n");
+
+				stream.Stream.Write (data, 0, data.Length);
+				stream.Stream.Position = 0;
+
+				var token = await stream.ReadTokenAsync (CancellationToken.None);
+				Assert.That (token.Type, Is.EqualTo (ImapTokenType.Error));
+			}
+		}
+
+		[Test]
 		public void TestSeek ()
 		{
 			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {

@@ -137,7 +137,7 @@ namespace MailKit
 		}
 
 		// FIXME: This should be moved somewhere else...
-		internal static bool TryParse (byte[] text, ref int index, int endIndex, out int value)
+		internal static bool TryParse (byte[] text, ref int index, int endIndex, out long value)
 		{
 			int startIndex = index;
 
@@ -146,12 +146,12 @@ namespace MailKit
 			while (index < endIndex && text[index] >= (byte) '0' && text[index] <= (byte) '9') {
 				int digit = text[index] - (byte) '0';
 
-				if (value > int.MaxValue / 10) {
+				if (value > long.MaxValue / 10) {
 					// integer overflow
 					return false;
 				}
 
-				if (value == int.MaxValue / 10 && digit > int.MaxValue % 10) {
+				if (value == long.MaxValue / 10 && digit > long.MaxValue % 10) {
 					// integer overflow
 					return false;
 				}
@@ -164,7 +164,7 @@ namespace MailKit
 		}
 
 		// FIXME: Does this make sense to have here? Or should I have an extensions class for byte[] that has this?
-		public bool TryParse (int startIndex, int endIndex, out int value)
+		public bool TryParse (int startIndex, int endIndex, out long value)
 		{
 			int index = startIndex;
 

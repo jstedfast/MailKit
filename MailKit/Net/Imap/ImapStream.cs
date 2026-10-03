@@ -78,7 +78,7 @@ namespace MailKit.Net.Imap {
 		readonly ByteArrayBuilder tokenBuilder;
 		readonly Stack<ImapToken> tokens;
 		readonly IProtocolLogger logger;
-		int literalDataLeft;
+		long literalDataLeft;
 		bool disposed;
 
 		/// <summary>
@@ -136,7 +136,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the length of the literal.
 		/// </remarks>
 		/// <value>The length of the literal.</value>
-		public int LiteralLength {
+		public long LiteralLength {
 			get { return literalDataLeft; }
 			internal set { literalDataLeft = value; }
 		}
@@ -417,7 +417,7 @@ namespace MailKit.Net.Imap {
 			if (Mode != ImapStreamMode.Literal)
 				return 0;
 
-			count = Math.Min (count, literalDataLeft);
+			count = (int) Math.Min (count, literalDataLeft);
 
 			int length = inputEnd - inputIndex;
 			int n;
@@ -511,7 +511,7 @@ namespace MailKit.Net.Imap {
 			if (Mode != ImapStreamMode.Literal)
 				return 0;
 
-			count = Math.Min (count, literalDataLeft);
+			count = (int) Math.Min (count, literalDataLeft);
 
 			int length = inputEnd - inputIndex;
 			int n;

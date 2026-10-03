@@ -271,7 +271,7 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("RFC822.SIZE", StringComparison.OrdinalIgnoreCase)) {
 					token = engine.ReadToken (cancellationToken);
 
-					message.Size = ImapEngine.ParseNumber (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					message.Size = ImapEngine.ParseNumber63 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					message.Fields |= MessageSummaryItems.Size;
 				} else if (atom.Equals ("BODYSTRUCTURE", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODYSTRUCTURE", "{0}");
@@ -515,7 +515,7 @@ namespace MailKit.Net.Imap
 				} else if (atom.Equals ("RFC822.SIZE", StringComparison.OrdinalIgnoreCase)) {
 					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-					message.Size = ImapEngine.ParseNumber (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
+					message.Size = ImapEngine.ParseNumber63 (token, false, ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					message.Fields |= MessageSummaryItems.Size;
 				} else if (atom.Equals ("BODYSTRUCTURE", StringComparison.OrdinalIgnoreCase)) {
 					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODYSTRUCTURE", "{0}");
@@ -1755,13 +1755,12 @@ namespace MailKit.Net.Imap
 		/// <param name="section">The section of the message that is being fetched.</param>
 		/// <param name="offset">The starting offset of the message section being fetched.</param>
 		/// <param name="length">The length of the stream being fetched, measured in bytes.</param>
-		protected virtual Stream CreateStream (UniqueId? uid, string section, int offset, int length)
+		protected virtual Stream CreateStream (UniqueId? uid, string section, long offset, long length)
 		{
-			// FIXME: 'length' needs to be changed to a 'long' in order to support >2GB messages, but that requires an API/ABI break.
 			if (length > 4096)
 				return new MemoryBlockStream ();
 
-			return new MemoryStream (length);
+			return new MemoryStream ((int) length);
 		}
 
 		/// <summary>
@@ -1786,7 +1785,7 @@ namespace MailKit.Net.Imap
 		/// <param name="section">The section of the message that the stream represents.</param>
 		/// <param name="offset">The starting offset of the message section.</param>
 		/// <param name="length">The length of the stream, measured in bytes.</param>
-		protected virtual Stream CommitStream (Stream stream, UniqueId uid, string section, int offset, int length)
+		protected virtual Stream CommitStream (Stream stream, UniqueId uid, string section, long offset, long length)
 		{
 			return stream;
 		}
@@ -1859,10 +1858,10 @@ namespace MailKit.Net.Imap
 			public UniqueId? UniqueId;
 			public readonly Stream Stream;
 			public readonly string Name;
-			public readonly int Offset;
-			public readonly int Length;
+			public readonly long Offset;
+			public readonly long Length;
 
-			public Section (Stream stream, int index, UniqueId? uid, string name, int offset, int length)
+			public Section (Stream stream, int index, UniqueId? uid, string name, long offset, long length)
 			{
 				Stream = stream;
 				Offset = offset;
@@ -2029,7 +2028,7 @@ namespace MailKit.Net.Imap
 				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
-				int offset = 0, length;
+				long offset = 0, length;
 				uint value;
 
 				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
@@ -2085,7 +2084,7 @@ namespace MailKit.Net.Imap
 						if (expr.Length > 2 && expr[0] == '<' && expr[expr.Length - 1] == '>') {
 							var region = expr.Substring (1, expr.Length - 2);
 
-							int.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
+							long.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
 
 							token = engine.ReadToken (ic.CancellationToken);
 						}
@@ -2095,7 +2094,7 @@ namespace MailKit.Net.Imap
 
 					switch (token.Type) {
 					case ImapTokenType.Literal:
-						length = (int) token.Value;
+						length = (long) token.Value;
 						size += length;
 
 						stream = CreateStream (uid, name, offset, length);
@@ -2134,7 +2133,7 @@ namespace MailKit.Net.Imap
 						stream = CreateStream (uid, name, offset, length);
 
 						try {
-							stream.Write (buf, 0, length);
+							stream.Write (buf, 0, buf.Length);
 							ctx.Report (nread, size);
 							stream.Position = 0;
 						} catch {
@@ -2272,7 +2271,7 @@ namespace MailKit.Net.Imap
 				ImapEngine.AssertToken (token, ImapTokenType.Atom, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
-				int offset = 0, length;
+				long offset = 0, length;
 				uint value;
 
 				if (atom.Equals ("BODY", StringComparison.OrdinalIgnoreCase)) {
@@ -2328,7 +2327,7 @@ namespace MailKit.Net.Imap
 						if (expr.Length > 2 && expr[0] == '<' && expr[expr.Length - 1] == '>') {
 							var region = expr.Substring (1, expr.Length - 2);
 
-							int.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
+							long.TryParse (region, NumberStyles.None, CultureInfo.InvariantCulture, out offset);
 
 							token = await engine.ReadTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 						}
@@ -2338,7 +2337,7 @@ namespace MailKit.Net.Imap
 
 					switch (token.Type) {
 					case ImapTokenType.Literal:
-						length = (int) token.Value;
+						length = (long) token.Value;
 						size += length;
 
 						stream = CreateStream (uid, name, offset, length);
@@ -2377,7 +2376,7 @@ namespace MailKit.Net.Imap
 						stream = CreateStream (uid, name, offset, length);
 
 						try {
-							stream.Write (buf, 0, length);
+							stream.Write (buf, 0, buf.Length);
 							ctx.Report (nread, size);
 							stream.Position = 0;
 						} catch {
@@ -4178,7 +4177,7 @@ namespace MailKit.Net.Imap
 			return GetBodyPartAsync (index, part.PartSpecifier, cancellationToken, progress);
 		}
 
-		bool TryQueueGetStreamCommand (UniqueId uid, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (UniqueId uid, long offset, long count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -4266,7 +4265,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Stream GetStream (UniqueId uid, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -4330,7 +4329,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override async Task<Stream> GetStreamAsync (UniqueId uid, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (uid, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -4344,7 +4343,7 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		bool TryQueueGetStreamCommand (int index, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (int index, long offset, long count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -4431,7 +4430,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Stream GetStream (int index, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -4494,7 +4493,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override async Task<Stream> GetStreamAsync (int index, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (index, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -4662,7 +4661,7 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		bool TryQueueGetStreamCommand (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (UniqueId uid, string section, long offset, long count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (!uid.IsValid)
 				throw new ArgumentException ("The uid is invalid.", nameof (uid));
@@ -4752,7 +4751,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Stream GetStream (UniqueId uid, string section, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -4822,7 +4821,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override async Task<Stream> GetStreamAsync (UniqueId uid, string section, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (uid, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -4985,7 +4984,7 @@ namespace MailKit.Net.Imap
 			}
 		}
 
-		bool TryQueueGetStreamCommand (int index, string section, int offset, int count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
+		bool TryQueueGetStreamCommand (int index, string section, long offset, long count, CancellationToken cancellationToken, ITransferProgress? progress, [NotNullWhen (true)] out ImapCommand? ic, [NotNullWhen (true)] out FetchStreamContext? ctx)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException (nameof (index));
@@ -5075,7 +5074,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Stream GetStream (int index, string section, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();
@@ -5144,7 +5143,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override async Task<Stream> GetStreamAsync (int index, string section, long offset, long count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!TryQueueGetStreamCommand (index, section, offset, count, cancellationToken, progress, out var ic, out var ctx))
 				return new MemoryStream ();

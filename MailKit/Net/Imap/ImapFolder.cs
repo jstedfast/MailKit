@@ -6307,7 +6307,7 @@ namespace MailKit.Net.Imap {
 			AppendLimit = limit;
 		}
 
-		internal void UpdateSize (ulong? size)
+		internal void UpdateSize (long? size)
 		{
 			if (Size == size)
 				return;

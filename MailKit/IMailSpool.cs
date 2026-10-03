@@ -141,7 +141,7 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		int GetMessageSize (int index, CancellationToken cancellationToken = default);
+		long GetMessageSize (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -152,7 +152,7 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default);
+		Task<long> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the sizes for all available messages, in bytes.
@@ -162,7 +162,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<int> GetMessageSizes (CancellationToken cancellationToken = default);
+		IList<long> GetMessageSizes (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -172,7 +172,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default);
+		Task<IList<long>> GetMessageSizesAsync (CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the headers for the specified message.

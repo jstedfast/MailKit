@@ -1028,13 +1028,13 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default)
+		public override async Task<long> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default)
 		{
 			var pc = QueueListCommand (index);
 
 			await engine.RunAsync (true, cancellationToken).ConfigureAwait (false);
 
-			return (int) pc.UserData!;
+			return (long) pc.UserData!;
 		}
 
 		static async Task ReadListAllResponseAsync (Pop3Engine engine, Pop3Command pc, CancellationToken cancellationToken)
@@ -1081,7 +1081,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default)
+		public override async Task<IList<long>> GetMessageSizesAsync (CancellationToken cancellationToken = default)
 		{
 			var sizes = QueueListCommand ();
 

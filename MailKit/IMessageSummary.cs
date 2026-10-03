@@ -311,9 +311,10 @@ namespace MailKit {
 		/// one of the <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
 		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a>
 		/// methods.</para>
+		/// <para>When set, this value will never be negative.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
-		uint? Size { get; }
+		long? Size { get; }
 
 		/// <summary>
 		/// Gets the mod-sequence value for the message, if available.

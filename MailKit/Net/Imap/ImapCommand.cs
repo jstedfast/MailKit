@@ -168,8 +168,8 @@ namespace MailKit.Net.Imap {
 					case '%': // a literal %
 						builder.Append ((byte) '%');
 						break;
-					case 'd': // an integer
-						str = ((int) args[argc++]).ToString (CultureInfo.InvariantCulture);
+					case 'd': // an integer (int or long)
+						str = Convert.ToInt64 (args[argc++], CultureInfo.InvariantCulture).ToString (CultureInfo.InvariantCulture);
 						buf = Encoding.ASCII.GetBytes (str);
 						builder.Append (buf, 0, buf.Length);
 						break;

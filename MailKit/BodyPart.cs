@@ -132,6 +132,11 @@ namespace MailKit {
 			builder.Append (value.ToString (CultureInfo.InvariantCulture));
 		}
 
+		internal static void Encode (StringBuilder builder, long value)
+		{
+			builder.Append (value.ToString (CultureInfo.InvariantCulture));
+		}
+
 		internal static void Encode (StringBuilder builder, string? value)
 		{
 			if (value != null)
@@ -293,6 +298,21 @@ namespace MailKit {
 
 			while (index < text.Length && char.IsDigit (text[index]))
 				value = (value * 10) + (uint) (text[index++] - '0');
+
+			return index > startIndex;
+		}
+
+		static bool TryParse (string text, ref int index, out long value)
+		{
+			while (index < text.Length && text[index] == ' ')
+				index++;
+
+			int startIndex = index;
+
+			value = 0;
+
+			while (index < text.Length && char.IsDigit (text[index]))
+				value = (value * 10) + (text[index++] - '0');
 
 			return index > startIndex;
 		}
@@ -687,15 +707,15 @@ namespace MailKit {
 
 					message.Body = body;
 
-					if (!TryParse (text, ref index, out number))
+					if (!TryParse (text, ref index, out long lines))
 						return false;
 
-					message.Lines = number;
+					message.Lines = lines;
 				} else if (txt != null) {
-					if (!TryParse (text, ref index, out number))
+					if (!TryParse (text, ref index, out long lines))
 						return false;
 
-					txt.Lines = number;
+					txt.Lines = lines;
 				}
 
 				part = basic;

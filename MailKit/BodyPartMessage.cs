@@ -92,10 +92,11 @@ namespace MailKit {
 		/// Gets the length of the message, in lines.
 		/// </summary>
 		/// <remarks>
-		/// Gets the length of the message, in lines.
+		/// <para>Gets the length of the message, in lines.</para>
+		/// <para>This value will never be negative.</para>
 		/// </remarks>
 		/// <value>The number of lines.</value>
-		public uint Lines {
+		public long Lines {
 			get; set;
 		}
 
