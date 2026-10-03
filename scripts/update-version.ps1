@@ -136,23 +136,11 @@ $projectFile = Resolve-Path $projectFile
 Write-Host "Updating $projectFile..."
 Update-Project -ProjectFile $projectFile -Version $Version
 
-$fileName = $ProjectName + "Lite.csproj"
-$projectFile = Join-Path $ProjectName $fileName
-$projectFile = Resolve-Path $projectFile
-Write-Host "Updating $projectFile..."
-Update-Project -ProjectFile $projectFile -Version $Version
-
 $fileName = $ProjectName + ".nuspec"
 $nuspec = Join-Path "nuget" $fileName
 $nuspec = Resolve-Path $nuspec
 Write-Host "Updating $nuspec..."
-Update-NuGetPackageVersion -NuSpecFile $nuspec -Version $Version -MimeKitPackageName "MimeKit" -MimeKitVersion $mimekitVersion
-
-$fileName = $ProjectName + "Lite.nuspec"
-$nuspec = Join-Path "nuget" $fileName
-$nuspec = Resolve-Path $nuspec
-Write-Host "Updating $nuspec..."
-Update-NuGetPackageVersion -NuSpecFile $nuspec -Version $Version -MimeKitPackageName "MimeKitLite" -MimeKitVersion $mimekitVersion
+Update-NuGetPackageVersion -NuSpecFile $nuspec -Version $Version -MimeKitPackageName "MimeKit.Core" -MimeKitVersion $mimekitVersion
 
 $sampleProjects = Get-ChildItem "samples" -Filter "*.csproj" -Recurse
 foreach ($projectFile in $sampleProjects) {

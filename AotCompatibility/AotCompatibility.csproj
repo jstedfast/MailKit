@@ -9,7 +9,6 @@
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
     <SelfContained>true</SelfContained>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <UseMailKitLite Condition=" '$(UseMailKitLite)' == '' ">false</UseMailKitLite>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,15 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MailKit\MailKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
-    <ProjectReference Include="..\submodules\MimeKit\MimeKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
-    <TrimmerRootAssembly Include="MailKit" Path="..\MailKit\MailKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
-    <TrimmerRootAssembly Include="MimeKit" Path="..\submodules\MimeKit\MimeKit.csproj" Condition=" '$(UseMailKitLite)' == 'false' " />
+    <ProjectReference Include="..\MailKit\MailKit.csproj" />
+    <TrimmerRootAssembly Include="MailKit" Path="..\MailKit\MailKit.csproj" />
 
-    <ProjectReference Include="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
-    <ProjectReference Include="..\submodules\MimeKit\MimeKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
-    <TrimmerRootAssembly Include="MailKitLite" Path="..\MailKit\MailKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
-    <TrimmerRootAssembly Include="MimeKitLite" Path="..\submodules\MimeKit\MimeKitLite.csproj" Condition=" '$(UseMailKitLite)' == 'true' " />
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj" />
+    <TrimmerRootAssembly Include="MimeKit.Core" Path="..\submodules\MimeKit\MimeKit\MimeKit.csproj" />
   </ItemGroup>
 
 </Project>

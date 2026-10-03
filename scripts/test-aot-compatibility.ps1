@@ -1,7 +1,5 @@
-param([string]$useMailKitLite)
-
 $rootDirectory = Split-Path $PSScriptRoot -Parent
-$publishOutput = dotnet publish $rootDirectory/AotCompatibility/AotCompatibility.csproj -nodeReuse:false /p:UseSharedCompilation=false /p:ExposeExperimentalFeatures=true /p:UseMailKitLite=$useMailKitLite
+$publishOutput = dotnet publish $rootDirectory/AotCompatibility/AotCompatibility.csproj -nodeReuse:false /p:UseSharedCompilation=false /p:ExposeExperimentalFeatures=true
 
 $actualWarningCount = 0
 

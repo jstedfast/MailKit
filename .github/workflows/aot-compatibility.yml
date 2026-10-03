@@ -16,7 +16,6 @@ jobs:
       fail-fast: false  # ensures the entire test matrix is run, even if one permutation fails
       matrix:
         os: [ windows-latest ]
-        mailkitlite: [ true ]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -35,4 +34,4 @@ jobs:
 
     - name: Publish AOT testApp, assert static analysis warning count, and run the app
       shell: pwsh
-      run: .\scripts\test-aot-compatibility.ps1 ${{ matrix.mailkitlite }}
+      run: .\scripts\test-aot-compatibility.ps1
