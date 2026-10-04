@@ -74,6 +74,12 @@ rather than the full MimeKit cryptography stack.
   (`SERIALIZABLE` is only defined for .NET Framework), and the unconditional attribute on the
   protected serialization constructors emitted a spurious `CS0618` for .NET Framework consumers
   subclassing these exceptions.
+* The `AnnotationAttribute (string)` constructor now validates the specifier according to
+  [rfc5257](https://tools.ietf.org/html/rfc5257) section 3.2 and throws `ArgumentException` if it
+  contains empty components (e.g. a leading or trailing `.` or `..`), NUL or non-ASCII characters,
+  or `priv`/`shared` components other than the trailing scope suffix (e.g. `value.priv.priv`).
+  Previously, only `*` and `%` were rejected. Attribute specifiers parsed from IMAP server responses
+  are not validated.
 * `ImapCommandException` has new
   `(ImapCommandResponse, string? responseCode, string responseText, string message[, Exception])`
   constructors. As a result, calls to the existing `(ImapCommandResponse, string, string, Exception)`

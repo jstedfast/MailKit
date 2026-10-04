@@ -41,6 +41,55 @@ namespace UnitTests {
 			Assert.Throws<ArgumentException> (() => new AnnotationAttribute ("w%ldcard"));
 		}
 
+		[TestCase (".priv", TestName = "TestInvalidSpecifier(ScopeOnlyPriv)")]
+		[TestCase (".shared", TestName = "TestInvalidSpecifier(ScopeOnlyShared)")]
+		[TestCase (".value", TestName = "TestInvalidSpecifier(LeadingDot)")]
+		[TestCase ("value.", TestName = "TestInvalidSpecifier(TrailingDot)")]
+		[TestCase ("vendor..value", TestName = "TestInvalidSpecifier(ConsecutiveDots)")]
+		[TestCase ("value..priv", TestName = "TestInvalidSpecifier(ConsecutiveDotsBeforeSuffix)")]
+		[TestCase ("priv", TestName = "TestInvalidSpecifier(Priv)")]
+		[TestCase ("shared", TestName = "TestInvalidSpecifier(Shared)")]
+		[TestCase ("priv.value", TestName = "TestInvalidSpecifier(PrivComponent)")]
+		[TestCase ("vendor.shared.value", TestName = "TestInvalidSpecifier(SharedComponent)")]
+		[TestCase ("value.priv.priv", TestName = "TestInvalidSpecifier(DoublePrivSuffix)")]
+		[TestCase ("value.shared.priv", TestName = "TestInvalidSpecifier(SharedThenPrivSuffix)")]
+		[TestCase ("val\0ue", TestName = "TestInvalidSpecifier(Nul)")]
+		[TestCase ("val\u00fce", TestName = "TestInvalidSpecifier(NonAscii)")]
+		[TestCase ("value*.priv", TestName = "TestInvalidSpecifier(WildcardBeforeSuffix)")]
+		public void TestInvalidSpecifier (string specifier)
+		{
+			Assert.Throws<ArgumentException> (() => new AnnotationAttribute (specifier));
+		}
+
+		[TestCase ("value", "value", AnnotationScope.Both)]
+		[TestCase ("size.shared", "size", AnnotationScope.Shared)]
+		[TestCase ("vendor.cmu.value.priv", "vendor.cmu.value", AnnotationScope.Private)]
+		[TestCase ("private", "private", AnnotationScope.Both)]
+		[TestCase ("sharedx.priv", "sharedx", AnnotationScope.Private)]
+		[TestCase ("Priv", "Priv", AnnotationScope.Both)]
+		[TestCase ("value.Shared", "value.Shared", AnnotationScope.Both)]
+		public void TestValidSpecifier (string specifier, string name, AnnotationScope scope)
+		{
+			var attr = new AnnotationAttribute (specifier);
+
+			Assert.That (attr.Specifier, Is.EqualTo (specifier), "Specifier");
+			Assert.That (attr.Name, Is.EqualTo (name), "Name");
+			Assert.That (attr.Scope, Is.EqualTo (scope), "Scope");
+		}
+
+		[Test]
+		public void TestNonValidatingConstructor ()
+		{
+			// Note: attribute specifiers parsed from server responses are not validated.
+			var attr = new AnnotationAttribute ("vendor..value.priv", false);
+
+			Assert.That (attr.Specifier, Is.EqualTo ("vendor..value.priv"), "Specifier");
+			Assert.That (attr.Name, Is.EqualTo ("vendor..value"), "Name");
+			Assert.That (attr.Scope, Is.EqualTo (AnnotationScope.Private), "Scope");
+
+			Assert.Throws<ArgumentNullException> (() => new AnnotationAttribute (null, false));
+		}
+
 		[Test]
 		public void TestBasicFunctionality ()
 		{

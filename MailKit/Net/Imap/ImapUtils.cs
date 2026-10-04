@@ -2737,7 +2737,8 @@ namespace MailKit.Net.Imap {
 
 						var name = ReadStringToken (engine, format, cancellationToken);
 						var value = ReadNStringToken (engine, format, false, cancellationToken);
-						var attribute = new AnnotationAttribute (name);
+						// Note: Don't validate attribute names from the server so that we can be lenient with nonconforming servers.
+						var attribute = new AnnotationAttribute (name, false);
 
 						annotation.Properties[attribute] = value;
 					} while (true);
@@ -2795,7 +2796,8 @@ namespace MailKit.Net.Imap {
 
 						var name = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
 						var value = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
-						var attribute = new AnnotationAttribute (name);
+						// Note: Don't validate attribute names from the server so that we can be lenient with nonconforming servers.
+						var attribute = new AnnotationAttribute (name, false);
 
 						annotation.Properties[attribute] = value;
 					} while (true);
