@@ -3444,13 +3444,14 @@ namespace MailKit.Net.Imap {
 
 			int index;
 
-			// FIXME: should this search EncodedName instead of FullName?
-			if ((index = folder.FullName.LastIndexOf (folder.DirectorySeparator)) != -1) {
+			// Note: Use the EncodedName rather than re-encoding the parent portion of the FullName because the
+			// decode/encode round-trip is not guaranteed to reproduce the server's original encoding (e.g. if the
+			// server uses raw 8-bit characters, non-canonical modified UTF-7, or invalid modified UTF-7).
+			if ((index = folder.EncodedName.LastIndexOf (folder.DirectorySeparator)) != -1) {
 				if (index == 0)
 					return false;
 
-				var parentName = folder.FullName.Substring (0, index);
-				encodedParentName = EncodeMailboxName (parentName);
+				encodedParentName = folder.EncodedName.Substring (0, index);
 			} else {
 				encodedParentName = string.Empty;
 			}

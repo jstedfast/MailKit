@@ -149,6 +149,10 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
   used to report the progress of its own message.
 * Fixed `ImapClient.Notify ()` to throw `InvalidOperationException` if an `ImapMailboxFilter.Mailboxes` or
   `ImapMailboxFilter.Subtree` filter contains folders that belong to a different `ImapClient`.
+* Fixed the IMAP parent folder lookup to use the folder's encoded name (as sent by the server) rather than
+  re-encoding the parent portion of the decoded `FullName`. Previously, folders with names using raw 8-bit
+  characters, non-canonical modified UTF-7, or invalid modified UTF-7 could end up with a phantom
+  `\NonExistent` parent folder instead of the real (cached) parent folder.
 
 ## MailKit 4.18.1 (2026-09-27)
 

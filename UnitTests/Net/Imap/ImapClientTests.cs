@@ -3535,6 +3535,85 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateGetFoldersNonCanonicalEncodedNamesCommands ()
+		{
+			const string list = "* LIST (\\HasChildren) \".\" \"&AGE-\"\r\n" +
+				"* LIST (\\HasNoChildren) \".\" \"&AGE-.Child\"\r\n" +
+				"* LIST (\\HasChildren) \".\" \"&Jjo!\"\r\n" +
+				"* LIST (\\HasNoChildren) \".\" \"&Jjo!.Child\"\r\n" +
+				"A00000004 OK List completed.\r\n";
+
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 LIST \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes (list)),
+			};
+		}
+
+		static void AssertNonCanonicalEncodedNameParents (IList<IMailFolder> folders)
+		{
+			// Note: "&AGE-" is a valid (but non-canonical) modified UTF-7 encoding of "a" and "&Jjo!" is invalid modified UTF-7.
+			// In both cases, re-encoding the decoded FullName of the parent does not reproduce the server's encoded name, so the
+			// parent folder lookup needs to use the EncodedName in order to find the cached parent folder.
+			var nonCanonical = folders.First (f => ((ImapFolder) f).EncodedName == "&AGE-");
+			var nonCanonicalChild = folders.First (f => ((ImapFolder) f).EncodedName == "&AGE-.Child");
+			var invalid = folders.First (f => ((ImapFolder) f).EncodedName == "&Jjo!");
+			var invalidChild = folders.First (f => ((ImapFolder) f).EncodedName == "&Jjo!.Child");
+
+			Assert.That (nonCanonical.FullName, Is.EqualTo ("a"));
+			Assert.That (nonCanonicalChild.FullName, Is.EqualTo ("a.Child"));
+			Assert.That (nonCanonicalChild.ParentFolder, Is.SameAs (nonCanonical));
+
+			Assert.That (invalid.FullName, Is.EqualTo ("&Jjo!"));
+			Assert.That (invalidChild.FullName, Is.EqualTo ("&Jjo!.Child"));
+			Assert.That (invalidChild.ParentFolder, Is.SameAs (invalid));
+		}
+
+		[Test]
+		public void TestGetFoldersNonCanonicalEncodedNames ()
+		{
+			var commands = CreateGetFoldersNonCanonicalEncodedNamesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				client.Authenticate ("username", "password");
+
+				var folders = client.GetFolders (client.PersonalNamespaces[0]);
+
+				AssertNonCanonicalEncodedNameParents (folders);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestGetFoldersNonCanonicalEncodedNamesAsync ()
+		{
+			var commands = CreateGetFoldersNonCanonicalEncodedNamesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+
+				// Note: we do not want to use SASL at all...
+				client.AuthenticationMechanisms.Clear ();
+
+				await client.AuthenticateAsync ("username", "password");
+
+				var folders = await client.GetFoldersAsync (client.PersonalNamespaces[0]);
+
+				AssertNonCanonicalEncodedNameParents (folders);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static List<ImapReplayCommand> CreateEnableQuickResyncCommands ()
 		{
 			return new List<ImapReplayCommand> {
