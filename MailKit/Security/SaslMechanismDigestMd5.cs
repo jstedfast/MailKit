@@ -148,7 +148,13 @@ namespace MailKit.Security {
 					throw new SaslException (MechanismName, SaslErrorCode.ChallengeTooLong, "Server challenge too long.");
 
 				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token, startIndex, length));
-				encoding = challenge.Charset != null ? Encoding.UTF8 : TextEncodings.Latin1;
+
+				// Note: rfc2831 states that qop defaults to "auth" if not specified by the server. Since "auth" is the
+				// only quality of protection that we support, abort if the server does not allow it.
+				if (challenge.Qop.Count > 0 && !challenge.Qop.Contains ("auth"))
+					throw new SaslException (MechanismName, SaslErrorCode.InvalidChallenge, "The server does not support the \"auth\" quality of protection.");
+
+				encoding =  challenge.Charset != null ? Encoding.UTF8 : TextEncodings.Latin1;
 				cnonce ??= GenerateEntropy (15);
 
 				response = new DigestResponse (challenge, encoding, Uri.Scheme, Uri.DnsSafeHost, AuthorizationId, Credentials.UserName, Credentials.Password, cnonce);
@@ -209,7 +215,7 @@ namespace MailKit.Security {
 		DigestChallenge (string nonce, string? algorithm, string? charset, string[]? ciphers, string[]? realms, string[]? qop, bool? stale, int? maxbuf)
 		{
 			Ciphers = ciphers != null ? new HashSet<string> (ciphers, StringComparer.Ordinal) : new HashSet<string> (StringComparer.Ordinal);
-			Qop = qop != null ? new HashSet<string> (qop, StringComparer.Ordinal) : new HashSet<string> (StringComparer.Ordinal);
+			Qop = qop != null ? new HashSet<string> (qop, StringComparer.OrdinalIgnoreCase) : new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			Algorithm = algorithm;
 			Charset = charset;
 			MaxBuf = maxbuf;
@@ -327,6 +333,21 @@ namespace MailKit.Security {
 
 		static readonly char[] Comma = new char[] { ',' };
 
+		// Splits an rfc2831 #rule list, which allows linear whitespace around the commas.
+		static string[] SplitList (string value)
+		{
+			var items = new List<string> ();
+
+			foreach (var item in value.Split (Comma)) {
+				var trimmed = item.Trim ();
+
+				if (trimmed.Length > 0)
+					items.Add (trimmed);
+			}
+
+			return items.ToArray ();
+		}
+
 		public static DigestChallenge Parse (string token)
 		{
 			string[]? realms = null, qop = null, ciphers = null;
@@ -357,7 +378,7 @@ namespace MailKit.Security {
 				case "qop":
 					if (qop != null)
 						throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
-					qop = value.Split (Comma, StringSplitOptions.RemoveEmptyEntries);
+					qop = SplitList (value);
 					break;
 				case "stale":
 					if (stale.HasValue)
@@ -429,7 +450,7 @@ namespace MailKit.Security {
 			CNonce = cnonce;
 			Nc = 1;
 
-			// FIXME: make sure this is supported
+			// Note: SaslMechanismDigestMd5.Challenge() verifies that the server supports "auth".
 			Qop = "auth";
 
 			DigestUri = string.Format ("{0}/{1}", protocol, hostName);

@@ -160,5 +160,36 @@ namespace UnitTests.Security {
 			Assert.That (sasl.IsAuthenticated, Is.True, "should be authenticated now.");
 			Assert.That (sasl.Challenge (string.Empty), Is.EqualTo (string.Empty), "challenge while authenticated.");
 		}
+
+		[TestCase ("qop=\"auth-int\"", TestName = "TestUnsupportedQop(AuthInt)")]
+		[TestCase ("qop=\"auth-int,auth-conf\"", TestName = "TestUnsupportedQop(AuthIntAuthConf)")]
+		[TestCase ("qop=\"x-unknown\"", TestName = "TestUnsupportedQop(Unknown)")]
+		public void TestUnsupportedQop (string qop)
+		{
+			var serverToken = "realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\"," + qop + ",algorithm=md5-sess,charset=utf-8";
+			var sasl = new SaslMechanismDigestMd5 ("chris", "secret") { Uri = new Uri ("imap://elwood.innosoft.com"), cnonce = "OA6MHXh6VqTrRk" };
+
+			AssertSaslException (sasl, serverToken, SaslErrorCode.InvalidChallenge);
+		}
+
+		[TestCase ("realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",algorithm=md5-sess,charset=utf-8", TestName = "TestSupportedQop(DefaultsToAuth)")]
+		[TestCase ("realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",qop=\"auth-conf, auth-int, auth\",algorithm=md5-sess,charset=utf-8", TestName = "TestSupportedQop(WhiteSpace)")]
+		[TestCase ("realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",qop=\"AUTH\",algorithm=md5-sess,charset=utf-8", TestName = "TestSupportedQop(UpperCase)")]
+		public void TestSupportedQop (string serverToken1)
+		{
+			const string expected1 = "username=\"chris\",realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",cnonce=\"OA6MHXh6VqTrRk\",nc=00000001,qop=\"auth\",digest-uri=\"imap/elwood.innosoft.com\",response=d388dad90d4bbd760a152321f2143af7,charset=utf-8,algorithm=md5-sess";
+			const string serverToken2 = "rspauth=ea40f60335c427b5527b84dbabcdfffd";
+			var sasl = new SaslMechanismDigestMd5 ("chris", "secret") { Uri = new Uri ("imap://elwood.innosoft.com"), cnonce = "OA6MHXh6VqTrRk" };
+
+			var challenge = sasl.Challenge (Convert.ToBase64String (Encoding.ASCII.GetBytes (serverToken1)));
+			var result = Encoding.ASCII.GetString (Convert.FromBase64String (challenge));
+
+			Assert.That (result, Is.EqualTo (expected1), "challenge response does not match the expected string.");
+
+			challenge = sasl.Challenge (Convert.ToBase64String (Encoding.ASCII.GetBytes (serverToken2)));
+
+			Assert.That (challenge, Is.EqualTo (string.Empty), "second DIGEST-MD5 challenge should be an empty string.");
+			Assert.That (sasl.IsAuthenticated, Is.True, "should be authenticated now.");
+		}
 	}
 }

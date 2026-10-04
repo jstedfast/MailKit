@@ -139,6 +139,10 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
   Previously, if `Write ()` had drained its internal buffer directly to the underlying stream,
   `Flush ()` would return without flushing the underlying stream, which could deadlock when the
   underlying stream did its own buffering.
+* Fixed `SaslMechanismDigestMd5` to verify that the server supports the `"auth"` quality of protection
+  before responding with `qop="auth"`. If the server's `qop` list does not include `"auth"`, authentication
+  now fails with a `SaslException` (`SaslErrorCode.InvalidChallenge`). The `qop` list is now also parsed
+  case-insensitively and tolerates whitespace around commas, as allowed by RFC 2831.
 
 ## MailKit 4.18.1 (2026-09-27)
 
