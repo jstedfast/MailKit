@@ -87,22 +87,24 @@ namespace MailKit.Net.Imap
 #endif
 
 		/// <summary>
-		/// Asynchronously enable the QRESYNC feature.
+		/// Asynchronously enable the specified IMAP features.
 		/// </summary>
 		/// <remarks>
-		/// <para>Enables the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a> feature.</para>
-		/// <para>The QRESYNC extension improves resynchronization performance of folders by
-		/// querying the IMAP server for a list of changes when the folder is opened using the
-		/// <see cref="ImapFolder.Open(FolderAccess,uint,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
-		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>Enables the specified features using the <a href="https://tools.ietf.org/html/rfc5161">ENABLE</a>
+		/// command. Multiple features may be enabled at once by combining them, e.g.
+		/// <c>ImapFeatures.UTF8Accept | ImapFeatures.IMAP4rev2</c>.</para>
+		/// <para>Features that have already been enabled are not requested again. If all of the requested
+		/// features are already enabled, then no command is sent to the server.</para>
 		/// <para>This method needs to be called immediately after calling one of the
 		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
 		/// opening any folders.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
+		/// <param name="features">The features to enable.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="features"/> contains unknown feature flags.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -113,10 +115,10 @@ namespace MailKit.Net.Imap
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// Quick resynchronization needs to be enabled before selecting a folder.
+		/// Features need to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the QRESYNC extension.
+		/// The IMAP server does not support one or more of the requested features.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -130,59 +132,14 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override async Task EnableQuickResyncAsync (CancellationToken cancellationToken = default)
+		public async Task EnableAsync (ImapFeatures features, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueEnableQuickResyncCommand (cancellationToken, out var ic))
+			if (!TryQueueEnableCommand (features, cancellationToken, out var ic))
 				return;
 
 			await engine.RunAsync (ic).ConfigureAwait (false);
 
-			ProcessEnableResponse (ic);
-		}
-
-		/// <summary>
-		/// Asynchronously enable the UTF8=ACCEPT extension.
-		/// </summary>
-		/// <remarks>
-		/// Enables the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// UTF8=ACCEPT needs to be enabled before selecting a folder.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UTF8=ACCEPT extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied to the ENABLE command with a NO or BAD response.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// An IMAP protocol error occurred.
-		/// </exception>
-		public async Task EnableUTF8Async (CancellationToken cancellationToken = default)
-		{
-			if (!TryQueueEnableUTF8Command (cancellationToken, out var ic))
-				return;
-
-			await engine.RunAsync (ic).ConfigureAwait (false);
-
-			ProcessEnableResponse (ic);
+			ProcessEnableResponse (ic, features);
 		}
 
 		/// <summary>

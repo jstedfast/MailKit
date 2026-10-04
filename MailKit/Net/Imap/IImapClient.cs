@@ -176,12 +176,23 @@ namespace MailKit.Net.Imap {
 #endif
 
 		/// <summary>
-		/// Enable the UTF8=ACCEPT extension.
+		/// Enable the specified IMAP features.
 		/// </summary>
 		/// <remarks>
-		/// Enables the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
+		/// <para>Enables the specified features using the <a href="https://tools.ietf.org/html/rfc5161">ENABLE</a>
+		/// command. Multiple features may be enabled at once by combining them, e.g.
+		/// <c>ImapFeatures.UTF8Accept | ImapFeatures.IMAP4rev2</c>.</para>
+		/// <para>Features that have already been enabled are not requested again. If all of the requested
+		/// features are already enabled, then no command is sent to the server.</para>
+		/// <para>This method needs to be called immediately after calling one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
+		/// opening any folders.</para>
 		/// </remarks>
+		/// <param name="features">The features to enable.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="features"/> contains unknown feature flags.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -192,10 +203,10 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// UTF8=ACCEPT needs to be enabled before selecting a folder.
+		/// Features need to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UTF8=ACCEPT extension.
+		/// The IMAP server does not support one or more of the requested features.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -209,16 +220,27 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		void EnableUTF8 (CancellationToken cancellationToken = default);
+		void Enable (ImapFeatures features, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously enable the UTF8=ACCEPT extension.
+		/// Asynchronously enable the specified IMAP features.
 		/// </summary>
 		/// <remarks>
-		/// Enables the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
+		/// <para>Enables the specified features using the <a href="https://tools.ietf.org/html/rfc5161">ENABLE</a>
+		/// command. Multiple features may be enabled at once by combining them, e.g.
+		/// <c>ImapFeatures.UTF8Accept | ImapFeatures.IMAP4rev2</c>.</para>
+		/// <para>Features that have already been enabled are not requested again. If all of the requested
+		/// features are already enabled, then no command is sent to the server.</para>
+		/// <para>This method needs to be called immediately after calling one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
+		/// opening any folders.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
+		/// <param name="features">The features to enable.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="features"/> contains unknown feature flags.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -229,10 +251,10 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// UTF8=ACCEPT needs to be enabled before selecting a folder.
+		/// Features need to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UTF8=ACCEPT extension.
+		/// The IMAP server does not support one or more of the requested features.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -246,7 +268,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		Task EnableUTF8Async (CancellationToken cancellationToken = default);
+		Task EnableAsync (ImapFeatures features, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Identify the client implementation to the server and obtain the server implementation details.

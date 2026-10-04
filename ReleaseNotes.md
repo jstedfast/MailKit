@@ -84,6 +84,13 @@ rather than the full MimeKit cryptography stack.
   `(ImapCommandResponse, string? responseCode, string responseText, string message[, Exception])`
   constructors. As a result, calls to the existing `(ImapCommandResponse, string, string, Exception)`
   constructor that pass a `null` literal for the inner exception are now ambiguous and need a cast.
+* Replaced `ImapClient.EnableQuickResync ()`, `ImapClient.EnableUTF8 ()` (and their `Async` variants) with
+  new `ImapClient.Enable (ImapFeatures)` and `EnableAsync (ImapFeatures)` methods. `ImapFeatures` is a flags
+  enum, so multiple features can be enabled with a single `ENABLE` command, e.g.
+  `client.Enable (ImapFeatures.QuickResync | ImapFeatures.UTF8Accept)`. `EnableUTF8 ()` has also been removed
+  from `IImapClient`, and `EnableQuickResync ()` has been removed from `IMailStore` and `MailStore`.
+* Added an `IMailFolder.DeletedCount` property and a `DeletedCountChanged` event. Custom `IMailFolder`
+  implementations that do not derive from `MailFolder` will need to implement them.
 * The `error.type` values reported by MailKit's metrics are now more specific. See
   [Telemetry changes](#telemetry-changes) below.
 
@@ -103,6 +110,12 @@ rather than the full MimeKit cryptography stack.
   * `Pop3CommandException.ErrorType` is derived from the POP3 extended response code (RFC 2449/3206),
     exposed via the new `Pop3CommandException.ResponseCode` property.
   * `SmtpCommandException.ErrorType` is derived from the SMTP status code.
+* Added `ImapFeatures.IMAP4rev2` which can be used with `ImapClient.Enable ()` to enable IMAP4rev2 semantics
+  on servers that advertise both `IMAP4rev1` and `IMAP4rev2` (rfc9051 Appendix A). Once enabled, `ImapClient`
+  uses UTF-8 mailbox names and assumes the extensions implied by IMAP4rev2.
+* Added `StatusItems.Deleted`, which updates the new `IMailFolder.DeletedCount` property (and emits the
+  `DeletedCountChanged` event) with the number of messages marked `\Deleted`. This is only supported when
+  IMAP4rev2 is in use.
 
 ### Telemetry changes
 
@@ -153,6 +166,14 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
   re-encoding the parent portion of the decoded `FullName`. Previously, folders with names using raw 8-bit
   characters, non-canonical modified UTF-7, or invalid modified UTF-7 could end up with a phantom
   `\NonExistent` parent folder instead of the real (cached) parent folder.
+* Fixed `ImapClient` to use UTF-8 mailbox names (instead of modified UTF-7) when connected to an IMAP server
+  that only advertises `IMAP4rev2` (i.e. not `IMAP4rev1`), as required by rfc9051. `ImapClient` now also sends
+  non-ASCII strings as UTF-8 quoted strings and omits `CHARSET UTF-8` from `SEARCH` commands when connected to
+  such servers.
+* Fixed `ImapClient` to assume `STATUS=SIZE` support when connected to an IMAP4rev2-only server (since rfc9051
+  folded it into the base protocol), allowing `StatusItems.Size` to be queried.
+* Fixed `ImapFolder.Check ()` to send `NOOP` instead of `CHECK` when IMAP4rev2 is in use
+  since rfc9051 removed the `CHECK` command.
 
 ## MailKit 4.18.1 (2026-09-27)
 

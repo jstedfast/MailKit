@@ -401,7 +401,7 @@ namespace MailKit {
 		/// <para>Fetches the message summaries for the specified message UIDs that
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>,
 		/// then this method will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that
 		/// have vanished since the specified mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message
@@ -462,7 +462,7 @@ namespace MailKit {
 		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResyncAsync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="MailKit.Net.Imap.ImapClient.EnableAsync(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>,
 		/// then this method will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that
 		/// have vanished since the specified mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message
@@ -523,7 +523,7 @@ namespace MailKit {
 		/// <para>Fetches the message summaries for the specified message UIDs that
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>,
 		/// then this method will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that
 		/// have vanished since the specified mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message
@@ -589,7 +589,7 @@ namespace MailKit {
 		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResyncAsync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="MailKit.Net.Imap.ImapClient.EnableAsync(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>,
 		/// then this method will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that
 		/// have vanished since the specified mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message
@@ -655,7 +655,7 @@ namespace MailKit {
 		/// <para>Fetches the message summaries for the specified message UIDs that
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>,
 		/// then this method will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that
 		/// have vanished since the specified mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message
@@ -721,7 +721,7 @@ namespace MailKit {
 		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResyncAsync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="MailKit.Net.Imap.ImapClient.EnableAsync(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>,
 		/// then this method will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that
 		/// have vanished since the specified mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message

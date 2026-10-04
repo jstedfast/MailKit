@@ -446,7 +446,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>This variant of the <see cref="Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// method is meant for quick resynchronization of the folder. Before calling this method,
-		/// the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method MUST be called.</para>
+		/// the <see cref="ImapClient.Enable(ImapFeatures,CancellationToken)"/> method MUST be called.</para>
 		/// <para>You should also make sure to add listeners to the <see cref="MailFolder.MessagesVanished"/> and
 		/// <see cref="MailFolder.MessageFlagsChanged"/> events to get notifications of changes since
 		/// the last time the folder was opened.</para>
@@ -503,7 +503,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>This variant of the <see cref="Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// method is meant for quick resynchronization of the folder. Before calling this method,
-		/// the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method MUST be called.</para>
+		/// the <see cref="ImapClient.Enable(ImapFeatures,CancellationToken)"/> method MUST be called.</para>
 		/// <para>You should also make sure to add listeners to the <see cref="MailFolder.MessagesVanished"/> and
 		/// <see cref="MailFolder.MessageFlagsChanged"/> events to get notifications of changes since
 		/// the last time the folder was opened.</para>
@@ -2020,18 +2020,21 @@ namespace MailKit.Net.Imap {
 			return folder;
 		}
 
+		// rfc9051 removed the CHECK command and instructs clients to use NOOP instead.
+		string CheckCommandName => Engine.ProtocolVersion == ImapProtocolVersion.IMAP4rev2 ? "NOOP" : "CHECK";
+
 		ImapCommand QueueCheckCommand (CancellationToken cancellationToken)
 		{
 			CheckState (true, false);
 
-			return Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
+			return Engine.QueueCommand (cancellationToken, this, CheckCommandName + "\r\n");
 		}
 
 		void ProcessCheckResponse (ImapCommand ic)
 		{
 			ProcessResponseCodes (ic, null);
 
-			ic.ThrowIfNotOk ("CHECK");
+			ic.ThrowIfNotOk (CheckCommandName);
 		}
 
 		/// <summary>
@@ -2041,7 +2044,9 @@ namespace MailKit.Net.Imap {
 		/// <para>The <c>CHECK</c> command forces the IMAP server to sync its
 		/// in-memory state with its disk state.</para>
 		/// <para>For more information about the <c>CHECK</c> command, see
-		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.1">rfc350101</a>.</para>
+		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.1">rfc3501</a>.</para>
+		/// <para>Since the <c>CHECK</c> command was removed in IMAP4rev2, the <c>NOOP</c> command is sent instead when
+		/// IMAP4rev2 is in use (as recommended by <a href="https://tools.ietf.org/html/rfc9051">rfc9051</a>).</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -2084,7 +2089,9 @@ namespace MailKit.Net.Imap {
 		/// <para>The <c>CHECK</c> command forces the IMAP server to sync its
 		/// in-memory state with its disk state.</para>
 		/// <para>For more information about the <c>CHECK</c> command, see
-		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.1">rfc350101</a>.</para>
+		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.1">rfc3501</a>.</para>
+		/// <para>Since the <c>CHECK</c> command was removed in IMAP4rev2, the <c>NOOP</c> command is sent instead when
+		/// IMAP4rev2 is in use (as recommended by <a href="https://tools.ietf.org/html/rfc9051">rfc9051</a>).</para>
 		/// </remarks>
 		/// <returns>An awaitable task.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -4120,7 +4127,7 @@ namespace MailKit.Net.Imap {
 		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.3">rfc3501</a>.</para>
 		/// <note type="note">Normally, a <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC extension
-		/// and it has been enabled via the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>
+		/// and it has been enabled via the <see cref="ImapClient.Enable(ImapFeatures,CancellationToken)"/>
 		/// method, then the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than
 		/// the <see cref="MailFolder.MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -4168,7 +4175,7 @@ namespace MailKit.Net.Imap {
 		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.3">rfc3501</a>.</para>
 		/// <note type="note">Normally, a <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC extension
-		/// and it has been enabled via the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>
+		/// and it has been enabled via the <see cref="ImapClient.Enable(ImapFeatures,CancellationToken)"/>
 		/// method, then the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than
 		/// the <see cref="MailFolder.MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -4226,7 +4233,7 @@ namespace MailKit.Net.Imap {
 		/// <a href="https://tools.ietf.org/html/rfc4315#section-2.1">rfc4315</a>.</para>
 		/// <note type="note">Normally, a <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC extension
-		/// and it has been enabled via the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>
+		/// and it has been enabled via the <see cref="ImapClient.Enable(ImapFeatures,CancellationToken)"/>
 		/// method, then the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than
 		/// the <see cref="MailFolder.MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -4319,7 +4326,7 @@ namespace MailKit.Net.Imap {
 		/// <a href="https://tools.ietf.org/html/rfc4315#section-2.1">rfc4315</a>.</para>
 		/// <note type="note">Normally, a <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC extension
-		/// and it has been enabled via the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>
+		/// and it has been enabled via the <see cref="ImapClient.Enable(ImapFeatures,CancellationToken)"/>
 		/// method, then the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than
 		/// the <see cref="MailFolder.MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -6376,6 +6383,16 @@ namespace MailKit.Net.Imap {
 			Size = size;
 
 			OnSizeChanged ();
+		}
+
+		internal void UpdateDeletedCount (int? deleted)
+		{
+			if (DeletedCount == deleted)
+				return;
+
+			DeletedCount = deleted;
+
+			OnDeletedCountChanged ();
 		}
 
 		internal void UpdateId (string id)

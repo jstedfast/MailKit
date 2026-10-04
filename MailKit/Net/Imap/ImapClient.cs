@@ -355,33 +355,60 @@ namespace MailKit.Net.Imap {
 		}
 #endif
 
-		bool TryQueueEnableQuickResyncCommand (CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
+		const ImapFeatures AllFeatures = ImapFeatures.QuickResync | ImapFeatures.UTF8Accept | ImapFeatures.IMAP4rev2;
+
+		bool TryQueueEnableCommand (ImapFeatures features, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
+			if ((features & ~AllFeatures) != 0)
+				throw new ArgumentOutOfRangeException (nameof (features));
+
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if (engine.State != ImapEngineState.Authenticated)
-				throw new InvalidOperationException ("QRESYNC needs to be enabled immediately after authenticating.");
+			ic = null;
 
-			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
+			if (features == ImapFeatures.None)
+				return false;
+
+			if (engine.State != ImapEngineState.Authenticated)
+				throw new InvalidOperationException ("Features need to be enabled immediately after authenticating.");
+
+			if ((features & ImapFeatures.QuickResync) != 0 && (engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
-			if (engine.QResyncEnabled) {
-				ic = null;
-				return false;
-			}
+			if ((features & ImapFeatures.UTF8Accept) != 0 && (engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
 
-			ic = engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
+			if ((features & ImapFeatures.IMAP4rev2) != 0 && (engine.Capabilities & ImapCapabilities.IMAP4rev2) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the IMAP4rev2 protocol.");
+
+			var command = new StringBuilder ("ENABLE");
+
+			if ((features & ImapFeatures.QuickResync) != 0 && !engine.QResyncEnabled)
+				command.Append (" QRESYNC CONDSTORE");
+
+			if ((features & ImapFeatures.UTF8Accept) != 0 && !engine.UTF8Enabled)
+				command.Append (" UTF8=ACCEPT");
+
+			if ((features & ImapFeatures.IMAP4rev2) != 0 && engine.ProtocolVersion != ImapProtocolVersion.IMAP4rev2)
+				command.Append (" IMAP4rev2");
+
+			if (command.Length == "ENABLE".Length)
+				return false;
+
+			command.Append ("\r\n");
+
+			ic = engine.QueueCommand (cancellationToken, null, command.ToString ());
 
 			return true;
 		}
 
-		void ProcessEnableResponse (ImapCommand ic)
+		void ProcessEnableResponse (ImapCommand ic, ImapFeatures features)
 		{
 			ic.ThrowIfNotOk ("ENABLE");
 
-			if (engine.QuirksMode == ImapQuirksMode.iCloud) {
+			if (engine.QuirksMode == ImapQuirksMode.iCloud && (features & ImapFeatures.QuickResync) != 0) {
 				// Note: iCloud's response to the `ENABLE QRESYNC CONDSTORE` command does not include an untagged response
 				// notifying us that QRESYNC or CONDSTORE have been enabled. Instead, if we get a tagged OK response, we
 				// assume that these features were enabled successfully.
@@ -392,21 +419,23 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Enable the QRESYNC feature.
+		/// Enable the specified IMAP features.
 		/// </summary>
 		/// <remarks>
-		/// <para>Enables the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a> feature.</para>
-		/// <para>The QRESYNC extension improves resynchronization performance of folders by
-		/// querying the IMAP server for a list of changes when the folder is opened using the
-		/// <see cref="ImapFolder.Open(FolderAccess,uint,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
-		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>Enables the specified features using the <a href="https://tools.ietf.org/html/rfc5161">ENABLE</a>
+		/// command. Multiple features may be enabled at once by combining them, e.g.
+		/// <c>ImapFeatures.UTF8Accept | ImapFeatures.IMAP4rev2</c>.</para>
+		/// <para>Features that have already been enabled are not requested again. If all of the requested
+		/// features are already enabled, then no command is sent to the server.</para>
 		/// <para>This method needs to be called immediately after calling one of the
 		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
 		/// opening any folders.</para>
 		/// </remarks>
+		/// <param name="features">The features to enable.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="features"/> contains unknown feature flags.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -417,10 +446,10 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// Quick resynchronization needs to be enabled before selecting a folder.
+		/// Features need to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the QRESYNC extension.
+		/// The IMAP server does not support one or more of the requested features.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -434,80 +463,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void EnableQuickResync (CancellationToken cancellationToken = default)
+		public void Enable (ImapFeatures features, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueEnableQuickResyncCommand (cancellationToken, out var ic))
+			if (!TryQueueEnableCommand (features, cancellationToken, out var ic))
 				return;
 
 			engine.Run (ic);
 
-			ProcessEnableResponse (ic);
-		}
-
-		bool TryQueueEnableUTF8Command (CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
-		{
-			CheckDisposed ();
-			CheckConnected ();
-			CheckAuthenticated ();
-
-			if (engine.State != ImapEngineState.Authenticated)
-				throw new InvalidOperationException ("UTF8=ACCEPT needs to be enabled immediately after authenticating.");
-
-			if ((engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
-
-			if (engine.UTF8Enabled) {
-				ic = null;
-				return false;
-			}
-
-			ic = engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
-
-			return true;
-		}
-
-		/// <summary>
-		/// Enable the UTF8=ACCEPT extension.
-		/// </summary>
-		/// <remarks>
-		/// Enables the <a href="https://tools.ietf.org/html/rfc6855">UTF8=ACCEPT</a> extension.
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// UTF8=ACCEPT needs to be enabled before selecting a folder.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UTF8=ACCEPT extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied to the ENABLE command with a NO or BAD response.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// An IMAP protocol error occurred.
-		/// </exception>
-		public void EnableUTF8 (CancellationToken cancellationToken = default)
-		{
-			if (!TryQueueEnableUTF8Command (cancellationToken, out var ic))
-				return;
-
-			engine.Run (ic);
-
-			ProcessEnableResponse (ic);
+			ProcessEnableResponse (ic, features);
 		}
 
 		ImapCommand QueueIdentifyCommand (ImapImplementation clientImplementation, CancellationToken cancellationToken)

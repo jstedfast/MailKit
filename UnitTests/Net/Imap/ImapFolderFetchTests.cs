@@ -637,7 +637,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				client.EnableQuickResync ();
+				client.Enable (ImapFeatures.QuickResync);
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -684,7 +684,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				await client.EnableQuickResyncAsync ();
+				await client.EnableAsync (ImapFeatures.QuickResync);
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);

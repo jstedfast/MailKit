@@ -455,8 +455,8 @@ namespace MailKit.Net.Imap {
 		/// <para>If the expunged message or messages are in the selected mailbox, the server notifies the client
 		/// using <see cref="IMailFolder.MessageExpunged"/> (or <see cref="IMailFolder.MessagesVanished"/> if
 		/// the <a href="https://tools.ietf.org/html/rfc5162">QRESYNC</a> extension has been enabled via
-		/// <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/> or
-		/// <see cref="ImapClient.EnableQuickResyncAsync(System.Threading.CancellationToken)"/>).</para>
+		/// <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/> or
+		/// <see cref="ImapClient.EnableAsync(ImapFeatures,System.Threading.CancellationToken)"/>).</para>
 		/// <para>If the expunged message or messages are in another mailbox, the <see cref="IMailFolder.UidNext"/>
 		/// and <see cref="IMailFolder.Count"/> properties will be updated and the appropriate
 		/// <see cref="IMailFolder.UidNextChanged"/> and <see cref="IMailFolder.CountChanged"/> events will be
@@ -485,13 +485,13 @@ namespace MailKit.Net.Imap {
 		/// <see cref="ImapCapabilities"/> of the IMAP server.</para>
 		/// <para>If the server supports the <see cref="ImapCapabilities.CondStore"/> capability (or the
 		/// <see cref="ImapCapabilities.QuickResync"/> capability and the client has enabled it via
-		/// <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/>), then the
+		/// <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>), then the
 		/// <see cref="IMailFolder.HighestModSeqChanged"/> event will be emitted as well as the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event (if the latter has changed). If the number of
 		/// seen messages has changed, then the <see cref="IMailFolder.UnreadChanged"/> event may also be emitted.</para>
 		/// <para>If the server does not support either the <see cref="ImapCapabilities.CondStore"/> capability nor
 		/// the <see cref="ImapCapabilities.QuickResync"/> capability and the client has not enabled the later capability
-		/// via <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/>, then the server may choose
+		/// via <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>, then the server may choose
 		/// only to notify the client of <see cref="IMailFolder.UidValidity"/> changes by emitting the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event.</para>
 		/// </remarks>
@@ -510,13 +510,13 @@ namespace MailKit.Net.Imap {
 		/// <see cref="ImapCapabilities"/> of the IMAP server.</para>
 		/// <para>If the server supports the <see cref="ImapCapabilities.CondStore"/> capability (or the
 		/// <see cref="ImapCapabilities.QuickResync"/> capability and the client has enabled it via
-		/// <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/>), then the
+		/// <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>), then the
 		/// <see cref="IMailFolder.HighestModSeqChanged"/> event will be emitted as well as the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event (if the latter has changed). If the number of
 		/// seen messages has changed, then the <see cref="IMailFolder.UnreadChanged"/> event may also be emitted.</para>
 		/// <para>If the server does not support either the <see cref="ImapCapabilities.CondStore"/> capability nor
 		/// the <see cref="ImapCapabilities.QuickResync"/> capability and the client has not enabled the later capability
-		/// via <see cref="ImapClient.EnableQuickResync(System.Threading.CancellationToken)"/>, then the server may choose
+		/// via <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>, then the server may choose
 		/// only to notify the client of <see cref="IMailFolder.UidValidity"/> changes by emitting the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event.</para>
 		/// </remarks>

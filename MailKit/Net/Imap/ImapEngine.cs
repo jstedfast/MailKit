@@ -355,10 +355,22 @@ namespace MailKit.Net.Imap {
 		/// Get whether or not the UTF8=ACCEPT feature has been enabled.
 		/// </summary>
 		/// <remarks>
-		/// Gets whether or not the UTF8=ACCEPT feature has been enabled.
+		/// Gets whether or not the UTF8=ACCEPT feature has been enabled. This is also
+		/// <see langword="true" /> when IMAP4rev2 is in use, which uses UTF-8 natively.
 		/// </remarks>
 		/// <value><see langword="true" /> if the UTF8=ACCEPT feature has been enabled; otherwise, <see langword="false" />.</value>
 		public bool UTF8Enabled {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Get whether or not the IMAP4rev2 feature has been enabled.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the IMAP4rev2 feature has been explicitly enabled using the ENABLE command.
+		/// </remarks>
+		/// <value><see langword="true" /> if the IMAP4rev2 feature has been enabled; otherwise, <see langword="false" />.</value>
+		public bool IMAP4rev2Enabled {
 			get; internal set;
 		}
 
@@ -704,6 +716,7 @@ namespace MailKit.Net.Imap {
 			SupportedCharsets.Add ("US-ASCII");
 			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
+			IMAP4rev2Enabled = false;
 			QResyncEnabled = false;
 			UTF8Enabled = false;
 			AppendLimit = null;
@@ -1514,7 +1527,9 @@ namespace MailKit.Net.Imap {
 
 		void StandardizeCapabilities ()
 		{
-			if ((Capabilities & (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.IMAP4rev2)) == ImapCapabilities.IMAP4rev2) {
+			var versions = Capabilities & (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.IMAP4rev2);
+
+			if (versions == ImapCapabilities.IMAP4rev2 || (IMAP4rev2Enabled && (versions & ImapCapabilities.IMAP4rev2) != 0)) {
 				// rfc9501, section 6.1.1:
 				//
 				// If IMAP4rev1 capability is not advertised, no capabilities, beyond the base
@@ -1525,11 +1540,16 @@ namespace MailKit.Net.Imap {
 				// the capability.
 				ProtocolVersion = ImapProtocolVersion.IMAP4rev2;
 
+				// rfc9051, section 5.1: In IMAP4rev2, mailbox names are encoded in Net-Unicode (UTF-8). Modified
+				// UTF-7 is only used for backward compatibility with IMAP4rev1.
+				UTF8Enabled = true;
+
 				// Rfc9051, Appendix E defines the capabilities that IMAP4rev2 should be assumed to implement:
 				Capabilities |= ImapCapabilities.Status |
 					ImapCapabilities.Namespace | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.ESearch |
 					ImapCapabilities.SearchResults | ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.SaslIR | ImapCapabilities.ListExtended |
-					ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse;
+					ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse |
+					ImapCapabilities.StatusSize;
 
 				// Note: IMAP4rev2 also supports the FETCH portion of the 'BINARY' extension but not the APPEND portion. Since
 				// we currently have no way to distinguish between them using the ImapCapabilities enum, we do not enable the
@@ -2673,6 +2693,12 @@ namespace MailKit.Net.Imap {
 				var size = ParseNumber63 (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 				folder?.UpdateSize (size);
+			} else if (atom.Equals ("DELETED", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateDeletedCount ((int) count);
 			} else {
 				// This is probably the MAILBOXID value which is multiple tokens and can't be handled here.
 				return false;
@@ -2895,10 +2921,14 @@ namespace MailKit.Net.Imap {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 
 					var feature = (string) token.Value;
-					if (feature.Equals ("UTF8=ACCEPT", StringComparison.OrdinalIgnoreCase))
+					if (feature.Equals ("UTF8=ACCEPT", StringComparison.OrdinalIgnoreCase)) {
 						UTF8Enabled = true;
-					else if (feature.Equals ("QRESYNC", StringComparison.OrdinalIgnoreCase))
+					} else if (feature.Equals ("QRESYNC", StringComparison.OrdinalIgnoreCase)) {
 						QResyncEnabled = true;
+					} else if (feature.Equals ("IMAP4rev2", StringComparison.OrdinalIgnoreCase)) {
+						IMAP4rev2Enabled = true;
+						StandardizeCapabilities ();
+					}
 				} while (true);
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
@@ -3049,10 +3079,14 @@ namespace MailKit.Net.Imap {
 					AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 
 					var feature = (string) token.Value;
-					if (feature.Equals ("UTF8=ACCEPT", StringComparison.OrdinalIgnoreCase))
+					if (feature.Equals ("UTF8=ACCEPT", StringComparison.OrdinalIgnoreCase)) {
 						UTF8Enabled = true;
-					else if (feature.Equals ("QRESYNC", StringComparison.OrdinalIgnoreCase))
+					} else if (feature.Equals ("QRESYNC", StringComparison.OrdinalIgnoreCase)) {
 						QResyncEnabled = true;
+					} else if (feature.Equals ("IMAP4rev2", StringComparison.OrdinalIgnoreCase)) {
+						IMAP4rev2Enabled = true;
+						StandardizeCapabilities ();
+					}
 				} while (true);
 			} else if (atom.Equals ("FLAGS", StringComparison.OrdinalIgnoreCase)) {
 				var keywords = new HashSet<string> (StringComparer.Ordinal);
@@ -4063,6 +4097,11 @@ namespace MailKit.Net.Imap {
 			if ((Capabilities & ImapCapabilities.StatusSize) != 0) {
 				if ((items & StatusItems.Size) != 0)
 					flags += "SIZE ";
+			}
+
+			if (ProtocolVersion == ImapProtocolVersion.IMAP4rev2) {
+				if ((items & StatusItems.Deleted) != 0)
+					flags += "DELETED ";
 			}
 
 			if ((Capabilities & ImapCapabilities.ObjectID) != 0) {

@@ -406,6 +406,19 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the number of messages in the folder that are marked for deletion.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the number of messages in the folder that have the <see cref="MessageFlags.Deleted"/> flag set.</para>
+		/// <note type="note">If the value is not set, then the number of deleted messages is unknown. This value is only
+		/// set when the folder's status is queried using <see cref="StatusItems.Deleted"/>.</note>
+		/// </remarks>
+		/// <value>The number of messages marked for deletion.</value>
+		public int? DeletedCount {
+			get; protected set;
+		}
+
+		/// <summary>
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>
@@ -489,7 +502,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>This variant of the <see cref="Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// method is meant for quick resynchronization of the folder. Before calling this method,
-		/// the <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method MUST be called.</para>
+		/// the <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/> method MUST be called.</para>
 		/// <para>You should also make sure to add listeners to the <see cref="MessagesVanished"/> and
 		/// <see cref="MessageFlagsChanged"/> events to get notifications of changes since
 		/// the last time the folder was opened.</para>
@@ -541,7 +554,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>This variant of the <see cref="OpenAsync(FolderAccess,System.Threading.CancellationToken)"/>
 		/// method is meant for quick resynchronization of the folder. Before calling this method,
-		/// the <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method MUST be called.</para>
+		/// the <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/> method MUST be called.</para>
 		/// <para>You should also make sure to add listeners to the <see cref="MessagesVanished"/> and
 		/// <see cref="MessageFlagsChanged"/> events to get notifications of changes since
 		/// the last time the folder was opened.</para>
@@ -2670,7 +2683,7 @@ namespace MailKit {
 		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
 		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -2709,7 +2722,7 @@ namespace MailKit {
 		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
 		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -2749,7 +2762,7 @@ namespace MailKit {
 		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
 		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -2795,7 +2808,7 @@ namespace MailKit {
 		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
 		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
@@ -10101,6 +10114,25 @@ namespace MailKit {
 		protected virtual void OnSizeChanged ()
 		{
 			SizeChanged?.Invoke (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the number of messages marked for deletion changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="DeletedCountChanged"/> event is emitted whenever the <see cref="DeletedCount"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs>? DeletedCountChanged;
+
+		/// <summary>
+		/// Raise the deleted count changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the deleted count changed event.
+		/// </remarks>
+		protected virtual void OnDeletedCountChanged ()
+		{
+			DeletedCountChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>

@@ -84,5 +84,13 @@ namespace MailKit {
 		/// Updates <see cref="IMailFolder.Id"/>.
 		/// </summary>
 		MailboxId      = 1 << 8,
+
+		/// <summary>
+		/// Updates <see cref="IMailFolder.DeletedCount"/>.
+		/// </summary>
+		/// <remarks>
+		/// This item is only supported by IMAP servers that use the IMAP4rev2 protocol.
+		/// </remarks>
+		Deleted        = 1 << 9,
 	}
 }

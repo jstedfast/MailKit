@@ -42,7 +42,7 @@ namespace MailKit {
 		/// or <a href="Overload_MailKit_IMailFolder_FetchAsync.htm">FetchAsync</a> will only include the message summaries which
 		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has enabled this feature via
-		/// <see cref="IMailStore.EnableQuickResync(System.Threading.CancellationToken)"/>, then the Fetch or FetchAsync method
+		/// <see cref="MailKit.Net.Imap.ImapClient.Enable(MailKit.Net.Imap.ImapFeatures,System.Threading.CancellationToken)"/>, then the Fetch or FetchAsync method
 		/// will emit <see cref="IMailFolder.MessagesVanished"/> events for messages that were expunged from the folder after
 		/// the change specified by the mod-sequence value.</para>
 		/// <para>It should be noted that if another client has modified any message in the folder, the mail service may choose

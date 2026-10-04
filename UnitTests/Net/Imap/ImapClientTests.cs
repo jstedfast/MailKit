@@ -84,7 +84,8 @@ namespace UnitTests.Net.Imap {
 		static readonly ImapCapabilities IMAP4rev2CoreCapabilities = ImapCapabilities.IMAP4rev2 | ImapCapabilities.Status |
 			ImapCapabilities.Namespace | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.ESearch |
 			ImapCapabilities.SearchResults | ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.SaslIR | ImapCapabilities.ListExtended |
-			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse;
+			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse |
+			ImapCapabilities.StatusSize;
 		static readonly ImapCapabilities AclInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities MetadataInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Metadata;
@@ -289,6 +290,233 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static IList<ImapReplayCommand> CreateIMAP4rev2UTF8MailboxNamesCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK [CAPABILITY IMAP4rev2 AUTH=PLAIN] IMAP4rev2 Service Ready\r\n")),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.ASCII.GetBytes ("A00000000 OK [CAPABILITY IMAP4rev2] Logged in\r\n")),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("* NAMESPACE ((\"\" \"/\")) NIL NIL\r\nA00000001 OK Namespace completed.\r\n")),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("* LIST (\\Subscribed \\HasNoChildren) \"/\" INBOX\r\nA00000002 OK List completed.\r\n")),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("A00000003 OK List completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000004 LIST \"\" \"Café\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.UTF8.GetBytes ("* LIST (\\HasNoChildren) \"/\" \"Café\"\r\nA00000004 OK List completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 CREATE \"Café/Crème\"\r\n", Encoding.ASCII.GetBytes ("A00000005 OK Create completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000006 LIST \"\" \"Café/Crème\"\r\n", Encoding.UTF8.GetBytes ("* LIST (\\HasNoChildren) \"/\" \"Café/Crème\"\r\nA00000006 OK List completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000007 STATUS \"Café\" (SIZE)\r\n", Encoding.UTF8.GetBytes ("* STATUS \"Café\" (SIZE 5000000000)\r\nA00000007 OK Status completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000008 SELECT \"Café\"\r\n", Encoding.UTF8.GetBytes ("* 0 EXISTS\r\n* OK [UIDVALIDITY 1] UIDs valid\r\n* OK [UIDNEXT 1] Predicted next UID\r\n* FLAGS (\\Answered \\Flagged \\Deleted \\Seen \\Draft)\r\n* OK [PERMANENTFLAGS (\\Answered \\Flagged \\Deleted \\Seen \\Draft \\*)] Limited\r\n* LIST () \"/\" \"Café\"\r\nA00000008 OK [READ-WRITE] Select completed.\r\n")),
+				new ImapReplayCommand ("A00000009 NOOP\r\n", Encoding.ASCII.GetBytes ("A00000009 OK NOOP completed.\r\n")),
+				new ImapReplayCommand ("A00000010 LOGOUT\r\n", Encoding.ASCII.GetBytes ("* BYE Logging out.\r\nA00000010 OK Logout completed.\r\n"))
+			};
+		}
+
+		[Test]
+		public void TestIMAP4rev2UTF8MailboxNames ()
+		{
+			var commands = CreateIMAP4rev2UTF8MailboxNamesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept), Is.False, "UTF8=ACCEPT");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE");
+
+				var cafe = client.GetFolder ("Café");
+				Assert.That (cafe.Name, Is.EqualTo ("Café"), "Name");
+				Assert.That (cafe.FullName, Is.EqualTo ("Café"), "FullName");
+				Assert.That (((ImapFolder) cafe).EncodedName, Is.EqualTo ("Café"), "EncodedName");
+				Assert.That (cafe.Supports (FolderFeature.UTF8), Is.True, "Supports UTF8");
+
+				var creme = cafe.Create ("Crème", true);
+				Assert.That (creme.Name, Is.EqualTo ("Crème"), "Name");
+				Assert.That (creme.FullName, Is.EqualTo ("Café/Crème"), "FullName");
+				Assert.That (((ImapFolder) creme).EncodedName, Is.EqualTo ("Café/Crème"), "EncodedName");
+
+				cafe.Status (StatusItems.Size);
+				Assert.That (cafe.Size, Is.EqualTo (5000000000), "Size");
+
+				cafe.Open (FolderAccess.ReadWrite);
+				cafe.Check ();
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestIMAP4rev2UTF8MailboxNamesAsync ()
+		{
+			var commands = CreateIMAP4rev2UTF8MailboxNamesCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept), Is.False, "UTF8=ACCEPT");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE");
+
+				var cafe = await client.GetFolderAsync ("Café");
+				Assert.That (cafe.Name, Is.EqualTo ("Café"), "Name");
+				Assert.That (cafe.FullName, Is.EqualTo ("Café"), "FullName");
+				Assert.That (((ImapFolder) cafe).EncodedName, Is.EqualTo ("Café"), "EncodedName");
+				Assert.That (cafe.Supports (FolderFeature.UTF8), Is.True, "Supports UTF8");
+
+				var creme = await cafe.CreateAsync ("Crème", true);
+				Assert.That (creme.Name, Is.EqualTo ("Crème"), "Name");
+				Assert.That (creme.FullName, Is.EqualTo ("Café/Crème"), "FullName");
+				Assert.That (((ImapFolder) creme).EncodedName, Is.EqualTo ("Café/Crème"), "EncodedName");
+
+				await cafe.StatusAsync (StatusItems.Size);
+				Assert.That (cafe.Size, Is.EqualTo (5000000000), "Size");
+
+				await cafe.OpenAsync (FolderAccess.ReadWrite);
+				await cafe.CheckAsync ();
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		static IList<ImapReplayCommand> CreateEnableIMAP4rev2Commands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK [CAPABILITY IMAP4rev1 IMAP4rev2 AUTH=PLAIN] IMAP4rev1/IMAP4rev2 Service Ready\r\n")),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.ASCII.GetBytes ("A00000000 OK [CAPABILITY IMAP4rev1 IMAP4rev2 ENABLE NAMESPACE LIST-EXTENDED SPECIAL-USE] Logged in\r\n")),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("* NAMESPACE ((\"\" \"/\")) NIL NIL\r\nA00000001 OK Namespace completed.\r\n")),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("* LIST (\\Subscribed \\HasNoChildren) \"/\" INBOX\r\nA00000002 OK List completed.\r\n")),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("A00000003 OK List completed.\r\n")),
+				new ImapReplayCommand ("A00000004 ENABLE IMAP4rev2\r\n", Encoding.ASCII.GetBytes ("* ENABLED IMAP4rev2\r\nA00000004 OK Enabled.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000005 LIST \"\" \"Café\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.UTF8.GetBytes ("* LIST (\\HasNoChildren) \"/\" \"Café\"\r\nA00000005 OK List completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000006 STATUS \"Café\" (SIZE DELETED)\r\n", Encoding.UTF8.GetBytes ("* STATUS \"Café\" (SIZE 1024 DELETED 3)\r\nA00000006 OK Status completed.\r\n")),
+				// Note: an unsolicited CAPABILITY response must not revert the session back to IMAP4rev1.
+				new ImapReplayCommand ("A00000007 NOOP\r\n", Encoding.ASCII.GetBytes ("* CAPABILITY IMAP4rev1 IMAP4rev2 ENABLE NAMESPACE LIST-EXTENDED SPECIAL-USE\r\nA00000007 OK NOOP completed.\r\n")),
+				new ImapReplayCommand (Encoding.UTF8, "A00000008 STATUS \"Café\" (DELETED)\r\n", Encoding.UTF8.GetBytes ("* STATUS \"Café\" (DELETED 0)\r\nA00000008 OK Status completed.\r\n")),
+				new ImapReplayCommand ("A00000009 LOGOUT\r\n", Encoding.ASCII.GetBytes ("* BYE Logging out.\r\nA00000009 OK Logout completed.\r\n"))
+			};
+		}
+
+		[Test]
+		public void TestEnableIMAP4rev2 ()
+		{
+			var commands = CreateEnableIMAP4rev2Commands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.False, "STATUS=SIZE before ENABLE");
+
+				client.Enable (ImapFeatures.IMAP4rev2);
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE after ENABLE");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Move), Is.True, "MOVE after ENABLE");
+
+				// ENABLE IMAP4rev2 a second time should no-op.
+				client.Enable (ImapFeatures.IMAP4rev2);
+
+				var cafe = client.GetFolder ("Café");
+				Assert.That (((ImapFolder) cafe).EncodedName, Is.EqualTo ("Café"), "EncodedName");
+				Assert.That (cafe.DeletedCount, Is.Null, "DeletedCount before STATUS");
+
+				int changed = 0;
+				cafe.DeletedCountChanged += (sender, e) => changed++;
+
+				cafe.Status (StatusItems.Size | StatusItems.Deleted);
+				Assert.That (cafe.Size, Is.EqualTo (1024), "Size");
+				Assert.That (cafe.DeletedCount, Is.EqualTo (3), "DeletedCount");
+				Assert.That (changed, Is.EqualTo (1), "DeletedCountChanged");
+
+				client.NoOp ();
+
+				cafe.Status (StatusItems.Deleted);
+				Assert.That (cafe.DeletedCount, Is.EqualTo (0), "DeletedCount after NOOP");
+				Assert.That (changed, Is.EqualTo (2), "DeletedCountChanged after NOOP");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestEnableIMAP4rev2Async ()
+		{
+			var commands = CreateEnableIMAP4rev2Commands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.False, "STATUS=SIZE before ENABLE");
+
+				await client.EnableAsync (ImapFeatures.IMAP4rev2);
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE after ENABLE");
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Move), Is.True, "MOVE after ENABLE");
+
+				// ENABLE IMAP4rev2 a second time should no-op.
+				await client.EnableAsync (ImapFeatures.IMAP4rev2);
+
+				var cafe = await client.GetFolderAsync ("Café");
+				Assert.That (((ImapFolder) cafe).EncodedName, Is.EqualTo ("Café"), "EncodedName");
+				Assert.That (cafe.DeletedCount, Is.Null, "DeletedCount before STATUS");
+
+				int changed = 0;
+				cafe.DeletedCountChanged += (sender, e) => changed++;
+
+				await cafe.StatusAsync (StatusItems.Size | StatusItems.Deleted);
+				Assert.That (cafe.Size, Is.EqualTo (1024), "Size");
+				Assert.That (cafe.DeletedCount, Is.EqualTo (3), "DeletedCount");
+				Assert.That (changed, Is.EqualTo (1), "DeletedCountChanged");
+
+				await client.NoOpAsync ();
+
+				await cafe.StatusAsync (StatusItems.Deleted);
+				Assert.That (cafe.DeletedCount, Is.EqualTo (0), "DeletedCount after NOOP");
+				Assert.That (changed, Is.EqualTo (2), "DeletedCountChanged after NOOP");
+
+				await client.DisconnectAsync (true);
+			}
+		}
 		[Test]
 		public void TestEscapeUserName ()
 		{
@@ -2646,7 +2874,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
-				client.EnableUTF8 ();
+				client.Enable (ImapFeatures.UTF8Accept);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2720,7 +2948,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
-				await client.EnableUTF8Async ();
+				await client.EnableAsync (ImapFeatures.UTF8Accept);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2788,7 +3016,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				client.EnableUTF8 ();
+				client.Enable (ImapFeatures.UTF8Accept);
 
 				var implementation = new ImapImplementation {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
@@ -2826,7 +3054,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				await client.EnableUTF8Async ();
+				await client.EnableAsync (ImapFeatures.UTF8Accept);
 
 				var implementation = new ImapImplementation {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc.", Address = "1 Memorial Dr.\r\nCambridge, MA 02142"
@@ -3485,10 +3713,10 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
-				client.EnableUTF8 ();
+				client.Enable (ImapFeatures.UTF8Accept);
 
 				// ENABLE UTF8 a second time should no-op.
-				client.EnableUTF8 ();
+				client.Enable (ImapFeatures.UTF8Accept);
 
 				client.Disconnect (false);
 			}
@@ -3526,10 +3754,10 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
-				await client.EnableUTF8Async ();
+				await client.EnableAsync (ImapFeatures.UTF8Accept);
 
 				// ENABLE UTF8 a second time should no-op.
-				await client.EnableUTF8Async ();
+				await client.EnableAsync (ImapFeatures.UTF8Accept);
 
 				await client.DisconnectAsync (false);
 			}
@@ -3659,12 +3887,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
-				client.EnableQuickResync ();
+				client.Enable (ImapFeatures.QuickResync);
 
 				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
 
 				// ENABLE QRESYNC a second time should no-op.
-				client.EnableQuickResync ();
+				client.Enable (ImapFeatures.QuickResync);
 
 				client.Disconnect (false);
 			}
@@ -3703,12 +3931,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
-				await client.EnableQuickResyncAsync ();
+				await client.EnableAsync (ImapFeatures.QuickResync);
 
 				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
 
 				// ENABLE QRESYNC a second time should no-op.
-				await client.EnableQuickResyncAsync ();
+				await client.EnableAsync (ImapFeatures.QuickResync);
 
 				await client.DisconnectAsync (false);
 			}
@@ -3755,12 +3983,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
-				client.EnableQuickResync ();
+				client.Enable (ImapFeatures.QuickResync);
 
 				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
 
 				// ENABLE QRESYNC a second time should no-op.
-				client.EnableQuickResync ();
+				client.Enable (ImapFeatures.QuickResync);
 
 				client.Disconnect (false);
 			}
@@ -3795,12 +4023,12 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
-				await client.EnableQuickResyncAsync ();
+				await client.EnableAsync (ImapFeatures.QuickResync);
 
 				Assert.That (client.Inbox.Supports (FolderFeature.QuickResync), Is.True, "Expected the INBOX to support QRESYNC");
 
 				// ENABLE QRESYNC a second time should no-op.
-				await client.EnableQuickResyncAsync ();
+				await client.EnableAsync (ImapFeatures.QuickResync);
 
 				await client.DisconnectAsync (false);
 			}
@@ -3891,9 +4119,11 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities | ImapCapabilities.StatusSize | ImapCapabilities.ObjectID));
 
-				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId;
+				// Note: StatusItems.Deleted should be ignored since the server does not support IMAP4rev2.
+				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId | StatusItems.Deleted;
 				var folders = client.GetFolders (client.PersonalNamespaces[0], all, true);
 				Assert.That (folders, Has.Count.EqualTo (10), "Unexpected folder count.");
+				Assert.That (folders[0].DeletedCount, Is.Null, "DeletedCount");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "+Folder", "f001Ed6c-ebee-41a5-a65e-9498d3e0aec0", FolderAttributes.HasNoChildren, true, 41234, 6, 0, 7, 1, 0, 1024);
@@ -4002,9 +4232,11 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities | ImapCapabilities.StatusSize | ImapCapabilities.ObjectID));
 
-				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId;
+				// Note: StatusItems.Deleted should be ignored since the server does not support IMAP4rev2.
+				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId | StatusItems.Deleted;
 				var folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, true);
 				Assert.That (folders, Has.Count.EqualTo (10), "Unexpected folder count.");
+				Assert.That (folders[0].DeletedCount, Is.Null, "DeletedCount");
 
 				AssertFolder (folders[0], "INBOX", "d0f3b017-d3ec-40aa-9bb9-66c1aeccbb24", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 41234, 60, 0, 410, 1, 0, 1024);
 				AssertFolder (folders[1], "+Folder", "f001Ed6c-ebee-41a5-a65e-9498d3e0aec0", FolderAttributes.HasNoChildren, true, 41234, 6, 0, 7, 1, 0, 1024);
@@ -4392,7 +4624,9 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Inbox.Supports (FolderFeature.UTF8), Is.False);
 
 				// Make sure these all throw NotSupportedException
-				Assert.Throws<NotSupportedException> (() => client.EnableUTF8 ());
+				Assert.Throws<NotSupportedException> (() => client.Enable (ImapFeatures.UTF8Accept));
+				Assert.Throws<NotSupportedException> (() => client.Enable (ImapFeatures.IMAP4rev2));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Enable ((ImapFeatures) 0x100));
 				Assert.Throws<NotSupportedException> (() => client.Inbox.GetAccessRights ("smith"));
 				Assert.Throws<NotSupportedException> (() => client.Inbox.GetMyAccessRights ());
 				var rights = new AccessRights ("lrswida");
@@ -4426,7 +4660,7 @@ namespace UnitTests.Net.Imap {
 				Assert.Throws<NotSupportedException> (() => client.Inbox.SetLabels (new int[] { 0 }, 1, labels, true));
 
 				try {
-					client.EnableQuickResync ();
+					client.Enable (ImapFeatures.QuickResync);
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception when enabling QRESYNC: {ex}");
 				}
@@ -5045,7 +5279,9 @@ namespace UnitTests.Net.Imap {
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
 				// Make sure these all throw NotSupportedException
-				Assert.ThrowsAsync<NotSupportedException> (async () => await client.EnableUTF8Async ());
+				Assert.ThrowsAsync<NotSupportedException> (async () => await client.EnableAsync (ImapFeatures.UTF8Accept));
+				Assert.ThrowsAsync<NotSupportedException> (async () => await client.EnableAsync (ImapFeatures.IMAP4rev2));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (async () => await client.EnableAsync ((ImapFeatures) 0x100));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.Inbox.GetAccessRightsAsync ("smith"));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.Inbox.GetMyAccessRightsAsync ());
 				var rights = new AccessRights ("lrswida");
@@ -5079,7 +5315,7 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.Inbox.SetLabelsAsync (new int[] { 0 }, 1, labels, true));
 
 				try {
-					await client.EnableQuickResyncAsync ();
+					await client.EnableAsync (ImapFeatures.QuickResync);
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception when enabling QRESYNC: {ex}");
 				}
@@ -5788,7 +6024,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.AppendLimit.HasValue, Is.True, "Expected AppendLimit to have a value");
 				Assert.That (client.AppendLimit.Value, Is.EqualTo (35651584), "Expected AppendLimit value to match");
 
-				Assert.Throws<NotSupportedException> (() => client.EnableQuickResync ());
+				Assert.Throws<NotSupportedException> (() => client.Enable (ImapFeatures.QuickResync));
 				Assert.Throws<NotSupportedException> (() => client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Inboxes, ImapEvent.FlagChange, new ImapEvent.MessageNew (), ImapEvent.MessageExpunge)
 				}));
@@ -5987,7 +6223,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.AppendLimit.HasValue, Is.True, "Expected AppendLimit to have a value");
 				Assert.That (client.AppendLimit.Value, Is.EqualTo (35651584), "Expected AppendLimit value to match");
 
-				Assert.ThrowsAsync<NotSupportedException> (async () => await client.EnableQuickResyncAsync ());
+				Assert.ThrowsAsync<NotSupportedException> (async () => await client.EnableAsync (ImapFeatures.QuickResync));
 				Assert.ThrowsAsync<NotSupportedException> (async () => await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Inboxes, ImapEvent.FlagChange, new ImapEvent.MessageNew (), ImapEvent.MessageExpunge)
 				}));
