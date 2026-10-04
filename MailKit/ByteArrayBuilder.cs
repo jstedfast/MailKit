@@ -136,39 +136,9 @@ namespace MailKit
 			}
 		}
 
-		// FIXME: This should be moved somewhere else...
-		internal static bool TryParse (byte[] text, ref int index, int endIndex, out long value)
+		public byte[] GetBuffer ()
 		{
-			int startIndex = index;
-
-			value = 0;
-
-			while (index < endIndex && text[index] >= (byte) '0' && text[index] <= (byte) '9') {
-				int digit = text[index] - (byte) '0';
-
-				if (value > long.MaxValue / 10) {
-					// integer overflow
-					return false;
-				}
-
-				if (value == long.MaxValue / 10 && digit > long.MaxValue % 10) {
-					// integer overflow
-					return false;
-				}
-
-				value = (value * 10) + digit;
-				index++;
-			}
-
-			return index > startIndex;
-		}
-
-		// FIXME: Does this make sense to have here? Or should I have an extensions class for byte[] that has this?
-		public bool TryParse (int startIndex, int endIndex, out long value)
-		{
-			int index = startIndex;
-
-			return TryParse (buffer, ref index, endIndex, out value);
+			return buffer;
 		}
 
 		public void Dispose ()

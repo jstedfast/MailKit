@@ -716,6 +716,27 @@ namespace MailKit.Net.Imap {
 			return inputIndex < inputEnd;
 		}
 
+		static bool TryParseLiteralLength (byte[] text, int startIndex, int endIndex, out long value)
+		{
+			int index = startIndex;
+
+			value = 0;
+
+			while (index < endIndex && text[index] >= (byte) '0' && text[index] <= (byte) '9') {
+				int digit = text[index] - (byte) '0';
+
+				if (value > long.MaxValue / 10 || (value == long.MaxValue / 10 && digit > long.MaxValue % 10)) {
+					// integer overflow
+					return false;
+				}
+
+				value = (value * 10) + digit;
+				index++;
+			}
+
+			return index > startIndex;
+		}
+
 		ImapToken ReadLiteralToken (CancellationToken cancellationToken)
 		{
 			tokenBuilder.Clear ();
@@ -750,7 +771,7 @@ namespace MailKit.Net.Imap {
 			// skip over the '\n'
 			inputIndex++;
 
-			if (!tokenBuilder.TryParse (1, endIndex, out literalDataLeft))
+			if (!TryParseLiteralLength (tokenBuilder.GetBuffer (), 1, endIndex, out literalDataLeft))
 				return ImapToken.Create (ImapTokenType.Error, tokenBuilder.ToString ());
 
 			Mode = ImapStreamMode.Literal;
@@ -792,7 +813,7 @@ namespace MailKit.Net.Imap {
 			// skip over the '\n'
 			inputIndex++;
 
-			if (!tokenBuilder.TryParse (1, endIndex, out literalDataLeft) || literalDataLeft < 0)
+			if (!TryParseLiteralLength (tokenBuilder.GetBuffer (), 1, endIndex, out literalDataLeft))
 				return ImapToken.Create (ImapTokenType.Error, tokenBuilder.ToString ());
 
 			Mode = ImapStreamMode.Literal;
