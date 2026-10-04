@@ -201,11 +201,7 @@ namespace MailKit.Net.Proxy
 			// +-----+--------+
 			// |  1  |   1    |
 			// +-----+--------+
-			int nread, n = 0;
-			do {
-				if ((nread = Receive (socket, buffer, 0 + n, 2 - n, cancellationToken)) > 0)
-					n += nread;
-			} while (n < 2);
+			ReceiveExactly (socket, buffer, 0, 2, cancellationToken);
 
 			VerifySocksVersion (buffer[0]);
 
@@ -223,11 +219,7 @@ namespace MailKit.Net.Proxy
 			// +-----+--------+
 			// |  1  |   1    |
 			// +-----+--------+
-			int nread, n = 0;
-			do {
-				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, cancellationToken).ConfigureAwait (false)) > 0)
-					n += nread;
-			} while (n < 2);
+			await ReceiveExactlyAsync (socket, buffer, 0, 2, cancellationToken).ConfigureAwait (false);
 
 			VerifySocksVersion (buffer[0]);
 
@@ -269,12 +261,7 @@ namespace MailKit.Net.Proxy
 
 			Send (socket, buffer, 0, buffer.Length, cancellationToken);
 
-			int nread, n = 0;
-
-			do {
-				if ((nread = Receive (socket, buffer, 0 + n, 2 - n, cancellationToken)) > 0)
-					n += nread;
-			} while (n < 2);
+			ReceiveExactly (socket, buffer, 0, 2, cancellationToken);
 
 			if (buffer[1] != (byte) Socks5Reply.Success)
 				throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
@@ -286,12 +273,7 @@ namespace MailKit.Net.Proxy
 
 			await SendAsync (socket, buffer, 0, buffer.Length, cancellationToken).ConfigureAwait (false);
 
-			int nread, n = 0;
-
-			do {
-				if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 2 - n, cancellationToken).ConfigureAwait (false)) > 0)
-					n += nread;
-			} while (n < 2);
+			await ReceiveExactlyAsync (socket, buffer, 0, 2, cancellationToken).ConfigureAwait (false);
 
 			if (buffer[1] != (byte) Socks5Reply.Success)
 				throw new AuthenticationException ("Failed to authenticate with SOCKS5 proxy server.");
@@ -429,22 +411,16 @@ namespace MailKit.Net.Proxy
 
 				// Note: We know we'll need at least 4 bytes of header + a minimum of 1 byte
 				// to determine the length of the BND.ADDR field if ATYP is a domain.
-				int nread, need = 5;
-				n = 0;
+				ReceiveExactly (socket, buffer, 0, 5, cancellationToken);
 
-				do {
-					if ((nread = Receive (socket, buffer, 0 + n, need - n, cancellationToken)) > 0)
-						n += nread;
-				} while (n < need);
+				int need = ProcessPartialConnectResponse (host, port, buffer);
 
-				need = ProcessPartialConnectResponse (host, port, buffer);
+				ReceiveExactly (socket, buffer, 5, need - 5, cancellationToken);
 
-				do {
-					if ((nread = Receive (socket, buffer, 0 + n, need - n, cancellationToken)) > 0)
-						n += nread;
-				} while (n < need);
-
-				// TODO: do we care about BND.ADDR and BND.PORT?
+				// Note: For a CONNECT request, BND.ADDR and BND.PORT are the address and port that
+				// the proxy server bound to in order to connect to the target host. They are only
+				// meaningful for BIND and UDP ASSOCIATE requests (which we do not support), so we
+				// just consume and ignore them.
 
 				return new NetworkStream (socket, true);
 			} catch {
@@ -527,22 +503,16 @@ namespace MailKit.Net.Proxy
 
 				// Note: We know we'll need at least 4 bytes of header + a minimum of 1 byte
 				// to determine the length of the BND.ADDR field if ATYP is a domain.
-				int nread, need = 5;
-				n = 0;
+				await ReceiveExactlyAsync (socket, buffer, 0, 5, cancellationToken).ConfigureAwait (false);
 
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < need);
+				int need = ProcessPartialConnectResponse (host, port, buffer);
 
-				need = ProcessPartialConnectResponse (host, port, buffer);
+				await ReceiveExactlyAsync (socket, buffer, 5, need - 5, cancellationToken).ConfigureAwait (false);
 
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, need - n, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < need);
-
-				// TODO: do we care about BND.ADDR and BND.PORT?
+				// Note: For a CONNECT request, BND.ADDR and BND.PORT are the address and port that
+				// the proxy server bound to in order to connect to the target host. They are only
+				// meaningful for BIND and UDP ASSOCIATE requests (which we do not support), so we
+				// just consume and ignore them.
 
 				return new NetworkStream (socket, true);
 			} catch {

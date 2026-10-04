@@ -124,6 +124,8 @@ rather than the full MimeKit cryptography stack.
 * Added `StatusItems.Deleted`, which updates the new `IMailFolder.DeletedCount` property (and emits the
   `DeletedCountChanged` event) with the number of messages marked `\Deleted`. This is only supported when
   IMAP4rev2 is in use.
+* Added `ProxyProtocolException (string, ProtocolErrorType)` and
+  `ProxyProtocolException (string, ProtocolErrorType, Exception)` constructors.
 * Added more context to SMTP exceptions to make it easier to diagnose why sending a message failed
   (issue [#1748](https://github.com/jstedfast/MailKit/issues/1748)):
   * Added a public `SmtpCommand` enum identifying the SMTP command (e.g. `MailFrom`, `RcptTo`, `Data`)
@@ -193,6 +195,9 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
   folded it into the base protocol), allowing `StatusItems.Size` to be queried.
 * Fixed `ImapFolder.Check ()` to send `NOOP` instead of `CHECK` when IMAP4rev2 is in use
   since rfc9051 removed the `CHECK` command.
+* Fixed `Socks4Client` and `Socks5Client` to throw a `ProxyProtocolException` (with an `ErrorType` of
+  `ProtocolErrorType.UnexpectedDisconnect`) if the proxy server disconnects in the middle of a reply.
+  Previously, `Connect ()` and `ConnectAsync ()` would spin in an infinite loop.
 
 ## MailKit 4.18.1 (2026-09-27)
 

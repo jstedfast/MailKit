@@ -30,6 +30,7 @@ using System.Net;
 using System.Net.Sockets;
 
 using MailKit.Security;
+using MailKit;
 using MailKit.Net.Proxy;
 
 namespace UnitTests.Net.Proxy {
@@ -392,5 +393,49 @@ namespace UnitTests.Net.Proxy {
 				}
 			}
 		}
-	}
+
+		static readonly object[] UnexpectedDisconnectCases = {
+			// disconnect during auth method negotiation
+			new object[] { false, new byte[][] { Array.Empty<byte> () } },
+			new object[] { false, new byte[][] { new byte[] { 0x05 } } },
+			// disconnect during username/password authentication
+			new object[] { true, new byte[][] { new byte[] { 0x05, 0x02 }, Array.Empty<byte> () } },
+			new object[] { true, new byte[][] { new byte[] { 0x05, 0x02 }, new byte[] { 0x01 } } },
+			// disconnect while reading the connect reply header
+			new object[] { false, new byte[][] { new byte[] { 0x05, 0x00 }, new byte[] { 0x05, 0x00, 0x00 } } },
+			// disconnect while reading BND.ADDR/BND.PORT
+			new object[] { false, new byte[][] { new byte[] { 0x05, 0x00 }, new byte[] { 0x05, 0x00, 0x00, 0x01, 127, 0 } } },
+		};
+
+		static Socks5Client CreateClient (DisconnectingProxyListener proxy, bool credentials)
+		{
+			if (credentials)
+				return new Socks5Client (proxy.Host, proxy.Port, new NetworkCredential ("username", "password"));
+
+			return new Socks5Client (proxy.Host, proxy.Port);
+		}
+
+		[TestCaseSource (nameof (UnexpectedDisconnectCases))]
+		public void TestUnexpectedDisconnect (bool credentials, byte[][] replies)
+		{
+			using (var proxy = new DisconnectingProxyListener (replies))
+			using (var cts = new CancellationTokenSource (TimeSpan.FromSeconds (10))) {
+				var socks = CreateClient (proxy, credentials);
+
+				var ex = Assert.Throws<ProxyProtocolException> (() => socks.Connect ("127.0.0.1", 25, cts.Token));
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
+			}
+		}
+
+		[TestCaseSource (nameof (UnexpectedDisconnectCases))]
+		public void TestUnexpectedDisconnectAsync (bool credentials, byte[][] replies)
+		{
+			using (var proxy = new DisconnectingProxyListener (replies))
+			using (var cts = new CancellationTokenSource (TimeSpan.FromSeconds (10))) {
+				var socks = CreateClient (proxy, credentials);
+
+				var ex = Assert.ThrowsAsync<ProxyProtocolException> (() => socks.ConnectAsync ("127.0.0.1", 25, cts.Token));
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
+			}
+		}	}
 }

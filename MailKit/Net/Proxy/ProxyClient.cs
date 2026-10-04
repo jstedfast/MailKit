@@ -301,6 +301,37 @@ namespace MailKit.Net.Proxy
 			}
 		}
 
+		static ProxyProtocolException CreateUnexpectedDisconnectException ()
+		{
+			return new ProxyProtocolException ("The proxy server unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
+		}
+
+		internal static void ReceiveExactly (Socket socket, byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			while (count > 0) {
+				int nread = Receive (socket, buffer, offset, count, cancellationToken);
+
+				if (nread == 0)
+					throw CreateUnexpectedDisconnectException ();
+
+				offset += nread;
+				count -= nread;
+			}
+		}
+
+		internal static async Task ReceiveExactlyAsync (Socket socket, byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			while (count > 0) {
+				int nread = await ReceiveAsync (socket, buffer, offset, count, cancellationToken).ConfigureAwait (false);
+
+				if (nread == 0)
+					throw CreateUnexpectedDisconnectException ();
+
+				offset += nread;
+				count -= nread;
+			}
+		}
+
 		/// <summary>
 		/// Connect to the target host.
 		/// </summary>

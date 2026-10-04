@@ -257,17 +257,14 @@ namespace MailKit.Net.Proxy
 				// +-----+-----+----------+----------+
 				// |  1  |  1  |    2     |    4     |
 				// +-----+-----+----------+----------+
-				int nread, n = 0;
-
-				do {
-					if ((nread = Receive (socket, buffer, 0 + n, 8 - n, cancellationToken)) > 0)
-						n += nread;
-				} while (n < 8);
+				ReceiveExactly (socket, buffer, 0, 8, cancellationToken);
 
 				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
 					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
 
-				// TODO: do we care about BND.ADDR and BND.PORT?
+				// Note: For a CONNECT request, BND.PORT and BND.ADDR are not meaningful (many SOCKS4
+				// servers just send zeros) and are only used for BIND requests, which we do not
+				// support, so we ignore them.
 
 				return new NetworkStream (socket, true);
 			} catch {
@@ -343,17 +340,14 @@ namespace MailKit.Net.Proxy
 				// +-----+-----+----------+----------+
 				// |  1  |  1  |    2     |    4     |
 				// +-----+-----+----------+----------+
-				int nread, n = 0;
-
-				do {
-					if ((nread = await ReceiveAsync (socket, buffer, 0 + n, 8 - n, cancellationToken).ConfigureAwait (false)) > 0)
-						n += nread;
-				} while (n < 8);
+				await ReceiveExactlyAsync (socket, buffer, 0, 8, cancellationToken).ConfigureAwait (false);
 
 				if (buffer[1] != (byte) Socks4Reply.RequestGranted)
 					throw new ProxyProtocolException (string.Format (CultureInfo.InvariantCulture, "Failed to connect to {0}:{1}: {2}", host, port, GetFailureReason (buffer[1])));
 
-				// TODO: do we care about BND.ADDR and BND.PORT?
+				// Note: For a CONNECT request, BND.PORT and BND.ADDR are not meaningful (many SOCKS4
+				// servers just send zeros) and are only used for BIND requests, which we do not
+				// support, so we ignore them.
 
 				return new NetworkStream (socket, true);
 			} catch {

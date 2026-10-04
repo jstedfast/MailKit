@@ -29,6 +29,7 @@
 using System.Net;
 using System.Net.Sockets;
 
+using MailKit;
 using MailKit.Net.Proxy;
 
 namespace UnitTests.Net.Proxy {
@@ -196,5 +197,33 @@ namespace UnitTests.Net.Proxy {
 				}
 			}
 		}
-	}
+
+		static readonly object[] UnexpectedDisconnectCases = {
+			new object[] { Array.Empty<byte> () },
+			new object[] { new byte[] { 0x00, 0x5A, 0x00 } },
+		};
+
+		[TestCaseSource (nameof (UnexpectedDisconnectCases))]
+		public void TestUnexpectedDisconnect (byte[] reply)
+		{
+			using (var proxy = new DisconnectingProxyListener (reply))
+			using (var cts = new CancellationTokenSource (TimeSpan.FromSeconds (10))) {
+				var socks = new Socks4Client (proxy.Host, proxy.Port);
+
+				var ex = Assert.Throws<ProxyProtocolException> (() => socks.Connect ("127.0.0.1", 25, cts.Token));
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
+			}
+		}
+
+		[TestCaseSource (nameof (UnexpectedDisconnectCases))]
+		public void TestUnexpectedDisconnectAsync (byte[] reply)
+		{
+			using (var proxy = new DisconnectingProxyListener (reply))
+			using (var cts = new CancellationTokenSource (TimeSpan.FromSeconds (10))) {
+				var socks = new Socks4Client (proxy.Host, proxy.Port);
+
+				var ex = Assert.ThrowsAsync<ProxyProtocolException> (() => socks.ConnectAsync ("127.0.0.1", 25, cts.Token));
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
+			}
+		}	}
 }

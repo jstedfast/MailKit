@@ -68,6 +68,31 @@ namespace MailKit.Net.Proxy
 		/// Creates a new <see cref="ProxyProtocolException"/>.
 		/// </remarks>
 		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		/// <param name="innerException">An inner exception.</param>
+		public ProxyProtocolException (string message, ProtocolErrorType errorType, Exception innerException) : base (message, errorType, innerException)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Proxy.ProxyProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProxyProtocolException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		public ProxyProtocolException (string message, ProtocolErrorType errorType) : base (message, errorType)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Proxy.ProxyProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProxyProtocolException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
 		public ProxyProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
