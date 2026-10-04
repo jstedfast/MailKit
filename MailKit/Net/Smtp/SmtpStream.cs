@@ -52,7 +52,8 @@ namespace MailKit.Net.Smtp {
 
 		readonly IProtocolLogger logger;
 		int inputIndex, inputEnd;
-		string? lastResponse;
+		SmtpResponse? lastResponse;
+		SmtpCommand currentCommand;
 		bool disposed;
 
 		/// <summary>
@@ -231,6 +232,23 @@ namespace MailKit.Net.Smtp {
 			offset = inputEnd;
 		}
 
+		SmtpProtocolException CreateUnexpectedDisconnectException ()
+		{
+			string message;
+
+			if (lastResponse is not null)
+				message = $"The SMTP server has unexpectedly disconnected: {lastResponse.Response}";
+			else
+				message = "The SMTP server has unexpectedly disconnected.";
+
+			return new SmtpProtocolException (message, ProtocolErrorType.UnexpectedDisconnect, currentCommand, lastResponse);
+		}
+
+		SmtpProtocolException CreateInvalidResponseException (string message)
+		{
+			return new SmtpProtocolException (message, ProtocolErrorType.InvalidResponse, currentCommand, lastResponse);
+		}
+
 		int ReadAhead (CancellationToken cancellationToken)
 		{
 			AlignReadAheadBuffer (out int offset, out int count);
@@ -249,10 +267,8 @@ namespace MailKit.Net.Smtp {
 
 					// Optimization hack used by ReadResponse
 					input[inputEnd] = (byte) '\n';
-				} else if (lastResponse is not null) {
-					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}", ProtocolErrorType.UnexpectedDisconnect);
 				} else {
-					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
+					throw CreateUnexpectedDisconnectException ();
 				}
 			} catch {
 				IsConnected = false;
@@ -277,10 +293,8 @@ namespace MailKit.Net.Smtp {
 
 					// Optimization hack used by ReadResponse
 					input[inputEnd] = (byte) '\n';
-				} else if (lastResponse is not null) {
-					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}", ProtocolErrorType.UnexpectedDisconnect);
 				} else {
-					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
+					throw CreateUnexpectedDisconnectException ();
 				}
 			} catch {
 				IsConnected = false;
@@ -485,17 +499,17 @@ namespace MailKit.Net.Smtp {
 				if (newLine) {
 					if (inputIndex + 3 < inputEnd) {
 						if (!TryParseStatusCode (input, inputIndex, out int value))
-							throw new SmtpProtocolException ("Unable to parse status code returned by the server.", ProtocolErrorType.InvalidResponse);
+							throw CreateInvalidResponseException ("Unable to parse status code returned by the server.");
 
 						inputIndex += 3;
 
 						if (value < 100 || !IsLegalAfterStatusCode (input[inputIndex]))
-							throw new SmtpProtocolException ("Invalid status code returned by the server.", ProtocolErrorType.InvalidResponse);
+							throw CreateInvalidResponseException ("Invalid status code returned by the server.");
 
 						if (code == 0) {
 							code = value;
 						} else if (value != code) {
-							throw new SmtpProtocolException ("The status codes returned by the server did not match.", ProtocolErrorType.InvalidResponse);
+							throw CreateInvalidResponseException ("The status codes returned by the server did not match.");
 						}
 
 						newLine = false;
@@ -539,6 +553,7 @@ namespace MailKit.Net.Smtp {
 		/// Reads a full command response from the SMTP server.
 		/// </remarks>
 		/// <returns>The response.</returns>
+		/// <param name="command">The command that the response is for.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -552,9 +567,11 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public SmtpResponse ReadResponse (CancellationToken cancellationToken)
+		public SmtpResponse ReadResponse (SmtpCommand command, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
+
+			currentCommand = command;
 
 			using (var builder = new ByteArrayBuilder (256)) {
 				bool needInput = inputIndex == inputEnd;
@@ -569,11 +586,11 @@ namespace MailKit.Net.Smtp {
 					needInput = ReadResponse (builder, ref newLine, ref more, ref code);
 				} while (more || !newLine);
 
-				var message = builder.ToString ();
+				var response = new SmtpResponse ((SmtpStatusCode) code, builder.ToString ());
 
-				lastResponse = message;
+				lastResponse = response;
 
-				return new SmtpResponse ((SmtpStatusCode) code, message);
+				return response;
 			}
 		}
 
@@ -584,6 +601,7 @@ namespace MailKit.Net.Smtp {
 		/// Reads a full command response from the SMTP server.
 		/// </remarks>
 		/// <returns>The response.</returns>
+		/// <param name="command">The command that the response is for.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -597,9 +615,11 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public async Task<SmtpResponse> ReadResponseAsync (CancellationToken cancellationToken)
+		public async Task<SmtpResponse> ReadResponseAsync (SmtpCommand command, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
+
+			currentCommand = command;
 
 			using (var builder = new ByteArrayBuilder (256)) {
 				bool needInput = inputIndex == inputEnd;
@@ -614,11 +634,11 @@ namespace MailKit.Net.Smtp {
 					needInput = ReadResponse (builder, ref newLine, ref more, ref code);
 				} while (more || !newLine);
 
-				var message = builder.ToString ();
+				var response = new SmtpResponse ((SmtpStatusCode) code, builder.ToString ());
 
-				lastResponse = message;
+				lastResponse = response;
 
-				return new SmtpResponse ((SmtpStatusCode) code, message);
+				return response;
 			}
 		}
 
@@ -660,7 +680,8 @@ namespace MailKit.Net.Smtp {
 		/// Queue a command to the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// Queues a command to the SMTP server.
+		/// <para>Queues a command to the SMTP server.</para>
+		/// <para>Queuing a command resets the last response received from the server.</para>
 		/// </remarks>
 		/// <param name="command">The command.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -678,6 +699,8 @@ namespace MailKit.Net.Smtp {
 			var encoder = Encoding.UTF8.GetEncoder ();
 			int index = 0;
 
+			lastResponse = null;
+
 			while (!TryQueueCommand (encoder, command, ref index))
 				Flush (cancellationToken);
 		}
@@ -686,7 +709,8 @@ namespace MailKit.Net.Smtp {
 		/// Asynchronously queue a command to the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously queues a command to the SMTP server.
+		/// <para>Asynchronously queues a command to the SMTP server.</para>
+		/// <para>Queuing a command resets the last response received from the server.</para>
 		/// </remarks>
 		/// <param name="command">The command.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -704,6 +728,8 @@ namespace MailKit.Net.Smtp {
 			var encoder = Encoding.UTF8.GetEncoder ();
 			int index = 0;
 
+			lastResponse = null;
+
 			while (!TryQueueCommand (encoder, command, ref index))
 				await FlushAsync (cancellationToken).ConfigureAwait (false);
 		}
@@ -716,6 +742,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <returns>The response.</returns>
 		/// <param name="command">The command.</param>
+		/// <param name="commandText">The command text.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -729,12 +756,12 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public SmtpResponse SendCommand (string command, CancellationToken cancellationToken)
+		public SmtpResponse SendCommand (SmtpCommand command, string commandText, CancellationToken cancellationToken)
 		{
-			QueueCommand (command, cancellationToken);
+			QueueCommand (commandText, cancellationToken);
 			Flush (cancellationToken);
 
-			return ReadResponse (cancellationToken);
+			return ReadResponse (command, cancellationToken);
 		}
 
 		/// <summary>
@@ -745,6 +772,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <returns>The response.</returns>
 		/// <param name="command">The command.</param>
+		/// <param name="commandText">The command text.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -758,12 +786,12 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public async Task<SmtpResponse> SendCommandAsync (string command, CancellationToken cancellationToken)
+		public async Task<SmtpResponse> SendCommandAsync (SmtpCommand command, string commandText, CancellationToken cancellationToken)
 		{
-			await QueueCommandAsync (command, cancellationToken).ConfigureAwait (false);
+			await QueueCommandAsync (commandText, cancellationToken).ConfigureAwait (false);
 			await FlushAsync (cancellationToken).ConfigureAwait (false);
 
-			return await ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+			return await ReadResponseAsync (command, cancellationToken).ConfigureAwait (false);
 		}
 
 		/// <summary>

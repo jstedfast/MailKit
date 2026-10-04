@@ -598,10 +598,10 @@ namespace UnitTests.Net.Smtp {
 				using (var socket = Connect ("www.gmail.com", 80))
 					Assert.Throws<InvalidOperationException> (() => client.Connect (socket, "host", 465, SecureSocketOptions.SslOnConnect));
 
-				Assert.Throws<ServiceNotAuthenticatedException> (() => client.Send (options, message, sender, recipients));
-				Assert.Throws<ServiceNotAuthenticatedException> (() => client.Send (message, sender, recipients));
-				Assert.Throws<ServiceNotAuthenticatedException> (() => client.Send (options, message));
-				Assert.Throws<ServiceNotAuthenticatedException> (() => client.Send (message));
+				Assert.Throws<SmtpServiceNotAuthenticatedException> (() => client.Send (options, message, sender, recipients));
+				Assert.Throws<SmtpServiceNotAuthenticatedException> (() => client.Send (message, sender, recipients));
+				Assert.Throws<SmtpServiceNotAuthenticatedException> (() => client.Send (options, message));
+				Assert.Throws<SmtpServiceNotAuthenticatedException> (() => client.Send (message));
 
 				try {
 					client.Authenticate ("username", "password");
@@ -656,10 +656,10 @@ namespace UnitTests.Net.Smtp {
 				using (var socket = Connect ("www.gmail.com", 80))
 					Assert.ThrowsAsync<InvalidOperationException> (async () => await client.ConnectAsync (socket, "host", 465, SecureSocketOptions.SslOnConnect));
 
-				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message, sender, recipients));
-				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.SendAsync (message, sender, recipients));
-				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message));
-				Assert.ThrowsAsync<ServiceNotAuthenticatedException> (async () => await client.SendAsync (message));
+				Assert.ThrowsAsync<SmtpServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message, sender, recipients));
+				Assert.ThrowsAsync<SmtpServiceNotAuthenticatedException> (async () => await client.SendAsync (message, sender, recipients));
+				Assert.ThrowsAsync<SmtpServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message));
+				Assert.ThrowsAsync<SmtpServiceNotAuthenticatedException> (async () => await client.SendAsync (message));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3818,6 +3818,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
+					Assert.That (sex.ResponseText, Is.Not.Null, "ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -3870,6 +3872,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
+					Assert.That (sex.ResponseText, Is.Not.Null, "ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -3931,7 +3935,10 @@ namespace UnitTests.Net.Smtp {
 					using (var message = CreateSimpleMessage ())
 						client.Send (message);
 					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
+				} catch (SmtpServiceNotAuthenticatedException snae) {
+					Assert.That (snae.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
+					Assert.That (snae.StatusCode, Is.EqualTo (SmtpStatusCode.AuthenticationRequired), "StatusCode");
+					Assert.That (snae.ResponseText, Is.EqualTo ("5.7.0 Authentication required"), "ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -3982,7 +3989,10 @@ namespace UnitTests.Net.Smtp {
 					using (var message = CreateSimpleMessage ())
 						await client.SendAsync (message);
 					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
+				} catch (SmtpServiceNotAuthenticatedException snae) {
+					Assert.That (snae.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
+					Assert.That (snae.StatusCode, Is.EqualTo (SmtpStatusCode.AuthenticationRequired), "StatusCode");
+					Assert.That (snae.ResponseText, Is.EqualTo ("5.7.0 Authentication required"), "ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -4046,6 +4056,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpCommandException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
+					Assert.That (sex.ResponseText, Is.Not.Null, "ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -4098,6 +4110,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpCommandException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
+					Assert.That (sex.ResponseText, Is.Not.Null, "ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -4297,6 +4311,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
@@ -4353,6 +4368,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
@@ -4370,6 +4386,70 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
+			}
+		}
+
+		static List<SmtpReplayCommand> CreatePipelinedUnexpectedDisconnectCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+pipelining.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\nRCPT TO:<recipient@example.com>\r\n", "comcast-mail-from.txt", SmtpReplayState.UnexpectedDisconnect)
+			};
+		}
+
+		[Test]
+		public void TestPipelinedUnexpectedDisconnect ()
+		{
+			var commands = CreatePipelinedUnexpectedDisconnectCommands ();
+
+			using (var client = new SmtpClient ()) {
+				client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
+				client.Authenticate ("username", "password");
+
+				try {
+					using (var message = CreateSimpleMessage ())
+						client.Send (message);
+					Assert.Fail ("Expected an SmtpProtocolException");
+				} catch (SmtpProtocolException spe) {
+					Assert.That (spe.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect), "ErrorType");
+					Assert.That (spe.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
+					Assert.That (spe.LastResponse, Is.Not.Null, "LastResponse");
+					Assert.That (spe.LastResponse!.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "LastResponse.StatusCode");
+					Assert.That (spe.LastResponse.Response, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.Response");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.False, "Expected the client to be disconnected");
+			}
+		}
+
+		[Test]
+		public async Task TestPipelinedUnexpectedDisconnectAsync ()
+		{
+			var commands = CreatePipelinedUnexpectedDisconnectCommands ();
+
+			using (var client = new SmtpClient ()) {
+				await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
+				await client.AuthenticateAsync ("username", "password");
+
+				try {
+					using (var message = CreateSimpleMessage ())
+						await client.SendAsync (message);
+					Assert.Fail ("Expected an SmtpProtocolException");
+				} catch (SmtpProtocolException spe) {
+					Assert.That (spe.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect), "ErrorType");
+					Assert.That (spe.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
+					Assert.That (spe.LastResponse, Is.Not.Null, "LastResponse");
+					Assert.That (spe.LastResponse!.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "LastResponse.StatusCode");
+					Assert.That (spe.LastResponse.Response, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.Response");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect this exception in Send: {ex}");
+				}
+
+				Assert.That (client.IsConnected, Is.False, "Expected the client to be disconnected");
 			}
 		}
 
@@ -4421,6 +4501,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
@@ -4477,6 +4558,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
+					Assert.That (sex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 					Assert.That (sex.StatusCode, Is.EqualTo (SmtpStatusCode.TransactionFailed), "Unexpected SmtpStatusCode");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");

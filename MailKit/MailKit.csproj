@@ -128,11 +128,13 @@
     <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
+    <Compile Include="Net\Smtp\SmtpCommand.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />
     <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
     <Compile Include="Net\Smtp\SmtpErrorCode.cs" />
     <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
+    <Compile Include="Net\Smtp\SmtpServiceNotAuthenticatedException.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
     <Compile Include="Net\ClientMetrics.cs" />

@@ -91,6 +91,14 @@ rather than the full MimeKit cryptography stack.
   from `IImapClient`, and `EnableQuickResync ()` has been removed from `IMailStore` and `MailStore`.
 * Added an `IMailFolder.DeletedCount` property and a `DeletedCountChanged` event. Custom `IMailFolder`
   implementations that do not derive from `MailFolder` will need to implement them.
+* `SmtpClient` now throws the new `SmtpServiceNotAuthenticatedException` (which derives from
+  `ServiceNotAuthenticatedException`) when the server responds with `530 Authentication required`.
+  Code that catches `ServiceNotAuthenticatedException` is unaffected, but code that checks for the exact
+  type will need to be updated.
+* The message of an `SmtpProtocolException` thrown due to an unexpected disconnect no longer includes the
+  response text from a previous command. The last response received for the current command is now
+  available via the new `SmtpProtocolException.LastResponse` property instead.
+  (issue [#1748](https://github.com/jstedfast/MailKit/issues/1748))
 * The `error.type` values reported by MailKit's metrics are now more specific. See
   [Telemetry changes](#telemetry-changes) below.
 
@@ -116,6 +124,17 @@ rather than the full MimeKit cryptography stack.
 * Added `StatusItems.Deleted`, which updates the new `IMailFolder.DeletedCount` property (and emits the
   `DeletedCountChanged` event) with the number of messages marked `\Deleted`. This is only supported when
   IMAP4rev2 is in use.
+* Added more context to SMTP exceptions to make it easier to diagnose why sending a message failed
+  (issue [#1748](https://github.com/jstedfast/MailKit/issues/1748)):
+  * Added a public `SmtpCommand` enum identifying the SMTP command (e.g. `MailFrom`, `RcptTo`, `Data`)
+    that was being processed when an error occurred.
+  * Added `SmtpCommandException.Command` and `SmtpCommandException.ResponseText` properties, along
+    with new constructors that take an `SmtpCommand` and `SmtpResponse`.
+  * Added `SmtpProtocolException.Command` and `SmtpProtocolException.LastResponse` properties. When
+    commands are pipelined, `LastResponse` can be used to determine which of the queued commands the
+    server responded to before the error occurred.
+  * Added `SmtpServiceNotAuthenticatedException` with `Command`, `StatusCode` and `ResponseText`
+    properties.
 
 ### Telemetry changes
 

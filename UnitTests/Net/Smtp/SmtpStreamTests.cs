@@ -82,7 +82,7 @@ namespace UnitTests.Net.Smtp {
 				dummy.Write (buffer, 0, buffer.Length);
 				dummy.Position = 0;
 
-				Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (CancellationToken.None));
+				Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None));
 			}
 		}
 
@@ -136,7 +136,7 @@ namespace UnitTests.Net.Smtp {
 				dummy.Write (buffer, 0, buffer.Length);
 				dummy.Position = 0;
 
-				var response = stream.ReadResponse (CancellationToken.None);
+				var response = stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None);
 
 				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
 				Assert.That (response.Response, Is.EqualTo (expected));
@@ -153,7 +153,7 @@ namespace UnitTests.Net.Smtp {
 				dummy.Write (buffer, 0, buffer.Length);
 				dummy.Position = 0;
 
-				Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (CancellationToken.None));
+				Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None));
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace UnitTests.Net.Smtp {
 				dummy.Write (buffer, 0, buffer.Length);
 				dummy.Position = 0;
 
-				var response = stream.ReadResponse (CancellationToken.None);
+				var response = stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None);
 
 				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
 				Assert.That (response.Response, Is.EqualTo (expected));
@@ -203,7 +203,7 @@ namespace UnitTests.Net.Smtp {
 				dummy.Write (buffer, 0, buffer.Length);
 				dummy.Position = 0;
 
-				var response = stream.ReadResponse (CancellationToken.None);
+				var response = stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None);
 
 				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
 				Assert.That (response.Response, Is.EqualTo (expected));
