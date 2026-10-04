@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using MimeKit.IO;
+using MimeKit.Utils;
 
 using Buffer = System.Buffer;
 
@@ -964,11 +965,8 @@ namespace MailKit.Net.Imap {
 				start = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
 				*inend = (byte) '\n';
-				inptr = start;
 
-				// FIXME: use SIMD to optimize this
-				while (*inptr != (byte) '\n')
-					inptr++;
+				inptr = ParseUtils.EndOfLine (start, inend + 1);
 
 				inputIndex = (int) (inptr - inbuf);
 				count = (int) (inptr - start);
