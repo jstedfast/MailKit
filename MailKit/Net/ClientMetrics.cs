@@ -63,7 +63,7 @@ namespace MailKit.Net {
 				description: $"The amount of time it takes for the {protocol} server to perform an operation.");
 		}
 
-		static bool TryGetErrorType (Exception exception, [NotNullWhen (true)] out string? errorType)
+		internal static bool TryGetErrorType (Exception exception, [NotNullWhen (true)] out string? errorType)
 		{
 			if (SocketMetrics.TryGetErrorType (exception, false, out errorType))
 				return true;
@@ -74,14 +74,15 @@ namespace MailKit.Net {
 				return true;
 			}
 
-			if (exception is ProtocolException) {
-				// TODO: ProtocolExceptions tend to be either "Unexpectedly disconnected" or "Parse error".
-				// If we add a property to ProtocolException to tell us this, we could report it better here.
-				//
-				// To mimic HttpClient error.type values, we could use "response_ended" and "invalid_response", respectively.
-				//
-				// Alternatively, HttpClient also uses "http_protocol_error" so we could use "smtp/pop3/imap_protocol_error".
-				errorType = "protocol_error";
+			if (exception is ProtocolException protocol) {
+				// Note: "response_ended" and "invalid_response" mimic the error.type values used by HttpClient.
+				errorType = protocol.ErrorType switch {
+					ProtocolErrorType.UnexpectedDisconnect => "response_ended",
+					ProtocolErrorType.InvalidResponse => "invalid_response",
+					ProtocolErrorType.ServerDisconnected => "server_disconnected",
+					ProtocolErrorType.ResponseTooLarge => "response_too_large",
+					_ => "protocol_error"
+				};
 				return true;
 			}
 
@@ -90,9 +91,21 @@ namespace MailKit.Net {
 				return true;
 			}
 
-			if (exception is CommandException) {
-				// FIXME: We need to add a property to CommandException to tell us the error type.
-				errorType = "command_error";
+			if (exception is CommandException command) {
+				errorType = command.ErrorType switch {
+					CommandErrorType.Rejected => "rejected",
+					CommandErrorType.InvalidCommand => "invalid_command",
+					CommandErrorType.NotSupported => "not_supported",
+					CommandErrorType.PermissionDenied => "permission_denied",
+					CommandErrorType.NotFound => "not_found",
+					CommandErrorType.AlreadyExists => "already_exists",
+					CommandErrorType.QuotaExceeded => "quota_exceeded",
+					CommandErrorType.LimitExceeded => "limit_exceeded",
+					CommandErrorType.InUse => "in_use",
+					CommandErrorType.TemporaryFailure => "temporary_failure",
+					CommandErrorType.ServerError => "server_error",
+					_ => "command_error"
+				};
 				return true;
 			}
 

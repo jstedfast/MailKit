@@ -1,5 +1,5 @@
 ﻿//
-// SaslExceptionTests.cs
+// ImapProtocolExceptionTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,16 +24,22 @@
 // THE SOFTWARE.
 //
 
-using MailKit.Security;
+using MailKit;
+using MailKit.Net.Imap;
 
-namespace UnitTests.Security {
+namespace UnitTests.Net.Imap {
 	[TestFixture]
-	public class SaslExceptionTests
+	public class ImapProtocolExceptionTests
 	{
 		[Test]
-		public void TestArgumentExceptions ()
+		public void TestImapStreamUnexpectedDisconnect ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
+			using (var stream = new ImapStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				using (var builder = new ByteArrayBuilder (64)) {
+					var ex = Assert.Throws<ImapProtocolException> (() => stream.ReadLine (builder, CancellationToken.None));
+					Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
+				}
+			}
 		}
 	}
 }

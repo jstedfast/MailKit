@@ -24,49 +24,46 @@
 // THE SOFTWARE.
 //
 
-#if NET6_0
-
-using System.Runtime.Serialization.Formatters.Binary;
-
-using MimeKit;
+using MailKit;
 using MailKit.Net.Smtp;
 
 namespace UnitTests.Net.Smtp {
 	[TestFixture]
 	public class SmtpCommandExceptionTests
 	{
-		static void TestSerialization (SmtpCommandException expected)
+		[TestCase (SmtpStatusCode.MailboxBusy, CommandErrorType.InUse)]
+		[TestCase (SmtpStatusCode.InsufficientStorage, CommandErrorType.QuotaExceeded)]
+		[TestCase (SmtpStatusCode.ExceededStorageAllocation, CommandErrorType.QuotaExceeded)]
+		[TestCase (SmtpStatusCode.ServiceNotAvailable, CommandErrorType.TemporaryFailure)]
+		[TestCase (SmtpStatusCode.ErrorInProcessing, CommandErrorType.TemporaryFailure)]
+		[TestCase (SmtpStatusCode.CommandUnrecognized, CommandErrorType.InvalidCommand)]
+		[TestCase (SmtpStatusCode.SyntaxError, CommandErrorType.InvalidCommand)]
+		[TestCase (SmtpStatusCode.BadCommandSequence, CommandErrorType.InvalidCommand)]
+		[TestCase (SmtpStatusCode.CommandNotImplemented, CommandErrorType.NotSupported)]
+		[TestCase (SmtpStatusCode.CommandParameterNotImplemented, CommandErrorType.NotSupported)]
+		[TestCase (SmtpStatusCode.AuthenticationRequired, CommandErrorType.PermissionDenied)]
+		[TestCase (SmtpStatusCode.AuthenticationMechanismTooWeak, CommandErrorType.PermissionDenied)]
+		[TestCase (SmtpStatusCode.AuthenticationInvalidCredentials, CommandErrorType.PermissionDenied)]
+		[TestCase (SmtpStatusCode.EncryptionRequiredForAuthenticationMechanism, CommandErrorType.PermissionDenied)]
+		[TestCase (SmtpStatusCode.MailboxUnavailable, CommandErrorType.Rejected)]
+		[TestCase (SmtpStatusCode.UserNotLocalTryAlternatePath, CommandErrorType.Rejected)]
+		[TestCase (SmtpStatusCode.MailboxNameNotAllowed, CommandErrorType.Rejected)]
+		[TestCase (SmtpStatusCode.TransactionFailed, CommandErrorType.Rejected)]
+		[TestCase (SmtpStatusCode.Ok, CommandErrorType.Unknown)]
+		public void TestSmtpCommandExceptionErrorType (SmtpStatusCode statusCode, CommandErrorType expected)
 		{
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
+			var ex = new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, statusCode, "message");
 
-				var ex = (SmtpCommandException) formatter.Deserialize (stream);
-				Assert.That (ex.ErrorCode, Is.EqualTo (expected.ErrorCode), "Unexpected ErrorCode.");
-				Assert.That (ex.StatusCode, Is.EqualTo (expected.StatusCode), "Unexpected StatusCode.");
-
-				if (expected.Mailbox != null)
-					Assert.That (ex.Mailbox, Is.EqualTo (expected.Mailbox), "Unexpected Mailbox.");
-				else
-					Assert.That (ex.Mailbox, Is.Null, "Expected Mailbox to be null.");
-			}
+			Assert.That (ex.ErrorType, Is.EqualTo (expected), "ErrorType");
+			Assert.That (ex.IsTransient, Is.EqualTo (expected == CommandErrorType.TemporaryFailure || expected == CommandErrorType.InUse), "IsTransient");
 		}
 
 		[Test]
-		public void TestSmtpCommandException ()
+		public void TestSmtpCommandExceptionParameterNotImplemented ()
 		{
-			TestSerialization (new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpStatusCode.MailboxUnavailable,
-														 new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message"));
-			TestSerialization (new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpStatusCode.MailboxUnavailable,
-														 new MailboxAddress ("Unit Tests", "example@mimekit.net"), "Message",
-														 new IOException ("There was an IO error.")));
-			TestSerialization (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
-														 "Message"));
-			TestSerialization (new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.InsufficientStorage,
-														 "Message", new IOException ("There was an IO error.")));
+			var ex = new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpStatusCode.MailFromOrRcptToParametersNotRecognizedOrNotImplemented, "message");
+
+			Assert.That (ex.ErrorType, Is.EqualTo (CommandErrorType.NotSupported));
 		}
 	}
 }
-
-#endif // NET6_0

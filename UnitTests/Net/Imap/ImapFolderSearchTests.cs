@@ -375,7 +375,9 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
-				Assert.Throws<ImapCommandException> (() => inbox.Search (SearchQuery.Filter ("MyUndefinedFilter")));
+				var cex = Assert.Throws<ImapCommandException> (() => inbox.Search (SearchQuery.Filter ("MyUndefinedFilter")));
+				Assert.That (cex.ResponseCode, Is.EqualTo ("UNDEFINED-FILTER"), "ResponseCode");
+				Assert.That (cex.ErrorType, Is.EqualTo (CommandErrorType.NotFound), "ErrorType");
 
 				// Now disable the FILTERS extension and try again...
 				client.Capabilities &= ~ImapCapabilities.Filters;
@@ -418,7 +420,9 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < uids.Count; i++)
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
-				Assert.ThrowsAsync<ImapCommandException> (() => inbox.SearchAsync (SearchQuery.Filter ("MyUndefinedFilter")));
+				var cex = Assert.ThrowsAsync<ImapCommandException> (() => inbox.SearchAsync (SearchQuery.Filter ("MyUndefinedFilter")));
+				Assert.That (cex.ResponseCode, Is.EqualTo ("UNDEFINED-FILTER"), "ResponseCode");
+				Assert.That (cex.ErrorType, Is.EqualTo (CommandErrorType.NotFound), "ErrorType");
 
 				// Now disable the SAVEDATE extension and try again...
 				client.Capabilities &= ~ImapCapabilities.Filters;

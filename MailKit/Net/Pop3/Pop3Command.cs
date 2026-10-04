@@ -78,7 +78,7 @@ namespace MailKit.Net.Pop3 {
 			if (pc.Status == Pop3CommandStatus.Error)
 				return new Pop3CommandException (message, pc.StatusText!);
 
-			return new Pop3ProtocolException (message);
+			return new Pop3ProtocolException (message, ProtocolErrorType.InvalidResponse);
 		}
 
 		public void ThrowIfError ()

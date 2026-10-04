@@ -214,6 +214,7 @@
     <Compile Include="BodyPartText.cs" />
     <Compile Include="BodyPartVisitor.cs" />
     <Compile Include="ByteArrayBuilder.cs" />
+    <Compile Include="CommandErrorType.cs" />
     <Compile Include="CommandException.cs" />
     <Compile Include="CompressedStream.cs" />
     <Compile Include="ConnectedEventArgs.cs" />
@@ -280,6 +281,7 @@
     <Compile Include="PartialRange.cs" />
     <Compile Include="PreviewOptions.cs" />
     <Compile Include="ProgressStream.cs" />
+    <Compile Include="ProtocolErrorType.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="ReplaceRequest.cs" />

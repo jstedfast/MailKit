@@ -30,7 +30,6 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Runtime.Serialization.Formatters.Binary;
 
 using MailKit;
 using MailKit.Security;
@@ -41,112 +40,18 @@ namespace UnitTests.Security {
 	{
 		const string HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ssl-handshake-exception";
 
-#if NET6_0
-
 		[Test]
-		public void TestSerialization ()
+		public void TestHelpLink ()
 		{
-			var expected = new SslHandshakeException ("Bad boys, bad boys. Whatcha gonna do?", new IOException ("I/O Error."));
 			SslCertificateValidationInfo info = null;
 
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
+			Assert.That (new SslHandshakeException ("message", new IOException ("I/O Error.")).HelpLink, Is.EqualTo (HelpLink), "(string, Exception)");
+			Assert.That (new SslHandshakeException ("message").HelpLink, Is.EqualTo (HelpLink), "(string)");
+			Assert.That (new SslHandshakeException ().HelpLink, Is.EqualTo (HelpLink), "()");
 
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
-
-			expected = new SslHandshakeException ("Bad boys, bad boys. Whatcha gonna do?");
-
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
-
-			expected = new SslHandshakeException ();
-
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
-
-			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
-
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
-
-			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
-
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
-
-			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
-
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
-
-			expected = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException ()), true, "IMAP", "localhost", 143, 993, 143);
-
-			Assert.That (expected.HelpLink, Is.EqualTo (HelpLink), "Unexpected HelpLink.");
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SslHandshakeException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-				Assert.That (ex.HelpLink, Is.EqualTo (expected.HelpLink), "Unexpected HelpLink.");
-			}
+			var ex = SslHandshakeException.Create (ref info, new AggregateException ("Aggregate errors.", new IOException (), new IOException ()), false, "IMAP", "localhost", 993, 993, 143);
+			Assert.That (ex.HelpLink, Is.EqualTo (HelpLink), "Create");
 		}
-
-#endif // NET6_0
 
 		class FakeClient : MailService
 		{

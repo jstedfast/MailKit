@@ -1019,11 +1019,15 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* INVALID\r\n"))
 			};
 
-			using (var client = new ImapClient () { TagPrefix = 'A' })
-				Assert.Throws<ImapProtocolException> (() => client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None), "Connect");
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var ex = Assert.Throws<ImapProtocolException> (() => client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None), "Connect");
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.InvalidResponse), "ErrorType");
+			}
 
-			using (var client = new ImapClient () { TagPrefix = 'A' })
-				Assert.ThrowsAsync<ImapProtocolException> (() => client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None), "ConnectAsync");
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				var ex = Assert.ThrowsAsync<ImapProtocolException> (() => client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None), "ConnectAsync");
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.InvalidResponse), "ErrorType");
+			}
 		}
 
 		[Test]

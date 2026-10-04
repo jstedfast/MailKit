@@ -91,19 +91,33 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Creates a new <see cref="ImapProtocolException"/>.
 		/// </remarks>
-		public ImapProtocolException ()
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		/// <param name="innerException">An inner exception.</param>
+		public ImapProtocolException (string message, ProtocolErrorType errorType, Exception innerException) : base (message, errorType, innerException)
 		{
 		}
 
 		/// <summary>
-		/// Gets or sets whether or not this exception was thrown due to an unexpected token.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets whether or not this exception was thrown due to an unexpected token.
+		/// Creates a new <see cref="ImapProtocolException"/>.
 		/// </remarks>
-		/// <value><see langword="true" /> if an unexpected token was encountered; otherwise, <see langword="false" />.</value>
-		internal bool UnexpectedToken {
-			get; set;
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		public ImapProtocolException (string message, ProtocolErrorType errorType) : base (message, errorType)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapProtocolException"/>.
+		/// </remarks>
+		public ImapProtocolException ()
+		{
 		}
 
 		/// <summary>
@@ -131,7 +145,7 @@ namespace MailKit.Net.Imap {
 				message = ic.ResponseText!;
 			}
 
-			return ic.Exception != null ? new ImapProtocolException (message, ic.Exception) : new ImapProtocolException (message);
+			return ic.Exception != null ? new ImapProtocolException (message, ProtocolErrorType.ServerDisconnected, ic.Exception) : new ImapProtocolException (message, ProtocolErrorType.ServerDisconnected);
 		}
 	}
 }

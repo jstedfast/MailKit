@@ -284,12 +284,12 @@ namespace MailKit.Net.Pop3 {
 
 		static ProtocolException CreatePop3ParseException (Exception innerException, string format, params object[] args)
 		{
-			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args), innerException);
+			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args), ProtocolErrorType.InvalidResponse, innerException);
 		}
 
 		static ProtocolException CreatePop3ParseException (string format, params object[] args)
 		{
-			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args));
+			return new Pop3ProtocolException (string.Format (CultureInfo.InvariantCulture, format, args), ProtocolErrorType.InvalidResponse);
 		}
 
 		static int GetExpectedSequenceId (Pop3Command pc)
@@ -687,7 +687,7 @@ namespace MailKit.Net.Pop3 {
 					pc.StatusText = text;
 
 					if (pc.Status == Pop3CommandStatus.ProtocolError)
-						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response), ProtocolErrorType.InvalidResponse);
 				}
 
 				AuthMessage = text;
@@ -709,7 +709,7 @@ namespace MailKit.Net.Pop3 {
 					pc.StatusText = text;
 
 					if (pc.Status == Pop3CommandStatus.ProtocolError)
-						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+						throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response), ProtocolErrorType.InvalidResponse);
 				}
 
 				AuthMessage = text;

@@ -1,5 +1,5 @@
 ﻿//
-// SaslExceptionTests.cs
+// ProtocolErrorType.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,16 +24,38 @@
 // THE SOFTWARE.
 //
 
-using MailKit.Security;
-
-namespace UnitTests.Security {
-	[TestFixture]
-	public class SaslExceptionTests
+namespace MailKit {
+	/// <summary>
+	/// The type of error that caused a <see cref="ProtocolException"/>.
+	/// </summary>
+	/// <remarks>
+	/// The type of error that caused a <see cref="ProtocolException"/>.
+	/// </remarks>
+	public enum ProtocolErrorType
 	{
-		[Test]
-		public void TestArgumentExceptions ()
-		{
-			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
-		}
+		/// <summary>
+		/// The type of protocol error is unknown.
+		/// </summary>
+		Unknown,
+
+		/// <summary>
+		/// The server unexpectedly closed the connection.
+		/// </summary>
+		UnexpectedDisconnect,
+
+		/// <summary>
+		/// The server sent a response that could not be parsed or was not expected.
+		/// </summary>
+		InvalidResponse,
+
+		/// <summary>
+		/// The server explicitly terminated the connection (e.g. an IMAP <c>BYE</c> response).
+		/// </summary>
+		ServerDisconnected,
+
+		/// <summary>
+		/// The server sent a response that exceeded the maximum allowed size.
+		/// </summary>
+		ResponseTooLarge
 	}
 }

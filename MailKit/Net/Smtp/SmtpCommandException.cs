@@ -214,5 +214,34 @@ namespace MailKit.Net.Smtp {
 		public SmtpStatusCode StatusCode {
 			get; private set;
 		}
+
+		/// <summary>
+		/// Get the type of command error.
+		/// </summary>
+		/// <remarks>
+		/// Gets the type of command error based on the <see cref="StatusCode"/>.
+		/// </remarks>
+		/// <value>The type of command error.</value>
+		public override CommandErrorType ErrorType {
+			get {
+				int code = (int) StatusCode;
+
+				switch (code) {
+				case 450: return CommandErrorType.InUse;
+				case 452: case 552: return CommandErrorType.QuotaExceeded;
+				case 500: case 501: case 503: return CommandErrorType.InvalidCommand;
+				case 502: case 504: case 555: return CommandErrorType.NotSupported;
+				case 530: case 534: case 535: case 538: return CommandErrorType.PermissionDenied;
+				}
+
+				if (code >= 400 && code < 500)
+					return CommandErrorType.TemporaryFailure;
+
+				if (code >= 500 && code < 600)
+					return CommandErrorType.Rejected;
+
+				return CommandErrorType.Unknown;
+			}
+		}
 	}
 }

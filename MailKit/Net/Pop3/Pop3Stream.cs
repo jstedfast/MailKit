@@ -304,7 +304,7 @@ namespace MailKit.Net.Pop3 {
 				logger.LogServer (input, start, nread);
 				inputEnd += nread;
 			} else {
-				throw new Pop3ProtocolException ("The POP3 server has unexpectedly disconnected.");
+				throw new Pop3ProtocolException ("The POP3 server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
 			}
 		}
 

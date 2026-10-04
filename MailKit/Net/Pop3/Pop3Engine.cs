@@ -255,7 +255,7 @@ namespace MailKit.Net.Pop3 {
 				Stream!.Dispose ();
 				Stream = null;
 
-				throw new Pop3ProtocolException (string.Format ("Unexpected greeting from server: {0}", greeting));
+				throw new Pop3ProtocolException (string.Format ("Unexpected greeting from server: {0}", greeting), ProtocolErrorType.InvalidResponse);
 			}
 
 			index = text.IndexOf ('<');
@@ -468,7 +468,7 @@ namespace MailKit.Net.Pop3 {
 
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
-				var pex = new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				var pex = new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response), ProtocolErrorType.InvalidResponse);
 				Disconnect (pex);
 				throw pex;
 			case Pop3CommandStatus.Continue:
@@ -503,7 +503,7 @@ namespace MailKit.Net.Pop3 {
 
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
-				var pex = new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
+				var pex = new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response), ProtocolErrorType.InvalidResponse);
 				Disconnect (pex);
 				throw pex;
 			case Pop3CommandStatus.Continue:

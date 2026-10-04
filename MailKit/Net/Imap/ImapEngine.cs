@@ -603,7 +603,7 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			return new ImapProtocolException (string.Format (CultureInfo.InvariantCulture, format, args)) { UnexpectedToken = true };
+			return new ImapProtocolException (string.Format (CultureInfo.InvariantCulture, format, args), ProtocolErrorType.InvalidResponse);
 		}
 
 		internal static void AssertToken (ImapToken token, ImapTokenType type, string format, params object[] args)
@@ -804,7 +804,7 @@ namespace MailKit.Net.Imap {
 						OnAlert (code.Message);
 
 						if (bye)
-							throw new ImapProtocolException (code.Message);
+							throw new ImapProtocolException (code.Message, ProtocolErrorType.ServerDisconnected);
 					} else {
 						text = code.Message;
 					}
@@ -813,9 +813,9 @@ namespace MailKit.Net.Imap {
 					text = token.Value.ToString () + text;
 
 					if (bye)
-						throw new ImapProtocolException (text);
+						throw new ImapProtocolException (text, ProtocolErrorType.ServerDisconnected);
 				} else if (bye) {
-					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
+					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.", ProtocolErrorType.ServerDisconnected);
 				}
 
 				DetectQuirksMode (text);
@@ -865,7 +865,7 @@ namespace MailKit.Net.Imap {
 						OnAlert (code.Message);
 
 						if (bye)
-							throw new ImapProtocolException (code.Message);
+							throw new ImapProtocolException (code.Message, ProtocolErrorType.ServerDisconnected);
 					} else {
 						text = code.Message;
 					}
@@ -874,9 +874,9 @@ namespace MailKit.Net.Imap {
 					text = token.Value.ToString () + text;
 
 					if (bye)
-						throw new ImapProtocolException (text);
+						throw new ImapProtocolException (text, ProtocolErrorType.ServerDisconnected);
 				} else if (bye) {
-					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.");
+					throw new ImapProtocolException ("The IMAP server unexpectedly refused the connection.", ProtocolErrorType.ServerDisconnected);
 				}
 
 				DetectQuirksMode (text);
@@ -1224,7 +1224,7 @@ namespace MailKit.Net.Imap {
 			long literalLength = Stream.LiteralLength;
 
 			if (literalLength > MaxLiteralTokenLength)
-				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).");
+				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).", ProtocolErrorType.ResponseTooLarge);
 
 			var buf = ArrayPool<byte>.Shared.Rent ((int) literalLength);
 
@@ -1266,7 +1266,7 @@ namespace MailKit.Net.Imap {
 			long literalLength = Stream.LiteralLength;
 
 			if (literalLength > MaxLiteralTokenLength)
-				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).");
+				throw new ImapProtocolException ($"Literal token length ({literalLength} bytes) exceeds the maximum allowed size ({MaxLiteralTokenLength} bytes).", ProtocolErrorType.ResponseTooLarge);
 
 			var buf = ArrayPool<byte>.Shared.Rent ((int) literalLength);
 
@@ -1991,6 +1991,7 @@ namespace MailKit.Net.Imap {
 
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 			code.IsTagged = isTagged;
+			code.Atom = atom;
 
 			switch (code.Type) {
 			case ImapResponseCodeType.BadCharset:
@@ -2317,6 +2318,7 @@ namespace MailKit.Net.Imap {
 
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 			code.IsTagged = isTagged;
+			code.Atom = atom;
 
 			switch (code.Type) {
 			case ImapResponseCodeType.BadCharset:
@@ -3180,12 +3182,12 @@ namespace MailKit.Net.Imap {
 					if (code.Type == ImapResponseCodeType.Alert) {
 						OnAlert (code.Message);
 
-						throw new ImapProtocolException (code.Message, ex);
+						throw new ImapProtocolException (code.Message, ProtocolErrorType.ServerDisconnected, ex);
 					}
 				}
 
 				if (!string.IsNullOrEmpty (ic.ResponseText))
-					throw new ImapProtocolException (ic.ResponseText!, ex);
+					throw new ImapProtocolException (ic.ResponseText!, ProtocolErrorType.ServerDisconnected, ex);
 			}
 		}
 
@@ -3204,7 +3206,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (current.Bye && !current.Logout)
-					throw new ImapProtocolException ("Bye.");
+					throw new ImapProtocolException ("Bye.", ProtocolErrorType.ServerDisconnected);
 			} catch (ImapProtocolException ex) {
 				OnImapProtocolException (current, ex);
 				throw;
@@ -3231,7 +3233,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (current.Bye && !current.Logout)
-					throw new ImapProtocolException ("Bye.");
+					throw new ImapProtocolException ("Bye.", ProtocolErrorType.ServerDisconnected);
 			} catch (ImapProtocolException ex) {
 				OnImapProtocolException (current, ex);
 				throw;

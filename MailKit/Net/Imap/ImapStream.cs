@@ -319,7 +319,7 @@ namespace MailKit.Net.Imap {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
-					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
+					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
 				}
 
 				if (network == null)
@@ -346,7 +346,7 @@ namespace MailKit.Net.Imap {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
-					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
+					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
 				}
 
 				if (Stream is not NetworkStream)

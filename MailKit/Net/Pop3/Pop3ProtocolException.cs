@@ -94,6 +94,31 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Creates a new <see cref="Pop3ProtocolException"/>.
 		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		/// <param name="innerException">An inner exception.</param>
+		public Pop3ProtocolException (string message, ProtocolErrorType errorType, Exception innerException) : base (message, errorType, innerException)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3ProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3ProtocolException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		public Pop3ProtocolException (string message, ProtocolErrorType errorType) : base (message, errorType)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3ProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3ProtocolException"/>.
+		/// </remarks>
 		public Pop3ProtocolException ()
 		{
 		}

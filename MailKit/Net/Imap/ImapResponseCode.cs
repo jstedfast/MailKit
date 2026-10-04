@@ -135,10 +135,12 @@ namespace MailKit.Net.Imap {
 		public readonly ImapResponseCodeType Type;
 		public bool IsTagged, IsError;
 		public string Message;
+		public string Atom;
 
 		internal ImapResponseCode (ImapResponseCodeType type, bool isError)
 		{
 			Message = string.Empty;
+			Atom = string.Empty;
 			IsError = isError;
 			Type = type;
 		}

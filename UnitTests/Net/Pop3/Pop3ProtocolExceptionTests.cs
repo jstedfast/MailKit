@@ -1,5 +1,5 @@
 ﻿//
-// SaslExceptionTests.cs
+// Pop3ProtocolExceptionTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
 //
@@ -24,16 +24,22 @@
 // THE SOFTWARE.
 //
 
-using MailKit.Security;
+using MailKit;
+using MailKit.Net.Pop3;
 
-namespace UnitTests.Security {
+namespace UnitTests.Net.Pop3 {
 	[TestFixture]
-	public class SaslExceptionTests
+	public class Pop3ProtocolExceptionTests
 	{
 		[Test]
-		public void TestArgumentExceptions ()
+		public void TestPop3StreamUnexpectedDisconnect ()
 		{
-			Assert.Throws<ArgumentNullException> (() => new SaslException (null, SaslErrorCode.MissingChallenge, "message"));
+			using (var stream = new Pop3Stream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				using (var builder = new ByteArrayBuilder (64)) {
+					var ex = Assert.Throws<Pop3ProtocolException> (() => stream.ReadLine (builder, CancellationToken.None));
+					Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
+				}
+			}
 		}
 	}
 }

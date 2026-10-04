@@ -487,7 +487,7 @@ namespace MailKit.Net.Imap
 						tag = (string) token.Value;
 
 						if (tag != ic.Tag)
-							throw new ImapProtocolException ("Unexpected TAG value in untagged ESEARCH response: " + tag);
+							throw new ImapProtocolException ("Unexpected TAG value in untagged ESEARCH response: " + tag, ProtocolErrorType.InvalidResponse);
 					}
 				} while (true);
 
@@ -640,7 +640,7 @@ namespace MailKit.Net.Imap
 						tag = (string) token.Value;
 
 						if (tag != ic.Tag)
-							throw new ImapProtocolException ("Unexpected TAG value in untagged ESEARCH response: " + tag);
+							throw new ImapProtocolException ("Unexpected TAG value in untagged ESEARCH response: " + tag, ProtocolErrorType.InvalidResponse);
 					}
 				} while (true);
 

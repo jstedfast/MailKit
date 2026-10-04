@@ -1,5 +1,4 @@
 ﻿//
-//
 // ImapCommandExceptionTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
@@ -25,55 +24,69 @@
 // THE SOFTWARE.
 //
 
-#if NET6_0
-
-using System.Runtime.Serialization.Formatters.Binary;
-
+using MailKit;
 using MailKit.Net.Imap;
 
 namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapCommandExceptionTests
 	{
-		[Test]
-		public void TestImapCommandException ()
+		[TestCase ("CANNOT", CommandErrorType.NotSupported)]
+		[TestCase ("UNKNOWN-CTE", CommandErrorType.NotSupported)]
+		[TestCase ("BADCHARSET", CommandErrorType.NotSupported)]
+		[TestCase ("BADCOMPARATOR", CommandErrorType.NotSupported)]
+		[TestCase ("BADEVENT", CommandErrorType.NotSupported)]
+		[TestCase ("USEATTR", CommandErrorType.NotSupported)]
+		[TestCase ("CLIENTBUG", CommandErrorType.InvalidCommand)]
+		[TestCase ("NOPERM", CommandErrorType.PermissionDenied)]
+		[TestCase ("PRIVACYREQUIRED", CommandErrorType.PermissionDenied)]
+		[TestCase ("AUTHENTICATIONFAILED", CommandErrorType.PermissionDenied)]
+		[TestCase ("AUTHORIZATIONFAILED", CommandErrorType.PermissionDenied)]
+		[TestCase ("EXPIRED", CommandErrorType.PermissionDenied)]
+		[TestCase ("CONTACTADMIN", CommandErrorType.PermissionDenied)]
+		[TestCase ("NONEXISTENT", CommandErrorType.NotFound)]
+		[TestCase ("TRYCREATE", CommandErrorType.NotFound)]
+		[TestCase ("UNDEFINED-FILTER", CommandErrorType.NotFound)]
+		[TestCase ("BADURL", CommandErrorType.NotFound)]
+		[TestCase ("ALREADYEXISTS", CommandErrorType.AlreadyExists)]
+		[TestCase ("OVERQUOTA", CommandErrorType.QuotaExceeded)]
+		[TestCase ("LIMIT", CommandErrorType.LimitExceeded)]
+		[TestCase ("TOOBIG", CommandErrorType.LimitExceeded)]
+		[TestCase ("MAXCONVERTMESSAGES", CommandErrorType.LimitExceeded)]
+		[TestCase ("MAXCONVERTPARTS", CommandErrorType.LimitExceeded)]
+		[TestCase ("INUSE", CommandErrorType.InUse)]
+		[TestCase ("UNAVAILABLE", CommandErrorType.TemporaryFailure)]
+		[TestCase ("TEMPFAIL", CommandErrorType.TemporaryFailure)]
+		[TestCase ("SERVERBUG", CommandErrorType.ServerError)]
+		[TestCase ("CORRUPTION", CommandErrorType.ServerError)]
+		[TestCase ("X-UNKNOWN-CODE", CommandErrorType.Rejected)]
+		public void TestImapCommandExceptionErrorType (string responseCode, CommandErrorType expected)
 		{
-			ImapCommandException expected;
+			var ex = new ImapCommandException (ImapCommandResponse.No, responseCode, "response text", "message");
 
-			expected = new ImapCommandException (ImapCommandResponse.Ok, "This is the response text.");
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
+			Assert.That (ex.ResponseCode, Is.EqualTo (responseCode), "ResponseCode");
+			Assert.That (ex.ErrorType, Is.EqualTo (expected), "ErrorType");
+			Assert.That (ex.IsTransient, Is.EqualTo (expected == CommandErrorType.TemporaryFailure || expected == CommandErrorType.InUse), "IsTransient");
 
-				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
-				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
-			}
+			ex = new ImapCommandException (ImapCommandResponse.No, responseCode, "response text", "message", new IOException ());
+			Assert.That (ex.ResponseCode, Is.EqualTo (responseCode), "ResponseCode (inner)");
+			Assert.That (ex.ErrorType, Is.EqualTo (expected), "ErrorType (inner)");
+		}
 
-			expected = new ImapCommandException (ImapCommandResponse.Ok, "This is the response text.", "This is the error message.");
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
+		[TestCase (ImapCommandResponse.No, CommandErrorType.Rejected)]
+		[TestCase (ImapCommandResponse.Bad, CommandErrorType.InvalidCommand)]
+		[TestCase (ImapCommandResponse.Ok, CommandErrorType.Unknown)]
+		[TestCase (ImapCommandResponse.None, CommandErrorType.Unknown)]
+		public void TestImapCommandExceptionErrorTypeWithoutResponseCode (ImapCommandResponse response, CommandErrorType expected)
+		{
+			var ex = new ImapCommandException (response, "response text", "message");
 
-				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
-				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
-			}
+			Assert.That (ex.ResponseCode, Is.Null, "ResponseCode");
+			Assert.That (ex.ErrorType, Is.EqualTo (expected), "ErrorType");
 
-			expected = new ImapCommandException (ImapCommandResponse.Ok, "This is the response text.", "This is the error message.", new IOException ("This is the IO error."));
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (ImapCommandException) formatter.Deserialize (stream);
-				Assert.That (ex.Response, Is.EqualTo (expected.Response), "Unexpected Response.");
-				Assert.That (ex.ResponseText, Is.EqualTo (expected.ResponseText), "Unexpected ResponseText.");
-			}
+			ex = new ImapCommandException (response, "response text");
+			Assert.That (ex.ResponseCode, Is.Null, "ResponseCode (2 args)");
+			Assert.That (ex.ErrorType, Is.EqualTo (expected), "ErrorType (2 args)");
 		}
 	}
 }
-
-#endif // NET6_0

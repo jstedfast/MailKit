@@ -24,10 +24,9 @@
 // THE SOFTWARE.
 //
 
-#if NET6_0
+using System.Text;
 
-using System.Runtime.Serialization.Formatters.Binary;
-
+using MailKit;
 using MailKit.Net.Smtp;
 
 namespace UnitTests.Net.Smtp {
@@ -35,42 +34,28 @@ namespace UnitTests.Net.Smtp {
 	public class SmtpProtocolExceptionTests
 	{
 		[Test]
-		public void TestSerialization ()
+		public void TestSmtpStreamUnexpectedDisconnect ()
 		{
-			var expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?", new Exception ("InnerException"));
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var ex = Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (CancellationToken.None));
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.UnexpectedDisconnect));
 			}
+		}
 
-			expected = new SmtpProtocolException ("Bad boys, bad boys. Whatcha gonna do?");
+		[TestCase ("XXX This is an invalid response.\r\n")]
+		[TestCase ("250-This is the first line of a response.\r\n340 And this is a mismatched response code.\r\n")]
+		public void TestSmtpStreamInvalidResponse (string response)
+		{
+			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
+				var buffer = Encoding.ASCII.GetBytes (response);
+				var dummy = (MemoryStream) stream.Stream;
 
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
+				dummy.Write (buffer, 0, buffer.Length);
+				dummy.Position = 0;
 
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
-			}
-
-			expected = new SmtpProtocolException ();
-
-			using (var stream = new MemoryStream ()) {
-				var formatter = new BinaryFormatter ();
-				formatter.Serialize (stream, expected);
-				stream.Position = 0;
-
-				var ex = (SmtpProtocolException) formatter.Deserialize (stream);
-				Assert.That (ex.Message, Is.EqualTo (expected.Message), "Unexpected Message.");
+				var ex = Assert.Throws<SmtpProtocolException> (() => stream.ReadResponse (CancellationToken.None));
+				Assert.That (ex.ErrorType, Is.EqualTo (ProtocolErrorType.InvalidResponse));
 			}
 		}
 	}
 }
-
-#endif // NET6_0

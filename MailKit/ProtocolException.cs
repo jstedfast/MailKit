@@ -60,8 +60,38 @@ namespace MailKit {
 		[SecuritySafeCritical]
 		protected ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
+			ErrorType = (ProtocolErrorType) info.GetInt32 ("ErrorType");
 		}
 #endif
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		/// <param name="innerException">An inner exception.</param>
+		protected ProtocolException (string message, ProtocolErrorType errorType, Exception innerException) : base (message, innerException)
+		{
+			HelpLink = ProtocolLogHelpLink;
+			ErrorType = errorType;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="errorType">The type of protocol error.</param>
+		protected ProtocolException (string message, ProtocolErrorType errorType) : base (message)
+		{
+			HelpLink = ProtocolLogHelpLink;
+			ErrorType = errorType;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
@@ -98,5 +128,38 @@ namespace MailKit {
 		{
 			HelpLink = ProtocolLogHelpLink;
 		}
+
+		/// <summary>
+		/// Get the type of protocol error.
+		/// </summary>
+		/// <remarks>
+		/// Gets the type of protocol error, if known.
+		/// </remarks>
+		/// <value>The type of protocol error.</value>
+		public ProtocolErrorType ErrorType {
+			get; private set;
+		}
+
+#if SERIALIZABLE
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
+		/// with information about the exception.
+		/// </summary>
+		/// <remarks>
+		/// Serializes the state of the <see cref="ProtocolException"/>.
+		/// </remarks>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <see langword="null" />.
+		/// </exception>
+		[SecurityCritical]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+
+			info.AddValue ("ErrorType", (int) ErrorType);
+		}
+#endif
 	}
 }

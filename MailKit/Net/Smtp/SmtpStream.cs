@@ -250,9 +250,9 @@ namespace MailKit.Net.Smtp {
 					// Optimization hack used by ReadResponse
 					input[inputEnd] = (byte) '\n';
 				} else if (lastResponse is not null) {
-					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}");
+					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}", ProtocolErrorType.UnexpectedDisconnect);
 				} else {
-					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
+					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
 				}
 			} catch {
 				IsConnected = false;
@@ -278,9 +278,9 @@ namespace MailKit.Net.Smtp {
 					// Optimization hack used by ReadResponse
 					input[inputEnd] = (byte) '\n';
 				} else if (lastResponse is not null) {
-					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}");
+					throw new SmtpProtocolException ($"The SMTP server has unexpectedly disconnected: {lastResponse}", ProtocolErrorType.UnexpectedDisconnect);
 				} else {
-					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.");
+					throw new SmtpProtocolException ("The SMTP server has unexpectedly disconnected.", ProtocolErrorType.UnexpectedDisconnect);
 				}
 			} catch {
 				IsConnected = false;
@@ -485,17 +485,17 @@ namespace MailKit.Net.Smtp {
 				if (newLine) {
 					if (inputIndex + 3 < inputEnd) {
 						if (!TryParseStatusCode (input, inputIndex, out int value))
-							throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
+							throw new SmtpProtocolException ("Unable to parse status code returned by the server.", ProtocolErrorType.InvalidResponse);
 
 						inputIndex += 3;
 
 						if (value < 100 || !IsLegalAfterStatusCode (input[inputIndex]))
-							throw new SmtpProtocolException ("Invalid status code returned by the server.");
+							throw new SmtpProtocolException ("Invalid status code returned by the server.", ProtocolErrorType.InvalidResponse);
 
 						if (code == 0) {
 							code = value;
 						} else if (value != code) {
-							throw new SmtpProtocolException ("The status codes returned by the server did not match.");
+							throw new SmtpProtocolException ("The status codes returned by the server did not match.", ProtocolErrorType.InvalidResponse);
 						}
 
 						newLine = false;

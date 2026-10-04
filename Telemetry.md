@@ -97,7 +97,11 @@ This metric tracks the connection duration of each SmtpClient connection and rec
 | `connection_reset`        | The connection was reset by the remote peer.                                            |
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0
 
@@ -133,7 +137,12 @@ This metric tracks the number of times an SmtpClient has performed an operation 
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `too_many_open_sockets`   | There are too many open sockets in the underlying socket provider.                      |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
+| `4xx`, `5xx`              | The numeric SMTP status code returned by the server when it rejected a command (e.g. `550`). |
 
 Available starting in: MailKit v4.7.0
 
@@ -169,7 +178,12 @@ This metric tracks the amount of time it takes an SMTP server to perform an oper
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `too_many_open_sockets`   | There are too many open sockets in the underlying socket provider.                      |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
+| `4xx`, `5xx`              | The numeric SMTP status code returned by the server when it rejected a command (e.g. `550`). |
 
 Available starting in: MailKit v4.7.0
 
@@ -202,7 +216,11 @@ This metric tracks the connection duration of each Pop3Client connection and rec
 | `connection_reset`        | The connection was reset by the remote peer.                                            |
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0
 
@@ -238,7 +256,23 @@ This metric tracks the number of times an Pop3Client has performed an operation 
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `too_many_open_sockets`   | There are too many open sockets in the underlying socket provider.                      |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
+| `command_error`           | The server rejected a command for an unknown or unclassified reason. |
+| `rejected`                | The server rejected the command. *(v5.0.0+)* |
+| `invalid_command`         | The server reported that the command was invalid or malformed. *(v5.0.0+)* |
+| `not_supported`           | The server does not support the command or one of its parameters. *(v5.0.0+)* |
+| `permission_denied`       | The client does not have permission to perform the operation. *(v5.0.0+)* |
+| `not_found`               | The requested resource (e.g. a folder or message) does not exist. *(v5.0.0+)* |
+| `already_exists`          | The resource being created already exists. *(v5.0.0+)* |
+| `quota_exceeded`          | The operation would exceed a storage quota. *(v5.0.0+)* |
+| `limit_exceeded`          | The operation would exceed a server-imposed limit. *(v5.0.0+)* |
+| `in_use`                  | The resource is in use or locked by another session. *(v5.0.0+)* |
+| `temporary_failure`       | The server encountered a temporary failure; the operation may succeed if retried. *(v5.0.0+)* |
+| `server_error`            | The server encountered an internal error. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0
 
@@ -274,7 +308,23 @@ This metric tracks the amount of time it takes a POP3 server to perform an opera
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `too_many_open_sockets`   | There are too many open sockets in the underlying socket provider.                      |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
+| `command_error`           | The server rejected a command for an unknown or unclassified reason. |
+| `rejected`                | The server rejected the command. *(v5.0.0+)* |
+| `invalid_command`         | The server reported that the command was invalid or malformed. *(v5.0.0+)* |
+| `not_supported`           | The server does not support the command or one of its parameters. *(v5.0.0+)* |
+| `permission_denied`       | The client does not have permission to perform the operation. *(v5.0.0+)* |
+| `not_found`               | The requested resource (e.g. a folder or message) does not exist. *(v5.0.0+)* |
+| `already_exists`          | The resource being created already exists. *(v5.0.0+)* |
+| `quota_exceeded`          | The operation would exceed a storage quota. *(v5.0.0+)* |
+| `limit_exceeded`          | The operation would exceed a server-imposed limit. *(v5.0.0+)* |
+| `in_use`                  | The resource is in use or locked by another session. *(v5.0.0+)* |
+| `temporary_failure`       | The server encountered a temporary failure; the operation may succeed if retried. *(v5.0.0+)* |
+| `server_error`            | The server encountered an internal error. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0
 
@@ -307,7 +357,11 @@ This metric tracks the connection duration of each ImapClient connection and rec
 | `connection_reset`        | The connection was reset by the remote peer.                                            |
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0
 
@@ -343,7 +397,23 @@ This metric tracks the number of times an ImapClient has performed an operation 
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `too_many_open_sockets`   | There are too many open sockets in the underlying socket provider.                      |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
+| `command_error`           | The server rejected a command for an unknown or unclassified reason. |
+| `rejected`                | The server rejected the command. *(v5.0.0+)* |
+| `invalid_command`         | The server reported that the command was invalid or malformed. *(v5.0.0+)* |
+| `not_supported`           | The server does not support the command or one of its parameters. *(v5.0.0+)* |
+| `permission_denied`       | The client does not have permission to perform the operation. *(v5.0.0+)* |
+| `not_found`               | The requested resource (e.g. a folder or message) does not exist. *(v5.0.0+)* |
+| `already_exists`          | The resource being created already exists. *(v5.0.0+)* |
+| `quota_exceeded`          | The operation would exceed a storage quota. *(v5.0.0+)* |
+| `limit_exceeded`          | The operation would exceed a server-imposed limit. *(v5.0.0+)* |
+| `in_use`                  | The resource is in use or locked by another session. *(v5.0.0+)* |
+| `temporary_failure`       | The server encountered a temporary failure; the operation may succeed if retried. *(v5.0.0+)* |
+| `server_error`            | The server encountered an internal error. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0
 
@@ -379,6 +449,22 @@ This metric tracks the amount of time it takes an IMAP server to perform an oper
 | `timed_out`               | The connection attempt timed out, or the connected host has failed to respond.          |
 | `too_many_open_sockets`   | There are too many open sockets in the underlying socket provider.                      |
 | `secure_connection_error` | An SSL or TLS connection could not be negotiated.                                       |
-| `protocol_error`          | The connection was terminated due to an incomplete or invalid response from the server. |
+| `protocol_error`          | The connection was terminated due to an unclassified protocol error.                    |
+| `response_ended`          | The server unexpectedly closed the connection while the client was waiting for a response. *(v5.0.0+)* |
+| `invalid_response`        | The server sent a response that could not be parsed or was otherwise invalid. *(v5.0.0+)* |
+| `server_disconnected`     | The server explicitly closed the connection (e.g. an IMAP `BYE` response). *(v5.0.0+)* |
+| `response_too_large`      | The server sent a response that exceeded the client's size limits. *(v5.0.0+)* |
+| `command_error`           | The server rejected a command for an unknown or unclassified reason. |
+| `rejected`                | The server rejected the command. *(v5.0.0+)* |
+| `invalid_command`         | The server reported that the command was invalid or malformed. *(v5.0.0+)* |
+| `not_supported`           | The server does not support the command or one of its parameters. *(v5.0.0+)* |
+| `permission_denied`       | The client does not have permission to perform the operation. *(v5.0.0+)* |
+| `not_found`               | The requested resource (e.g. a folder or message) does not exist. *(v5.0.0+)* |
+| `already_exists`          | The resource being created already exists. *(v5.0.0+)* |
+| `quota_exceeded`          | The operation would exceed a storage quota. *(v5.0.0+)* |
+| `limit_exceeded`          | The operation would exceed a server-imposed limit. *(v5.0.0+)* |
+| `in_use`                  | The resource is in use or locked by another session. *(v5.0.0+)* |
+| `temporary_failure`       | The server encountered a temporary failure; the operation may succeed if retried. *(v5.0.0+)* |
+| `server_error`            | The server encountered an internal error. *(v5.0.0+)* |
 
 Available starting in: MailKit v4.7.0

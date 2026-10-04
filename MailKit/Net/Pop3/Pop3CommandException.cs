@@ -154,6 +154,62 @@ namespace MailKit.Net.Pop3 {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Get the POP3 response code, if any.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the extended response code that the server included at the beginning of
+		/// the <see cref="StatusText"/>, if any.</para>
+		/// <para>Extended response codes are defined by
+		/// <a href="https://tools.ietf.org/html/rfc2449">rfc2449</a> and
+		/// <a href="https://tools.ietf.org/html/rfc3206">rfc3206</a> and include values such as
+		/// <c>"IN-USE"</c>, <c>"LOGIN-DELAY"</c>, <c>"SYS/TEMP"</c>, <c>"SYS/PERM"</c> and <c>"AUTH"</c>.</para>
+		/// </remarks>
+		/// <value>The upper-case response code or <see langword="null" /> if the server did not include a response code.</value>
+		public string? ResponseCode {
+			get {
+				if (StatusText.Length < 3 || StatusText[0] != '[')
+					return null;
+
+				int endIndex = StatusText.IndexOf (']', 1);
+
+				if (endIndex <= 1)
+					return null;
+
+				return StatusText.Substring (1, endIndex - 1).Trim ().ToUpperInvariant ();
+			}
+		}
+
+		/// <summary>
+		/// Get the type of command error.
+		/// </summary>
+		/// <remarks>
+		/// Gets the type of command error based on the <see cref="ResponseCode"/>.
+		/// </remarks>
+		/// <value>The type of command error.</value>
+		public override CommandErrorType ErrorType {
+			get {
+				var code = ResponseCode;
+
+				if (code is null)
+					return CommandErrorType.Rejected;
+
+				if (code == "IN-USE")
+					return CommandErrorType.InUse;
+
+				if (code == "LOGIN-DELAY" || code == "SYS/TEMP" || code.StartsWith ("SYS/TEMP/", StringComparison.Ordinal))
+					return CommandErrorType.TemporaryFailure;
+
+				if (code == "SYS/PERM" || code.StartsWith ("SYS/PERM/", StringComparison.Ordinal))
+					return CommandErrorType.ServerError;
+
+				if (code == "AUTH" || code.StartsWith ("AUTH/", StringComparison.Ordinal))
+					return CommandErrorType.PermissionDenied;
+
+				return CommandErrorType.Rejected;
+			}
+		}
+
 #if SERIALIZABLE
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>

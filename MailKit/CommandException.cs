@@ -98,5 +98,30 @@ namespace MailKit {
 		{
 			HelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog";
 		}
+
+		/// <summary>
+		/// Get the type of command error.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the type of command error, if known.</para>
+		/// <para>The error type is derived from protocol-specific information such as IMAP response codes,
+		/// POP3 response codes or SMTP status codes.</para>
+		/// </remarks>
+		/// <value>The type of command error.</value>
+		public virtual CommandErrorType ErrorType {
+			get { return CommandErrorType.Unknown; }
+		}
+
+		/// <summary>
+		/// Get whether or not the error is likely to be transient.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the error is likely to be transient, meaning that retrying the
+		/// command at a later time may succeed.
+		/// </remarks>
+		/// <value><see langword="true" /> if the error is likely to be transient; otherwise, <see langword="false" />.</value>
+		public bool IsTransient {
+			get { return ErrorType == CommandErrorType.TemporaryFailure || ErrorType == CommandErrorType.InUse; }
+		}
 	}
 }
