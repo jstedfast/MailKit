@@ -101,6 +101,7 @@ namespace MailKit.Net.Imap {
 		public ImapCommandStatus Status { get; internal set; }
 		public ImapCommandResponse Response { get; internal set; }
 		public ITransferProgress? Progress { get; internal set; }
+		public long TotalSize { get { return totalSize; } }
 		public Exception? Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
 		public string? ResponseText { get; internal set; }

@@ -2898,7 +2898,8 @@ namespace MailKit {
 		/// Append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.
+		/// <para>Appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.</para>
+		/// <para>Only the <see cref="IAppendRequest.TransferProgress"/> of the first request is used, and it reports the progress of the entire batch.</para>
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise, an empty array.</returns>
 		/// <param name="requests">The append requests.</param>
@@ -2947,7 +2948,8 @@ namespace MailKit {
 		/// Asynchronously append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.
+		/// <para>Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.</para>
+		/// <para>Only the <see cref="IAppendRequest.TransferProgress"/> of the first request is used, and it reports the progress of the entire batch.</para>
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, an empty array.</returns>
 		/// <param name="requests">The append requests.</param>
@@ -2996,7 +2998,8 @@ namespace MailKit {
 		/// Append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.
+		/// <para>Appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.</para>
+		/// <para>Only the <see cref="IAppendRequest.TransferProgress"/> of the first request is used, and it reports the progress of the entire batch.</para>
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise, an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -3048,7 +3051,8 @@ namespace MailKit {
 		/// Asynchronously append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.
+		/// <para>Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to each of the messages.</para>
+		/// <para>Only the <see cref="IAppendRequest.TransferProgress"/> of the first request is used, and it reports the progress of the entire batch.</para>
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, an empty array.</returns>
 		/// <param name="options">The formatting options.</param>

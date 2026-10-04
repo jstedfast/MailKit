@@ -1206,6 +1206,136 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		class AppendProgress : ITransferProgress
+		{
+			public readonly List<long> Reports = new List<long> ();
+			public bool TotalSizeChanged;
+			public long TotalSize = -1;
+
+			public void Report (long bytesTransferred, long totalSize)
+			{
+				if (TotalSize != -1 && TotalSize != totalSize)
+					TotalSizeChanged = true;
+
+				TotalSize = totalSize;
+				Reports.Add (bytesTransferred);
+			}
+
+			public void Report (long bytesTransferred)
+			{
+				Reports.Add (bytesTransferred);
+			}
+		}
+
+		static long GetTotalAppendSize (List<MimeMessage> messages)
+		{
+			var options = FormatOptions.Default.Clone ();
+			options.NewLineFormat = NewLineFormat.Dos;
+			long total = 0;
+
+			foreach (var message in messages) {
+				using (var stream = new MemoryStream ()) {
+					message.WriteTo (options, stream);
+					total += stream.Length;
+				}
+			}
+
+			return total;
+		}
+
+		static List<IAppendRequest> CreateAppendRequests (List<MimeMessage> messages, List<MessageFlags> flags, out AppendProgress progress, out AppendProgress unused)
+		{
+			var requests = new List<IAppendRequest> ();
+
+			for (int i = 0; i < messages.Count; i++)
+				requests.Add (new AppendRequest (messages[i], flags[i]));
+
+			// Only the first request's progress should be used; it should report the progress of the entire batch.
+			requests[0].TransferProgress = progress = new AppendProgress ();
+			requests[1].TransferProgress = unused = new AppendProgress ();
+
+			return requests;
+		}
+
+		static void AssertAggregateProgress (AppendProgress progress, AppendProgress unused, long expectedTotal, string mode)
+		{
+			Assert.That (progress.Reports, Is.Not.Empty, $"{mode}: Expected progress reports");
+			Assert.That (progress.TotalSizeChanged, Is.False, $"{mode}: TotalSize should not change");
+			Assert.That (progress.TotalSize, Is.EqualTo (expectedTotal), $"{mode}: TotalSize");
+
+			for (int i = 1; i < progress.Reports.Count; i++)
+				Assert.That (progress.Reports[i], Is.GreaterThanOrEqualTo (progress.Reports[i - 1]), $"{mode}: Progress should never go backwards");
+
+			Assert.That (progress.Reports[progress.Reports.Count - 1], Is.EqualTo (expectedTotal), $"{mode}: Final progress");
+			Assert.That (unused.Reports, Is.Empty, $"{mode}: Only the first request's progress should be used");
+		}
+
+		[Test]
+		public void TestMultiAppendProgress ()
+		{
+			var commands = CreateMultiAppendCommands (false, false, out var messages, out var flags, out _, out _);
+			var expectedTotal = GetTotalAppendSize (messages);
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				client.Authenticate ("username", "password");
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), Is.True, "MULTIAPPEND");
+
+				var requests = CreateAppendRequests (messages, flags, out var progress, out var unused);
+				var uids = client.Inbox.Append (requests);
+				Assert.That (uids, Has.Count.EqualTo (8), "MULTIAPPEND: Unexpected number of messages appended");
+				AssertAggregateProgress (progress, unused, expectedTotal, "MULTIAPPEND");
+
+				// Disable the MULTIAPPEND extension and do it again
+				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+
+				requests = CreateAppendRequests (messages, flags, out progress, out unused);
+				uids = client.Inbox.Append (requests);
+				Assert.That (uids, Has.Count.EqualTo (8), "APPEND: Unexpected number of messages appended");
+				AssertAggregateProgress (progress, unused, expectedTotal, "APPEND");
+
+				client.Disconnect (true);
+			}
+
+			foreach (var message in messages)
+				message.Dispose ();
+		}
+
+		[Test]
+		public async Task TestMultiAppendProgressAsync ()
+		{
+			var commands = CreateMultiAppendCommands (false, false, out var messages, out var flags, out _, out _);
+			var expectedTotal = GetTotalAppendSize (messages);
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				await client.AuthenticateAsync ("username", "password");
+
+				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), Is.True, "MULTIAPPEND");
+
+				var requests = CreateAppendRequests (messages, flags, out var progress, out var unused);
+				var uids = await client.Inbox.AppendAsync (requests);
+				Assert.That (uids, Has.Count.EqualTo (8), "MULTIAPPEND: Unexpected number of messages appended");
+				AssertAggregateProgress (progress, unused, expectedTotal, "MULTIAPPEND");
+
+				// Disable the MULTIAPPEND extension and do it again
+				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+
+				requests = CreateAppendRequests (messages, flags, out progress, out unused);
+				uids = await client.Inbox.AppendAsync (requests);
+				Assert.That (uids, Has.Count.EqualTo (8), "APPEND: Unexpected number of messages appended");
+				AssertAggregateProgress (progress, unused, expectedTotal, "APPEND");
+
+				await client.DisconnectAsync (true);
+			}
+
+			foreach (var message in messages)
+				message.Dispose ();
+		}
+
 		static List<ImapReplayCommand> CreateReplaceCommands (bool clientSide, bool withKeywords, bool withInternalDates, out List<MimeMessage> messages, out List<MessageFlags> flags, out List<List<string>> keywords, out List<DateTimeOffset> internalDates)
 		{
 			var commands = new List<ImapReplayCommand> {

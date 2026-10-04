@@ -143,6 +143,10 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
   before responding with `qop="auth"`. If the server's `qop` list does not include `"auth"`, authentication
   now fails with a `SaslException` (`SaslErrorCode.InvalidChallenge`). The `qop` list is now also parsed
   case-insensitively and tolerates whitespace around commas, as allowed by RFC 2831.
+* Fixed `ImapFolder.Append (IList<IAppendRequest>)` to report aggregate progress when the server does not
+  support `MULTIAPPEND`. The first request's `TransferProgress` now reports the progress of the entire
+  batch, consistent with the `MULTIAPPEND` code path. Previously, each request's `TransferProgress` was
+  used to report the progress of its own message.
 
 ## MailKit 4.18.1 (2026-09-27)
 

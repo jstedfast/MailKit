@@ -4412,7 +4412,7 @@ namespace MailKit.Net.Imap {
 			return format;
 		}
 
-		ImapCommand QueueAppendCommand (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
+		ImapCommand CreateAppendCommand (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
@@ -4466,9 +4466,62 @@ namespace MailKit.Net.Imap {
 				Progress = request.TransferProgress
 			};
 
+			return ic;
+		}
+
+		ImapCommand QueueAppendCommand (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
+		{
+			var ic = CreateAppendCommand (options, request, cancellationToken);
+
 			Engine.QueueCommand (ic);
 
 			return ic;
+		}
+
+		sealed class AppendTransferProgress : ITransferProgress
+		{
+			readonly ITransferProgress progress;
+			readonly long offset, totalSize;
+
+			public AppendTransferProgress (ITransferProgress progress, long offset, long totalSize)
+			{
+				this.progress = progress;
+				this.totalSize = totalSize;
+				this.offset = offset;
+			}
+
+			public void Report (long bytesTransferred, long totalSize)
+			{
+				progress.Report (offset + bytesTransferred, this.totalSize);
+			}
+
+			public void Report (long bytesTransferred)
+			{
+				progress.Report (offset + bytesTransferred);
+			}
+		}
+
+		ImapCommand[] CreateAppendCommands (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
+		{
+			var commands = new ImapCommand[requests.Count];
+			long totalSize = 0;
+
+			for (int i = 0; i < requests.Count; i++) {
+				commands[i] = CreateAppendCommand (options, requests[i], cancellationToken);
+				totalSize += commands[i].TotalSize;
+			}
+
+			// Note: Report the aggregate progress of all of the messages to the first request's progress
+			// reporter, which matches the behavior of the MULTIAPPEND code path.
+			var progress = requests[0].TransferProgress;
+			long offset = 0;
+
+			for (int i = 0; i < commands.Length; i++) {
+				commands[i].Progress = progress != null ? new AppendTransferProgress (progress, offset, totalSize) : null;
+				offset += commands[i].TotalSize;
+			}
+
+			return commands;
 		}
 
 		UniqueId? ProcessAppendResponse (ImapCommand ic)
@@ -4689,7 +4742,8 @@ namespace MailKit.Net.Imap {
 		/// Append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends multiple messages to the folder and returns the UniqueIds assigned to the messages.
+		/// <para>Appends multiple messages to the folder and returns the UniqueIds assigned to the messages.</para>
+		/// <para>Only the <see cref="IAppendRequest.TransferProgress"/> of the first request is used, and it reports the progress of the entire batch.</para>
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -4750,11 +4804,14 @@ namespace MailKit.Net.Imap {
 				return ProcessMultiAppendResponse (ic);
 			}
 
-			// FIXME: use an aggregate progress reporter
+			var commands = CreateAppendCommands (options, requests, cancellationToken);
 			var uids = new List<UniqueId> ();
 
-			for (int i = 0; i < requests.Count; i++) {
-				var uid = Append (options, requests[i], cancellationToken);
+			for (int i = 0; i < commands.Length; i++) {
+				Engine.QueueCommand (commands[i]);
+				Engine.Run (commands[i]);
+
+				var uid = ProcessAppendResponse (commands[i]);
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
@@ -4771,7 +4828,8 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously append multiple messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to the messages.
+		/// <para>Asynchronously appends multiple messages to the folder and returns the UniqueIds assigned to the messages.</para>
+		/// <para>Only the <see cref="IAppendRequest.TransferProgress"/> of the first request is used, and it reports the progress of the entire batch.</para>
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -4832,11 +4890,14 @@ namespace MailKit.Net.Imap {
 				return ProcessMultiAppendResponse (ic);
 			}
 
-			// FIXME: use an aggregate progress reporter
+			var commands = CreateAppendCommands (options, requests, cancellationToken);
 			var uids = new List<UniqueId> ();
 
-			for (int i = 0; i < requests.Count; i++) {
-				var uid = await AppendAsync (options, requests[i], cancellationToken).ConfigureAwait (false);
+			for (int i = 0; i < commands.Length; i++) {
+				Engine.QueueCommand (commands[i]);
+				await Engine.RunAsync (commands[i]).ConfigureAwait (false);
+
+				var uid = ProcessAppendResponse (commands[i]);
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
