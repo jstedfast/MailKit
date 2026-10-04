@@ -1,5 +1,139 @@
 # Release Notes
 
+## MailKit 5.0.0 (unreleased)
+
+MailKit 5.0 is a major release containing a number of breaking changes. The headline change is that
+MailKit no longer depends on BouncyCastle, allowing it to depend on the new `MimeKit.Core` package
+rather than the full MimeKit cryptography stack.
+
+### Breaking Changes
+
+* `MailKitLite` has been retired. Now that MailKit no longer depends on BouncyCastle, `MailKitLite` was
+  functionally identical to `MailKit`. Projects referencing `MailKitLite` should reference `MailKit`
+  instead.
+* MailKit now depends on `MimeKit.Core` (MimeKit 5.0) instead of `MimeKit`. See the
+  [MimeKit 5.0.0 release notes](https://github.com/jstedfast/MimeKit/blob/master/ReleaseNotes.md)
+  for details on the MimeKit changes.
+  * Applications that use S/MIME, PGP/MIME, DKIM or ARC must now add a reference to the
+    `MimeKit.Cryptography` package (or the `MimeKit` meta-package) and call
+    `CryptographyModule.Initialize ()` during startup.
+* Replaced BouncyCastle's Zlib implementation with `System.IO.Compression.DeflateStream` for the IMAP
+  `COMPRESS=DEFLATE` extension. BouncyCastle's Zlib was the last remaining use of BouncyCastle in
+  MailKit.
+  * `DeflateStream.Flush ()` is a no-op on .NET Framework and .NET Standard, which makes it unusable
+    for an interactive protocol. As a result, IMAP `COMPRESS` is now only supported on .NET 8.0 and
+    later, and the `IImapClient.Compress ()` and `CompressAsync ()` methods (and their `ImapClient`
+    implementations) have been removed from the .NET Framework and .NET Standard builds of MailKit.
+  * The compressed stream is now flushed using `Z_SYNC_FLUSH` rather than `Z_FULL_FLUSH`, which means
+    that the compression dictionary is no longer reset after each command. This results in better
+    compression.
+* Moved `DeliveryStatusNotificationType` from the `MailKit.Net.Smtp` namespace to the `MailKit`
+  namespace. Add a `using MailKit;` directive if you get a compile error.
+* `IMailFolder.GetMessage ()`, `GetMessageAsync ()` and `IMailSpool.GetMessage[s] ()`,
+  `GetMessage[s]Async ()` now return `IMimeMessage` (or `IList<IMimeMessage>`) instead of
+  `MimeMessage`, making it possible to mock the returned messages in unit tests. `IMailFolder` and
+  `IMailSpool` (and therefore `ImapFolder` and `Pop3Client`) now implement
+  `IEnumerable<IMimeMessage>` rather than `IEnumerable<MimeMessage>`. The returned objects are still
+  `MimeMessage` instances, so code that needs `MimeMessage`-specific APIs can cast.
+  (issue [#1933](https://github.com/jstedfast/MailKit/issues/1933))
+* Message sizes, line counts, byte offsets and byte counts are now 64-bit (`long`) values. RFC 3501
+  defines these as 32-bit *unsigned* integers, so messages larger than 2 GB could overflow MailKit's
+  `int` APIs, and IMAP4rev2 (RFC 9051) widens them to 63 bits. None of the new values will ever be
+  negative. The affected APIs are:
+  * `IMailFolder.GetStream ()` and `GetStreamAsync ()` overloads that take `offset` and `count`
+    arguments now take `long` instead of `int`. This also applies to `MailFolder` and `ImapFolder`.
+  * The `offset` and `length` arguments of `ImapFolder.CreateStream ()` and `ImapFolder.CommitStream ()`
+    are now `long`.
+  * `IMessageSummary.Size` and `MessageSummary.Size` are now `long?` instead of `uint?`.
+  * `IMailFolder.Size` and `MailFolder.Size` are now `long?` instead of `ulong?`.
+  * `BodyPartText.Lines` and `BodyPartMessage.Lines` are now `long` instead of `uint`.
+  * `SearchQuery.LargerThan ()` and `SearchQuery.SmallerThan ()` now take `long` instead of `int`.
+  * `IMailSpool.GetMessageSize ()` and `GetMessageSizeAsync ()` now return `long` instead of `int`,
+    and `GetMessageSizes ()` and `GetMessageSizesAsync ()` now return `IList<long>` instead of
+    `IList<int>`. This also applies to `MailSpool` and `Pop3Client`.
+  * `ISmtpClient.MaxSize` and `SmtpClient.MaxSize` are now `long` instead of `uint`. RFC 1870 allows
+    SIZE values of up to 20 digits, so a value larger than `long.MaxValue` is clamped to
+    `long.MaxValue`.
+* `SaslMechanism.Create ()` now returns a non-nullable `SaslMechanism` and throws
+  `NotSupportedException` if the requested mechanism is not supported, rather than returning `null`.
+  Code that checked the result of `Create ()` for `null` should be updated to use the new
+  `SaslMechanism.TryCreate ()` methods instead.
+* Removed previously obsoleted APIs:
+  * The parameterless `BodyPart`, `BodyPartBasic`, `BodyPartMessage`, `BodyPartMultipart` and
+    `BodyPartText` constructors. Use the `(ContentType, string)` constructors instead.
+  * The parameterless `MailFolder` constructor. Use
+    `MailFolder (string fullName, char directorySeparator, FolderAttributes attributes)` instead.
+  * The `ImapFolderConstructorArgs.Name` property.
+  * The `SslCipherAlgorithm`, `SslCipherStrength`, `SslHashAlgorithm`, `SslHashStrength`,
+    `SslKeyExchangeAlgorithm` and `SslKeyExchangeStrength` properties on `IMailService`,
+    `MailService`, `SmtpClient`, `ImapClient` and `Pop3Client` have been removed from the .NET 10.0
+    build of MailKit, where the underlying `SslStream` APIs are obsolete. Use `SslCipherSuite`
+    instead. They remain available on .NET Framework, .NET Standard and .NET 8.0.
+* Removed the dead `[Obsolete]` annotations on the legacy serialization members of MailKit's
+  exceptions. The `#if NET8_0_OR_GREATER` guard around `GetObjectData ()` could never be satisfied
+  (`SERIALIZABLE` is only defined for .NET Framework), and the unconditional attribute on the
+  protected serialization constructors emitted a spurious `CS0618` for .NET Framework consumers
+  subclassing these exceptions.
+* `ImapCommandException` has new
+  `(ImapCommandResponse, string? responseCode, string responseText, string message[, Exception])`
+  constructors. As a result, calls to the existing `(ImapCommandResponse, string, string, Exception)`
+  constructor that pass a `null` literal for the inner exception are now ambiguous and need a cast.
+* The `error.type` values reported by MailKit's metrics are now more specific. See
+  [Telemetry changes](#telemetry-changes) below.
+
+### New Features
+
+* Added a `ProtocolErrorType` enum and a `ProtocolException.ErrorType` property that classifies why a
+  protocol error occurred (`UnexpectedDisconnect`, `InvalidResponse`, `ServerDisconnected` or
+  `ResponseTooLarge`). `ImapProtocolException`, `Pop3ProtocolException` and `SmtpProtocolException`
+  have new constructors that take a `ProtocolErrorType`.
+* Added a `CommandErrorType` enum and a `CommandException.ErrorType` property that classifies why the
+  server rejected a command (`Rejected`, `InvalidCommand`, `NotSupported`, `PermissionDenied`,
+  `NotFound`, `AlreadyExists`, `QuotaExceeded`, `LimitExceeded`, `InUse`, `TemporaryFailure` or
+  `ServerError`), along with a `CommandException.IsTransient` convenience property that is `true` for
+  `TemporaryFailure` and `InUse` errors.
+  * `ImapCommandException.ErrorType` is derived from the IMAP response code (RFC 5530 and others),
+    exposed via the new `ImapCommandException.ResponseCode` property.
+  * `Pop3CommandException.ErrorType` is derived from the POP3 extended response code (RFC 2449/3206),
+    exposed via the new `Pop3CommandException.ResponseCode` property.
+  * `SmtpCommandException.ErrorType` is derived from the SMTP status code.
+
+### Telemetry changes
+
+The `error.type` attribute reported by the `mailkit.net.*.client.*` metrics is now more specific for
+protocol and command errors. Dashboards or alerts that match on `protocol_error` or `command_error`
+should be updated to also match the new values. SMTP command errors continue to report the numeric
+SMTP status code (e.g. `550`), and all socket, cancellation and TLS values are unchanged.
+
+| **Old value**    | **New value**         | **Condition**                                                          |
+|:-----------------|:----------------------|:-----------------------------------------------------------------------|
+| `protocol_error` | `response_ended`      | The server unexpectedly closed the connection.                         |
+| `protocol_error` | `invalid_response`    | The server sent a response that could not be parsed.                   |
+| `protocol_error` | `server_disconnected` | The server explicitly closed the connection (e.g. IMAP `BYE`).         |
+| `protocol_error` | `response_too_large`  | The server sent a response that exceeded the client's limits.          |
+| `protocol_error` | `protocol_error`      | Any other protocol error.                                              |
+| `command_error`  | `rejected`            | The server rejected the command (e.g. IMAP `NO`, POP3 `-ERR`).         |
+| `command_error`  | `invalid_command`     | The command was invalid or malformed (e.g. IMAP `BAD`).                |
+| `command_error`  | `not_supported`       | The command or a parameter is not supported.                           |
+| `command_error`  | `permission_denied`   | The client lacks permission to perform the operation.                  |
+| `command_error`  | `not_found`           | The requested folder, message or other resource does not exist.        |
+| `command_error`  | `already_exists`      | The resource being created already exists.                             |
+| `command_error`  | `quota_exceeded`      | The operation would exceed a storage quota.                            |
+| `command_error`  | `limit_exceeded`      | The operation would exceed a server-imposed limit.                     |
+| `command_error`  | `in_use`              | The resource is in use or locked by another session.                   |
+| `command_error`  | `temporary_failure`   | The server reported a temporary failure.                               |
+| `command_error`  | `server_error`        | The server encountered an internal error.                              |
+| `command_error`  | `command_error`       | Any other command error.                                               |
+
+See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
+
+### Bug Fixes
+
+* Fixed `ImapStream.Flush ()` to always flush the underlying stream when data had been written to it.
+  Previously, if `Write ()` had drained its internal buffer directly to the underlying stream,
+  `Flush ()` would return without flushing the underlying stream, which could deadlock when the
+  underlying stream did its own buffering.
+
 ## MailKit 4.18.1 (2026-09-27)
 
 * Fixed telemetry duration histograms being 100x too large on Linux/macOS.
