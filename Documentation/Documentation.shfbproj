@@ -150,6 +150,16 @@
     <None Include="Examples\SmtpExamples.cs" />
     <None Include="Examples\SslCertificateValidation.cs" />
     <None Include="Examples\VerifySignature.cs" />
+    <None Include="Examples\ContentTypeExamples.cs" />
+    <None Include="Examples\FilterExamples.cs" />
+    <None Include="Examples\HeaderExamples.cs" />
+    <None Include="Examples\InternetAddressExamples.cs" />
+    <None Include="Examples\MimeAnonymizerExamples.cs" />
+    <None Include="Examples\MimeMessageExamples.cs" />
+    <None Include="Examples\MimeReaderExamples.cs" />
+    <None Include="Examples\MultipartExamples.cs" />
+    <None Include="Examples\TextConverterExamples.cs" />
+    <None Include="Examples\TnefExamples.cs" />
   </ItemGroup>
   <ItemGroup>
     <ContentLayout Include="ContentLayout.content" />
