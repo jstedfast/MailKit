@@ -112,7 +112,6 @@ namespace MailKit.Net.Imap {
 		{
 			protocolLogger.AuthenticationSecretDetector = detector;
 
-			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine (CreateImapFolder);
 			engine.MetadataChanged += OnEngineMetadataChanged;
 			engine.FolderCreated += OnEngineFolderCreated;
