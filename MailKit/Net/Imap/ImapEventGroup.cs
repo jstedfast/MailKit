@@ -331,7 +331,10 @@ namespace MailKit.Net.Imap {
 				command.Append (Name);
 				command.Append (' ');
 
-				// FIXME: should we verify that each ImapFolder belongs to this ImapEngine?
+				for (int i = 0; i < folders.Length; i++) {
+					if (folders[i].Engine != engine)
+						throw new InvalidOperationException ("One or more folders do not belong to this ImapClient.");
+				}
 
 				if (folders.Length == 1) {
 					command.Append ("%F");

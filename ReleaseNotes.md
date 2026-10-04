@@ -147,6 +147,8 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
   support `MULTIAPPEND`. The first request's `TransferProgress` now reports the progress of the entire
   batch, consistent with the `MULTIAPPEND` code path. Previously, each request's `TransferProgress` was
   used to report the progress of its own message.
+* Fixed `ImapClient.Notify ()` to throw `InvalidOperationException` if an `ImapMailboxFilter.Mailboxes` or
+  `ImapMailboxFilter.Subtree` filter contains folders that belong to a different `ImapClient`.
 
 ## MailKit 4.18.1 (2026-09-27)
 

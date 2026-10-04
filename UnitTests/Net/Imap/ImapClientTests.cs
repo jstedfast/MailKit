@@ -6624,6 +6624,19 @@ namespace UnitTests.Net.Imap {
 
 				folder.Open (FolderAccess.ReadOnly);
 
+				// Folders that belong to a different ImapClient should be rejected
+				using (var foreignEngine = new ImapEngine (args => new ImapFolder (args))) {
+					var foreign = new ImapFolder (new ImapFolderConstructorArgs (foreignEngine, "Foreign", FolderAttributes.None, '.'));
+					var events = new List<ImapEvent> { new ImapEvent.MessageNew (), ImapEvent.MessageExpunge };
+
+					Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+						new ImapEventGroup (new ImapMailboxFilter.Mailboxes (inbox, foreign), events)
+					}));
+					Assert.Throws<InvalidOperationException> (() => client.Notify (true, new List<ImapEventGroup> {
+						new ImapEventGroup (new ImapMailboxFilter.Subtree (foreign), events)
+					}));
+				}
+
 				client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
 						ImapEvent.MailboxName,
@@ -6802,6 +6815,19 @@ namespace UnitTests.Net.Imap {
 				var unsubscribeMe = folders.FirstOrDefault (x => x.Name == "UnsubscribeMe");
 
 				await folder.OpenAsync (FolderAccess.ReadOnly);
+
+				// Folders that belong to a different ImapClient should be rejected
+				using (var foreignEngine = new ImapEngine (args => new ImapFolder (args))) {
+					var foreign = new ImapFolder (new ImapFolderConstructorArgs (foreignEngine, "Foreign", FolderAttributes.None, '.'));
+					var events = new List<ImapEvent> { new ImapEvent.MessageNew (), ImapEvent.MessageExpunge };
+
+					Assert.ThrowsAsync<InvalidOperationException> (() => client.NotifyAsync (true, new List<ImapEventGroup> {
+						new ImapEventGroup (new ImapMailboxFilter.Mailboxes (inbox, foreign), events)
+					}));
+					Assert.ThrowsAsync<InvalidOperationException> (() => client.NotifyAsync (true, new List<ImapEventGroup> {
+						new ImapEventGroup (new ImapMailboxFilter.Subtree (foreign), events)
+					}));
+				}
 
 				await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Personal, new List<ImapEvent> {
