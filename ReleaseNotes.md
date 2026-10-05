@@ -99,6 +99,10 @@ rather than the full MimeKit cryptography stack.
   response text from a previous command. The last response received for the current command is now
   available via the new `SmtpProtocolException.LastResponse` property instead.
   (issue [#1748](https://github.com/jstedfast/MailKit/issues/1748))
+* Multi-line SMTP responses are now joined using `\r\n` rather than `\n`, matching the line endings used
+  on the wire. This affects `SmtpResponse.Response` as well as the new `SmtpCommandException.ResponseText`
+  and `SmtpProtocolException.LastResponse` properties. Code that splits multi-line responses on `'\n'`
+  should be updated to split on `"\r\n"` (or trim the trailing `'\r'` from each line).
 * The `error.type` values reported by MailKit's metrics are now more specific. See
   [Telemetry changes](#telemetry-changes) below.
 

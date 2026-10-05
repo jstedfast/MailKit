@@ -5299,7 +5299,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (response, Is.Not.Null, "EXPN result");
 				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "EXPN response code");
-				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>"), "EXPN response");
+				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\r\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\r\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\r\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\r\n<joe@foo-unix.ARPA>\r\n<xyz@bar-unix.ARPA>"), "EXPN response");
 			}
 		}
 
@@ -5362,7 +5362,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (response, Is.Not.Null, "EXPN result");
 				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "EXPN response code");
-				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\n<joe@foo-unix.ARPA>\n<xyz@bar-unix.ARPA>"), "EXPN response");
+				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\r\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\r\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\r\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\r\n<joe@foo-unix.ARPA>\r\n<xyz@bar-unix.ARPA>"), "EXPN response");
 			}
 		}
 	}

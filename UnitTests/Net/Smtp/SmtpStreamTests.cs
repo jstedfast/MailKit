@@ -127,7 +127,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestReadResponseStatusCodeUnderflow (int underflow)
 		{
 			var input = GenerateCrossBoundaryResponse (underflow);
-			var expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
+			var expected = input.Replace ("250-", "").Replace ("250 ", "").TrimEnd ();
 
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.ASCII.GetBytes (input);
@@ -161,7 +161,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestReadResponseLatin1Fallback ()
 		{
 			const string input = "250-Wikipédia est un projet d'encyclopédie collective en ligne,\r\n250-universelle, multilingue et fonctionnant sur le principe du wiki.\r\n250-Ce projet vise à offrir un contenu librement réutilisable, objectif\r\n250 et vérifiable, que chacun peut modifier et améliorer.\r\n";
-			var expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
+			var expected = input.Replace ("250-", "").Replace ("250 ", "").TrimEnd ();
 
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.GetEncoding (28591).GetBytes (input);
@@ -194,7 +194,7 @@ namespace UnitTests.Net.Smtp {
 
 			var input = builder.ToString ();
 
-			var expected = input.Replace ("250-", "").Replace ("250 ", "").Replace ("\r\n", "\n").TrimEnd ();
+			var expected = input.Replace ("250-", "").Replace ("250 ", "").TrimEnd ();
 
 			using (var stream = new SmtpStream (new DummyNetworkStream (), new NullProtocolLogger ())) {
 				var buffer = Encoding.ASCII.GetBytes (input);

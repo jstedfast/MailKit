@@ -536,8 +536,10 @@ namespace MailKit.Net.Smtp {
 				builder.Append (input, startIndex, endIndex - startIndex);
 
 				if (inputIndex < inputEnd && input[inputIndex] == (byte) '\n') {
-					if (more)
+					if (more) {
+						builder.Append ((byte) '\r');
 						builder.Append ((byte) '\n');
+					}
 					newLine = true;
 					inputIndex++;
 				}

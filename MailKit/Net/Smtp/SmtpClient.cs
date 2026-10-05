@@ -75,6 +75,7 @@ namespace MailKit.Net.Smtp {
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes (".\r\n");
 		static readonly char[] NewLineCharacters = { '\r', '\n' };
+		static readonly string[] CRLF = { "\r\n" };
 		internal static readonly string DefaultLocalDomain;
 		const int MaxLineLength = 998;
 
@@ -2700,7 +2701,7 @@ namespace MailKit.Net.Smtp {
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.Expn, response);
 
-			var lines = response.Response.Split ('\n');
+			var lines = response.Response.Split (CRLF, StringSplitOptions.RemoveEmptyEntries);
 			var list = new InternetAddressList ();
 
 			for (int i = 0; i < lines.Length; i++) {
