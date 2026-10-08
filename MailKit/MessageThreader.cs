@@ -69,8 +69,6 @@ namespace MailKit {
 				get { return Children.Count > 0; }
 			}
 
-			public IMailFolder? Folder => null;
-
 			public MessageSummaryItems Fields {
 				get { return MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope | MessageSummaryItems.ModSeq | MessageSummaryItems.Size; }
 			}

@@ -73,28 +73,6 @@ namespace MailKit {
 			Index = index;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MessageSummary"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="MessageSummary"/>.
-		/// </remarks>
-		/// <param name="folder">The folder that the message belongs to.</param>
-		/// <param name="index">The message index.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is negative.
-		/// </exception>
-		public MessageSummary (IMailFolder folder, int index) : this (index)
-		{
-			if (folder == null)
-				throw new ArgumentNullException (nameof (folder));
-
-			Folder = folder;
-		}
-
 		[MemberNotNull (nameof (normalizedSubject))]
 		void UpdateThreadableSubject ()
 		{
@@ -107,17 +85,6 @@ namespace MailKit {
 				normalizedSubject = string.Empty;
 				threadableReplyDepth = 0;
 			}
-		}
-
-		/// <summary>
-		/// Get the folder that the message belongs to.
-		/// </summary>
-		/// <remarks>
-		/// Gets the folder that the message belongs to, if available.
-		/// </remarks>
-		/// <value>The folder.</value>
-		public IMailFolder? Folder {
-			get; private set;
 		}
 
 		/// <summary>

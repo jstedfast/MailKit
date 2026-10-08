@@ -116,6 +116,11 @@ rather than the full MimeKit cryptography stack.
   Custom implementations of these interfaces will need to implement the new methods. The built-in
   `StoreFlagsRequest`, `StoreLabelsRequest`, `AppendRequest` and `ReplaceRequest` classes implement
   them as virtual no-ops.
+* Removed the `IMessageSummary.Folder` property and the `MessageSummary (IMailFolder, int)` constructor.
+  Summaries no longer hold a reference to the folder they were fetched from, which makes it possible to
+  cache, serialize and rehydrate them independently of a live `IMailFolder` instance. Applications that
+  need to know which folder a summary came from should track that themselves (e.g. alongside the
+  collection returned by `Fetch ()`).
 
 ### New Features
 

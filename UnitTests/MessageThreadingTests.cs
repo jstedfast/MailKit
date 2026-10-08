@@ -308,7 +308,6 @@ Welcome to Netscape
 		{
 			var node = new MessageThreader.ThreadableNode (new MessageSummary (0));
 
-			Assert.That (node.Folder, Is.Null, "Folder");
 			Assert.That (node.Body, Is.Null, "Body");
 			Assert.That (node.TextBody, Is.Null, "TextBody");
 			Assert.That (node.HtmlBody, Is.Null, "HtmlBody");

@@ -725,7 +725,7 @@ namespace MailKit.Net.Imap
 			var ctx = (FetchSummaryContext) ic.UserData!;
 
 			if (!ctx.TryGetValue (index, out var message)) {
-				message = new MessageSummary (this, index);
+				message = new MessageSummary (index);
 				ctx.Add (index, message);
 			}
 

@@ -35,7 +35,6 @@ namespace UnitTests {
 		public void TestArgumentExceptions ()
 		{
 			Assert.Throws<ArgumentOutOfRangeException> (() => new MessageSummary (-1));
-			Assert.Throws<ArgumentNullException> (() => new MessageSummary (null, 0));
 		}
 
 		[Test]

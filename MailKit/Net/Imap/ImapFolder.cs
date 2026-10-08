@@ -6503,14 +6503,14 @@ namespace MailKit.Net.Imap {
 
 		internal void OnUntaggedFetchResponse (ImapEngine engine, int index, CancellationToken cancellationToken)
 		{
-			var message = new MessageSummary (this, index);
+			var message = new MessageSummary (index);
 
 			ParseSummaryItems (engine, message, OnFetchAsyncCompleted, cancellationToken);
 		}
 
 		internal Task OnUntaggedFetchResponseAsync (ImapEngine engine, int index, CancellationToken cancellationToken)
 		{
-			var message = new MessageSummary (this, index);
+			var message = new MessageSummary (index);
 
 			return ParseSummaryItemsAsync (engine, message, OnFetchAsyncCompleted, cancellationToken);
 		}
