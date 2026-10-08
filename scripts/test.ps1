@@ -21,7 +21,11 @@ $UnitTestsAssembly = Join-Path $OutputDir "UnitTests.dll"
 if ($GenerateCodeCoverage -eq 'true') {
     Write-Output "Instrumenting code..."
 
-    & dotnet AltCover -i="$OutputDir" --inplace -s="System.*" -s="Microsoft.*" -s="Newtonsoft.*" -s="BouncyCastle.*" -s="MimeKit" -s="NUnit*" -s="AltCover.*" -s="testhost" -s="UnitTests"
+    # Note: MailKit must be re-signed with its strong-name key after instrumentation or else MimeKit's
+    # InternalsVisibleTo ("MailKit, PublicKey=...") will no longer match, causing MethodAccessExceptions.
+    $StrongNameKey = Join-Path "MailKit" "mailkit.snk"
+
+    & dotnet AltCover -i="$OutputDir" --inplace --strongNameKey="$StrongNameKey" -s="System.*" -s="Microsoft.*" -s="Newtonsoft.*" -s="BouncyCastle.*" -s="MimeKit" -s="NUnit*" -s="AltCover.*" -s="testhost" -s="UnitTests"
     # & dotnet AltCover Runner --recorderDirectory=$OutputDir --executable=$NUnitConsoleRunner --summary=O -- --domain:single $UnitTestsAssembly
 }
 
