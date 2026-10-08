@@ -206,5 +206,30 @@ namespace MailKit {
 		public ITransferProgress? TransferProgress {
 			get; set;
 		}
+
+		/// <summary>
+		/// Called when the message is about to be sent to the server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called immediately before the command that will append the message is sent to the server.</para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the message is being appended to.</param>
+		public virtual void OnStarted (IMailFolder folder)
+		{
+		}
+
+		/// <summary>
+		/// Called when the server has successfully appended the message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called after the server has successfully completed the command that appended the message.</para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the message was appended to.</param>
+		/// <param name="uid">The UID of the appended message, if available; otherwise, <see langword="null" />.</param>
+		public virtual void OnCompleted (IMailFolder folder, UniqueId? uid)
+		{
+		}
 	}
 }

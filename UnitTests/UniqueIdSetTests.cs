@@ -544,5 +544,63 @@ namespace UnitTests {
 				Assert.That (copy[i].Id, Is.EqualTo (ids[i]));
 			}
 		}
+
+		static void AssertSerializedSubsets (IList<UniqueId> uids, int maxLength, string[] expected, uint validity, SortOrder order)
+		{
+			var subsets = UniqueIdSet.EnumerateSerializedSubsets (uids, maxLength).ToList ();
+			var all = new List<UniqueId> ();
+
+			Assert.That (subsets.Select (x => x.Serialized), Is.EqualTo (expected));
+
+			foreach (var (serialized, subset) in subsets) {
+				Assert.That (subset.ToString (), Is.EqualTo (serialized));
+				Assert.That (subset.Validity, Is.EqualTo (validity));
+				Assert.That (subset.SortOrder, Is.EqualTo (order));
+
+				Assert.That (UniqueIdSet.TryParse (serialized, validity, out var parsed), Is.True);
+				Assert.That (subset, Is.EqualTo (parsed));
+
+				all.AddRange (subset);
+			}
+
+			Assert.That (all, Is.EqualTo (uids));
+		}
+
+		[Test]
+		public void TestEnumerateSerializedSubsetsUniqueIdSet ()
+		{
+			UniqueIdSet.TryParse ("1:5,7,9:12,15,20:25,30", 42, out var set);
+
+			AssertSerializedSubsets (set, 12, new[] { "1:5,7,9:12", "15,20:25,30" }, 42, SortOrder.Ascending);
+			AssertSerializedSubsets (set, int.MaxValue, new[] { "1:5,7,9:12,15,20:25,30" }, 42, SortOrder.Ascending);
+		}
+
+		[Test]
+		public void TestEnumerateSerializedSubsetsList ()
+		{
+			var ids = new uint[] { 1, 2, 3, 4, 5, 7, 12, 11, 10, 9, 15, 20, 21, 22, 23, 24, 25, 30 };
+			var uids = ids.Select (id => new UniqueId (42, id)).ToList ();
+
+			AssertSerializedSubsets (uids, 12, new[] { "1:5,7,12:9", "15,20:25,30" }, 42, SortOrder.None);
+			AssertSerializedSubsets (uids, int.MaxValue, new[] { "1:5,7,12:9,15,20:25,30" }, 42, SortOrder.None);
+		}
+
+		[Test]
+		public void TestEnumerateSerializedSubsetsRange ()
+		{
+			var range = new UniqueIdRange (42, 5, 10);
+
+			AssertSerializedSubsets (range, 1, new[] { "5:10" }, 42, SortOrder.Ascending);
+		}
+
+		[Test]
+		public void TestEnumerateSerializedSubsetsEmpty ()
+		{
+			var subsets = UniqueIdSet.EnumerateSerializedSubsets (Array.Empty<UniqueId> (), 10).ToList ();
+
+			Assert.That (subsets, Has.Count.EqualTo (1));
+			Assert.That (subsets[0].Serialized, Is.Empty);
+			Assert.That (subsets[0].Subset, Is.Empty);
+		}
 	}
 }

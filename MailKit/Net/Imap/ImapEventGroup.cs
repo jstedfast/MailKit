@@ -633,7 +633,7 @@ namespace MailKit.Net.Imap {
 		/// <note type="note">These events will not be emitted for any message created by the client on this particular folder
 		/// as a result of, for example, a call to
 		/// <see cref="IMailFolder.Append(IAppendRequest, System.Threading.CancellationToken)"/>
-		/// or <see cref="IMailFolder.CopyTo(IList{UniqueId}, IMailFolder, System.Threading.CancellationToken)"/>.</note>
+		/// or <see cref="IMailFolder.CopyTo(IList{UniqueId}, ICopyRequest, System.Threading.CancellationToken)"/>.</note>
 		/// </remarks>
 		public class MessageNew : ImapEvent
 		{

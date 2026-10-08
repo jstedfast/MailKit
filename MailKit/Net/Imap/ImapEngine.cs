@@ -3366,10 +3366,12 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			foreach (var subset in UniqueIdSet.EnumerateSerializedSubsets (uids, maxLength)) {
+			foreach (var (subset, chunk) in UniqueIdSet.EnumerateSerializedSubsets (uids, maxLength)) {
 				args[0] = subset;
 
-				yield return new ImapCommand (this, cancellationToken, folder, format, args);
+				yield return new ImapCommand (this, cancellationToken, folder, format, args) {
+					UniqueIds = chunk
+				};
 			}
 		}
 

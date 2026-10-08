@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace MailKit {
 	/// <summary>
 	/// A request for storing flags, labels, or annotations for a message.
@@ -44,5 +46,59 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The mod-sequence value that indicates the last known state of the message(s) being updated.</value>
 		ulong? UnchangedSince { get; set; }
+
+		/// <summary>
+		/// Called when a subset of the messages is about to be sent to the server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called immediately before a command that will update the specified subset of messages is sent
+		/// to the server. A single <a href="Overload_MailKit_IMailFolder_Store.htm">Store</a> operation may be split
+		/// into multiple commands, in which case this method will be called once for each subset of the messages.</para>
+		/// <para>If this method is called but <see cref="OnCompleted(IMailFolder, IList{UniqueId}, IList{UniqueId})"/>
+		/// is not called for the same subset of messages and the operation fails with an exception other than a
+		/// <see cref="CommandException"/>, then it is unknown whether or not the server applied the changes.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="uids">The UIDs of the messages that are about to be updated.</param>
+		void OnStarted (IMailFolder folder, IList<UniqueId> uids);
+
+		/// <summary>
+		/// Called when a subset of the messages is about to be sent to the server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called immediately before a command that will update the specified subset of messages is sent
+		/// to the server. A single <a href="Overload_MailKit_IMailFolder_Store.htm">Store</a> operation may be split
+		/// into multiple commands, in which case this method will be called once for each subset of the messages.</para>
+		/// <para>If this method is called but <see cref="OnCompleted(IMailFolder, IList{int}, IList{int})"/>
+		/// is not called for the same subset of messages and the operation fails with an exception other than a
+		/// <see cref="CommandException"/>, then it is unknown whether or not the server applied the changes.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="indexes">The indexes of the messages that are about to be updated.</param>
+		void OnStarted (IMailFolder folder, IList<int> indexes);
+
+		/// <summary>
+		/// Called when the server has successfully updated a subset of the messages.
+		/// </summary>
+		/// <remarks>
+		/// Called after the server has successfully completed the command that updated the specified subset of messages.
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="uids">The UIDs of the messages that were sent to the server.</param>
+		/// <param name="unmodified">The UIDs of the messages that were not updated because they were modified since
+		/// <see cref="UnchangedSince"/>.</param>
+		void OnCompleted (IMailFolder folder, IList<UniqueId> uids, IList<UniqueId> unmodified);
+
+		/// <summary>
+		/// Called when the server has successfully updated a subset of the messages.
+		/// </summary>
+		/// <remarks>
+		/// Called after the server has successfully completed the command that updated the specified subset of messages.
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="indexes">The indexes of the messages that were sent to the server.</param>
+		/// <param name="unmodified">The indexes of the messages that were not updated because they were modified since
+		/// <see cref="UnchangedSince"/>.</param>
+		void OnCompleted (IMailFolder folder, IList<int> indexes, IList<int> unmodified);
 	}
 }

@@ -2635,9 +2635,12 @@ namespace MailKit {
 		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
+		/// <param name="request">The expunge request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <see langword="null" />.
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -2666,7 +2669,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default);
+		void Expunge (IList<UniqueId> uids, IExpungeRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously expunge the specified uids, permanently removing them from the folder.
@@ -2682,9 +2685,12 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The message uids.</param>
+		/// <param name="request">The expunge request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <see langword="null" />.
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -2713,7 +2719,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default);
+		Task ExpungeAsync (IList<UniqueId> uids, IExpungeRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Append a message to the folder.
@@ -3540,100 +3546,6 @@ namespace MailKit {
 		Task<UniqueId?> ReplaceAsync (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Copy the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Copies the specified message to the destination folder.
-		/// </remarks>
-		/// <returns>The UID of the message in the destination folder, if available; otherwise, <see langword="null" />.</returns>
-		/// <param name="uid">The UID of the message to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail store does not support the UIDPLUS extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Asynchronously copy the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously copies the specified message to the destination folder.
-		/// </remarks>
-		/// <returns>The UID of the message in the destination folder, if available; otherwise, <see langword="null" />.</returns>
-		/// <param name="uid">The UID of the message to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail store does not support the UIDPLUS extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
 		/// Copy the specified messages to the destination folder.
 		/// </summary>
 		/// <remarks>
@@ -3641,17 +3553,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3680,7 +3592,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
+		UniqueIdMap CopyTo (IList<UniqueId> uids, ICopyRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -3690,17 +3602,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3729,101 +3641,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Move the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Moves the specified message to the destination folder.
-		/// </remarks>
-		/// <returns>The UID of the message in the destination folder, if available; otherwise, <see langword="null" />.</returns>
-		/// <param name="uid">The UID of the message to move.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail store does not support the UIDPLUS extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Asynchronously move the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously moves the specified message to the destination folder.
-		/// </remarks>
-		/// <returns>The UID of the message in the destination folder, if available; otherwise, <see langword="null" />.</returns>
-		/// <param name="uid">The UID of the message to move.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uid"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail store does not support the UIDPLUS extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default);
+		Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, ICopyRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Move the specified messages to the destination folder.
@@ -3833,17 +3651,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3872,7 +3690,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
+		UniqueIdMap MoveTo (IList<UniqueId> uids, IMoveRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -3882,17 +3700,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -3921,96 +3739,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Copy the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Copies the specified message to the destination folder.
-		/// </remarks>
-		/// <param name="index">The index of the message to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> does not refer to a valid message index.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The destination folder does not belong to the <see cref="IMailStore"/>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		void CopyTo (int index, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Asynchronously copy the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously copies the specified message to the destination folder.
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="index">The indexes of the message to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> does not refer to a valid message index.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The destination folder does not belong to the <see cref="IMailStore"/>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task CopyToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default);
+		Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMoveRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Copy the specified messages to the destination folder.
@@ -4019,17 +3748,17 @@ namespace MailKit {
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4055,7 +3784,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
+		void CopyTo (IList<int> indexes, ICopyRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -4065,17 +3794,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4101,96 +3830,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Move the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Moves the specified message to the destination folder.
-		/// </remarks>
-		/// <param name="index">The index of the message to move.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> does not refer to a valid message index.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The destination folder does not belong to the <see cref="IMailStore"/>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		void MoveTo (int index, IMailFolder destination, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Asynchronously move the specified message to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously moves the specified message to the destination folder.
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="index">The index of the message to move.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="destination"/> is <see langword="null" />.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> does not refer to a valid message index.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The destination folder does not belong to the <see cref="IMailStore"/>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task MoveToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default);
+		Task CopyToAsync (IList<int> indexes, ICopyRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Move the specified messages to the destination folder.
@@ -4199,17 +3839,17 @@ namespace MailKit {
 		/// Moves the specified messages to the destination folder.
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4235,7 +3875,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
+		void MoveTo (IList<int> indexes, IMoveRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -4245,17 +3885,17 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="IMailStore"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4281,7 +3921,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default);
+		Task MoveToAsync (IList<int> indexes, IMoveRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs.

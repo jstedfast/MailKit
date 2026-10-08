@@ -161,5 +161,63 @@ namespace MailKit {
 		public ulong? UnchangedSince {
 			get; set;
 		}
+
+		/// <summary>
+		/// Called when a subset of the messages is about to be sent to the server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called immediately before a command that will update the specified subset of messages is sent
+		/// to the server.</para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="uids">The UIDs of the messages that are about to be updated.</param>
+		public virtual void OnStarted (IMailFolder folder, IList<UniqueId> uids)
+		{
+		}
+
+		/// <summary>
+		/// Called when a subset of the messages is about to be sent to the server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called immediately before a command that will update the specified subset of messages is sent
+		/// to the server.</para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="indexes">The indexes of the messages that are about to be updated.</param>
+		public virtual void OnStarted (IMailFolder folder, IList<int> indexes)
+		{
+		}
+
+		/// <summary>
+		/// Called when the server has successfully updated a subset of the messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called after the server has successfully completed the command that updated the specified subset of messages.</para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="uids">The UIDs of the messages that were sent to the server.</param>
+		/// <param name="unmodified">The UIDs of the messages that were not updated because they were modified since
+		/// <see cref="UnchangedSince"/>.</param>
+		public virtual void OnCompleted (IMailFolder folder, IList<UniqueId> uids, IList<UniqueId> unmodified)
+		{
+		}
+
+		/// <summary>
+		/// Called when the server has successfully updated a subset of the messages.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called after the server has successfully completed the command that updated the specified subset of messages.</para>
+		/// <para>The default implementation does nothing.</para>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="indexes">The indexes of the messages that were sent to the server.</param>
+		/// <param name="unmodified">The indexes of the messages that were not updated because they were modified since
+		/// <see cref="UnchangedSince"/>.</param>
+		public virtual void OnCompleted (IMailFolder folder, IList<int> indexes, IList<int> unmodified)
+		{
+		}
 	}
 }

@@ -40,16 +40,29 @@ namespace MailKit.Net.Imap
 		static readonly IStoreFlagsRequest AddDeletedFlag = new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true };
 		static readonly IStoreFlagsRequest RemoveDeletedFlag = new StoreFlagsRequest (StoreAction.Remove, MessageFlags.Deleted) { Silent = true };
 
-		static void ProcessUnmodified (ImapCommand ic, ref UniqueIdSet? uids, ulong? modseq)
+		static IList<UniqueId> ProcessUnmodified (ImapCommand ic, ref UniqueIdSet? uids, ulong? modseq)
 		{
+			UniqueIdSet? chunk = null;
+
 			if (modseq.HasValue) {
 				foreach (var rc in ic.RespCodes.OfType<ModifiedResponseCode> ()) {
-					if (uids != null && rc.UidSet != null)
-						uids.AddRange (rc.UidSet);
+					if (rc.UidSet == null)
+						continue;
+
+					if (chunk != null)
+						chunk.AddRange (rc.UidSet);
 					else
-						uids = rc.UidSet;
+						chunk = rc.UidSet;
 				}
 			}
+
+			if (chunk == null)
+				return Array.Empty<UniqueId> ();
+
+			uids ??= new UniqueIdSet (chunk.Validity, chunk.SortOrder);
+			uids.AddRange (chunk);
+
+			return chunk;
 		}
 
 		void ProcessStoreResponse (ImapCommand ic)
@@ -76,7 +89,7 @@ namespace MailKit.Net.Imap
 			return Array.Empty<int> ();
 		}
 
-		IEnumerable<ImapCommand> QueueStoreCommands (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken)
+		IEnumerable<ImapCommand> CreateStoreCommands (IList<UniqueId> uids, IStoreFlagsRequest request, CancellationToken cancellationToken)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -122,7 +135,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("UID STORE %s{0} {1} {2}\r\n", @params, action, flaglist);
 
-			return Engine.QueueCommands (cancellationToken, this, command, uids, keywordList);
+			return Engine.CreateCommands (cancellationToken, this, command, uids, keywordList);
 		}
 
 		/// <summary>
@@ -175,12 +188,19 @@ namespace MailKit.Net.Imap
 		{
 			UniqueIdSet? unmodified = null;
 
-			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
+			foreach (var ic in CreateStoreCommands (uids, request, cancellationToken)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
 				ProcessStoreResponse (ic);
 
-				ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+				var chunkUnmodified = ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+
+				request.OnCompleted (this, chunk, chunkUnmodified);
 			}
 
 			if (unmodified == null)
@@ -239,12 +259,19 @@ namespace MailKit.Net.Imap
 		{
 			UniqueIdSet? unmodified = null;
 
-			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
+			foreach (var ic in CreateStoreCommands (uids, request, cancellationToken)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
 				ProcessStoreResponse (ic);
 
-				ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+				var chunkUnmodified = ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+
+				request.OnCompleted (this, chunk, chunkUnmodified);
 			}
 
 			if (unmodified == null)
@@ -253,7 +280,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		bool TryQueueStoreCommand (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
+		bool TryCreateStoreCommand (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -308,7 +335,7 @@ namespace MailKit.Net.Imap
 			ImapUtils.FormatFlagsList (command, request.Flags & PermanentFlags, request.Keywords != null ? request.Keywords.Count : 0);
 			command.Append ("\r\n");
 
-			ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), keywordList);
+			ic = new ImapCommand (Engine, cancellationToken, this, command.ToString (), keywordList);
 
 			return true;
 		}
@@ -361,14 +388,21 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<int> Store (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
+			if (!TryCreateStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
 			ProcessStoreResponse (ic);
 
-			return GetUnmodified (ic, request.UnchangedSince);
+			var unmodified = GetUnmodified (ic, request.UnchangedSince);
+
+			request.OnCompleted (this, indexes, unmodified);
+
+			return unmodified;
 		}
 
 		/// <summary>
@@ -419,14 +453,21 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<int>> StoreAsync (IList<int> indexes, IStoreFlagsRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
+			if (!TryCreateStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessStoreResponse (ic);
 
-			return GetUnmodified (ic, request.UnchangedSince);
+			var unmodified = GetUnmodified (ic, request.UnchangedSince);
+
+			request.OnCompleted (this, indexes, unmodified);
+
+			return unmodified;
 		}
 
 		void AppendLabelList (StringBuilder command, ISet<string> labels, List<object> args)
@@ -469,7 +510,7 @@ namespace MailKit.Net.Imap
 			command.Append (')');
 		}
 
-		IEnumerable<ImapCommand> QueueStoreCommands (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken)
+		IEnumerable<ImapCommand> CreateStoreCommands (IList<UniqueId> uids, IStoreLabelsRequest request, CancellationToken cancellationToken)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
@@ -519,7 +560,7 @@ namespace MailKit.Net.Imap
 			AppendLabelList (command, request.Labels, args);
 			command.Append ("\r\n");
 
-			return Engine.QueueCommands (cancellationToken, this, command.ToString (), uids, args.ToArray ());
+			return Engine.CreateCommands (cancellationToken, this, command.ToString (), uids, args.ToArray ());
 		}
 
 		/// <summary>
@@ -572,12 +613,19 @@ namespace MailKit.Net.Imap
 		{
 			UniqueIdSet? unmodified = null;
 
-			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
+			foreach (var ic in CreateStoreCommands (uids, request, cancellationToken)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
 				ProcessStoreResponse (ic);
 
-				ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+				var chunkUnmodified = ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+
+				request.OnCompleted (this, chunk, chunkUnmodified);
 			}
 
 			if (unmodified == null)
@@ -636,12 +684,19 @@ namespace MailKit.Net.Imap
 		{
 			UniqueIdSet? unmodified = null;
 
-			foreach (var ic in QueueStoreCommands (uids, request, cancellationToken)) {
+			foreach (var ic in CreateStoreCommands (uids, request, cancellationToken)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
 				ProcessStoreResponse (ic);
 
-				ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+				var chunkUnmodified = ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+
+				request.OnCompleted (this, chunk, chunkUnmodified);
 			}
 
 			if (unmodified == null)
@@ -650,7 +705,7 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		bool TryQueueStoreCommand (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
+		bool TryCreateStoreCommand (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
@@ -705,7 +760,7 @@ namespace MailKit.Net.Imap
 			AppendLabelList (command, request.Labels, args);
 			command.Append ("\r\n");
 
-			ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
+			ic = new ImapCommand (Engine, cancellationToken, this, command.ToString (), args.ToArray ());
 
 			return true;
 		}
@@ -758,14 +813,21 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override IList<int> Store (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
+			if (!TryCreateStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
 			ProcessStoreResponse (ic);
 
-			return GetUnmodified (ic, request.UnchangedSince);
+			var unmodified = GetUnmodified (ic, request.UnchangedSince);
+
+			request.OnCompleted (this, indexes, unmodified);
+
+			return unmodified;
 		}
 
 		/// <summary>
@@ -816,14 +878,21 @@ namespace MailKit.Net.Imap
 		/// </exception>
 		public override async Task<IList<int>> StoreAsync (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueStoreCommand (indexes, request, cancellationToken, out var ic))
+			if (!TryCreateStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessStoreResponse (ic);
 
-			return GetUnmodified (ic, request.UnchangedSince);
+			var unmodified = GetUnmodified (ic, request.UnchangedSince);
+
+			request.OnCompleted (this, indexes, unmodified);
+
+			return unmodified;
 		}
 	}
 }

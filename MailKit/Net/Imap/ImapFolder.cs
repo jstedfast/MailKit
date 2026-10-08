@@ -4238,9 +4238,12 @@ namespace MailKit.Net.Imap {
 		/// the <see cref="MailFolder.MessageExpunged"/> event.</note>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
+		/// <param name="request">The expunge request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <see langword="null" />.
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4269,10 +4272,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default)
+		public override void Expunge (IList<UniqueId> uids, IExpungeRequest request, CancellationToken cancellationToken = default)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
+
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
 			CheckState (true, true);
 
@@ -4283,6 +4289,8 @@ namespace MailKit.Net.Imap {
 				// get the list of messages marked for deletion that should not be expunged
 				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
 				var unmark = Search (SearchOptions.None, query, cancellationToken);
+
+				request.OnStarted (this, uids);
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged
@@ -4297,13 +4305,22 @@ namespace MailKit.Net.Imap {
 					Store (unmark.UniqueIds, AddDeletedFlag, cancellationToken);
 				}
 
+				request.OnCompleted (this, uids);
+
 				return;
 			}
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
 				ProcessExpungeResponse (ic);
+
+				request.OnCompleted (this, chunk);
 			}
 		}
 
@@ -4332,9 +4349,12 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The message uids.</param>
+		/// <param name="request">The expunge request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <see langword="null" />.
+		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -4363,10 +4383,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default)
+		public override async Task ExpungeAsync (IList<UniqueId> uids, IExpungeRequest request, CancellationToken cancellationToken = default)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
+
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
 			CheckState (true, true);
 
@@ -4377,6 +4400,8 @@ namespace MailKit.Net.Imap {
 				// get the list of messages marked for deletion that should not be expunged
 				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
 				var unmark = await SearchAsync (SearchOptions.None, query, cancellationToken).ConfigureAwait (false);
+
+				request.OnStarted (this, uids);
 
 				if (unmark.Count > 0) {
 					// clear the \Deleted flag on all messages except the ones that are to be expunged
@@ -4391,13 +4416,22 @@ namespace MailKit.Net.Imap {
 					await StoreAsync (unmark.UniqueIds, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
 				}
 
+				request.OnCompleted (this, uids);
+
 				return;
 			}
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID EXPUNGE %s\r\n", uids)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
 				ProcessExpungeResponse (ic);
+
+				request.OnCompleted (this, chunk);
 			}
 		}
 
@@ -4476,14 +4510,6 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
-		ImapCommand QueueAppendCommand (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken)
-		{
-			var ic = CreateAppendCommand (options, request, cancellationToken);
-
-			Engine.QueueCommand (ic);
-
-			return ic;
-		}
 
 		sealed class AppendTransferProgress : ITransferProgress
 		{
@@ -4591,11 +4617,18 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId? Append (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueAppendCommand (options, request, cancellationToken);
+			var ic = CreateAppendCommand (options, request, cancellationToken);
 
+			request.OnStarted (this);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
-			return ProcessAppendResponse (ic);
+			var uid = ProcessAppendResponse (ic);
+
+			request.OnCompleted (this, uid);
+
+			return uid;
 		}
 
 		/// <summary>
@@ -4647,11 +4680,18 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override async Task<UniqueId?> AppendAsync (FormatOptions options, IAppendRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueAppendCommand (options, request, cancellationToken);
+			var ic = CreateAppendCommand (options, request, cancellationToken);
 
+			request.OnStarted (this);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			return ProcessAppendResponse (ic);
+			var uid = ProcessAppendResponse (ic);
+
+			request.OnCompleted (this, uid);
+
+			return uid;
 		}
 
 		void ValidateArguments (FormatOptions options, IList<IAppendRequest> requests)
@@ -4674,7 +4714,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 		}
 
-		ImapCommand QueueMultiAppendCommand (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
+		ImapCommand CreateMultiAppendCommand (FormatOptions options, IList<IAppendRequest> requests, CancellationToken cancellationToken)
 		{
 			var format = CreateAppendOptions (options);
 			var builder = new StringBuilder ("APPEND %F");
@@ -4725,8 +4765,6 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = requests[0].TransferProgress
 			};
-
-			Engine.QueueCommand (ic);
 
 			return ic;
 		}
@@ -4804,21 +4842,35 @@ namespace MailKit.Net.Imap {
 				return Array.Empty<UniqueId> ();
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppendCommand (options, requests, cancellationToken);
+				var ic = CreateMultiAppendCommand (options, requests, cancellationToken);
 
+				for (int i = 0; i < requests.Count; i++)
+					requests[i].OnStarted (this);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
-				return ProcessMultiAppendResponse (ic);
+				var appended = ProcessMultiAppendResponse (ic);
+
+				for (int i = 0; i < requests.Count; i++)
+					requests[i].OnCompleted (this, i < appended.Count ? appended[i] : null);
+
+				return appended;
 			}
 
 			var commands = CreateAppendCommands (options, requests, cancellationToken);
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < commands.Length; i++) {
+				requests[i].OnStarted (this);
+
 				Engine.QueueCommand (commands[i]);
 				Engine.Run (commands[i]);
 
 				var uid = ProcessAppendResponse (commands[i]);
+
+				requests[i].OnCompleted (this, uid);
+
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
@@ -4890,21 +4942,35 @@ namespace MailKit.Net.Imap {
 				return Array.Empty<UniqueId> ();
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppendCommand (options, requests, cancellationToken);
+				var ic = CreateMultiAppendCommand (options, requests, cancellationToken);
 
+				for (int i = 0; i < requests.Count; i++)
+					requests[i].OnStarted (this);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
-				return ProcessMultiAppendResponse (ic);
+				var appended = ProcessMultiAppendResponse (ic);
+
+				for (int i = 0; i < requests.Count; i++)
+					requests[i].OnCompleted (this, i < appended.Count ? appended[i] : null);
+
+				return appended;
 			}
 
 			var commands = CreateAppendCommands (options, requests, cancellationToken);
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < commands.Length; i++) {
+				requests[i].OnStarted (this);
+
 				Engine.QueueCommand (commands[i]);
 				await Engine.RunAsync (commands[i]).ConfigureAwait (false);
 
 				var uid = ProcessAppendResponse (commands[i]);
+
+				requests[i].OnCompleted (this, uid);
+
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
@@ -4937,7 +5003,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true, true);
 		}
 
-		ImapCommand QueueReplaceCommand (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken)
+		ImapCommand CreateReplaceCommand (FormatOptions options, UniqueId uid, IReplaceRequest request, CancellationToken cancellationToken)
 		{
 			var format = CreateAppendOptions (options);
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
@@ -4978,8 +5044,6 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = request.TransferProgress
 			};
-
-			Engine.QueueCommand (ic);
 
 			return ic;
 		}
@@ -5055,18 +5119,37 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var destination = request.Destination as ImapFolder ?? this;
-				var appended = destination.Append (options, request, cancellationToken);
+				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
+
+				request.OnStarted (destination);
+
+				Engine.QueueCommand (aic);
+				Engine.Run (aic);
+
+				var auid = destination.ProcessAppendResponse (aic);
+
 				Store (new[] { uid }, AddDeletedFlag, cancellationToken);
 				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-					Expunge (new[] { uid }, cancellationToken);
-				return appended;
+					Expunge (new[] { uid }, new ExpungeRequest (), cancellationToken);
+
+				request.OnCompleted (destination, auid);
+
+				return auid;
 			}
 
-			var ic = QueueReplaceCommand (options, uid, request, cancellationToken);
+			var target = request.Destination ?? this;
+			var ic = CreateReplaceCommand (options, uid, request, cancellationToken);
 
+			request.OnStarted (target);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
-			return ProcessReplaceResponse (ic);
+			var appended = ProcessReplaceResponse (ic);
+
+			request.OnCompleted (target, appended);
+
+			return appended;
 		}
 
 		/// <summary>
@@ -5129,21 +5212,40 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var destination = request.Destination as ImapFolder ?? this;
-				var appended = await destination.AppendAsync (options, request, cancellationToken).ConfigureAwait (false);
+				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
+
+				request.OnStarted (destination);
+
+				Engine.QueueCommand (aic);
+				await Engine.RunAsync (aic).ConfigureAwait (false);
+
+				var auid = destination.ProcessAppendResponse (aic);
+
 				await StoreAsync (new[] { uid }, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
 				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-					await ExpungeAsync (new[] { uid }, cancellationToken).ConfigureAwait (false);
-				return appended;
+					await ExpungeAsync (new[] { uid }, new ExpungeRequest (), cancellationToken).ConfigureAwait (false);
+
+				request.OnCompleted (destination, auid);
+
+				return auid;
 			}
 
-			var ic = QueueReplaceCommand (options, uid, request, cancellationToken);
+			var target = request.Destination ?? this;
+			var ic = CreateReplaceCommand (options, uid, request, cancellationToken);
 
+			request.OnStarted (target);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			return ProcessReplaceResponse (ic);
+			var appended = ProcessReplaceResponse (ic);
+
+			request.OnCompleted (target, appended);
+
+			return appended;
 		}
 
-		ImapCommand QueueReplaceCommand (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken)
+		ImapCommand CreateReplaceCommand (FormatOptions options, int index, IReplaceRequest request, CancellationToken cancellationToken)
 		{
 			var format = CreateAppendOptions (options);
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
@@ -5185,8 +5287,6 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, null, format, command, args) {
 				Progress = request.TransferProgress
 			};
-
-			Engine.QueueCommand (ic);
 
 			return ic;
 		}
@@ -5272,16 +5372,35 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var destination = request.Destination as ImapFolder ?? this;
-				var uid = destination.Append (options, request, cancellationToken);
+				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
+
+				request.OnStarted (destination);
+
+				Engine.QueueCommand (aic);
+				Engine.Run (aic);
+
+				var auid = destination.ProcessAppendResponse (aic);
+
 				Store (new[] { index }, AddDeletedFlag, cancellationToken);
-				return uid;
+
+				request.OnCompleted (destination, auid);
+
+				return auid;
 			}
 
-			var ic = QueueReplaceCommand (options, index, request, cancellationToken);
+			var target = request.Destination ?? this;
+			var ic = CreateReplaceCommand (options, index, request, cancellationToken);
 
+			request.OnStarted (target);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
-			return ProcessReplaceResponse (ic);
+			var appended = ProcessReplaceResponse (ic);
+
+			request.OnCompleted (target, appended);
+
+			return appended;
 		}
 
 		/// <summary>
@@ -5345,16 +5464,35 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
 				var destination = request.Destination as ImapFolder ?? this;
-				var uid = await destination.AppendAsync (options, request, cancellationToken).ConfigureAwait (false);
+				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
+
+				request.OnStarted (destination);
+
+				Engine.QueueCommand (aic);
+				await Engine.RunAsync (aic).ConfigureAwait (false);
+
+				var auid = destination.ProcessAppendResponse (aic);
+
 				await StoreAsync (new[] { index }, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
-				return uid;
+
+				request.OnCompleted (destination, auid);
+
+				return auid;
 			}
 
-			var ic = QueueReplaceCommand (options, index, request, cancellationToken);
+			var target = request.Destination ?? this;
+			var ic = CreateReplaceCommand (options, index, request, cancellationToken);
 
+			request.OnStarted (target);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
-			return ProcessReplaceResponse (ic);
+			var appended = ProcessReplaceResponse (ic);
+
+			request.OnCompleted (target, appended);
+
+			return appended;
 		}
 
 		ImapCommand QueueGetIndexesCommand (IList<UniqueId> uids, CancellationToken cancellationToken)
@@ -5409,26 +5547,30 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		static void GetCopiedUids (ImapCommand ic, ref UniqueIdSet? src, ref UniqueIdSet? dest)
+		static UniqueIdMap GetCopiedUids (ImapCommand ic, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			var rc = ic.GetResponseCode (ImapResponseCodeType.CopyUid);
 
 			if (rc is CopyUidResponseCode copy && copy.SrcUidSet != null && copy.DestUidSet != null) {
 				if (dest == null) {
-					dest = copy.DestUidSet;
-					src = copy.SrcUidSet;
-				} else {
-					dest.AddRange (copy.DestUidSet);
-					src!.AddRange (copy.SrcUidSet);
+					dest = new UniqueIdSet (copy.DestUidSet.Validity, copy.DestUidSet.SortOrder);
+					src = new UniqueIdSet (copy.SrcUidSet.Validity, copy.SrcUidSet.SortOrder);
 				}
+
+				dest.AddRange (copy.DestUidSet);
+				src!.AddRange (copy.SrcUidSet);
+
+				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
 			}
+
+			return UniqueIdMap.Empty;
 		}
 
-		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
+		UniqueIdMap ProcessCopyToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			ProcessCopyToResponse (ic, destination);
 
-			GetCopiedUids (ic, ref src, ref dest);
+			return GetCopiedUids (ic, ref src, ref dest);
 		}
 
 		/// <summary>
@@ -5439,17 +5581,17 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -5461,7 +5603,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="ICopyRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
@@ -5481,8 +5623,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override UniqueIdMap CopyTo (IList<UniqueId> uids, ICopyRequest request, CancellationToken cancellationToken = default)
 		{
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			var destination = request.Destination;
+
 			ValidateArguments (uids, destination);
 
 			CheckState (true, false);
@@ -5492,17 +5639,30 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				var indexes = GetIndexes (uids, cancellationToken);
-				CopyTo (indexes, destination, cancellationToken);
+
+				request.OnStarted (this, uids);
+
+				CopyTo (indexes, new CopyRequest (destination), cancellationToken);
+
+				request.OnCompleted (this, UniqueIdMap.Empty);
+
 				return UniqueIdMap.Empty;
 			}
 
 			UniqueIdSet? dest = null;
 			UniqueIdSet? src = null;
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
-				ProcessCopyToResponse (ic, destination, ref src, ref dest);
+				var copied = ProcessCopyToResponse (ic, destination, ref src, ref dest);
+
+				request.OnCompleted (this, copied);
 			}
 
 			if (src == null || dest == null)
@@ -5519,17 +5679,17 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -5541,7 +5701,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="ICopyRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
@@ -5561,8 +5721,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, ICopyRequest request, CancellationToken cancellationToken = default)
 		{
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			var destination = request.Destination;
+
 			ValidateArguments (uids, destination);
 
 			CheckState (true, false);
@@ -5572,17 +5737,30 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
-				await CopyToAsync (indexes, destination, cancellationToken).ConfigureAwait (false);
+
+				request.OnStarted (this, uids);
+
+				await CopyToAsync (indexes, new CopyRequest (destination), cancellationToken).ConfigureAwait (false);
+
+				request.OnCompleted (this, UniqueIdMap.Empty);
+
 				return UniqueIdMap.Empty;
 			}
 
 			UniqueIdSet? dest = null;
 			UniqueIdSet? src = null;
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID COPY %s %F\r\n", uids, destination)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
-				ProcessCopyToResponse (ic, destination, ref src, ref dest);
+				var copied = ProcessCopyToResponse (ic, destination, ref src, ref dest);
+
+				request.OnCompleted (this, copied);
 			}
 
 			if (src == null || dest == null)
@@ -5591,11 +5769,11 @@ namespace MailKit.Net.Imap {
 			return new UniqueIdMap (src, dest);
 		}
 
-		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
+		UniqueIdMap ProcessMoveToResponse (ImapCommand ic, IMailFolder destination, ref UniqueIdSet? src, ref UniqueIdSet? dest)
 		{
 			ProcessMoveToResponse (ic, destination);
 
-			GetCopiedUids (ic, ref src, ref dest);
+			return GetCopiedUids (ic, ref src, ref dest);
 		}
 
 		/// <summary>
@@ -5607,7 +5785,7 @@ namespace MailKit.Net.Imap {
 		/// property for the <see cref="ImapCapabilities.Move"/> flag), then this operation will be atomic.
 		/// Otherwise, MailKit implements this by first copying the messages to the destination folder, then
 		/// marking them for deletion in the originating folder, and finally expunging them (see
-		/// <see cref="Expunge(IList&lt;UniqueId&gt;,CancellationToken)"/> for more information about how a
+		/// <see cref="Expunge(IList{UniqueId},IExpungeRequest,CancellationToken)"/> for more information about how a
 		/// subset of messages are expunged). Since the server could disconnect at any point between those 3
 		/// (or more) commands, it is advisable for clients to implement their own logic for moving messages when
 		/// the IMAP server does not support the MOVE command in order to better handle spontaneous server
@@ -5615,19 +5793,19 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -5639,7 +5817,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="IMoveRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
@@ -5656,20 +5834,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override UniqueIdMap MoveTo (IList<UniqueId> uids, IMoveRequest request, CancellationToken cancellationToken = default)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
-				var copied = CopyTo (uids, destination, cancellationToken);
-				Store (uids, AddDeletedFlag, cancellationToken);
-				Expunge (uids, cancellationToken);
-				return copied;
-			}
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var indexes = GetIndexes (uids, cancellationToken);
-				MoveTo (indexes, destination, cancellationToken);
-				return UniqueIdMap.Empty;
-			}
+			var destination = request.Destination;
 
 			ValidateArguments (uids, destination);
 
@@ -5678,13 +5848,44 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				request.OnStarted (this, uids);
+
+				var copied = CopyTo (uids, new CopyRequest (destination), cancellationToken);
+				Store (uids, AddDeletedFlag, cancellationToken);
+				Expunge (uids, new ExpungeRequest (), cancellationToken);
+
+				request.OnCompleted (this, copied);
+
+				return copied;
+			}
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = GetIndexes (uids, cancellationToken);
+
+				request.OnStarted (this, uids);
+
+				MoveTo (indexes, new MoveRequest (destination), cancellationToken);
+
+				request.OnCompleted (this, UniqueIdMap.Empty);
+
+				return UniqueIdMap.Empty;
+			}
+
 			UniqueIdSet? dest = null;
 			UniqueIdSet? src = null;
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
-				ProcessMoveToResponse (ic, destination, ref src, ref dest);
+				var moved = ProcessMoveToResponse (ic, destination, ref src, ref dest);
+
+				request.OnCompleted (this, moved);
 			}
 
 			if (dest == null)
@@ -5702,7 +5903,7 @@ namespace MailKit.Net.Imap {
 		/// property for the <see cref="ImapCapabilities.Move"/> flag), then this operation will be atomic.
 		/// Otherwise, MailKit implements this by first copying the messages to the destination folder, then
 		/// marking them for deletion in the originating folder, and finally expunging them (see
-		/// <see cref="Expunge(IList&lt;UniqueId&gt;,CancellationToken)"/> for more information about how a
+		/// <see cref="Expunge(IList{UniqueId},IExpungeRequest,CancellationToken)"/> for more information about how a
 		/// subset of messages are expunged). Since the server could disconnect at any point between those 3
 		/// (or more) commands, it is advisable for clients to implement their own logic for moving messages when
 		/// the IMAP server does not support the MOVE command in order to better handle spontaneous server
@@ -5710,19 +5911,19 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -5734,7 +5935,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="IMoveRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
@@ -5751,20 +5952,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMoveRequest request, CancellationToken cancellationToken = default)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
-				var copied = await CopyToAsync (uids, destination, cancellationToken).ConfigureAwait (false);
-				await StoreAsync (uids, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
-				await ExpungeAsync (uids, cancellationToken).ConfigureAwait (false);
-				return copied;
-			}
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
-				await MoveToAsync (indexes, destination, cancellationToken).ConfigureAwait (false);
-				return UniqueIdMap.Empty;
-			}
+			var destination = request.Destination;
 
 			ValidateArguments (uids, destination);
 
@@ -5773,13 +5966,44 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				request.OnStarted (this, uids);
+
+				var copied = await CopyToAsync (uids, new CopyRequest (destination), cancellationToken).ConfigureAwait (false);
+				await StoreAsync (uids, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+				await ExpungeAsync (uids, new ExpungeRequest (), cancellationToken).ConfigureAwait (false);
+
+				request.OnCompleted (this, copied);
+
+				return copied;
+			}
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
+
+				request.OnStarted (this, uids);
+
+				await MoveToAsync (indexes, new MoveRequest (destination), cancellationToken).ConfigureAwait (false);
+
+				request.OnCompleted (this, UniqueIdMap.Empty);
+
+				return UniqueIdMap.Empty;
+			}
+
 			UniqueIdSet? dest = null;
 			UniqueIdSet? src = null;
 
-			foreach (var ic in Engine.QueueCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+			foreach (var ic in Engine.CreateCommands (cancellationToken, this, "UID MOVE %s %F\r\n", uids, destination)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
-				ProcessMoveToResponse (ic, destination, ref src, ref dest);
+				var moved = ProcessMoveToResponse (ic, destination, ref src, ref dest);
+
+				request.OnCompleted (this, moved);
 			}
 
 			if (dest == null)
@@ -5796,7 +6020,7 @@ namespace MailKit.Net.Imap {
 			CheckValidDestination (destination);
 		}
 
-		ImapCommand? QueueCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand? CreateCopyToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -5810,7 +6034,7 @@ namespace MailKit.Net.Imap {
 			ImapUtils.FormatIndexSet (Engine, command, indexes);
 			command.Append (" %F\r\n");
 
-			return Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
+			return new ImapCommand (Engine, cancellationToken, this, command.ToString (), destination);
 		}
 
 		void ProcessCopyToResponse (ImapCommand ic, IMailFolder destination)
@@ -5827,17 +6051,17 @@ namespace MailKit.Net.Imap {
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -5852,7 +6076,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="ICopyRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
@@ -5869,16 +6093,25 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override void CopyTo (IList<int> indexes, ICopyRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCopyToCommand (indexes, destination, cancellationToken);
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			var destination = request.Destination;
+			var ic = CreateCopyToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
 			ProcessCopyToResponse (ic, destination);
+
+			request.OnCompleted (this, indexes);
 		}
 
 		/// <summary>
@@ -5889,17 +6122,17 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The copy request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="ICopyRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -5914,7 +6147,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="ICopyRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
@@ -5931,19 +6164,28 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task CopyToAsync (IList<int> indexes, ICopyRequest request, CancellationToken cancellationToken = default)
 		{
-			var ic = QueueCopyToCommand (indexes, destination, cancellationToken);
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			var destination = request.Destination;
+			var ic = CreateCopyToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessCopyToResponse (ic, destination);
+
+			request.OnCompleted (this, indexes);
 		}
 
-		ImapCommand? QueueMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
+		ImapCommand? CreateMoveToCommand (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken)
 		{
 			ValidateArguments (indexes, destination);
 
@@ -5957,7 +6199,7 @@ namespace MailKit.Net.Imap {
 			ImapUtils.FormatIndexSet (Engine, command, indexes);
 			command.Append (" %F\r\n");
 
-			return Engine.QueueCommand (cancellationToken, this, command.ToString (), destination);
+			return new ImapCommand (Engine, cancellationToken, this, command.ToString (), destination);
 		}
 
 		void ProcessMoveToResponse (ImapCommand ic, IMailFolder destination)
@@ -5978,17 +6220,17 @@ namespace MailKit.Net.Imap {
 		/// handle spontaneous server disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -6000,7 +6242,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="IMoveRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
@@ -6017,22 +6259,45 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override void MoveTo (IList<int> indexes, IMoveRequest request, CancellationToken cancellationToken = default)
 		{
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			var destination = request.Destination;
+
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
-				CopyTo (indexes, destination, cancellationToken);
+				ValidateArguments (indexes, destination);
+
+				CheckState (true, true);
+				CheckAllowIndexes ();
+
+				if (indexes.Count == 0)
+					return;
+
+				request.OnStarted (this, indexes);
+
+				CopyTo (indexes, new CopyRequest (destination), cancellationToken);
 				Store (indexes, AddDeletedFlag, cancellationToken);
+
+				request.OnCompleted (this, indexes);
+
 				return;
 			}
 
-			var ic = QueueMoveToCommand (indexes, destination, cancellationToken);
+			var ic = CreateMoveToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
 			ProcessMoveToResponse (ic, destination);
+
+			request.OnCompleted (this, indexes);
 		}
 
 		/// <summary>
@@ -6047,17 +6312,17 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>An awaitable task.</returns>
 		/// <param name="indexes">The indexes of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
+		/// <param name="request">The move request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>The <see cref="IMoveRequest.Destination"/> folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -6069,7 +6334,7 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
-		/// <paramref name="destination"/> does not exist.
+		/// The <see cref="IMoveRequest.Destination"/> folder does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
@@ -6086,22 +6351,45 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default)
+		public override async Task MoveToAsync (IList<int> indexes, IMoveRequest request, CancellationToken cancellationToken = default)
 		{
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
+
+			var destination = request.Destination;
+
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
-				await CopyToAsync (indexes, destination, cancellationToken).ConfigureAwait (false);
+				ValidateArguments (indexes, destination);
+
+				CheckState (true, true);
+				CheckAllowIndexes ();
+
+				if (indexes.Count == 0)
+					return;
+
+				request.OnStarted (this, indexes);
+
+				await CopyToAsync (indexes, new CopyRequest (destination), cancellationToken).ConfigureAwait (false);
 				await StoreAsync (indexes, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
+
+				request.OnCompleted (this, indexes);
+
 				return;
 			}
 
-			var ic = QueueMoveToCommand (indexes, destination, cancellationToken);
+			var ic = CreateMoveToCommand (indexes, destination, cancellationToken);
 
 			if (ic == null)
 				return;
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessMoveToResponse (ic, destination);
+
+			request.OnCompleted (this, indexes);
 		}
 
 		#region IEnumerable<IMimeMessage> implementation

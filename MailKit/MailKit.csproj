@@ -221,11 +221,13 @@
     <Compile Include="CommandException.cs" />
     <Compile Include="CompressedStream.cs" />
     <Compile Include="ConnectedEventArgs.cs" />
+    <Compile Include="CopyRequest.cs" />
     <Compile Include="DeliveryStatusNotification.cs" />
     <Compile Include="DeliveryStatusNotificationType.cs" />
     <Compile Include="DisconnectedEventArgs.cs" />
     <Compile Include="DuplexStream.cs" />
     <Compile Include="Envelope.cs" />
+    <Compile Include="ExpungeRequest.cs" />
     <Compile Include="FetchRequest.cs" />
     <Compile Include="FolderAccess.cs" />
     <Compile Include="FolderAttributes.cs" />
@@ -240,9 +242,13 @@
     <Compile Include="HeaderSet.cs" />
     <Compile Include="IAuthenticationSecretDetector.cs" />
     <Compile Include="IAppendRequest.cs" />
+    <Compile Include="ICopyRequest.cs" />
+    <Compile Include="IExpungeRequest.cs" />
     <Compile Include="IFetchRequest.cs" />
     <Compile Include="IMailFolder.cs" />
     <Compile Include="IMailFolderAppendExtensions.cs" />
+    <Compile Include="IMailFolderCopyExtensions.cs" />
+    <Compile Include="IMailFolderExpungeExtensions.cs" />
     <Compile Include="IMailFolderFetchExtensions.cs" />
     <Compile Include="IMailFolderStoreExtensions.cs" />
     <Compile Include="IMailService.cs" />
@@ -250,6 +256,7 @@
     <Compile Include="IMailStore.cs" />
     <Compile Include="IMailTransport.cs" />
     <Compile Include="IMessageSummary.cs" />
+    <Compile Include="IMoveRequest.cs" />
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="IReplaceRequest.cs" />
     <Compile Include="IStoreFlagsRequest.cs" />
@@ -280,6 +287,7 @@
     <Compile Include="MetadataOptions.cs" />
     <Compile Include="MetadataTag.cs" />
     <Compile Include="ModSeqChangedEventArgs.cs" />
+    <Compile Include="MoveRequest.cs" />
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="PartialRange.cs" />
     <Compile Include="PreviewOptions.cs" />

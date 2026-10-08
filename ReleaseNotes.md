@@ -105,8 +105,33 @@ rather than the full MimeKit cryptography stack.
   should be updated to split on `"\r\n"` (or trim the trailing `'\r'` from each line).
 * The `error.type` values reported by MailKit's metrics are now more specific. See
   [Telemetry changes](#telemetry-changes) below.
+* Simplified the `IMailFolder.CopyTo ()`, `MoveTo ()` and `Expunge (IList<UniqueId>)` APIs (and their
+  `Async` variants) to take new `ICopyRequest`, `IMoveRequest` and `IExpungeRequest` parameters. The
+  previous overloads that took an `IMailFolder destination` (or no request) are now extension methods
+  in `IMailFolderExtensions`, so most calling code should continue to compile unchanged. Classes that
+  implement `IMailFolder` (or subclass `MailFolder`) will need to implement the new request-based
+  methods instead.
+* Added `OnStarted ()` and `OnCompleted ()` methods to the `IStoreRequest` and `IAppendRequest`
+  interfaces (and therefore `IStoreFlagsRequest`, `IStoreLabelsRequest` and `IReplaceRequest`).
+  Custom implementations of these interfaces will need to implement the new methods. The built-in
+  `StoreFlagsRequest`, `StoreLabelsRequest`, `AppendRequest` and `ReplaceRequest` classes implement
+  them as virtual no-ops.
 
 ### New Features
+
+* Added request callbacks that make it possible to observe exactly which changes the IMAP server has
+  applied, laying the groundwork for an offline/sync layer
+  (issue [#2023](https://github.com/jstedfast/MailKit/issues/2023)):
+  * Added the `ICopyRequest`/`CopyRequest`, `IMoveRequest`/`MoveRequest` and
+    `IExpungeRequest`/`ExpungeRequest` types.
+  * `OnStarted ()` is called immediately before each command is sent to the server, and `OnCompleted ()`
+    is called only after the server has successfully completed that command. Large operations may be
+    split into multiple commands, in which case the callbacks are called once per subset of messages.
+  * Store callbacks report the messages that were not modified due to `UNCHANGEDSINCE`, Append and
+    Replace callbacks report the UID of the new message (if available) and Copy/Move callbacks report
+    the `UniqueIdMap` of the copied/moved messages.
+  * When `ImapFolder` emulates an operation the server does not natively support (e.g. `MOVE` without
+    the `MOVE` extension or `MULTIAPPEND`), the callbacks are still invoked once per logical operation.
 
 * Added a `ProtocolErrorType` enum and a `ProtocolException.ErrorType` property that classifies why a
   protocol error occurred (`UnexpectedDisconnect`, `InvalidResponse`, `ServerDisconnected` or
