@@ -125,6 +125,16 @@ jobs:
           GIT_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           COVERALLS_JOB_ID: ${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}
 
+      # The unit test step uses continue-on-error so that the test results and code coverage data
+      # still get uploaded, but the job should still fail if any of the unit tests failed.
+      - if: ${{ steps.run_unit_tests.outcome == 'failure' }}
+        name: Fail if unit tests failed
+        id: check_unit_tests
+        shell: pwsh
+        run: |
+          Write-Output "::error::One or more unit tests failed. See the 'Run unit tests' step for details."
+          exit 1
+
       - if: ${{ env.PUBLISH == 'true' }}
         name: Create NuGet package
         id: create_nuget_package
