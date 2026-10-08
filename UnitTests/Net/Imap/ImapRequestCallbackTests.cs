@@ -207,6 +207,45 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		class RecordingStoreAnnotationsRequest : StoreAnnotationsRequest
+		{
+			public readonly List<IList<UniqueId>> StartedUids = new List<IList<UniqueId>> ();
+			public readonly List<IList<int>> StartedIndexes = new List<IList<int>> ();
+			public readonly List<IList<UniqueId>> CompletedUids = new List<IList<UniqueId>> ();
+			public readonly List<IList<UniqueId>> UnmodifiedUids = new List<IList<UniqueId>> ();
+			public readonly List<IList<int>> CompletedIndexes = new List<IList<int>> ();
+			public readonly List<IList<int>> UnmodifiedIndexes = new List<IList<int>> ();
+			public readonly List<IMailFolder> Folders = new List<IMailFolder> ();
+
+			public RecordingStoreAnnotationsRequest (IList<Annotation> annotations) : base (annotations)
+			{
+			}
+
+			public override void OnStarted (IMailFolder folder, IList<UniqueId> uids)
+			{
+				Folders.Add (folder);
+				StartedUids.Add (uids.ToArray ());
+			}
+
+			public override void OnStarted (IMailFolder folder, IList<int> indexes)
+			{
+				Folders.Add (folder);
+				StartedIndexes.Add (indexes.ToArray ());
+			}
+
+			public override void OnCompleted (IMailFolder folder, IList<UniqueId> uids, IList<UniqueId> unmodified)
+			{
+				CompletedUids.Add (uids.ToArray ());
+				UnmodifiedUids.Add (unmodified.ToArray ());
+			}
+
+			public override void OnCompleted (IMailFolder folder, IList<int> indexes, IList<int> unmodified)
+			{
+				CompletedIndexes.Add (indexes.ToArray ());
+				UnmodifiedIndexes.Add (unmodified.ToArray ());
+			}
+		}
+
 		static ImapReplayCommand Respond (string command, string response)
 		{
 			var tag = command.Substring (0, 9);
@@ -530,6 +569,104 @@ namespace UnitTests.Net.Imap {
 			Assert.That (request.Started[0], Is.SameAs (inbox));
 			Assert.That (request.Completed, Has.Count.EqualTo (1));
 			Assert.That (request.Completed[0]?.Id, Is.EqualTo (42));
+
+			await DisconnectAsync (client, async);
+		}
+
+		static List<ImapReplayCommand> CreateAnnotateSession ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+annotate.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate.txt")
+			};
+		}
+
+		static async Task<(ImapClient client, IMailFolder inbox)> ConnectAnnotateAsync (List<ImapReplayCommand> commands, bool async)
+		{
+			var client = new ImapClient () { TagPrefix = 'A' };
+
+			if (async) {
+				await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				await client.AuthenticateAsync ("username", "password");
+				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
+			} else {
+				client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				client.Authenticate ("username", "password");
+				client.Inbox.Open (FolderAccess.ReadWrite);
+			}
+
+			return (client, client.Inbox);
+		}
+
+		static List<Annotation> CreateAnnotations ()
+		{
+			var annotation = new Annotation (AnnotationEntry.AltSubject);
+			annotation.Properties.Add (AnnotationAttribute.SharedValue, "value");
+
+			return new List<Annotation> { annotation };
+		}
+
+		[Test]
+		public async Task TestStoreAnnotationsCallbacks ([Values] bool async)
+		{
+			var commands = CreateAnnotateSession ();
+			commands.Add (Respond ("A00000005 UID STORE 1:3 (UNCHANGEDSINCE 5) ANNOTATION (/altsubject (value.shared value))\r\n", "OK [MODIFIED 2] Store completed"));
+			commands.Add (Respond ("A00000006 STORE 1:3 (UNCHANGEDSINCE 5) ANNOTATION (/altsubject (value.shared value))\r\n", "OK [MODIFIED 2] Store completed"));
+			commands.Add (Respond ("A00000007 LOGOUT\r\n", "OK Logout completed"));
+
+			var (client, inbox) = await ConnectAnnotateAsync (commands, async);
+			var request = new RecordingStoreAnnotationsRequest (CreateAnnotations ()) { UnchangedSince = 5 };
+
+			var unmodifiedUids = async ? await inbox.StoreAsync (Uids, request) : inbox.Store (Uids, request);
+			var unmodifiedIndexes = async ? await inbox.StoreAsync (Indexes, request) : inbox.Store (Indexes, request);
+
+			Assert.That (request.Folders, Is.All.SameAs (inbox));
+			Assert.That (request.StartedUids, Has.Count.EqualTo (1));
+			Assert.That (request.StartedUids[0], Is.EqualTo (Uids));
+			Assert.That (request.CompletedUids, Has.Count.EqualTo (1));
+			Assert.That (request.CompletedUids[0], Is.EqualTo (Uids));
+			Assert.That (request.UnmodifiedUids[0].Select (x => x.Id), Is.EqualTo (new uint[] { 2 }));
+			Assert.That (unmodifiedUids.Select (x => x.Id), Is.EqualTo (new uint[] { 2 }));
+
+			Assert.That (request.StartedIndexes, Has.Count.EqualTo (1));
+			Assert.That (request.StartedIndexes[0], Is.EqualTo (Indexes));
+			Assert.That (request.CompletedIndexes, Has.Count.EqualTo (1));
+			Assert.That (request.CompletedIndexes[0], Is.EqualTo (Indexes));
+			Assert.That (request.UnmodifiedIndexes[0], Is.EqualTo (new int[] { 1 }));
+			Assert.That (unmodifiedIndexes, Is.EqualTo (new int[] { 1 }));
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public async Task TestStoreAnnotationsRejectedDoesNotComplete ([Values] bool async)
+		{
+			var commands = CreateAnnotateSession ();
+			commands.Add (Respond ("A00000005 UID STORE 1:3 ANNOTATION (/altsubject (value.shared value))\r\n", "NO [ANNOTATE TOOBIG] Annotate failed"));
+			commands.Add (Respond ("A00000006 STORE 1:3 ANNOTATION (/altsubject (value.shared value))\r\n", "NO [ANNOTATE TOOMANY] Annotate failed"));
+			commands.Add (Respond ("A00000007 LOGOUT\r\n", "OK Logout completed"));
+
+			var (client, inbox) = await ConnectAnnotateAsync (commands, async);
+			var request = new RecordingStoreAnnotationsRequest (CreateAnnotations ());
+
+			if (async) {
+				Assert.ThrowsAsync<ImapCommandException> (() => inbox.StoreAsync (Uids, request));
+				Assert.ThrowsAsync<ImapCommandException> (() => inbox.StoreAsync (Indexes, request));
+			} else {
+				Assert.Throws<ImapCommandException> (() => inbox.Store (Uids, request));
+				Assert.Throws<ImapCommandException> (() => inbox.Store (Indexes, request));
+			}
+
+			Assert.That (request.StartedUids, Has.Count.EqualTo (1));
+			Assert.That (request.CompletedUids, Is.Empty);
+			Assert.That (request.StartedIndexes, Has.Count.EqualTo (1));
+			Assert.That (request.CompletedIndexes, Is.Empty);
 
 			await DisconnectAsync (client, async);
 		}

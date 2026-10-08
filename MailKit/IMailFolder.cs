@@ -6949,20 +6949,21 @@ namespace MailKit {
 		Task<IList<int>> StoreAsync (IList<int> indexes, IStoreLabelsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Store the annotations for the specified message.
+		/// Store the annotations for a message.
 		/// </summary>
 		/// <remarks>
-		/// Stores the annotations for the specified message.
+		/// Stores the annotations for a message.
 		/// </remarks>
+		/// <returns><see langword="true" /> if the store operation was successful; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="annotations"/> is <see langword="null" />.
-		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="request"/> is <see langword="null" />.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
@@ -6973,13 +6974,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
+		/// <para>The folder does not support annotations.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6993,24 +6997,24 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void Store (UniqueId uid, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		bool Store (UniqueId uid, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified message.
+		/// Asynchronously store the annotations for a message.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified message.
+		/// Asynchronously stores the annotations for a message.
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
+		/// <returns><see langword="true" /> if the store operation was successful; otherwise, <see langword="false" />.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="annotations"/> is <see langword="null" />.
-		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="request"/> is <see langword="null" />.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
@@ -7021,13 +7025,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
+		/// <para>The folder does not support annotations.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7041,21 +7048,22 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task StoreAsync (UniqueId uid, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		Task<bool> StoreAsync (UniqueId uid, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Store the annotations for the specified messages.
+		/// Store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Stores the annotations for the specified messages.
+		/// Stores the annotations for a set of messages.
 		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <returns>The UIDs of the messages that were not updated.</returns>
+		/// <param name="uids">The message UIDs.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -7070,13 +7078,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
+		/// <para>The folder does not support annotations.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7090,22 +7101,22 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void Store (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		IList<UniqueId> Store (IList<UniqueId> uids, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified messages.
+		/// Asynchronously store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages.
+		/// Asynchronously stores the annotations for a set of messages.
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <returns>The UIDs of the messages that were not updated.</returns>
+		/// <param name="uids">The message UIDs.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -7120,13 +7131,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
+		/// <para>The folder does not support annotations.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7140,129 +7154,24 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task StoreAsync (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Store the annotations for a message.
 		/// </summary>
 		/// <remarks>
-		/// Stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Stores the annotations for a message.
 		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>The <see cref="IMailFolder"/> does not support annotations.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="IMailFolder"/> does not support mod-sequences.</para>
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		IList<UniqueId> Store (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Asynchronously store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>The <see cref="IMailFolder"/> does not support annotations.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="IMailFolder"/> does not support mod-sequences.</para>
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Store the annotations for the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Stores the annotations for the specified message.
-		/// </remarks>
+		/// <returns><see langword="true" /> if the store operation was successful; otherwise, <see langword="false" />.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="annotations"/> is <see langword="null" />.
-		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
 		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="request"/> is <see langword="null" />.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
@@ -7273,13 +7182,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
+		/// <para>The folder does not support annotations.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7293,72 +7205,23 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void Store (int index, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		bool Store (int index, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified message.
+		/// Asynchronously store the annotations for a message.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified message.
+		/// Asynchronously stores the annotations for a message.
 		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="index">The indexes of the message.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <returns><see langword="true" /> if the store operation was successful; otherwise, <see langword="false" />.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="annotations"/> is <see langword="null" />.
-		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="index"/> is invalid.
 		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task StoreAsync (int index, IList<Annotation> annotations, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Store the annotations for the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Stores the annotations for the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// <paramref name="request"/> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -7370,13 +7233,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
+		/// <para>The folder does not support annotations.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7390,73 +7256,22 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void Store (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		Task<bool> StoreAsync (int index, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified messages.
+		/// Store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages.
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailFolder"/> does not support annotations.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default);
-
-		/// <summary>
-		/// Store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Stores the annotations for a set of messages.
 		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="indexes">The message indexes.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -7471,15 +7286,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The <see cref="IMailFolder"/> does not support annotations.</para>
+		/// <para>The folder does not support annotations.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="IMailFolder"/> does not support mod-sequences.</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7493,23 +7309,22 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IList<int> Store (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		IList<int> Store (IList<int> indexes, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Asynchronously store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.s
+		/// Asynchronously stores the annotations for a set of message.
 		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="indexes">The message indexes.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -7524,15 +7339,16 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="IMailFolder"/> is not currently open in read-write mode.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// Cannot store annotations without any properties defined.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>The <see cref="IMailFolder"/> does not support annotations.</para>
+		/// <para>The folder does not support annotations.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="IMailFolder"/> does not support mod-sequences.</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/>
+		/// value but the folder does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7546,7 +7362,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default);
+		Task<IList<int>> StoreAsync (IList<int> indexes, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Search the folder for messages matching the specified query.

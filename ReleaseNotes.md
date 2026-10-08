@@ -105,6 +105,14 @@ rather than the full MimeKit cryptography stack.
   should be updated to split on `"\r\n"` (or trim the trailing `'\r'` from each line).
 * The `error.type` values reported by MailKit's metrics are now more specific. See
   [Telemetry changes](#telemetry-changes) below.
+* Simplified the `IMailFolder.Store ()` and `StoreAsync ()` methods for annotations to take a new
+  `IStoreAnnotationsRequest` parameter (implemented by the new `StoreAnnotationsRequest` class), matching
+  the existing flags and labels APIs. The previous overloads that took an `IList<Annotation>` (with or
+  without a `modseq`) are now extension methods in `IMailFolderExtensions`, so most calling code should
+  continue to compile unchanged. Classes that implement `IMailFolder` (or subclass `MailFolder`) will
+  need to implement the new request-based methods instead. The UID and index-based `Store ()` overloads
+  now return the UIDs/indexes of the messages that were not updated, and the single-message overloads
+  return a `bool`.
 * Simplified the `IMailFolder.CopyTo ()`, `MoveTo ()` and `Expunge (IList<UniqueId>)` APIs (and their
   `Async` variants) to take new `ICopyRequest`, `IMoveRequest` and `IExpungeRequest` parameters. The
   previous overloads that took an `IMailFolder destination` (or no request) are now extension methods
@@ -127,8 +135,8 @@ rather than the full MimeKit cryptography stack.
 * Added request callbacks that make it possible to observe exactly which changes the IMAP server has
   applied, laying the groundwork for an offline/sync layer
   (issue [#2023](https://github.com/jstedfast/MailKit/issues/2023)):
-  * Added the `ICopyRequest`/`CopyRequest`, `IMoveRequest`/`MoveRequest` and
-    `IExpungeRequest`/`ExpungeRequest` types.
+  * Added the `ICopyRequest`/`CopyRequest`, `IMoveRequest`/`MoveRequest`,
+    `IExpungeRequest`/`ExpungeRequest` and `IStoreAnnotationsRequest`/`StoreAnnotationsRequest` types.
   * `OnStarted ()` is called immediately before each command is sent to the server, and `OnCompleted ()`
     is called only after the server has successfully completed that command. Large operations may be
     split into multiple commands, in which case the callbacks are called once per subset of messages.

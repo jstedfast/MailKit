@@ -36,31 +36,33 @@ namespace MailKit.Net.Imap
 {
 	public partial class ImapFolder
 	{
-		IEnumerable<ImapCommand> QueueStoreCommands (IList<UniqueId> uids, ulong? modseq, IList<Annotation> annotations, CancellationToken cancellationToken)
+		IEnumerable<ImapCommand> CreateStoreCommands (IList<UniqueId> uids, IStoreAnnotationsRequest request, CancellationToken cancellationToken)
 		{
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if (modseq.HasValue && !supportsModSeq)
-				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
-			if (annotations == null)
-				throw new ArgumentNullException (nameof (annotations));
+			if (request.UnchangedSince.HasValue && !supportsModSeq)
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, true);
 
 			if (AnnotationAccess == AnnotationAccess.None)
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
-			if (uids.Count == 0 || annotations.Count == 0)
+			var annotations = request.Annotations;
+
+			if (uids.Count == 0 || annotations == null || annotations.Count == 0)
 				return Array.Empty<ImapCommand> ();
 
 			var builder = new StringBuilder ("UID STORE %s ");
 			var values = new List<object> ();
 
-			if (modseq.HasValue) {
+			if (request.UnchangedSince.HasValue) {
 				builder.Append ("(UNCHANGEDSINCE ");
-				builder.Append (modseq.Value.ToString (CultureInfo.InvariantCulture));
+				builder.Append (request.UnchangedSince.Value.ToString (CultureInfo.InvariantCulture));
 				builder.Append (") ");
 			}
 
@@ -70,7 +72,7 @@ namespace MailKit.Net.Imap
 			var command = builder.ToString ();
 			var args = values.ToArray ();
 
-			return Engine.QueueCommands (cancellationToken, this, command, uids, args);
+			return Engine.CreateCommands (cancellationToken, this, command, uids, args);
 		}
 
 		void ProcessStoreAnnotationsResponse (ImapCommand ic)
@@ -83,135 +85,20 @@ namespace MailKit.Net.Imap
 				throw ImapCommandException.Create ("STORE", ic);
 			}
 		}
-
 		/// <summary>
-		/// Store the annotations for the specified messages.
+		/// Store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Stores the annotations for the specified messages.
+		/// Stores the annotations for a set of messages.
 		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <returns>The UIDs of the messages that were not updated.</returns>
+		/// <param name="uids">The message UIDs.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support annotations.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public override void Store (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default)
-		{
-			foreach (var ic in QueueStoreCommands (uids, null, annotations, cancellationToken)) {
-				Engine.Run (ic);
-
-				ProcessStoreAnnotationsResponse (ic);
-			}
-		}
-
-		/// <summary>
-		/// Asynchronously store the annotations for the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages.
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support annotations.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public override async Task StoreAsync (IList<UniqueId> uids, IList<Annotation> annotations, CancellationToken cancellationToken = default)
-		{
-			foreach (var ic in QueueStoreCommands (uids, null, annotations, cancellationToken)) {
-				await Engine.RunAsync (ic).ConfigureAwait (false);
-
-				ProcessStoreAnnotationsResponse (ic);
-			}
-		}
-
-		/// <summary>
-		/// Store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -234,7 +121,8 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.NotSupportedException">
 		/// <para>The <see cref="ImapFolder"/> does not support annotations.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/> value
+		/// but the <see cref="ImapFolder"/> does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -248,16 +136,23 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Store (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override IList<UniqueId> Store (IList<UniqueId> uids, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default)
 		{
 			UniqueIdSet? unmodified = null;
 
-			foreach (var ic in QueueStoreCommands (uids, modseq, annotations, cancellationToken)) {
+			foreach (var ic in CreateStoreCommands (uids, request, cancellationToken)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
 				ProcessStoreAnnotationsResponse (ic);
 
-				ProcessUnmodified (ic, ref unmodified, modseq);
+				var chunkUnmodified = ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+
+				request.OnCompleted (this, chunk, chunkUnmodified);
 			}
 
 			if (unmodified == null)
@@ -267,20 +162,19 @@ namespace MailKit.Net.Imap
 		}
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Asynchronously store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Asynchronously stores the annotations for a set of messages.
 		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <returns>The UIDs of the messages that were not updated.</returns>
+		/// <param name="uids">The message UIDs.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="uids"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -303,7 +197,8 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.NotSupportedException">
 		/// <para>The <see cref="ImapFolder"/> does not support annotations.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/> value
+		/// but the <see cref="ImapFolder"/> does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -317,16 +212,23 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override async Task<IList<UniqueId>> StoreAsync (IList<UniqueId> uids, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default)
 		{
 			UniqueIdSet? unmodified = null;
 
-			foreach (var ic in QueueStoreCommands (uids, modseq, annotations, cancellationToken)) {
+			foreach (var ic in CreateStoreCommands (uids, request, cancellationToken)) {
+				var chunk = ic.UniqueIds!;
+
+				request.OnStarted (this, chunk);
+
+				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
 				ProcessStoreAnnotationsResponse (ic);
 
-				ProcessUnmodified (ic, ref unmodified, modseq);
+				var chunkUnmodified = ProcessUnmodified (ic, ref unmodified, request.UnchangedSince);
+
+				request.OnCompleted (this, chunk, chunkUnmodified);
 			}
 
 			if (unmodified == null)
@@ -335,23 +237,25 @@ namespace MailKit.Net.Imap
 			return unmodified;
 		}
 
-		bool TryQueueStoreCommand (IList<int> indexes, ulong? modseq, IList<Annotation> annotations, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
+		bool TryCreateStoreCommand (IList<int> indexes, IStoreAnnotationsRequest request, CancellationToken cancellationToken, [NotNullWhen (true)] out ImapCommand? ic)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException (nameof (indexes));
 
-			if (modseq.HasValue && !supportsModSeq)
-				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
-			if (annotations == null)
-				throw new ArgumentNullException (nameof (annotations));
+			if (request.UnchangedSince.HasValue && !supportsModSeq)
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, true);
 
 			if (AnnotationAccess == AnnotationAccess.None)
 				throw new NotSupportedException ("The ImapFolder does not support annotations.");
 
-			if (indexes.Count == 0 || annotations.Count == 0) {
+			var annotations = request.Annotations;
+
+			if (indexes.Count == 0 || annotations == null || annotations.Count == 0) {
 				ic = null;
 				return false;
 			}
@@ -362,150 +266,33 @@ namespace MailKit.Net.Imap
 			ImapUtils.FormatIndexSet (Engine, command, indexes);
 			command.Append (' ');
 
-			if (modseq.HasValue) {
+			if (request.UnchangedSince.HasValue) {
 				command.Append ("(UNCHANGEDSINCE ");
-				command.Append (modseq.Value.ToString (CultureInfo.InvariantCulture));
+				command.Append (request.UnchangedSince.Value.ToString (CultureInfo.InvariantCulture));
 				command.Append (") ");
 			}
 
 			ImapUtils.FormatAnnotations (command, annotations, args, true);
 			command.Append ("\r\n");
 
-			ic = Engine.QueueCommand (cancellationToken, this, command.ToString (), args.ToArray ());
+			ic = new ImapCommand (Engine, cancellationToken, this, command.ToString (), args.ToArray ());
 
 			return true;
 		}
-
 		/// <summary>
-		/// Store the annotations for the specified messages.
+		/// Store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Stores the annotations for the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support annotations.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public override void Store (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
-		{
-			if (!TryQueueStoreCommand (indexes, null, annotations, cancellationToken, out var ic))
-				return;
-
-			Engine.Run (ic);
-
-			ProcessStoreAnnotationsResponse (ic);
-		}
-
-		/// <summary>
-		/// Asynchronously store the annotations for the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages.
-		/// </remarks>
-		/// <returns>An asynchronous task context.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="annotations">The annotations to store.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Cannot store annotations without any properties defined.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="ImapFolder"/> does not support annotations.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public override async Task StoreAsync (IList<int> indexes, IList<Annotation> annotations, CancellationToken cancellationToken = default)
-		{
-			if (!TryQueueStoreCommand (indexes, null, annotations, cancellationToken, out var ic))
-				return;
-
-			await Engine.RunAsync (ic).ConfigureAwait (false);
-
-			ProcessStoreAnnotationsResponse (ic);
-		}
-
-		/// <summary>
-		/// Store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Stores the annotations for a set of messages.
 		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="indexes">The message indexes.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -528,7 +315,8 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.NotSupportedException">
 		/// <para>The <see cref="ImapFolder"/> does not support annotations.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/> value
+		/// but the <see cref="ImapFolder"/> does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -542,33 +330,39 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<int> Store (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override IList<int> Store (IList<int> indexes, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueStoreCommand (indexes, modseq, annotations, cancellationToken, out var ic))
+			if (!TryCreateStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
 			ProcessStoreAnnotationsResponse (ic);
 
-			return GetUnmodified (ic, modseq);
+			var unmodified = GetUnmodified (ic, request.UnchangedSince);
+
+			request.OnCompleted (this, indexes, unmodified);
+
+			return unmodified;
 		}
 
 		/// <summary>
-		/// Asynchronously store the annotations for the specified messages only if their mod-sequence value is less than the specified value.
+		/// Asynchronously store the annotations for a set of messages.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously stores the annotations for the specified messages only if their mod-sequence value is less than the specified value.s
+		/// Asynchronously stores the annotations for a set of messages.
 		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="annotations">The annotations to store.</param>
+		/// <param name="indexes">The message indexes.</param>
+		/// <param name="request">The annotations to store.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="indexes"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="annotations"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -591,7 +385,8 @@ namespace MailKit.Net.Imap
 		/// <exception cref="System.NotSupportedException">
 		/// <para>The <see cref="ImapFolder"/> does not support annotations.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="ImapFolder"/> does not support mod-sequences.</para>
+		/// <para>The <paramref name="request"/> specified an <see cref="IStoreRequest.UnchangedSince"/> value
+		/// but the <see cref="ImapFolder"/> does not support mod-sequences.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -605,16 +400,23 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<IList<int>> StoreAsync (IList<int> indexes, ulong modseq, IList<Annotation> annotations, CancellationToken cancellationToken = default)
+		public override async Task<IList<int>> StoreAsync (IList<int> indexes, IStoreAnnotationsRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!TryQueueStoreCommand (indexes, modseq, annotations, cancellationToken, out var ic))
+			if (!TryCreateStoreCommand (indexes, request, cancellationToken, out var ic))
 				return Array.Empty<int> ();
 
+			request.OnStarted (this, indexes);
+
+			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessStoreAnnotationsResponse (ic);
 
-			return GetUnmodified (ic, modseq);
+			var unmodified = GetUnmodified (ic, request.UnchangedSince);
+
+			request.OnCompleted (this, indexes, unmodified);
+
+			return unmodified;
 		}
 	}
 }
