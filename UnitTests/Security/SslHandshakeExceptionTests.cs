@@ -220,20 +220,29 @@ namespace UnitTests.Security {
 			}
 		}
 
-		static void AssertBadSslExpiredServerCertificate (X509Certificate2 certificate)
+		// Note: The badssl.com certificates get renewed periodically (often with a different issuing CA, intermediate
+		// and/or root), so these helpers only assert properties that are inherent to each badssl.com test endpoint
+		// rather than pinning issuers, serial numbers or thumbprints.
+		static string GetCommonName (X509Certificate2 certificate)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("*.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=COMODO RSA Domain Validation Secure Server CA, O=COMODO CA Limited, L=Salford, S=Greater Manchester, C=GB"), "Issuer");
-			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
-			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
+			return certificate.GetNameInfo (X509NameType.SimpleName, false);
 		}
 
-		static void AssertBadSslExpiredCACertificate (X509Certificate2 certificate)
+		static void AssertSelfSigned (X509Certificate2 certificate, string message)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("COMODO RSA Certification Authority"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=COMODO RSA Certification Authority, O=COMODO CA Limited, L=Salford, S=Greater Manchester, C=GB"), "Issuer");
-			Assert.That (certificate.SerialNumber, Is.EqualTo ("4CAAF9CADB636FE01FF74ED85B03869D"), "SerialNumber");
-			Assert.That (certificate.Thumbprint, Is.EqualTo ("AFE5D244A8D1194230FF479FE2F897BBCD7A8CB4"), "Thumbprint");
+			Assert.That (certificate.SubjectName.RawData, Is.EqualTo (certificate.IssuerName.RawData), message);
+		}
+
+		static void AssertBadSslRootCertificateAuthority (X509Certificate2 root, X509Certificate2 server)
+		{
+			Assert.That (root.Thumbprint, Is.Not.EqualTo (server.Thumbprint), "RootCertificateAuthority should not be the server certificate");
+			AssertSelfSigned (root, "RootCertificateAuthority should be self-signed");
+		}
+
+		static void AssertBadSslExpiredServerCertificate (X509Certificate2 certificate)
+		{
+			Assert.That (GetCommonName (certificate), Is.EqualTo ("*.badssl.com"), "CommonName");
+			Assert.That (certificate.NotAfter, Is.LessThan (DateTime.Now), "NotAfter");
 		}
 
 		[Test]
@@ -251,7 +260,7 @@ namespace UnitTests.Security {
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						AssertBadSslExpiredCACertificate (root);
+						AssertBadSslRootCertificateAuthority (root, (X509Certificate2) ex.ServerCertificate);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -273,7 +282,7 @@ namespace UnitTests.Security {
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						AssertBadSslExpiredCACertificate (root);
+						AssertBadSslRootCertificateAuthority (root, (X509Certificate2) ex.ServerCertificate);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -282,18 +291,8 @@ namespace UnitTests.Security {
 
 		static void AssertBadSslWrongHostServerCertificate (X509Certificate2 certificate)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("*.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=YR1, O=Let's Encrypt, C=US"), "Issuer");
-			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
-			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
-		}
-
-		static void AssertBadSslWrongHostCACertificate (X509Certificate2 certificate)
-		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("ISRG Root X1"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=ISRG Root X1, O=Internet Security Research Group, C=US"), "Issuer");
-			Assert.That (certificate.SerialNumber, Is.EqualTo ("008210CFB0D240E3594463E0BB63828B00"), "SerialNumber");
-			Assert.That (certificate.Thumbprint, Is.EqualTo ("CABD2A79A1076A31F21D253635CB039D4329A5E8"), "Thumbprint");
+			// Note: wrong.host.badssl.com serves the *.badssl.com certificate which does not match the 2-level subdomain.
+			Assert.That (GetCommonName (certificate), Is.EqualTo ("*.badssl.com"), "CommonName");
 		}
 
 		[Test]
@@ -311,7 +310,7 @@ namespace UnitTests.Security {
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						AssertBadSslWrongHostCACertificate (root);
+						AssertBadSslRootCertificateAuthority (root, (X509Certificate2) ex.ServerCertificate);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -333,7 +332,7 @@ namespace UnitTests.Security {
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						AssertBadSslWrongHostCACertificate (root);
+						AssertBadSslRootCertificateAuthority (root, (X509Certificate2) ex.ServerCertificate);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -342,10 +341,8 @@ namespace UnitTests.Security {
 
 		static void AssertBadSslSelfSignedServerCertificate (X509Certificate2 certificate)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("*.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=*.badssl.com, O=BadSSL, L=San Francisco, S=California, C=US"), "Issuer");
-			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
-			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
+			Assert.That (GetCommonName (certificate), Is.EqualTo ("*.badssl.com"), "CommonName");
+			AssertSelfSigned (certificate, "ServerCertificate should be self-signed");
 		}
 
 		[Test]
@@ -388,20 +385,18 @@ namespace UnitTests.Security {
 			}
 		}
 
+		const string BadSslUntrustedRootCommonName = "BadSSL Untrusted Root Certificate Authority";
+
 		public static void AssertBadSslUntrustedRootServerCertificate (X509Certificate2 certificate)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("*.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US"), "Issuer");
-			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
-			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
+			Assert.That (GetCommonName (certificate), Is.EqualTo ("*.badssl.com"), "CommonName");
+			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, true), Is.EqualTo (BadSslUntrustedRootCommonName), "Issuer");
 		}
 
 		public static void AssertBadSslUntrustedRootCACertificate (X509Certificate2 certificate)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("BadSSL Untrusted Root Certificate Authority"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=BadSSL Untrusted Root Certificate Authority, O=BadSSL, L=San Francisco, S=California, C=US"), "Issuer");
-			Assert.That (certificate.SerialNumber, Is.EqualTo ("0097A0FCFAD7E528FD"), "SerialNumber");
-			Assert.That (certificate.Thumbprint, Is.EqualTo ("7890C8934D5869B25D2F8D0D646F9A5D7385BA85"), "Thumbprint");
+			Assert.That (GetCommonName (certificate), Is.EqualTo (BadSslUntrustedRootCommonName), "CommonName");
+			AssertSelfSigned (certificate, "RootCertificateAuthority should be self-signed");
 		}
 
 		[Test]
@@ -450,18 +445,7 @@ namespace UnitTests.Security {
 
 		static void AssertBadSslRevokedServerCertificate (X509Certificate2 certificate)
 		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("revoked.badssl.com"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=YE2, O=Let's Encrypt, C=US"), "Issuer");
-			//Assert.That (certificate.SerialNumber, Is.EqualTo ("008040A36688A3B1F2"), "SerialNumber");
-			//Assert.That (certificate.Thumbprint, Is.EqualTo ("209BADBBC9E63BBFFC301B3E30C5B51216FCE81D"), "Thumbprint");
-		}
-
-		static void AssertBadSslRevokedCACertificate (X509Certificate2 certificate)
-		{
-			Assert.That (certificate.GetNameInfo (X509NameType.SimpleName, false), Is.EqualTo ("ISRG Root X1"), "CommonName");
-			Assert.That (certificate.Issuer, Is.EqualTo ("CN=ISRG Root X1, O=Internet Security Research Group, C=US"), "Issuer");
-			Assert.That (certificate.SerialNumber, Is.EqualTo ("008210CFB0D240E3594463E0BB63828B00"), "SerialNumber");
-			Assert.That (certificate.Thumbprint, Is.EqualTo ("CABD2A79A1076A31F21D253635CB039D4329A5E8"), "Thumbprint");
+			Assert.That (GetCommonName (certificate), Is.EqualTo ("revoked.badssl.com"), "CommonName");
 		}
 
 		[Test]
@@ -479,7 +463,7 @@ namespace UnitTests.Security {
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						AssertBadSslRevokedCACertificate (root);
+						AssertBadSslRootCertificateAuthority (root, (X509Certificate2) ex.ServerCertificate);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}
@@ -501,7 +485,7 @@ namespace UnitTests.Security {
 
 					// Note: This is null on Mono because Mono provides an empty chain.
 					if (ex.RootCertificateAuthority is X509Certificate2 root)
-						AssertBadSslRevokedCACertificate (root);
+						AssertBadSslRootCertificateAuthority (root, (X509Certificate2) ex.ServerCertificate);
 				} catch (Exception ex) {
 					Assert.Ignore ($"SSL handshake failure inconclusive: {ex}");
 				}

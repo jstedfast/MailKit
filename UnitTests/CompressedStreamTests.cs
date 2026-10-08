@@ -89,14 +89,14 @@ namespace UnitTests {
 			using (var stream = new CompressedStream (new DummyNetworkStream ())) {
 				string command = "A00000001 APPEND INBOX (\\Seen \\Draft) {4096+}\r\nFrom: Sample Sender <sender@sample.com>\r\nTo: Sample Recipient <recipient@sample.com>\r\nSubject: This is a test message...\r\nDate: Mon, 22 Oct 2018 18:22:56 EDT\r\nMessage-Id: <msgid@localhost.com>\r\n\r\nTesting... 1. 2. 3.\r\nTesting.\r\nOver and out.\r\n";
 				var output = Encoding.ASCII.GetBytes (command);
-				const int compressedLength = 222;
 				var buffer = new byte[1024];
 				int n;
 
 				stream.Write (output, 0, output.Length);
 				stream.Flush ();
 
-				Assert.That (stream.InnerStream.Position, Is.EqualTo (compressedLength), "Compressed output length");
+				// Note: The exact compressed length depends on the zlib implementation (e.g. zlib vs zlib-ng).
+				Assert.That (stream.InnerStream.Position, Is.GreaterThan (0).And.LessThan (output.Length), "Compressed output length");
 
 				stream.InnerStream.Position = 0;
 
@@ -114,14 +114,14 @@ namespace UnitTests {
 			using (var stream = new CompressedStream (new DummyNetworkStream ())) {
 				string command = "A00000001 APPEND INBOX (\\Seen \\Draft) {4096+}\r\nFrom: Sample Sender <sender@sample.com>\r\nTo: Sample Recipient <recipient@sample.com>\r\nSubject: This is a test message...\r\nDate: Mon, 22 Oct 2018 18:22:56 EDT\r\nMessage-Id: <msgid@localhost.com>\r\n\r\nTesting... 1. 2. 3.\r\nTesting.\r\nOver and out.\r\n";
 				var output = Encoding.ASCII.GetBytes (command);
-				const int compressedLength = 222;
 				var buffer = new byte[1024];
 				int n;
 
 				await stream.WriteAsync (output, 0, output.Length);
 				await stream.FlushAsync ();
 
-				Assert.That (stream.InnerStream.Position, Is.EqualTo (compressedLength), "Compressed output length");
+				// Note: The exact compressed length depends on the zlib implementation (e.g. zlib vs zlib-ng).
+				Assert.That (stream.InnerStream.Position, Is.GreaterThan (0).And.LessThan (output.Length), "Compressed output length");
 
 				stream.InnerStream.Position = 0;
 
