@@ -54,16 +54,19 @@ Features include:
     <dependencies>
       <group targetFramework="net462">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
+        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
         <dependency id="MimeKit.Core" version="5.0.0" />
       </group>
       <group targetFramework="net47">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
+        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
         <dependency id="MimeKit.Core" version="5.0.0" />
       </group>
       <group targetFramework="net48">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
+        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
         <dependency id="MimeKit.Core" version="5.0.0" />
       </group>
@@ -77,6 +80,7 @@ Features include:
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Formats.Asn1" version="10.0.0" />
+        <dependency id="Microsoft.Bcl.AsyncInterfaces" version="10.0.0" />
         <dependency id="System.Threading.Tasks.Extensions" version="4.6.3" />
         <dependency id="MimeKit.Core" version="5.0.0" />
       </group>

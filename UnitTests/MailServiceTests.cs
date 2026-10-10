@@ -81,5 +81,53 @@ namespace UnitTests {
 				}
 			}
 		}
+
+		static IEnumerable<Func<IProtocolLogger, MailService>> ClientFactories ()
+		{
+			yield return logger => new ImapClient (logger);
+			yield return logger => new Pop3Client (logger);
+			yield return logger => new SmtpClient (logger);
+		}
+
+		[TestCaseSource (nameof (ClientFactories))]
+		public async Task TestDisposeAsync (Func<IProtocolLogger, MailService> createClient)
+		{
+			var log = new MemoryStream ();
+			var client = createClient (new ProtocolLogger (log));
+
+			await using (client) {
+				Assert.That (client.IsConnected, Is.False);
+			}
+
+			Assert.That (log.CanWrite, Is.False, "The ProtocolLogger should have been disposed.");
+			Assert.Throws<ObjectDisposedException> (() => client.Connect (new MemoryStream (), "localhost", 143, SecureSocketOptions.None));
+			Assert.ThrowsAsync<ObjectDisposedException> (() => client.ConnectAsync (new MemoryStream (), "localhost", 143, SecureSocketOptions.None));
+
+			// Disposing more than once should be harmless.
+			await client.DisposeAsync ();
+			client.Dispose ();
+		}
+
+		class AsyncDisposeTrackingImapClient : ImapClient
+		{
+			public int DisposeAsyncCoreCount;
+
+			protected override async ValueTask DisposeAsyncCore ()
+			{
+				DisposeAsyncCoreCount++;
+				await base.DisposeAsyncCore ();
+			}
+		}
+
+		[Test]
+		public async Task TestDisposeAsyncCoreOverride ()
+		{
+			var client = new AsyncDisposeTrackingImapClient ();
+
+			await ((IAsyncDisposable) client).DisposeAsync ();
+
+			Assert.That (client.DisposeAsyncCoreCount, Is.EqualTo (1));
+			Assert.Throws<ObjectDisposedException> (() => client.Connect (new MemoryStream (), "localhost", 143, SecureSocketOptions.None));
+		}
 	}
 }

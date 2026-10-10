@@ -50,7 +50,7 @@ namespace MailKit {
 	/// <see cref="MailKit.Net.Pop3.Pop3Client"/> and
 	/// <see cref="MailKit.Net.Smtp.SmtpClient"/>.
 	/// </remarks>
-	public interface IMailService : IDisposable
+	public interface IMailService : IDisposable, IAsyncDisposable
 	{
 		/// <summary>
 		/// Get an object that can be used to synchronize access to the folder.

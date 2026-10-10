@@ -166,8 +166,17 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   * The `MessageSentEventArgs` constructor now takes an `ISendRequest` and a `SendResult`, and the
     event args expose new `Request` and `Result` properties. `MessageSentEventArgs.Response` has
     been renamed to `ResponseText`.
+* `IMailService` now extends `IAsyncDisposable`. Custom implementations of `IMailService` (or
+  `IMailStore`, `IMailTransport` and `IMailSpool`) that do not derive from `MailService` must implement
+  `DisposeAsync ()`. On .NET Framework and .NET Standard 2.0, MailKit now depends on
+  `Microsoft.Bcl.AsyncInterfaces`.
 
 ### New Features
+
+* `MailService` (and therefore `ImapClient`, `Pop3Client` and `SmtpClient`) now implements
+  `IAsyncDisposable`, so clients can be used with `await using`. Like `Dispose ()`, `DisposeAsync ()`
+  does not send `LOGOUT`/`QUIT`; call `DisconnectAsync (true)` first to disconnect cleanly. Subclasses
+  can override the new protected `DisposeAsyncCore ()` method to release resources asynchronously.
 
 * Added `ISendRequest`/`SendRequest` and `ISmtpSendRequest`/`SmtpSendRequest`, which bundle a message
   with its envelope sender, recipients, transfer progress and (for SMTP) DSN options, making it

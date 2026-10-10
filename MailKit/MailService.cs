@@ -1700,5 +1700,43 @@ namespace MailKit {
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+
+		/// <summary>
+		/// Asynchronously releases the managed resources used by the <see cref="MailService"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously releases the managed resources used by the <see cref="MailService"/>.</para>
+		/// <para>Subclasses that need to release resources asynchronously should override this method.
+		/// The default implementation calls <see cref="Dispose(bool)"/> with a value of
+		/// <see langword="true" />.</para>
+		/// </remarks>
+		/// <returns>A task that represents the asynchronous dispose operation.</returns>
+		protected virtual ValueTask DisposeAsyncCore ()
+		{
+			Dispose (true);
+
+			return default;
+		}
+
+		/// <summary>
+		/// Asynchronously releases all resources used by the <see cref="MailService"/> object.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously releases all resources used by the <see cref="MailService"/> object,
+		/// allowing the service to be used with <c>await using</c>.</para>
+		/// <para>Like <see cref="Dispose()"/>, this method does not send any commands to the server
+		/// (such as <c>LOGOUT</c> or <c>QUIT</c>). To disconnect cleanly, call
+		/// <see cref="DisconnectAsync(bool, CancellationToken)"/> with a value of
+		/// <see langword="true" /> before disposing the service.</para>
+		/// <para>After calling <see cref="DisposeAsync()"/>, you must release all references to the
+		/// <see cref="MailService"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="MailService"/> was occupying.</para>
+		/// </remarks>
+		/// <returns>A task that represents the asynchronous dispose operation.</returns>
+		public async ValueTask DisposeAsync ()
+		{
+			await DisposeAsyncCore ().ConfigureAwait (false);
+			GC.SuppressFinalize (this);
+		}
 	}
 }
