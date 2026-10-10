@@ -141,14 +141,14 @@ namespace MailKit.Net.Imap {
 		public override bool Supports (FolderFeature feature)
 		{
 			switch (feature) {
-			case FolderFeature.AccessRights: return (Engine.Capabilities & ImapCapabilities.Acl) != 0;
+			case FolderFeature.AccessRights: return Engine.Capabilities.Contains (ImapCapability.Acl);
 			case FolderFeature.Annotations: return AnnotationAccess != AnnotationAccess.None;
-			case FolderFeature.Metadata: return (Engine.Capabilities & ImapCapabilities.Metadata) != 0;
+			case FolderFeature.Metadata: return Engine.Capabilities.Contains (ImapCapability.Metadata);
 			case FolderFeature.ModSequences: return supportsModSeq;
 			case FolderFeature.QuickResync: return Engine.QResyncEnabled;
-			case FolderFeature.Quotas: return (Engine.Capabilities & ImapCapabilities.Quota) != 0;
-			case FolderFeature.Sorting: return (Engine.Capabilities & ImapCapabilities.Sort) != 0;
-			case FolderFeature.Threading: return (Engine.Capabilities & ImapCapabilities.Thread) != 0;
+			case FolderFeature.Quotas: return Engine.Capabilities.Contains (ImapCapability.Quota);
+			case FolderFeature.Sorting: return Engine.Capabilities.Contains (ImapCapability.Sort);
+			case FolderFeature.Threading: return Engine.Capabilities.Contains (ImapCapability.Thread);
 			case FolderFeature.UTF8: return Engine.UTF8Enabled;
 			default: return false;
 			}
@@ -338,7 +338,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.QuickResync))
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
 			if (!Supports (FolderFeature.QuickResync))
@@ -346,7 +346,7 @@ namespace MailKit.Net.Imap {
 
 			string qresync;
 
-			if ((Engine.Capabilities & ImapCapabilities.Annotate) != 0 && Engine.QuirksMode != ImapQuirksMode.iCloud)
+			if (Engine.Capabilities.Contains (ImapCapability.Annotate) && Engine.QuirksMode != ImapQuirksMode.iCloud)
 				qresync = string.Format (CultureInfo.InvariantCulture, "(ANNOTATE QRESYNC ({0} {1}", uidValidity, highestModSeq);
 			else
 				qresync = string.Format (CultureInfo.InvariantCulture, "(QRESYNC ({0} {1}", uidValidity, highestModSeq);
@@ -563,9 +563,9 @@ namespace MailKit.Net.Imap {
 
 			var @params = string.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0)
+			if (Engine.Capabilities.Contains (ImapCapability.CondStore))
 				@params += "CONDSTORE";
-			if ((Engine.Capabilities & ImapCapabilities.Annotate) != 0 && Engine.QuirksMode != ImapQuirksMode.iCloud)
+			if (Engine.Capabilities.Contains (ImapCapability.Annotate) && Engine.QuirksMode != ImapQuirksMode.iCloud)
 				@params += " ANNOTATE";
 
 			if (@params.Length > 0)
@@ -673,7 +673,7 @@ namespace MailKit.Net.Imap {
 
 			if (expunge) {
 				ic = Engine.QueueCommand (cancellationToken, this, "CLOSE\r\n");
-			} else if ((Engine.Capabilities & ImapCapabilities.Unselect) != 0) {
+			} else if (Engine.Capabilities.Contains (ImapCapability.Unselect)) {
 				ic = Engine.QueueCommand (cancellationToken, this, "UNSELECT\r\n");
 			} else {
 				ic = null;
@@ -995,7 +995,7 @@ namespace MailKit.Net.Imap {
 			if (!string.IsNullOrEmpty (FullName) && DirectorySeparator == '\0')
 				throw new InvalidOperationException ("Cannot create child folders.");
 
-			if ((Engine.Capabilities & ImapCapabilities.CreateSpecialUse) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.CreateSpecialUse))
 				throw new NotSupportedException ("The IMAP server does not support the CREATE-SPECIAL-USE extension.");
 
 			var uses = new StringBuilder ();
@@ -1647,7 +1647,7 @@ namespace MailKit.Net.Imap {
 			var lsub = subscribedOnly;
 
 			if (subscribedOnly) {
-				if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
+				if (Engine.Capabilities.Contains (ImapCapability.ListExtended)) {
 					command.Append ("LIST (SUBSCRIBED)");
 					returnsSubscribed = true;
 					lsub = false;
@@ -1661,10 +1661,10 @@ namespace MailKit.Net.Imap {
 			command.Append (" \"\" %S");
 
 			if (!lsub) {
-				if (items != StatusItems.None && (Engine.Capabilities & ImapCapabilities.ListStatus) != 0) {
+				if (items != StatusItems.None && Engine.Capabilities.Contains (ImapCapability.ListStatus)) {
 					command.Append (" RETURN (");
 
-					if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
+					if (Engine.Capabilities.Contains (ImapCapability.ListExtended)) {
 						if (!subscribedOnly) {
 							command.Append ("SUBSCRIBED ");
 							returnsSubscribed = true;
@@ -1676,7 +1676,7 @@ namespace MailKit.Net.Imap {
 					command.Append (Engine.GetStatusQuery (items));
 					command.Append ("))");
 					status = false;
-				} else if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
+				} else if (Engine.Capabilities.Contains (ImapCapability.ListExtended)) {
 					command.Append (" RETURN (");
 					if (!subscribedOnly) {
 						command.Append ("SUBSCRIBED ");
@@ -2130,7 +2130,7 @@ namespace MailKit.Net.Imap {
 
 		ImapCommand? QueueStatusCommand (StatusItems items, CancellationToken cancellationToken)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Status))
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
 
 			CheckState (false, false);
@@ -2325,7 +2325,7 @@ namespace MailKit.Net.Imap {
 
 		ImapCommand QueueGetAccessControlListCommand (CancellationToken cancellationToken)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Acl))
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
 
 			CheckState (false, false);
@@ -2487,7 +2487,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
 
-			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Acl))
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
 
 			CheckState (false, false);
@@ -2636,7 +2636,7 @@ namespace MailKit.Net.Imap {
 
 		ImapCommand QueueGetMyAccessRightsCommand (CancellationToken cancellationToken)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Acl))
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
 
 			CheckState (false, false);
@@ -2752,7 +2752,7 @@ namespace MailKit.Net.Imap {
 			if (action.Length != 0 && rights.Count == 0)
 				throw new ArgumentException ("No rights were specified.", nameof (rights));
 
-			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Acl))
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
 
 			CheckState (false, false);
@@ -3069,7 +3069,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException (nameof (name));
 
-			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Acl))
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
 
 			CheckState (false, false);
@@ -3177,7 +3177,7 @@ namespace MailKit.Net.Imap {
 		{
 			CheckState (false, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Metadata))
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETMETADATA %F %S\r\n", this, tag.Id);
@@ -3307,7 +3307,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Metadata))
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var command = new StringBuilder ("GETMETADATA %F");
@@ -3481,7 +3481,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Metadata))
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			if (metadata.Count == 0)
@@ -3819,7 +3819,7 @@ namespace MailKit.Net.Imap {
 		{
 			CheckState (false, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Quota))
 				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
@@ -3965,7 +3965,7 @@ namespace MailKit.Net.Imap {
 		{
 			CheckState (false, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Quota))
 				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var command = new StringBuilder ("SETQUOTA %F (");
@@ -4220,7 +4220,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Expunges the specified uids, permanently removing them from the folder.</para>
 		/// <para>If the IMAP server supports the UIDPLUS extension (check the
-		/// <see cref="ImapClient.Capabilities"/> for the <see cref="ImapCapabilities.UidPlus"/>
+		/// <see cref="ImapClient.Capabilities"/> for the <see cref="ImapCapability.UidPlus"/>
 		/// flag), then this operation is atomic. Otherwise, MailKit implements this operation
 		/// by first searching for the full list of message uids in the folder that are marked for
 		/// deletion, unmarking the set of message uids that are not within the specified list of
@@ -4285,7 +4285,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return;
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.UidPlus)) {
 				// get the list of messages marked for deletion that should not be expunged
 				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
 				var unmark = Search (SearchOptions.None, query, cancellationToken);
@@ -4330,7 +4330,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Expunges the specified uids, permanently removing them from the folder.</para>
 		/// <para>If the IMAP server supports the UIDPLUS extension (check the
-		/// <see cref="ImapClient.Capabilities"/> for the <see cref="ImapCapabilities.UidPlus"/>
+		/// <see cref="ImapClient.Capabilities"/> for the <see cref="ImapCapability.UidPlus"/>
 		/// flag), then this operation is atomic. Otherwise, MailKit implements this operation
 		/// by first searching for the full list of message uids in the folder that are marked for
 		/// deletion, unmarking the set of message uids that are not within the specified list of
@@ -4396,7 +4396,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return;
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.UidPlus)) {
 				// get the list of messages marked for deletion that should not be expunged
 				var query = SearchQuery.Deleted.And (SearchQuery.Not (SearchQuery.Uids (uids)));
 				var unmark = await SearchAsync (SearchOptions.None, query, cancellationToken).ConfigureAwait (false);
@@ -4437,14 +4437,14 @@ namespace MailKit.Net.Imap {
 
 		FormatOptions CreateAppendOptions (FormatOptions options)
 		{
-			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+			if (options.International && !Engine.Capabilities.Contains (ImapCapability.UTF8Accept))
 				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
 
 			var format = options.Clone ();
 			format.NewLineFormat = NewLineFormat.Dos;
 			format.EnsureNewLine = true;
 
-			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
+			if (Engine.Capabilities.Contains (ImapCapability.UTF8Only))
 				format.International = true;
 
 			if (format.International && !Engine.UTF8Enabled)
@@ -4465,7 +4465,7 @@ namespace MailKit.Net.Imap {
 
 			var format = CreateAppendOptions (options);
 
-			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+			if (request.Annotations != null && request.Annotations.Count > 0 && !Engine.Capabilities.Contains (ImapCapability.Annotate))
 				throw new NotSupportedException ("The IMAP server does not support annotations.");
 
 			int numKeywords = request.Keywords != null ? request.Keywords.Count : 0;
@@ -4707,7 +4707,7 @@ namespace MailKit.Net.Imap {
 					throw new ArgumentException ("One or more of the requests is null.");
 
 				var annotations = requests[i].Annotations;
-				if (annotations != null && annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				if (annotations != null && annotations.Count > 0 && !Engine.Capabilities.Contains (ImapCapability.Annotate))
 					throw new NotSupportedException ("One ore more requests included annotations but the IMAP server does not support annotations.");
 			}
 
@@ -4841,7 +4841,7 @@ namespace MailKit.Net.Imap {
 			if (requests.Count == 0)
 				return Array.Empty<UniqueId> ();
 
-			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
+			if (Engine.Capabilities.Contains (ImapCapability.MultiAppend)) {
 				var ic = CreateMultiAppendCommand (options, requests, cancellationToken);
 
 				for (int i = 0; i < requests.Count; i++)
@@ -4941,7 +4941,7 @@ namespace MailKit.Net.Imap {
 			if (requests.Count == 0)
 				return Array.Empty<UniqueId> ();
 
-			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
+			if (Engine.Capabilities.Contains (ImapCapability.MultiAppend)) {
 				var ic = CreateMultiAppendCommand (options, requests, cancellationToken);
 
 				for (int i = 0; i < requests.Count; i++)
@@ -4997,7 +4997,7 @@ namespace MailKit.Net.Imap {
 			if (request.Destination != null && !(request.Destination is ImapFolder target && target.Engine == Engine))
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (request));
 
-			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+			if (request.Annotations != null && request.Annotations.Count > 0 && !Engine.Capabilities.Contains (ImapCapability.Annotate))
 				throw new NotSupportedException ("The IMAP server does not support annotations.");
 
 			CheckState (true, true);
@@ -5117,7 +5117,7 @@ namespace MailKit.Net.Imap {
 		{
 			ValidateArguments (options, uid, request);
 
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Replace)) {
 				var destination = request.Destination as ImapFolder ?? this;
 				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
 
@@ -5129,7 +5129,7 @@ namespace MailKit.Net.Imap {
 				var auid = destination.ProcessAppendResponse (aic);
 
 				Store (new[] { uid }, AddDeletedFlag, cancellationToken);
-				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+				if (Engine.Capabilities.Contains (ImapCapability.UidPlus))
 					Expunge (new[] { uid }, new ExpungeRequest (), cancellationToken);
 
 				request.OnCompleted (destination, auid);
@@ -5210,7 +5210,7 @@ namespace MailKit.Net.Imap {
 		{
 			ValidateArguments (options, uid, request);
 
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Replace)) {
 				var destination = request.Destination as ImapFolder ?? this;
 				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
 
@@ -5222,7 +5222,7 @@ namespace MailKit.Net.Imap {
 				var auid = destination.ProcessAppendResponse (aic);
 
 				await StoreAsync (new[] { uid }, AddDeletedFlag, cancellationToken).ConfigureAwait (false);
-				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+				if (Engine.Capabilities.Contains (ImapCapability.UidPlus))
 					await ExpungeAsync (new[] { uid }, new ExpungeRequest (), cancellationToken).ConfigureAwait (false);
 
 				request.OnCompleted (destination, auid);
@@ -5305,7 +5305,7 @@ namespace MailKit.Net.Imap {
 			if (request.Destination != null && !(request.Destination is ImapFolder target && target.Engine == Engine))
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (request));
 
-			if (request.Annotations != null && request.Annotations.Count > 0 && (Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+			if (request.Annotations != null && request.Annotations.Count > 0 && !Engine.Capabilities.Contains (ImapCapability.Annotate))
 				throw new NotSupportedException ("The IMAP server does not support annotations.");
 
 			CheckState (true, true);
@@ -5370,7 +5370,7 @@ namespace MailKit.Net.Imap {
 		{
 			ValidateArguments (options, index, request);
 
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Replace)) {
 				var destination = request.Destination as ImapFolder ?? this;
 				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
 
@@ -5462,7 +5462,7 @@ namespace MailKit.Net.Imap {
 		{
 			ValidateArguments (options, index, request);
 
-			if ((Engine.Capabilities & ImapCapabilities.Replace) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Replace)) {
 				var destination = request.Destination as ImapFolder ?? this;
 				var aic = destination.CreateAppendCommand (options, request, cancellationToken);
 
@@ -5500,7 +5500,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("SEARCH UID {0}\r\n", UniqueIdSet.ToString (uids));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+			if (Engine.Capabilities.Contains (ImapCapability.ESearch))
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 
 			ic.RegisterUntaggedHandler ("SEARCH", UntaggedSearchHandler);
@@ -5637,7 +5637,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.UidPlus)) {
 				var indexes = GetIndexes (uids, cancellationToken);
 
 				request.OnStarted (this, uids);
@@ -5735,7 +5735,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.UidPlus)) {
 				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
 
 				request.OnStarted (this, uids);
@@ -5782,7 +5782,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Moves the specified messages to the destination folder.</para>
 		/// <para>If the IMAP server supports the MOVE extension (check the <see cref="ImapClient.Capabilities"/>
-		/// property for the <see cref="ImapCapabilities.Move"/> flag), then this operation will be atomic.
+		/// property for the <see cref="ImapCapability.Move"/> flag), then this operation will be atomic.
 		/// Otherwise, MailKit implements this by first copying the messages to the destination folder, then
 		/// marking them for deletion in the originating folder, and finally expunging them (see
 		/// <see cref="Expunge(IList{UniqueId},IExpungeRequest,CancellationToken)"/> for more information about how a
@@ -5848,7 +5848,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Move)) {
 				request.OnStarted (this, uids);
 
 				var copied = CopyTo (uids, new CopyRequest (destination), cancellationToken);
@@ -5860,7 +5860,7 @@ namespace MailKit.Net.Imap {
 				return copied;
 			}
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.UidPlus)) {
 				var indexes = GetIndexes (uids, cancellationToken);
 
 				request.OnStarted (this, uids);
@@ -5900,7 +5900,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Moves the specified messages to the destination folder.</para>
 		/// <para>If the IMAP server supports the MOVE extension (check the <see cref="ImapClient.Capabilities"/>
-		/// property for the <see cref="ImapCapabilities.Move"/> flag), then this operation will be atomic.
+		/// property for the <see cref="ImapCapability.Move"/> flag), then this operation will be atomic.
 		/// Otherwise, MailKit implements this by first copying the messages to the destination folder, then
 		/// marking them for deletion in the originating folder, and finally expunging them (see
 		/// <see cref="Expunge(IList{UniqueId},IExpungeRequest,CancellationToken)"/> for more information about how a
@@ -5966,7 +5966,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return UniqueIdMap.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Move)) {
 				request.OnStarted (this, uids);
 
 				var copied = await CopyToAsync (uids, new CopyRequest (destination), cancellationToken).ConfigureAwait (false);
@@ -5978,7 +5978,7 @@ namespace MailKit.Net.Imap {
 				return copied;
 			}
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.UidPlus)) {
 				var indexes = await GetIndexesAsync (uids, cancellationToken).ConfigureAwait (false);
 
 				request.OnStarted (this, uids);
@@ -6266,7 +6266,7 @@ namespace MailKit.Net.Imap {
 
 			var destination = request.Destination;
 
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Move)) {
 				ValidateArguments (indexes, destination);
 
 				CheckState (true, true);
@@ -6358,7 +6358,7 @@ namespace MailKit.Net.Imap {
 
 			var destination = request.Destination;
 
-			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+			if (!Engine.Capabilities.Contains (ImapCapability.Move)) {
 				ValidateArguments (indexes, destination);
 
 				CheckState (true, true);

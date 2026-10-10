@@ -136,7 +136,7 @@ namespace MailKit.Net.Imap
 					builder.Append (')');
 				break;
 			case SearchTerm.Annotation:
-				if ((Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.Annotate))
 					throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
 
 				annotation = (AnnotationSearchQuery) query;
@@ -187,7 +187,7 @@ namespace MailKit.Net.Imap
 				builder.Append ("DRAFT");
 				break;
 			case SearchTerm.Filter:
-				if ((Engine.Capabilities & ImapCapabilities.Filters) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.Filters))
 					throw new NotSupportedException ("The FILTER search term is not supported by the IMAP server.");
 
 				filter = (FilterSearchQuery) query;
@@ -203,7 +203,7 @@ namespace MailKit.Net.Imap
 				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.Fuzzy:
-				if ((Engine.Capabilities & ImapCapabilities.FuzzySearch) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.FuzzySearch))
 					throw new NotSupportedException ("The FUZZY search term is not supported by the IMAP server.");
 
 				builder.Append ("FUZZY ");
@@ -269,7 +269,7 @@ namespace MailKit.Net.Imap
 				builder.Append ("UNSEEN");
 				break;
 			case SearchTerm.Older:
-				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.Within))
 					throw new NotSupportedException ("The OLDER search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
@@ -287,13 +287,13 @@ namespace MailKit.Net.Imap
 				builder.Append ("RECENT");
 				break;
 			case SearchTerm.SaveDateSupported:
-				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.SaveDate))
 					throw new NotSupportedException ("The SAVEDATESUPPORTED search term is not supported by the IMAP server.");
 
 				builder.Append ("SAVEDATESUPPORTED");
 				break;
 			case SearchTerm.SavedBefore:
-				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.SaveDate))
 					throw new NotSupportedException ("The SAVEDBEFORE search term is not supported by the IMAP server.");
 
 				date = (DateSearchQuery) query;
@@ -301,7 +301,7 @@ namespace MailKit.Net.Imap
 				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SavedOn:
-				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.SaveDate))
 					throw new NotSupportedException ("The SAVEDON search term is not supported by the IMAP server.");
 
 				date = (DateSearchQuery) query;
@@ -309,7 +309,7 @@ namespace MailKit.Net.Imap
 				builder.Append (FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SavedSince:
-				if ((Engine.Capabilities & ImapCapabilities.SaveDate) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.SaveDate))
 					throw new NotSupportedException ("The SAVEDSINCE search term is not supported by the IMAP server.");
 
 				date = (DateSearchQuery) query;
@@ -355,7 +355,7 @@ namespace MailKit.Net.Imap
 				builder.Append (UniqueIdSet.ToString (uid.Uids));
 				break;
 			case SearchTerm.Younger:
-				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.Within))
 					throw new NotSupportedException ("The YOUNGER search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
@@ -363,7 +363,7 @@ namespace MailKit.Net.Imap
 				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.GMailMessageId:
-				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.GMailExt1))
 					throw new NotSupportedException ("The X-GM-MSGID search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
@@ -371,7 +371,7 @@ namespace MailKit.Net.Imap
 				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.GMailThreadId:
-				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.GMailExt1))
 					throw new NotSupportedException ("The X-GM-THRID search term is not supported by the IMAP server.");
 
 				numeric = (NumericSearchQuery) query;
@@ -379,7 +379,7 @@ namespace MailKit.Net.Imap
 				builder.Append (numeric.Value.ToString (CultureInfo.InvariantCulture));
 				break;
 			case SearchTerm.GMailLabels:
-				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.GMailExt1))
 					throw new NotSupportedException ("The X-GM-LABELS search term is not supported by the IMAP server.");
 
 				text = (TextSearchQuery) query;
@@ -387,7 +387,7 @@ namespace MailKit.Net.Imap
 				AddTextArgument (builder, args, text.Text, ref charset);
 				break;
 			case SearchTerm.GMailRaw:
-				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.GMailExt1))
 					throw new NotSupportedException ("The X-GM-RAW search term is not supported by the IMAP server.");
 
 				text = (TextSearchQuery) query;
@@ -422,7 +422,7 @@ namespace MailKit.Net.Imap
 
 				switch (orderBy[i].Type) {
 				case OrderByType.Annotation:
-					if ((Engine.Capabilities & ImapCapabilities.Annotate) == 0)
+					if (!Engine.Capabilities.Contains (ImapCapability.Annotate))
 						throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
 
 					var annotation = (OrderByAnnotation) orderBy[i];
@@ -435,13 +435,13 @@ namespace MailKit.Net.Imap
 				case OrderByType.Cc:          builder.Append ("CC"); break;
 				case OrderByType.Date:        builder.Append ("DATE"); break;
 				case OrderByType.DisplayFrom:
-					if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0)
+					if (!Engine.Capabilities.Contains (ImapCapability.SortDisplay))
 						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
 
 					builder.Append ("DISPLAYFROM");
 					break;
 				case OrderByType.DisplayTo:
-					if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0)
+					if (!Engine.Capabilities.Contains (ImapCapability.SortDisplay))
 						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
 
 					builder.Append ("DISPLAYTO");
@@ -909,7 +909,7 @@ namespace MailKit.Net.Imap
 
 			var command = "UID SEARCH " + query + "\r\n";
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+			if (Engine.Capabilities.Contains (ImapCapability.ESearch))
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 
 			// Note: always register the untagged SEARCH handler because some servers will brokenly
@@ -1041,18 +1041,18 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			if (options != SearchOptions.None && (Engine.Capabilities & ImapCapabilities.ESearch) == 0)
+			if (options != SearchOptions.None && !Engine.Capabilities.Contains (ImapCapability.ESearch))
 				throw new NotSupportedException ("The IMAP server does not support the ESEARCH extension.");
 
 			if (partialRange.HasValue) {
 				// Note: RFC 9394 advertises the "PARTIAL" capability while RFC 5267 defines the same PARTIAL
 				// search return option under the "CONTEXT=SEARCH" capability.
-				if ((Engine.Capabilities & ImapCapabilities.Partial) == 0 &&
-					((Engine.Capabilities & ImapCapabilities.Context) == 0 || !Engine.SupportedContexts.Contains ("SEARCH")))
+				if (!Engine.Capabilities.Contains (ImapCapability.Partial) &&
+					(!Engine.Capabilities.Contains (ImapCapability.Context) || !Engine.SupportedContexts.Contains ("SEARCH")))
 					throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
 
 				// Note: Negative partial ranges were introduced in RFC 9394 and are not defined by RFC 5267.
-				if (partialRange.Value.First < 0 && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+				if (partialRange.Value.First < 0 && !Engine.Capabilities.Contains (ImapCapability.Partial))
 					throw new NotSupportedException ("The IMAP server does not support negative partial ranges.");
 			}
 
@@ -1061,7 +1061,7 @@ namespace MailKit.Net.Imap
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = new StringBuilder ("UID SEARCH ");
 
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0 || partialRange.HasValue) {
+			if (Engine.Capabilities.Contains (ImapCapability.ESearch) || partialRange.HasValue) {
 				command.Append ("RETURN (");
 
 				if (options != SearchOptions.All && options != SearchOptions.None) {
@@ -1107,7 +1107,7 @@ namespace MailKit.Net.Imap
 				UserData = new SearchResults (UidValidity, SortOrder.Ascending)
 			};
 
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0 || partialRange.HasValue)
+			if (Engine.Capabilities.Contains (ImapCapability.ESearch) || partialRange.HasValue)
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 
 			// Note: always register the untagged SEARCH handler because some servers will brokenly
@@ -1398,14 +1398,14 @@ namespace MailKit.Net.Imap
 			if (query.Length == 0)
 				throw new ArgumentException ("Cannot sort using an empty query.", nameof (query));
 
-			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Sort))
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
 
 			CheckState (true, false);
 
 			var command = "UID SORT " + query + "\r\n";
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
+			if (Engine.Capabilities.Contains (ImapCapability.ESort))
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 			ic.RegisterUntaggedHandler ("SORT", UntaggedSearchHandler);
 			ic.UserData = new SearchResults (UidValidity);
@@ -1545,7 +1545,7 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Sort))
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
 
 			var args = new List<object> ();
@@ -1554,7 +1554,7 @@ namespace MailKit.Net.Imap
 			var order = BuildSortOrder (orderBy);
 			var command = new StringBuilder ("UID SORT ");
 
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
+			if (Engine.Capabilities.Contains (ImapCapability.ESort))
 				command.Append ("RETURN (ALL) ");
 
 			command.Append (order);
@@ -1568,7 +1568,7 @@ namespace MailKit.Net.Imap
 				UserData = new SearchResults (UidValidity)
 			};
 
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
+			if (Engine.Capabilities.Contains (ImapCapability.ESort))
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 			else
 				ic.RegisterUntaggedHandler ("SORT", UntaggedSearchHandler);
@@ -1739,7 +1739,7 @@ namespace MailKit.Net.Imap
 
 			CheckState (true, false);
 
-			if (options != SearchOptions.None && (Engine.Capabilities & ImapCapabilities.ESort) == 0)
+			if (options != SearchOptions.None && !Engine.Capabilities.Contains (ImapCapability.ESort))
 				throw new NotSupportedException ("The IMAP server does not support the ESORT extension.");
 
 			if (partialRange.HasValue) {
@@ -1747,11 +1747,11 @@ namespace MailKit.Net.Imap
 				// capability. In practice, however, servers such as Dovecot share their search return option
 				// implementation between the SEARCH and SORT commands and advertise only "CONTEXT=SEARCH"
 				// and/or "PARTIAL" while accepting the PARTIAL return option for both commands.
-				if ((Engine.Capabilities & (ImapCapabilities.Partial | ImapCapabilities.Context)) == 0)
+				if (!Engine.Capabilities.Contains (ImapCapability.Partial) && !Engine.Capabilities.Contains (ImapCapability.Context))
 					throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
 
 				// Note: Negative partial ranges were introduced in RFC 9394 and are not defined by RFC 5267.
-				if (partialRange.Value.First < 0 && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+				if (partialRange.Value.First < 0 && !Engine.Capabilities.Contains (ImapCapability.Partial))
 					throw new NotSupportedException ("The IMAP server does not support negative partial ranges.");
 			}
 
@@ -1761,7 +1761,7 @@ namespace MailKit.Net.Imap
 			var order = BuildSortOrder (orderBy);
 			var command = new StringBuilder ("UID SORT ");
 
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0 || partialRange.HasValue) {
+			if (Engine.Capabilities.Contains (ImapCapability.ESort) || partialRange.HasValue) {
 				command.Append ("RETURN (");
 
 				if (options != SearchOptions.All && options != SearchOptions.None) {
@@ -1805,7 +1805,7 @@ namespace MailKit.Net.Imap
 				UserData = new SearchResults (UidValidity)
 			};
 
-			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0 || partialRange.HasValue)
+			if (Engine.Capabilities.Contains (ImapCapability.ESort) || partialRange.HasValue)
 				ic.RegisterUntaggedHandler ("ESEARCH", UntaggedESearchHandler);
 			else
 				ic.RegisterUntaggedHandler ("SORT", UntaggedSearchHandler);
@@ -2103,7 +2103,7 @@ namespace MailKit.Net.Imap
 
 		ImapCommand QueueThreadCommand (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken, out string? charset)
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Thread))
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
 
 			if (!Engine.ThreadingAlgorithms.Contains (algorithm))
@@ -2277,7 +2277,7 @@ namespace MailKit.Net.Imap
 			if (uids == null)
 				throw new ArgumentNullException (nameof (uids));
 
-			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.Thread))
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
 
 			if (!Engine.ThreadingAlgorithms.Contains (algorithm))

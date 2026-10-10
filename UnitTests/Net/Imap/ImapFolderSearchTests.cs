@@ -207,7 +207,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Filters), Is.True, "ImapCapability.Filters");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -279,7 +279,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Filters), Is.True, "ImapCapability.Filters");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -365,7 +365,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Filters), Is.True, "ImapCapability.Filters");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -380,7 +380,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (cex.ErrorType, Is.EqualTo (CommandErrorType.NotFound), "ErrorType");
 
 				// Now disable the FILTERS extension and try again...
-				client.Capabilities &= ~ImapCapabilities.Filters;
+				client.Capabilities.Disable (ImapCapability.Filters);
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.Filter ("MyFilter")));
 
 				client.Disconnect (false);
@@ -410,7 +410,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Filters), Is.True, "ImapCapabilities.Filters");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Filters), Is.True, "ImapCapability.Filters");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -425,7 +425,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (cex.ErrorType, Is.EqualTo (CommandErrorType.NotFound), "ErrorType");
 
 				// Now disable the SAVEDATE extension and try again...
-				client.Capabilities &= ~ImapCapabilities.Filters;
+				client.Capabilities.Disable (ImapCapability.Filters);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.Filter ("MyFilter")));
 
 				await client.DisconnectAsync (false);
@@ -468,7 +468,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), Is.True, "ImapCapabilities.FuzzySearch");
+				Assert.That (client.Capabilities.Contains (ImapCapability.FuzzySearch), Is.True, "ImapCapability.FuzzySearch");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -479,7 +479,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the FUZZY extension and try again...
-				client.Capabilities &= ~ImapCapabilities.FuzzySearch;
+				client.Capabilities.Disable (ImapCapability.FuzzySearch);
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match"))));
 
 				client.Disconnect (false);
@@ -509,7 +509,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.FuzzySearch), Is.True, "ImapCapabilities.FuzzySearch");
+				Assert.That (client.Capabilities.Contains (ImapCapability.FuzzySearch), Is.True, "ImapCapability.FuzzySearch");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -520,7 +520,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the FUZZY extension and try again...
-				client.Capabilities &= ~ImapCapabilities.FuzzySearch;
+				client.Capabilities.Disable (ImapCapability.FuzzySearch);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.Fuzzy (SearchQuery.BodyContains ("fuzzy-match"))));
 
 				await client.DisconnectAsync (false);
@@ -566,7 +566,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "ImapCapabilities.SaveDate");
+				Assert.That (client.Capabilities.Contains (ImapCapability.SaveDate), Is.True, "ImapCapability.SaveDate");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -592,7 +592,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the SAVEDATE extension and try again...
-				client.Capabilities &= ~ImapCapabilities.SaveDate;
+				client.Capabilities.Disable (ImapCapability.SaveDate);
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SaveDateSupported));
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SavedBefore (new DateTime (2016, 10, 12))));
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchQuery.SavedOn (new DateTime (2016, 10, 12))));
@@ -625,7 +625,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "ImapCapabilities.SaveDate");
+				Assert.That (client.Capabilities.Contains (ImapCapability.SaveDate), Is.True, "ImapCapability.SaveDate");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -651,7 +651,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), $"Unexpected value for uids[{i}]");
 
 				// Now disable the SAVEDATE extension and try again...
-				client.Capabilities &= ~ImapCapabilities.SaveDate;
+				client.Capabilities.Disable (ImapCapability.SaveDate);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SaveDateSupported));
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedBefore (new DateTime (2016, 10, 12))));
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchQuery.SavedOn (new DateTime (2016, 10, 12))));
@@ -700,7 +700,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Partial), Is.True, "ImapCapability.Partial");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -734,11 +734,11 @@ namespace UnitTests.Net.Imap {
 
 				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
 				// no longer be supported even though CONTEXT=SEARCH is still advertised...
-				client.Capabilities &= ~ImapCapabilities.Partial;
+				client.Capabilities.Disable (ImapCapability.Partial);
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (-1, -10)));
 
 				// Now disable the CONTEXT extension as well and try again...
-				client.Capabilities &= ~ImapCapabilities.Context;
+				client.Capabilities.Disable (ImapCapability.Context);
 				Assert.Throws<NotSupportedException> (() => inbox.Search (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (1, 10)));
 
 				client.Disconnect (false);
@@ -768,7 +768,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Partial), Is.True, "ImapCapability.Partial");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -802,11 +802,11 @@ namespace UnitTests.Net.Imap {
 
 				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
 				// no longer be supported even though CONTEXT=SEARCH is still advertised...
-				client.Capabilities &= ~ImapCapabilities.Partial;
+				client.Capabilities.Disable (ImapCapability.Partial);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (-1, -10)));
 
 				// Now disable the CONTEXT extension as well and try again...
-				client.Capabilities &= ~ImapCapabilities.Context;
+				client.Capabilities.Disable (ImapCapability.Context);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (SearchOptions.None, SearchQuery.NotDeleted, new PartialRange (1, 10)));
 
 				await client.DisconnectAsync (false);
@@ -869,11 +869,11 @@ namespace UnitTests.Net.Imap {
 
 				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
 				// no longer be supported even though CONTEXT=SEARCH is still advertised...
-				client.Capabilities &= ~ImapCapabilities.Partial;
+				client.Capabilities.Disable (ImapCapability.Partial);
 				Assert.Throws<NotSupportedException> (() => inbox.Sort (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (-1, -5)));
 
 				// Now disable the CONTEXT extension as well and try again...
-				client.Capabilities &= ~ImapCapabilities.Context;
+				client.Capabilities.Disable (ImapCapability.Context);
 				Assert.Throws<NotSupportedException> (() => inbox.Sort (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5)));
 
 				client.Disconnect (false);
@@ -922,11 +922,11 @@ namespace UnitTests.Net.Imap {
 
 				// Now disable the PARTIAL extension. Negative ranges are RFC 9394-only, so they should
 				// no longer be supported even though CONTEXT=SEARCH is still advertised...
-				client.Capabilities &= ~ImapCapabilities.Partial;
+				client.Capabilities.Disable (ImapCapability.Partial);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SortAsync (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (-1, -5)));
 
 				// Now disable the CONTEXT extension as well and try again...
-				client.Capabilities &= ~ImapCapabilities.Context;
+				client.Capabilities.Disable (ImapCapability.Context);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SortAsync (SearchOptions.None, SearchQuery.NotDeleted, orderBy, new PartialRange (1, 5)));
 
 				await client.DisconnectAsync (false);

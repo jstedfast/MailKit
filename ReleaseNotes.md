@@ -129,6 +129,23 @@ rather than the full MimeKit cryptography stack.
   cache, serialize and rehydrate them independently of a live `IMailFolder` instance. Applications that
   need to know which folder a summary came from should track that themselves (e.g. alongside the
   collection returned by `Fetch ()`).
+* Replaced the `[Flags]` capability enums with capability-set classes. The 64-bit `ImapCapabilities`
+  enum was almost out of room for new IMAP extensions, and none of the enums could represent extensions
+  that MailKit does not know about.
+  * The `ImapCapabilities`, `SmtpCapabilities` and `Pop3Capabilities` enums have been renamed to
+    `ImapCapability`, `SmtpCapability` and `Pop3Capability`. They are no longer `[Flags]` enums and
+    no longer have a `None` value.
+  * `ImapCapabilities`, `SmtpCapabilities` and `Pop3Capabilities` are now sealed classes that
+    implement `IReadOnlyCollection<T>` of the corresponding enum. Replace
+    `client.Capabilities.HasFlag (ImapCapabilities.Idle)` with
+    `client.Capabilities.Contains (ImapCapability.Idle)`.
+  * The `Capabilities` properties of `ImapClient`, `SmtpClient` and `Pop3Client` (and their
+    interfaces) are now read-only. Replace `client.Capabilities &= ~ImapCapabilities.Compress` with
+    `client.Capabilities.Disable (ImapCapability.Compress)` to prevent MailKit from using an extension.
+  * The new `Names` property, `Contains (string)` and `GetValues (string)` methods expose the raw
+    capabilities advertised by the server, including ones that MailKit does not know about (e.g.
+    `client.Capabilities.GetValues ("AUTH")`). `Disable ()` does not affect the raw names.
+  * The public constructors can be used to create capability sets when mocking the client interfaces.
 
 ### New Features
 

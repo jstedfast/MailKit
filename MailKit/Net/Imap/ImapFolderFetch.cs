@@ -747,7 +747,7 @@ namespace MailKit.Net.Imap
 		{
 			var items = request.Items;
 
-			if ((engine.Capabilities & ImapCapabilities.Preview) == 0 && (items & MessageSummaryItems.PreviewText) != 0) {
+			if (!engine.Capabilities.Contains (ImapCapability.Preview) && (items & MessageSummaryItems.PreviewText) != 0) {
 				// if the user wants the preview text, we will also need the UIDs and BODYSTRUCTUREs
 				// so that we can request a preview of the body text in subsequent FETCH requests.
 				items |= MessageSummaryItems.BodyStructure | MessageSummaryItems.UniqueId;
@@ -791,29 +791,29 @@ namespace MailKit.Net.Imap
 			if ((items & MessageSummaryItems.Body) != 0)
 				tokens.Add ("BODY");
 
-			if ((engine.Capabilities & ImapCapabilities.CondStore) != 0) {
+			if (engine.Capabilities.Contains (ImapCapability.CondStore)) {
 				if ((items & MessageSummaryItems.ModSeq) != 0)
 					tokens.Add ("MODSEQ");
 			}
 
-			if ((engine.Capabilities & ImapCapabilities.Annotate) != 0) {
+			if (engine.Capabilities.Contains (ImapCapability.Annotate)) {
 				if ((items & MessageSummaryItems.Annotations) != 0)
 					tokens.Add ("ANNOTATION (/* (value size))");
 			}
 
-			if ((engine.Capabilities & ImapCapabilities.ObjectID) != 0) {
+			if (engine.Capabilities.Contains (ImapCapability.ObjectID)) {
 				if ((items & MessageSummaryItems.EmailId) != 0)
 					tokens.Add ("EMAILID");
 				if ((items & MessageSummaryItems.ThreadId) != 0)
 					tokens.Add ("THREADID");
 			}
 
-			if ((engine.Capabilities & ImapCapabilities.SaveDate) != 0) {
+			if (engine.Capabilities.Contains (ImapCapability.SaveDate)) {
 				if ((items & MessageSummaryItems.SaveDate) != 0)
 					tokens.Add ("SAVEDATE");
 			}
 
-			if ((engine.Capabilities & ImapCapabilities.Preview) != 0) {
+			if (engine.Capabilities.Contains (ImapCapability.Preview)) {
 				if ((items & MessageSummaryItems.PreviewText) != 0) {
 #if ENABLE_LAZY_PREVIEW_API
 					if (request.PreviewOptions == PreviewOptions.Lazy)
@@ -826,7 +826,7 @@ namespace MailKit.Net.Imap
 				}
 			}
 
-			if ((engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {
+			if (engine.Capabilities.Contains (ImapCapability.GMailExt1)) {
 				// now for the GMail extension items
 				if ((items & MessageSummaryItems.GMailMessageId) != 0)
 					tokens.Add ("X-GM-MSGID");
@@ -1087,7 +1087,7 @@ namespace MailKit.Net.Imap
 			if (request.ChangedSince.HasValue && !supportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
-			if (request.PartialRange.HasValue && (Engine.Capabilities & ImapCapabilities.Partial) == 0)
+			if (request.PartialRange.HasValue && !Engine.Capabilities.Contains (ImapCapability.Partial))
 				throw new NotSupportedException ("The IMAP server does not support the PARTIAL extension.");
 
 			CheckState (true, false);

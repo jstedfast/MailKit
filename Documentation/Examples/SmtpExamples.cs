@@ -176,25 +176,25 @@ namespace MailKit.Examples {
 			using (var client = new SmtpClient ()) {
 				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
+				if (client.Capabilities.Contains (SmtpCapability.Authentication)) {
 					var mechanisms = string.Join (", ", client.AuthenticationMechanisms);
 					Console.WriteLine ("The SMTP server supports the following SASL mechanisms: {0}", mechanisms);
 					client.Authenticate ("username", "password");
 				}
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Size))
+				if (client.Capabilities.Contains (SmtpCapability.Size))
 					Console.WriteLine ("The SMTP server has a size restriction on messages: {0}.", client.MaxSize);
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Dsn))
+				if (client.Capabilities.Contains (SmtpCapability.Dsn))
 					Console.WriteLine ("The SMTP server supports delivery-status notifications.");
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime))
+				if (client.Capabilities.Contains (SmtpCapability.EightBitMime))
 					Console.WriteLine ("The SMTP server supports Content-Transfer-Encoding: 8bit");
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime))
+				if (client.Capabilities.Contains (SmtpCapability.BinaryMime))
 					Console.WriteLine ("The SMTP server supports Content-Transfer-Encoding: binary");
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.UTF8))
+				if (client.Capabilities.Contains (SmtpCapability.UTF8))
 					Console.WriteLine ("The SMTP server supports UTF-8 in message headers.");
 
 				client.Disconnect (true);
@@ -218,7 +218,7 @@ namespace MailKit.Examples {
 				}
 
 				// Note: Not all SMTP servers support authentication, but GMail does.
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
+				if (client.Capabilities.Contains (SmtpCapability.Authentication)) {
 					try {
 						client.Authenticate ("username", "password");
 					} catch (AuthenticationException ex) {
@@ -304,7 +304,7 @@ namespace MailKit.Examples {
 
 				var options = FormatOptions.Default.Clone ();
 
-				if (client.Capabilities.HasFlag (SmtpCapabilities.UTF8))
+				if (client.Capabilities.Contains (SmtpCapability.UTF8))
 					options.International = true;
 
 				client.Send (options, message);

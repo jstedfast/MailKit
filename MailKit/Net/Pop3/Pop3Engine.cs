@@ -74,7 +74,8 @@ namespace MailKit.Net.Pop3 {
 		public Pop3Engine ()
 		{
 			AuthenticationMechanisms = new HashSet<string> (StringComparer.Ordinal);
-			Capabilities = Pop3Capabilities.User;
+			Capabilities = new Pop3Capabilities ();
+			Capabilities.Add (Pop3Capability.User);
 			queue = new List<Pop3Command> ();
 
 #if NET6_0_OR_GREATER
@@ -115,7 +116,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public Pop3Capabilities Capabilities {
-			get; set;
+			get;
 		}
 
 		/// <summary>
@@ -222,7 +223,8 @@ namespace MailKit.Net.Pop3 {
 			Stream?.Dispose ();
 
 			clientConnectedTimestamp = Stopwatch.GetTimestamp ();
-			Capabilities = Pop3Capabilities.User;
+			Capabilities.Clear ();
+			Capabilities.Add (Pop3Capability.User);
 			AuthenticationMechanisms.Clear ();
 			State = Pop3EngineState.Disconnected;
 			ApopToken = null;
@@ -264,7 +266,7 @@ namespace MailKit.Net.Pop3 {
 
 				if (endIndex++ != -1) {
 					ApopToken = text.Substring (index, endIndex - index);
-					Capabilities |= Pop3Capabilities.Apop;
+					Capabilities.Add (Pop3Capability.Apop);
 				}
 			}
 
@@ -679,11 +681,13 @@ namespace MailKit.Net.Pop3 {
 			int index = response.IndexOf (' ');
 			int startIndex, length, value;
 
+			engine.Capabilities.AddName (response);
+
 			if (index == -1)
 				index = response.Length;
 
 			if (IsCapability ("EXPIRE", response, index, true)) {
-				engine.Capabilities |= Pop3Capabilities.Expire;
+				engine.Capabilities.Add (Pop3Capability.Expire);
 
 				if (ReadNextToken (response, ref index, out startIndex, out length)) {
 					if (IsToken ("NEVER", response, startIndex, length)) {
@@ -695,35 +699,35 @@ namespace MailKit.Net.Pop3 {
 			} else if (IsCapability ("IMPLEMENTATION", response, index, true)) {
 				engine.Implementation = response.Substring (index + 1);
 			} else if (IsCapability ("LANG", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.Lang;
+				engine.Capabilities.Add (Pop3Capability.Lang);
 			} else if (IsCapability ("LOGIN-DELAY", response, index, true)) {
 				if (ReadNextToken (response, ref index, out startIndex, out length)) {
 					if (TryParseInt32 (response, startIndex, length, out value)) {
-						engine.Capabilities |= Pop3Capabilities.LoginDelay;
+						engine.Capabilities.Add (Pop3Capability.LoginDelay);
 						engine.LoginDelay = value;
 					}
 				}
 			} else if (IsCapability ("PIPELINING", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.Pipelining;
+				engine.Capabilities.Add (Pop3Capability.Pipelining);
 			} else if (IsCapability ("RESP-CODES", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.ResponseCodes;
+				engine.Capabilities.Add (Pop3Capability.ResponseCodes);
 			} else if (IsCapability ("SASL", response, index, true)) {
-				engine.Capabilities |= Pop3Capabilities.Sasl;
+				engine.Capabilities.Add (Pop3Capability.Sasl);
 				engine.AddAuthenticationMechanisms (response, index);
 			} else if (IsCapability ("STLS", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.StartTLS;
+				engine.Capabilities.Add (Pop3Capability.StartTLS);
 			} else if (IsCapability ("TOP", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.Top;
+				engine.Capabilities.Add (Pop3Capability.Top);
 			} else if (IsCapability ("UIDL", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.UIDL;
+				engine.Capabilities.Add (Pop3Capability.UIDL);
 			} else if (IsCapability ("USER", response, index)) {
-				engine.Capabilities |= Pop3Capabilities.User;
+				engine.Capabilities.Add (Pop3Capability.User);
 			} else if (IsCapability ("UTF8", response, index, true)) {
-				engine.Capabilities |= Pop3Capabilities.UTF8;
+				engine.Capabilities.Add (Pop3Capability.UTF8);
 
 				while (ReadNextToken (response, ref index, out startIndex, out length)) {
 					if (IsToken ("USER", response, startIndex, length)) {
-						engine.Capabilities |= Pop3Capabilities.UTF8User;
+						engine.Capabilities.Add (Pop3Capability.UTF8User);
 					}
 				}
 			}
@@ -770,7 +774,16 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 
 			// Clear all CAPA response capabilities (except the APOP, USER, and STLS capabilities).
-			Capabilities &= Pop3Capabilities.Apop | Pop3Capabilities.User | Pop3Capabilities.StartTLS;
+			bool apop = Capabilities.Contains (Pop3Capability.Apop);
+			bool user = Capabilities.Contains (Pop3Capability.User);
+			bool stls = Capabilities.Contains (Pop3Capability.StartTLS);
+			Capabilities.Clear ();
+			if (apop)
+				Capabilities.Add (Pop3Capability.Apop);
+			if (user)
+				Capabilities.Add (Pop3Capability.User);
+			if (stls)
+				Capabilities.Add (Pop3Capability.StartTLS);
 			AuthenticationMechanisms.Clear ();
 			Implementation = null;
 			ExpirePolicy = 0;

@@ -301,7 +301,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				// disable all features
-				client.Capabilities = ImapCapabilities.None;
+				client.Capabilities.Clear ();
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);

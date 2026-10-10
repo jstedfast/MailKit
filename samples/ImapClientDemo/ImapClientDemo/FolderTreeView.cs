@@ -41,7 +41,7 @@ namespace ImapClientDemo
 
 		static bool CheckFolderForChildren (ClientConnection<ImapClient> connection, IMailFolder folder)
 		{
-			if (connection.Client.Capabilities.HasFlag (ImapCapabilities.Children)) {
+			if (connection.Client.Capabilities.Contains (ImapCapability.Children)) {
 				if (folder.Attributes.HasFlag (FolderAttributes.HasChildren))
 					return true;
 			} else if (!folder.Attributes.HasFlag (FolderAttributes.NoInferiors)) {
@@ -125,7 +125,7 @@ namespace ImapClientDemo
 				subfolder.CountChanged += OnFolderCountChanged;
 
 				if (!subfolder.Attributes.HasFlag (FolderAttributes.NonExistent) && !subfolder.Attributes.HasFlag (FolderAttributes.NoSelect)) {
-					if (connection.Client.Capabilities.HasFlag (ImapCapabilities.ListStatus)) {
+					if (connection.Client.Capabilities.Contains (ImapCapability.ListStatus)) {
 						// Note: If the IMAP server supports LIST-STATUS, then we obtained the STATUS information for each subfolder already.
 						UpdateFolderNode (subfolder);
 					} else {
@@ -167,7 +167,7 @@ namespace ImapClientDemo
 			{
 				// Note: If the IMAP server supports LIST-STATUS, then we'll get the status of the subfolders as we get the list,
 				// otherwise, we'll queue a StatusCommand for each subfolder in LoadSubfolders().
-				if (Connection.Client.Capabilities.HasFlag (ImapCapabilities.ListStatus))
+				if (Connection.Client.Capabilities.Contains (ImapCapability.ListStatus))
 					subfolders = Folder.GetSubfolders (StatusItems.Unread, false, cancellationToken).ToList ();
 				else
 					subfolders = Folder.GetSubfolders (false, cancellationToken).ToList ();

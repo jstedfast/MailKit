@@ -78,6 +78,7 @@
     <Compile Include="Net\Imap\ImapAuthenticationSecretDetector.cs" />
     <Compile Include="Net\Imap\ImapCallbacks.cs" />
     <Compile Include="Net\Imap\ImapCapabilities.cs" />
+    <Compile Include="Net\Imap\ImapCapability.cs" />
     <Compile Include="Net\Imap\ImapClient.cs" />
     <Compile Include="Net\Imap\ImapCommand.cs" />
     <Compile Include="Net\Imap\ImapCommandException.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Net\Pop3\IPop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3AuthenticationSecretDetector.cs" />
     <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
+    <Compile Include="Net\Pop3\Pop3Capability.cs" />
     <Compile Include="Net\Pop3\Pop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Command.cs" />
     <Compile Include="Net\Pop3\Pop3CommandException.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Net\Smtp\ISmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
+    <Compile Include="Net\Smtp\SmtpCapability.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCommand.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />
@@ -137,6 +140,7 @@
     <Compile Include="Net\Smtp\SmtpServiceNotAuthenticatedException.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\CapabilityNameTable.cs" />
     <Compile Include="Net\ClientMetrics.cs" />
     <Compile Include="Net\ExtendedSslStream.cs" />
     <Compile Include="Net\IChannelBindingContext.cs" />

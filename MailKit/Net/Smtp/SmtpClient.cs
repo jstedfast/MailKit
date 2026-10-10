@@ -88,7 +88,7 @@ namespace MailKit.Net.Smtp {
 		readonly ClientMetrics? metrics;
 #endif
 		long clientConnectedTimestamp;
-		SmtpCapabilities capabilities;
+		readonly SmtpCapabilities capabilities = new SmtpCapabilities ();
 		int timeout = 2 * 60 * 1000;
 		bool authenticated;
 		bool connected;
@@ -243,24 +243,17 @@ namespace MailKit.Net.Smtp {
 		/// Get the capabilities supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made
-		/// and may change once the client is authenticated.
+		/// <para>The capabilities will not be known until a successful connection has been made
+		/// and may change once the client is authenticated.</para>
+		/// <para>To prevent MailKit from using a particular extension, use
+		/// <see cref="SmtpCapabilities.Disable(SmtpCapability)"/>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
 		public SmtpCapabilities Capabilities {
 			get { return capabilities; }
-			set {
-				if ((capabilities | value) > capabilities)
-					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", nameof (value));
-
-				capabilities = value;
-			}
 		}
 
 		/// <summary>
@@ -300,7 +293,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>The maximum message size will not be known until a successful connection has
 		/// been made and may change once the client is authenticated.</para>
 		/// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
-		/// the <see cref="SmtpCapabilities.Size"/> flag. The value will never be negative.</note>
+		/// the <see cref="SmtpCapability.Size"/> flag. The value will never be negative.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
@@ -319,7 +312,7 @@ namespace MailKit.Net.Smtp {
 		/// that a message passes through on its way to the recipient is required to use a TLS connection in
 		/// order to transfer the message to the next SMTP server.</para>
 		/// <note type="note">This feature is only available if <see cref="Capabilities"/> contains the
-		/// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
+		/// <see cref="SmtpCapability.RequireTLS"/> flag when sending the message.</note>
 		/// </remarks>
 		/// <value><see langword="true" /> if the REQUIRETLS extension should be used; otherwise, <see langword="false" />.</value>
 		public bool RequireTLS {
@@ -895,47 +888,55 @@ namespace MailKit.Net.Smtp {
 		void UpdateCapabilities (SmtpResponse response)
 		{
 			// Clear the extensions except STARTTLS so that this capability stays set after a STARTTLS command.
-			capabilities &= SmtpCapabilities.StartTLS;
+			bool starttls = capabilities.Contains (SmtpCapability.StartTLS);
+			capabilities.Clear ();
+			if (starttls)
+				capabilities.Add (SmtpCapability.StartTLS);
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
 			string text = response.Response;
 			int index = 0;
 
+			// Skip the first line of the EHLO response which is the server's greeting.
+			ReadNextLine (text, ref index, out _, out _);
+
 			while (ReadNextLine (text, ref index, out int lineStartIndex, out int lineEndIndex)) {
+				capabilities.AddName (text.Substring (lineStartIndex, lineEndIndex - lineStartIndex));
+
 				if (IsCapability ("AUTH", text, lineStartIndex, lineEndIndex, true)) {
 					int startIndex = lineStartIndex + 5;
 
 					AddAuthenticationMechanisms (text, startIndex, lineEndIndex);
-					capabilities |= SmtpCapabilities.Authentication;
+					capabilities.Add (SmtpCapability.Authentication);
 				} else if (IsCapability ("X-EXPS", text, lineStartIndex, lineEndIndex, true)) {
 					int startIndex = lineStartIndex + 7;
 
 					AddAuthenticationMechanisms (text, startIndex, lineEndIndex);
-					capabilities |= SmtpCapabilities.Authentication;
+					capabilities.Add (SmtpCapability.Authentication);
 				} else if (IsCapability ("SIZE", text, lineStartIndex, lineEndIndex, true)) {
 					int startIndex = lineStartIndex + 5;
 
 					SetMaxSize (text, startIndex, lineEndIndex);
-					capabilities |= SmtpCapabilities.Size;
+					capabilities.Add (SmtpCapability.Size);
 				} else if (IsCapability ("DSN", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.Dsn;
+					capabilities.Add (SmtpCapability.Dsn);
 				} else if (IsCapability ("BINARYMIME", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.BinaryMime;
+					capabilities.Add (SmtpCapability.BinaryMime);
 				} else if (IsCapability ("CHUNKING", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.Chunking;
+					capabilities.Add (SmtpCapability.Chunking);
 				} else if (IsCapability ("ENHANCEDSTATUSCODES", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.EnhancedStatusCodes;
+					capabilities.Add (SmtpCapability.EnhancedStatusCodes);
 				} else if (IsCapability ("8BITMIME", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.EightBitMime;
+					capabilities.Add (SmtpCapability.EightBitMime);
 				} else if (IsCapability ("PIPELINING", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.Pipelining;
+					capabilities.Add (SmtpCapability.Pipelining);
 				} else if (IsCapability ("STARTTLS", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.StartTLS;
+					capabilities.Add (SmtpCapability.StartTLS);
 				} else if (IsCapability ("SMTPUTF8", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.UTF8;
+					capabilities.Add (SmtpCapability.UTF8);
 				} else if (IsCapability ("REQUIRETLS", text, lineStartIndex, lineEndIndex)) {
-					capabilities |= SmtpCapabilities.RequireTLS;
+					capabilities.Add (SmtpCapability.RequireTLS);
 				}
 			}
 		}
@@ -1006,7 +1007,7 @@ namespace MailKit.Net.Smtp {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
 
-			if ((capabilities & SmtpCapabilities.Authentication) == 0)
+			if (!capabilities.Contains (SmtpCapability.Authentication))
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
 			mechanism.ChannelBindingContext = Stream.Stream as IChannelBindingContext;
@@ -1137,7 +1138,7 @@ namespace MailKit.Net.Smtp {
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
 
-			if ((capabilities & SmtpCapabilities.Authentication) == 0)
+			if (!capabilities.Contains (SmtpCapability.Authentication))
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 		}
 
@@ -1154,7 +1155,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>If, on the other hand, authentication is not supported by the SMTP
 		/// server, then this method will throw <see cref="System.NotSupportedException"/>.
 		/// The <see cref="Capabilities"/> property can be checked for the
-		/// <see cref="SmtpCapabilities.Authentication"/> flag to make sure the
+		/// <see cref="SmtpCapability.Authentication"/> flag to make sure the
 		/// SMTP server supports authentication before calling this method.</para>
 		/// <note type="tip"> To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
@@ -1370,10 +1371,10 @@ namespace MailKit.Net.Smtp {
 				// Send EHLO and get a list of supported extensions
 				Ehlo (true, cancellationToken);
 
-				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
+				if (options == SecureSocketOptions.StartTls && !capabilities.Contains (SmtpCapability.StartTLS))
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
-				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
+				if (starttls && capabilities.Contains (SmtpCapability.StartTLS)) {
 					response = Stream.SendCommand (SmtpCommand.StartTls, "STARTTLS\r\n", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.StartTls, response);
@@ -1497,7 +1498,7 @@ namespace MailKit.Net.Smtp {
 		{
 			ValidateArguments (host, port);
 
-			capabilities = SmtpCapabilities.None;
+			capabilities.Clear ();
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
@@ -1688,7 +1689,7 @@ namespace MailKit.Net.Smtp {
 		{
 			ValidateArguments (stream, host, port);
 
-			capabilities = SmtpCapabilities.None;
+			capabilities.Clear ();
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
@@ -1805,7 +1806,7 @@ namespace MailKit.Net.Smtp {
 			if (uri != null)
 				RecordClientDisconnected (null);
 
-			capabilities = SmtpCapabilities.None;
+			capabilities.Clear ();
 			authenticated = false;
 			connected = false;
 			secure = false;
@@ -1989,7 +1990,7 @@ namespace MailKit.Net.Smtp {
 			if (!idnEncode)
 				builder.Append (" SMTPUTF8");
 
-			if ((Capabilities & SmtpCapabilities.Size) != 0 && size != -1) {
+			if (Capabilities.Contains (SmtpCapability.Size) && size != -1) {
 				builder.Append (" SIZE=");
 				builder.Append (size.ToString (CultureInfo.InvariantCulture));
 			}
@@ -1999,7 +2000,7 @@ namespace MailKit.Net.Smtp {
 			else if ((extensions & SmtpExtensions.EightBitMime) != 0)
 				builder.Append (" BODY=8BITMIME");
 
-			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
+			if (capabilities.Contains (SmtpCapability.Dsn)) {
 				var envid = GetEnvelopeId (message);
 
 				if (!string.IsNullOrEmpty (envid)) {
@@ -2017,7 +2018,7 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			if (RequireTLS && (Capabilities & SmtpCapabilities.RequireTLS) != 0) {
+			if (RequireTLS && Capabilities.Contains (SmtpCapability.RequireTLS)) {
 				// Check to see if the message has a TLS-Required header. If it does, then the only defined value it can have is "No".
 				var index = message.Headers.IndexOf (HeaderId.TLSRequired);
 
@@ -2116,7 +2117,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="address">The original recipient address.</param>
 		void GetOriginalRecipientAddress (MimeMessage message, MailboxAddress mailbox, out string addrType, out string address)
 		{
-			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
+			var idnEncode = !Capabilities.Contains (SmtpCapability.UTF8);
 
 			addrType = "rfc822";
 			address = mailbox.GetAddress (idnEncode);
@@ -2143,13 +2144,13 @@ namespace MailKit.Net.Smtp {
 
 		string CreateRcptToCommand (FormatOptions options, MimeMessage message, MailboxAddress mailbox)
 		{
-			var idnEncode = (Capabilities & SmtpCapabilities.UTF8) == 0;
+			var idnEncode = !Capabilities.Contains (SmtpCapability.UTF8);
 			var command = new StringBuilder ("RCPT TO:<");
 
 			command.Append (mailbox.GetAddress (idnEncode));
 			command.Append ('>');
 
-			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
+			if (capabilities.Contains (SmtpCapability.Dsn)) {
 				var notify = GetDeliveryStatusNotifications (message, mailbox);
 
 				if (notify.HasValue) {
@@ -2385,17 +2386,17 @@ namespace MailKit.Net.Smtp {
 			format.NewLineFormat = NewLineFormat.Dos;
 			format.EnsureNewLine = true;
 
-			if (format.International && (Capabilities & SmtpCapabilities.UTF8) == 0)
+			if (format.International && !Capabilities.Contains (SmtpCapability.UTF8))
 				format.International = false;
 
-			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
+			if (format.International && !Capabilities.Contains (SmtpCapability.EightBitMime))
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
 			EncodingConstraint constraint;
 
-			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+			if (Capabilities.Contains (SmtpCapability.BinaryMime))
 				constraint = EncodingConstraint.None;
-			else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+			else if (Capabilities.Contains (SmtpCapability.EightBitMime))
 				constraint = EncodingConstraint.EightBit;
 			else
 				constraint = EncodingConstraint.SevenBit;
@@ -2409,16 +2410,16 @@ namespace MailKit.Net.Smtp {
 				while (iter.MoveNext ()) {
 					if (iter.Current is MimePart part) {
 						if (part.ContentTransferEncoding == ContentEncoding.EightBit) {
-							if ((capabilities & SmtpCapabilities.EightBitMime) != 0) {
+							if (capabilities.Contains (SmtpCapability.EightBitMime)) {
 								extensions |= SmtpExtensions.EightBitMime;
 
-								if ((capabilities & SmtpCapabilities.BinaryMime) == 0) {
+								if (!capabilities.Contains (SmtpCapability.BinaryMime)) {
 									// BINARYMIME is not supported, so there's no sense in continuing to scan more MimeParts.
 									break;
 								}
 							}
 						} else if (part.ContentTransferEncoding == ContentEncoding.Binary) {
-							if ((capabilities & SmtpCapabilities.BinaryMime) != 0) {
+							if (capabilities.Contains (SmtpCapability.BinaryMime)) {
 								// Once we've decided we require BINARYMIME, no sense continuing to check for 8BITMIME.
 								extensions |= SmtpExtensions.BinaryMime;
 								break;
@@ -2428,7 +2429,7 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			if ((Capabilities & SmtpCapabilities.UTF8) != 0 && (format.International || sender.IsInternational || recipients.Any (x => x.IsInternational)))
+			if (Capabilities.Contains (SmtpCapability.UTF8) && (format.International || sender.IsInternational || recipients.Any (x => x.IsInternational)))
 				extensions |= SmtpExtensions.UTF8;
 
 			return format;
@@ -2437,17 +2438,17 @@ namespace MailKit.Net.Smtp {
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		bool UseBdatCommand (SmtpExtensions extensions)
 		{
-			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities & (SmtpCapabilities.BinaryMime | SmtpCapabilities.Chunking)) != 0);
+			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities.Contains (SmtpCapability.BinaryMime) || Capabilities.Contains (SmtpCapability.Chunking)));
 		}
 
 		string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress? progress)
 		{
 			var format = Prepare (options, message, sender, recipients, out var extensions);
-			var pipeline = (capabilities & SmtpCapabilities.Pipelining) != 0;
+			var pipeline = capabilities.Contains (SmtpCapability.Pipelining);
 			var bdat = UseBdatCommand (extensions);
 			long size;
 
-			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
+			if (bdat || Capabilities.Contains (SmtpCapability.Size) || progress != null) {
 				size = GetSize (format, message, cancellationToken);
 			} else {
 				size = -1;

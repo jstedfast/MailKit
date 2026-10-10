@@ -129,7 +129,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages with the specified annotation.</para>
 		/// <note type="note">This is equivalent to the <c>ANNOTATION</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc5257#section-4.8">rfc5257</a>
 		/// and is therefor only available for use with IMAP servers that support the <c>ANNOTATE</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Annotate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.Annotate"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <param name="entry">The annotation entry.</param>
@@ -225,7 +225,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.</para>
 		/// <note type="note">This is equivalent to the <c>MODSEQ</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc4551#section-3.4">rfc4551</a>
 		/// and is therefor only available for use with IMAP servers that support the <c>CONDSTORE</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.CondStore"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.CondStore"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
@@ -305,7 +305,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages using a saved search filter.</para>
 		/// <note type="note">This is equivalent to the <c>FILTER</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc5466">rfc5466</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>FILTERS</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Filters"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.Filters"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="FilterSearchQuery"/>.</returns>
@@ -322,7 +322,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages using a saved search filter.</para>
 		/// <note type="note">This is equivalent to the <c>FILTER</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc5466">rfc5466</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>FILTERS</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Filters"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.Filters"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="FilterSearchQuery"/>.</returns>
@@ -368,7 +368,7 @@ namespace MailKit.Search {
 		/// <para>Applies a fuzzy matching algorithm to the specified expression.</para>
 		/// <note type="note">This is equivalent to the <c>OLDER</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc6203">rfc6203</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>SEARCH=FUZZY</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.FuzzySearch"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.FuzzySearch"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
@@ -819,7 +819,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages older than the specified number of seconds.</para>
 		/// <note type="note">This is equivalent to the <c>OLDER</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc5032">rfc5032</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>WITHIN</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Within"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.Within"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
@@ -900,7 +900,7 @@ namespace MailKit.Search {
 		/// date attribute is not supported.</para>
 		/// <note type="note">This is equivalent to the <c>SAVEDATESUPPORTED</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc8514">rfc8514, section 4.3</a>
 		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.SaveDate"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		public static readonly SearchQuery SaveDateSupported = new SearchQuery (SearchTerm.SaveDateSupported);
@@ -913,7 +913,7 @@ namespace MailKit.Search {
 		/// <para>The resolution of this search query does not include the time.</para>
 		/// <note type="note">This is equivalent to the <c>SAVEDBEFORE</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc8514">rfc8514, section 4.3</a>
 		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.SaveDate"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
@@ -931,7 +931,7 @@ namespace MailKit.Search {
 		/// <para>The resolution of this search query does not include the time.</para>
 		/// <note type="note">This is equivalent to the <c>SAVEDON</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc8514">rfc8514, section 4.3</a>
 		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.SaveDate"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
@@ -949,7 +949,7 @@ namespace MailKit.Search {
 		/// <para>The resolution of this search query does not include the time.</para>
 		/// <note type="note">This is equivalent to the <c>SAVEDSINCE</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc8514">rfc8514, section 4.3</a>
 		/// and is therefor only available for use with IMAP servers that support the <c>SAVEDATE</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.SaveDate"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.SaveDate"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
@@ -1100,7 +1100,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages younger than the specified number of seconds.</para>
 		/// <note type="note">This is equivalent to the <c>YOUNGER</c> search key as defined in <a href="https://datatracker.ietf.org/doc/html/rfc5032">rfc5032</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>WITHIN</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.Within"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.Within"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
@@ -1125,7 +1125,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages that have the specified GMail message identifier.</para>
 		/// <note type="note">This is equivalent to the <c>X-GM-MSGID</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.GMailExt1"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
@@ -1142,7 +1142,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages belonging to the specified GMail thread.</para>
 		/// <note type="note">This is equivalent to the <c>X-GM-THRID</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.GMailExt1"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
@@ -1159,7 +1159,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages that have the specified GMail label.</para>
 		/// <note type="note">This is equivalent to the <c>X-GM-LABELS</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.GMailExt1"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
@@ -1188,7 +1188,7 @@ namespace MailKit.Search {
 		/// <para>Matches messages using Google's custom message search syntax.</para>
 		/// <note type="note">This is equivalent to the <c>X-GM-RAW</c> search key as defined in <a href="https://developers.google.com/gmail/imap_extensions">Google's IMAP extensions</a> and is therefor only available
 		/// for use with IMAP servers that support the <c>X-GM-EXT1</c> extension.</note>
-		/// <seealso cref="MailKit.Net.Imap.ImapCapabilities.GMailExt1"/>
+		/// <seealso cref="MailKit.Net.Imap.ImapCapability.GMailExt1"/>
 		/// <seealso cref="MailKit.Net.Imap.ImapClient.Capabilities"/>
 		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>

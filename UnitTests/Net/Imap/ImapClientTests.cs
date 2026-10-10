@@ -48,48 +48,64 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapClientTests
 	{
-		static readonly ImapCapabilities GreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.Namespace | ImapCapabilities.Unselect;
-		static readonly ImapCapabilities DovecotInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.LiteralPlus | ImapCapabilities.SaslIR | ImapCapabilities.LoginReferrals | ImapCapabilities.Id |
-			ImapCapabilities.Enable | ImapCapabilities.Idle;
-		static readonly ImapCapabilities DovecotAuthenticatedCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.LiteralPlus | ImapCapabilities.SaslIR | ImapCapabilities.LoginReferrals | ImapCapabilities.Id |
-			ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.Sort | ImapCapabilities.SortDisplay |
-			ImapCapabilities.Thread | ImapCapabilities.MultiAppend | ImapCapabilities.Catenate | ImapCapabilities.Unselect |
-			ImapCapabilities.Children | ImapCapabilities.Namespace | ImapCapabilities.UidPlus | ImapCapabilities.ListExtended |
-			ImapCapabilities.I18NLevel | ImapCapabilities.CondStore | ImapCapabilities.QuickResync | ImapCapabilities.ESearch |
-			ImapCapabilities.ESort | ImapCapabilities.SearchResults | ImapCapabilities.Within | ImapCapabilities.Context |
-			ImapCapabilities.ListStatus | ImapCapabilities.Binary | ImapCapabilities.Move | ImapCapabilities.SpecialUse;
-		static readonly ImapCapabilities GMailInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.Quota | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Id |
-			ImapCapabilities.Children | ImapCapabilities.Unselect | ImapCapabilities.SaslIR | ImapCapabilities.XList |
-			ImapCapabilities.GMailExt1;
-		static readonly ImapCapabilities GMailAuthenticatedCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.Quota | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Id |
-			ImapCapabilities.Children | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.CondStore |
-			ImapCapabilities.ESearch | ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.ListExtended |
-			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.UTF8Accept | ImapCapabilities.XList |
-			ImapCapabilities.GMailExt1 | ImapCapabilities.LiteralMinus | ImapCapabilities.AppendLimit;
-		static readonly ImapCapabilities ICloudInitialCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 |
-			ImapCapabilities.Status | ImapCapabilities.SaslIR;
-		static readonly ImapCapabilities ICloudAuthenticatedCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 |
-			ImapCapabilities.Status | ImapCapabilities.CondStore | ImapCapabilities.Enable | ImapCapabilities.QuickResync |
-			ImapCapabilities.Quota | ImapCapabilities.Namespace | ImapCapabilities.UidPlus | ImapCapabilities.Children |
-			ImapCapabilities.Binary | ImapCapabilities.Unselect | ImapCapabilities.Sort | ImapCapabilities.Catenate |
-			ImapCapabilities.Language | ImapCapabilities.ESearch | ImapCapabilities.ESort | ImapCapabilities.Thread |
-			ImapCapabilities.Context | ImapCapabilities.Within | ImapCapabilities.SaslIR | ImapCapabilities.SearchResults |
-			ImapCapabilities.Metadata | ImapCapabilities.Id | ImapCapabilities.Annotate | ImapCapabilities.MultiSearch |
-			ImapCapabilities.Idle | ImapCapabilities.ListStatus;
-		static readonly ImapCapabilities IMAP4rev2CoreCapabilities = ImapCapabilities.IMAP4rev2 | ImapCapabilities.Status |
-			ImapCapabilities.Namespace | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.ESearch |
-			ImapCapabilities.SearchResults | ImapCapabilities.Enable | ImapCapabilities.Idle | ImapCapabilities.SaslIR | ImapCapabilities.ListExtended |
-			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.LiteralMinus | ImapCapabilities.SpecialUse |
-			ImapCapabilities.StatusSize;
-		static readonly ImapCapabilities AclInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Acl;
-		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
-		static readonly ImapCapabilities MetadataInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Metadata;
-		static readonly ImapCapabilities MetadataAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Metadata;
+		static readonly ImapCapability[] GreetingCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Status,
+			ImapCapability.Namespace, ImapCapability.Unselect
+		};
+		static readonly ImapCapability[] DovecotInitialCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Status,
+			ImapCapability.LiteralPlus, ImapCapability.SaslIR, ImapCapability.LoginReferrals, ImapCapability.Id,
+			ImapCapability.Enable, ImapCapability.Idle
+		};
+		static readonly ImapCapability[] DovecotAuthenticatedCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Status,
+			ImapCapability.LiteralPlus, ImapCapability.SaslIR, ImapCapability.LoginReferrals, ImapCapability.Id,
+			ImapCapability.Enable, ImapCapability.Idle, ImapCapability.Sort, ImapCapability.SortDisplay,
+			ImapCapability.Thread, ImapCapability.MultiAppend, ImapCapability.Catenate, ImapCapability.Unselect,
+			ImapCapability.Children, ImapCapability.Namespace, ImapCapability.UidPlus, ImapCapability.ListExtended,
+			ImapCapability.I18NLevel, ImapCapability.CondStore, ImapCapability.QuickResync, ImapCapability.ESearch,
+			ImapCapability.ESort, ImapCapability.SearchResults, ImapCapability.Within, ImapCapability.Context,
+			ImapCapability.ListStatus, ImapCapability.Binary, ImapCapability.Move, ImapCapability.SpecialUse
+		};
+		static readonly ImapCapability[] GMailInitialCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Status,
+			ImapCapability.Quota, ImapCapability.Idle, ImapCapability.Namespace, ImapCapability.Id,
+			ImapCapability.Children, ImapCapability.Unselect, ImapCapability.SaslIR, ImapCapability.XList,
+			ImapCapability.GMailExt1
+		};
+		static readonly ImapCapability[] GMailAuthenticatedCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Status,
+			ImapCapability.Quota, ImapCapability.Idle, ImapCapability.Namespace, ImapCapability.Id,
+			ImapCapability.Children, ImapCapability.Unselect, ImapCapability.UidPlus, ImapCapability.CondStore,
+			ImapCapability.ESearch, ImapCapability.Compress, ImapCapability.Enable, ImapCapability.ListExtended,
+			ImapCapability.ListStatus, ImapCapability.Move, ImapCapability.UTF8Accept, ImapCapability.XList,
+			ImapCapability.GMailExt1, ImapCapability.LiteralMinus, ImapCapability.AppendLimit
+		};
+		static readonly ImapCapability[] ICloudInitialCapabilities = new [] {
+			ImapCapability.IMAP4, ImapCapability.IMAP4rev1,
+			ImapCapability.Status, ImapCapability.SaslIR
+		};
+		static readonly ImapCapability[] ICloudAuthenticatedCapabilities = new [] {
+			ImapCapability.IMAP4, ImapCapability.IMAP4rev1,
+			ImapCapability.Status, ImapCapability.CondStore, ImapCapability.Enable, ImapCapability.QuickResync,
+			ImapCapability.Quota, ImapCapability.Namespace, ImapCapability.UidPlus, ImapCapability.Children,
+			ImapCapability.Binary, ImapCapability.Unselect, ImapCapability.Sort, ImapCapability.Catenate,
+			ImapCapability.Language, ImapCapability.ESearch, ImapCapability.ESort, ImapCapability.Thread,
+			ImapCapability.Context, ImapCapability.Within, ImapCapability.SaslIR, ImapCapability.SearchResults,
+			ImapCapability.Metadata, ImapCapability.Id, ImapCapability.Annotate, ImapCapability.MultiSearch,
+			ImapCapability.Idle, ImapCapability.ListStatus
+		};
+		static readonly ImapCapability[] IMAP4rev2CoreCapabilities = new [] {
+			ImapCapability.IMAP4rev2, ImapCapability.Status,
+			ImapCapability.Namespace, ImapCapability.Unselect, ImapCapability.UidPlus, ImapCapability.ESearch,
+			ImapCapability.SearchResults, ImapCapability.Enable, ImapCapability.Idle, ImapCapability.SaslIR, ImapCapability.ListExtended,
+			ImapCapability.ListStatus, ImapCapability.Move, ImapCapability.LiteralMinus, ImapCapability.SpecialUse,
+			ImapCapability.StatusSize
+		};
+		static readonly ImapCapability[] AclInitialCapabilities = GMailInitialCapabilities.Concat (new [] { ImapCapability.Acl }).ToArray ();
+		static readonly ImapCapability[] AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities.Concat (new [] { ImapCapability.Acl }).ToArray ();
+		static readonly ImapCapability[] MetadataInitialCapabilities = GMailInitialCapabilities.Concat (new [] { ImapCapability.Metadata }).ToArray ();
+		static readonly ImapCapability[] MetadataAuthenticatedCapabilities = GMailAuthenticatedCapabilities.Concat (new [] { ImapCapability.Metadata }).ToArray ();
 		const CipherAlgorithmType GmxDeCipherAlgorithm = CipherAlgorithmType.Aes256;
 		const int GmxDeCipherStrength = 256;
 #if !MONO
@@ -268,7 +284,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled), "Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (IMAP4rev2CoreCapabilities.Concat (new [] { ImapCapability.StartTLS, ImapCapability.LoginDisabled })), "Capabilities");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("SCRAM-SHA-256"), "AUTH=SCRAM-SHA-256");
 			}
 		}
@@ -285,7 +301,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (IMAP4rev2CoreCapabilities | ImapCapabilities.StartTLS | ImapCapabilities.LoginDisabled), "Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (IMAP4rev2CoreCapabilities.Concat (new [] { ImapCapability.StartTLS, ImapCapability.LoginDisabled })), "Capabilities");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("SCRAM-SHA-256"), "AUTH=SCRAM-SHA-256");
 			}
 		}
@@ -328,8 +344,8 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept), Is.False, "UTF8=ACCEPT");
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UTF8Accept), Is.False, "UTF8=ACCEPT");
+				Assert.That (client.Capabilities.Contains (ImapCapability.StatusSize), Is.True, "STATUS=SIZE");
 
 				var cafe = client.GetFolder ("Café");
 				Assert.That (cafe.Name, Is.EqualTo ("Café"), "Name");
@@ -372,8 +388,8 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UTF8Accept), Is.False, "UTF8=ACCEPT");
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UTF8Accept), Is.False, "UTF8=ACCEPT");
+				Assert.That (client.Capabilities.Contains (ImapCapability.StatusSize), Is.True, "STATUS=SIZE");
 
 				var cafe = await client.GetFolderAsync ("Café");
 				Assert.That (cafe.Name, Is.EqualTo ("Café"), "Name");
@@ -434,12 +450,12 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.False, "STATUS=SIZE before ENABLE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.StatusSize), Is.False, "STATUS=SIZE before ENABLE");
 
 				client.Enable (ImapFeatures.IMAP4rev2);
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE after ENABLE");
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Move), Is.True, "MOVE after ENABLE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.StatusSize), Is.True, "STATUS=SIZE after ENABLE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Move), Is.True, "MOVE after ENABLE");
 
 				// ENABLE IMAP4rev2 a second time should no-op.
 				client.Enable (ImapFeatures.IMAP4rev2);
@@ -486,12 +502,12 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.False, "STATUS=SIZE before ENABLE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.StatusSize), Is.False, "STATUS=SIZE before ENABLE");
 
 				await client.EnableAsync (ImapFeatures.IMAP4rev2);
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.StatusSize), Is.True, "STATUS=SIZE after ENABLE");
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Move), Is.True, "MOVE after ENABLE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.StatusSize), Is.True, "STATUS=SIZE after ENABLE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Move), Is.True, "MOVE after ENABLE");
 
 				// ENABLE IMAP4rev2 a second time should no-op.
 				await client.EnableAsync (ImapFeatures.IMAP4rev2);
@@ -1274,7 +1290,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GreetingCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GreetingCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (1));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 			}
@@ -1296,7 +1312,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GreetingCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GreetingCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (1));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 			}
@@ -1797,7 +1813,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestPreAuthGreeting ()
 		{
-			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var capabilities = new [] { ImapCapability.IMAP4rev1, ImapCapability.Status };
 			var commands = CreatePreAuthGreetingCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -1817,7 +1833,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (capabilities), "Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (capabilities), "Capabilities");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -1832,7 +1848,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestPreAuthGreetingAsync ()
 		{
-			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var capabilities = new [] { ImapCapability.IMAP4rev1, ImapCapability.Status };
 			var commands = CreatePreAuthGreetingCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -1852,7 +1868,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (capabilities), "Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (capabilities), "Capabilities");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -1876,7 +1892,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestPreAuthCapabilityGreeting ()
 		{
-			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var capabilities = new [] { ImapCapability.IMAP4rev1, ImapCapability.Status };
 			var commands = CreatePreAuthCapabilityGreetingCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -1896,7 +1912,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (capabilities), "Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (capabilities), "Capabilities");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -1911,7 +1927,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestPreAuthCapabilityGreetingAsync ()
 		{
-			var capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status;
+			var capabilities = new [] { ImapCapability.IMAP4rev1, ImapCapability.Status };
 			var commands = CreatePreAuthCapabilityGreetingCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -1931,7 +1947,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (capabilities), "Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (capabilities), "Capabilities");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2441,7 +2457,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2467,7 +2483,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				client.Disconnect (false);
@@ -2489,7 +2505,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2515,7 +2531,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				await client.DisconnectAsync (false);
@@ -2549,7 +2565,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2575,7 +2591,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				client.Disconnect (false);
@@ -2597,7 +2613,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2623,7 +2639,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				await client.DisconnectAsync (false);
@@ -2654,7 +2670,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities | ImapCapabilities.LoginDisabled));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities.Concat (new [] { ImapCapability.LoginDisabled })));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2698,7 +2714,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities | ImapCapabilities.LoginDisabled));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities.Concat (new [] { ImapCapability.LoginDisabled })));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2753,9 +2769,9 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
-					ImapCapabilities.Unselect | ImapCapabilities.Children | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.LiteralPlus |
-					ImapCapabilities.Status));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { ImapCapability.IMAP4, ImapCapability.IMAP4rev1, ImapCapability.SaslIR, ImapCapability.UidPlus, ImapCapability.Id,
+					ImapCapability.Unselect, ImapCapability.Children, ImapCapability.Idle, ImapCapability.Namespace, ImapCapability.LiteralPlus,
+					ImapCapability.Status }));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2788,9 +2804,9 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.SaslIR | ImapCapabilities.UidPlus | ImapCapabilities.Id |
-					ImapCapabilities.Unselect | ImapCapabilities.Children | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.LiteralPlus |
-					ImapCapabilities.Status));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { ImapCapability.IMAP4, ImapCapability.IMAP4rev1, ImapCapability.SaslIR, ImapCapability.UidPlus, ImapCapability.Id,
+					ImapCapability.Unselect, ImapCapability.Children, ImapCapability.Idle, ImapCapability.Namespace, ImapCapability.LiteralPlus,
+					ImapCapability.Status }));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2843,7 +2859,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2871,7 +2887,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				client.Enable (ImapFeatures.UTF8Accept);
@@ -2917,7 +2933,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -2945,7 +2961,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				await client.EnableAsync (ImapFeatures.UTF8Accept);
@@ -3023,8 +3039,8 @@ namespace UnitTests.Net.Imap {
 				};
 
 				// Disable LITERAL+ and LITERAL- extensions
-				client.Capabilities &= ~ImapCapabilities.LiteralPlus;
-				client.Capabilities &= ~ImapCapabilities.LiteralMinus;
+				client.Capabilities.Disable (ImapCapability.LiteralPlus);
+				client.Capabilities.Disable (ImapCapability.LiteralMinus);
 
 				implementation = client.Identify (implementation);
 
@@ -3061,8 +3077,8 @@ namespace UnitTests.Net.Imap {
 				};
 
 				// Disable LITERAL+ and LITERAL- extensions
-				client.Capabilities &= ~ImapCapabilities.LiteralPlus;
-				client.Capabilities &= ~ImapCapabilities.LiteralMinus;
+				client.Capabilities.Disable (ImapCapability.LiteralPlus);
+				client.Capabilities.Disable (ImapCapability.LiteralMinus);
 
 				implementation = await client.IdentifyAsync (implementation);
 
@@ -3099,7 +3115,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3126,7 +3142,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				client.Disconnect (false);
@@ -3148,7 +3164,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3175,7 +3191,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				await client.DisconnectAsync (false);
@@ -3209,7 +3225,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3235,7 +3251,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				client.Disconnect (false);
@@ -3257,7 +3273,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3283,7 +3299,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				await client.DisconnectAsync (false);
@@ -3366,7 +3382,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3392,7 +3408,7 @@ namespace UnitTests.Net.Imap {
 					}
 
 					Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-					Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 					Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 					client.Disconnect (false);
@@ -3418,7 +3434,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3444,7 +3460,7 @@ namespace UnitTests.Net.Imap {
 					}
 
 					Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-					Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 					Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 					await client.DisconnectAsync (false);
@@ -3481,7 +3497,7 @@ namespace UnitTests.Net.Imap {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3498,7 +3514,7 @@ namespace UnitTests.Net.Imap {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 
 					client.Disconnect (false);
 				}
@@ -3522,7 +3538,7 @@ namespace UnitTests.Net.Imap {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3539,7 +3555,7 @@ namespace UnitTests.Net.Imap {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 
 					await client.DisconnectAsync (false);
 				}
@@ -3578,7 +3594,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3605,7 +3621,7 @@ namespace UnitTests.Net.Imap {
 					}
 
 					Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-					Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 					Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 					client.Disconnect (false);
@@ -3631,7 +3647,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (6));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3658,7 +3674,7 @@ namespace UnitTests.Net.Imap {
 					}
 
 					Assert.That (authenticated, Is.EqualTo (1), "Authenticated event was not emitted the expected number of times");
-					Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 					Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 					await client.DisconnectAsync (false);
@@ -3696,7 +3712,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3710,7 +3726,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				client.Enable (ImapFeatures.UTF8Accept);
@@ -3737,7 +3753,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3751,7 +3767,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.SupportsQuotas, Is.True, "SupportsQuotas");
 
 				await client.EnableAsync (ImapFeatures.UTF8Accept);
@@ -3866,7 +3882,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
@@ -3882,7 +3898,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
@@ -3910,7 +3926,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
@@ -3926,7 +3942,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
@@ -3966,7 +3982,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ICloudInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ICloudInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("ATOKEN"), "Expected SASL ATOKEN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -3979,7 +3995,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ICloudAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ICloudAuthenticatedCapabilities));
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
@@ -4006,7 +4022,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ICloudInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ICloudInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("ATOKEN"), "Expected SASL ATOKEN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4019,7 +4035,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ICloudAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ICloudAuthenticatedCapabilities));
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
 
@@ -4100,7 +4116,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -4117,7 +4133,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities | ImapCapabilities.StatusSize | ImapCapabilities.ObjectID));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities.Concat (new [] { ImapCapability.StatusSize, ImapCapability.ObjectID })));
 
 				// Note: StatusItems.Deleted should be ignored since the server does not support IMAP4rev2.
 				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId | StatusItems.Deleted;
@@ -4146,7 +4162,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", "a663f6ce-4f36-434e-9f0c-7f757046a6d4", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0, 1024);
 
 				// Now make the same query but disable LIST-STATUS
-				client.Capabilities &= ~ImapCapabilities.ListStatus;
+				client.Capabilities.Disable (ImapCapability.ListStatus);
 				folders = client.GetFolders (client.PersonalNamespaces[0], all, false);
 				Assert.That (folders, Has.Count.EqualTo (10), "Unexpected folder count.");
 
@@ -4171,7 +4187,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", "a663f6ce-4f36-434e-9f0c-7f757046a6d4", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0, 1024);
 
 				// Now make the same query but disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 				folders = client.GetFolders (client.PersonalNamespaces[0], all, true);
 				Assert.That (folders, Has.Count.EqualTo (10), "Unexpected folder count.");
 
@@ -4213,7 +4229,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -4230,7 +4246,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities | ImapCapabilities.StatusSize | ImapCapabilities.ObjectID));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities.Concat (new [] { ImapCapability.StatusSize, ImapCapability.ObjectID })));
 
 				// Note: StatusItems.Deleted should be ignored since the server does not support IMAP4rev2.
 				var all = StatusItems.Count | StatusItems.HighestModSeq | StatusItems.Recent | StatusItems.UidNext | StatusItems.UidValidity | StatusItems.Unread | StatusItems.Size | StatusItems.MailboxId | StatusItems.Deleted;
@@ -4259,7 +4275,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", "a663f6ce-4f36-434e-9f0c-7f757046a6d4", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0, 1024);
 
 				// Now make the same query but disable LIST-STATUS
-				client.Capabilities &= ~ImapCapabilities.ListStatus;
+				client.Capabilities.Disable (ImapCapability.ListStatus);
 				folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, false);
 				Assert.That (folders, Has.Count.EqualTo (10), "Unexpected folder count.");
 
@@ -4284,7 +4300,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", "a663f6ce-4f36-434e-9f0c-7f757046a6d4", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0, 1024);
 
 				// Now make the same query but disable LIST-STATUS
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 				folders = await client.GetFoldersAsync (client.PersonalNamespaces[0], all, true);
 				Assert.That (folders, Has.Count.EqualTo (10), "Unexpected folder count.");
 
@@ -4340,7 +4356,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -4357,7 +4373,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 
 				var inbox = client.Inbox;
 
@@ -4391,7 +4407,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -4408,7 +4424,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 
 				var inbox = client.Inbox;
 
@@ -4589,7 +4605,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
@@ -4605,7 +4621,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
@@ -5188,7 +5204,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 				Assert.That (matches.Relevancy, Has.Count.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
-				client.Capabilities &= ~ImapCapabilities.ESearch;
+				client.Capabilities.Disable (ImapCapability.ESearch);
 				matches = ((ImapFolder) destination).Search ("ALL");
 				Assert.That (matches.Max.HasValue, Is.True, "MAX should always be set");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX value");
@@ -5199,7 +5215,7 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 
-				client.Capabilities &= ~ImapCapabilities.ESort;
+				client.Capabilities.Disable (ImapCapability.ESort);
 				matches = ((ImapFolder) destination).Sort ("(REVERSE ARRIVAL) US-ASCII ALL");
 				Assert.That (matches.Max.HasValue, Is.True, "MAX should always be set");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX value");
@@ -5254,7 +5270,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Expected SASL DIGEST-MD5 auth mechanism");
@@ -5270,7 +5286,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (DovecotAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (DovecotAuthenticatedCapabilities));
 				Assert.That (client.InternationalizationLevel, Is.EqualTo (1), "Expected I18NLEVEL=1");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.OrderedSubject), "Expected THREAD=ORDEREDSUBJECT");
 				Assert.That (client.ThreadingAlgorithms, Does.Contain (ThreadingAlgorithm.References), "Expected THREAD=REFERENCES");
@@ -5837,7 +5853,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 				Assert.That (matches.Relevancy, Has.Count.EqualTo (matches.Count), "Unexpected number of relevancy scores");
 
-				client.Capabilities &= ~ImapCapabilities.ESearch;
+				client.Capabilities.Disable (ImapCapability.ESearch);
 				matches = await ((ImapFolder) destination).SearchAsync ("ALL");
 				Assert.That (matches.Max.HasValue, Is.True, "MAX should always be set");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX value");
@@ -5848,7 +5864,7 @@ namespace UnitTests.Net.Imap {
 				for (int i = 0; i < matches.UniqueIds.Count; i++)
 					Assert.That (matches.UniqueIds[i].Id, Is.EqualTo (i + 1));
 
-				client.Capabilities &= ~ImapCapabilities.ESort;
+				client.Capabilities.Disable (ImapCapability.ESort);
 				matches = await ((ImapFolder) destination).SortAsync ("(REVERSE ARRIVAL) US-ASCII ALL");
 				Assert.That (matches.Max.HasValue, Is.True, "MAX should always be set");
 				Assert.That (matches.Max.Value.Id, Is.EqualTo (14), "Unexpected MAX value");
@@ -6003,7 +6019,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -6020,7 +6036,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.AppendLimit.HasValue, Is.True, "Expected AppendLimit to have a value");
 				Assert.That (client.AppendLimit.Value, Is.EqualTo (35651584), "Expected AppendLimit value to match");
 
@@ -6048,7 +6064,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -6202,7 +6218,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -6219,7 +6235,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 				Assert.That (client.AppendLimit.HasValue, Is.True, "Expected AppendLimit to have a value");
 				Assert.That (client.AppendLimit.Value, Is.EqualTo (35651584), "Expected AppendLimit value to match");
 
@@ -6247,7 +6263,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -6529,7 +6545,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -6543,7 +6559,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 
 				implementation = client.Identify (null);
 				Assert.That (implementation, Is.Not.Null, "Expected a non-null ID response.");
@@ -6584,7 +6600,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (implementation.Properties["remote-host"], Is.EqualTo ("127.0.0.1"));
 
 				// disable ID support
-				client.Capabilities &= ~ImapCapabilities.Id;
+				client.Capabilities.Disable (ImapCapability.Id);
 				Assert.Throws<NotSupportedException> (() => client.Identify (null));
 
 				client.Disconnect (false);
@@ -6608,7 +6624,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (5));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -6622,7 +6638,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailAuthenticatedCapabilities));
 
 				implementation = await client.IdentifyAsync (null);
 				Assert.That (implementation, Is.Not.Null, "Expected a non-null ID response.");
@@ -6663,7 +6679,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (implementation.Properties["remote-host"], Is.EqualTo ("127.0.0.1"));
 
 				// disable ID support
-				client.Capabilities &= ~ImapCapabilities.Id;
+				client.Capabilities.Disable (ImapCapability.Id);
 				Assert.ThrowsAsync<NotSupportedException> (() => client.IdentifyAsync (null));
 
 				await client.DisconnectAsync (false);
@@ -6849,7 +6865,7 @@ namespace UnitTests.Net.Imap {
 				inbox.Open (FolderAccess.ReadWrite);
 
 				// disable IDLE
-				client.Capabilities &= ~ImapCapabilities.Idle;
+				client.Capabilities.Disable (ImapCapability.Idle);
 
 				using (var done = new CancellationTokenSource ())
 					Assert.Throws<NotSupportedException> (() => client.Idle (done.Token));
@@ -6883,7 +6899,7 @@ namespace UnitTests.Net.Imap {
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
 
 				// disable IDLE
-				client.Capabilities &= ~ImapCapabilities.Idle;
+				client.Capabilities.Disable (ImapCapability.Idle);
 
 				using (var done = new CancellationTokenSource ())
 					Assert.ThrowsAsync<NotSupportedException> (() => client.IdleAsync (done.Token));
@@ -7441,7 +7457,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (AclInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (AclInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -7458,7 +7474,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (AclAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (AclAuthenticatedCapabilities));
 
 				var inbox = client.Inbox;
 				Assert.That (inbox, Is.Not.Null, "Expected non-null Inbox folder.");
@@ -7540,7 +7556,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (AclInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (AclInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -7557,7 +7573,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (AclAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (AclAuthenticatedCapabilities));
 
 				var inbox = client.Inbox;
 				Assert.That (inbox, Is.Not.Null, "Expected non-null Inbox folder.");
@@ -7668,7 +7684,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (MetadataInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (MetadataInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -7684,7 +7700,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (MetadataAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (MetadataAuthenticatedCapabilities));
 
 				var inbox = client.Inbox;
 				Assert.That (inbox, Is.Not.Null, "Expected non-null Inbox folder.");
@@ -7796,7 +7812,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (MetadataInitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (MetadataInitialCapabilities));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -7812,7 +7828,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (MetadataAuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (MetadataAuthenticatedCapabilities));
 
 				var inbox = client.Inbox;
 				Assert.That (inbox, Is.Not.Null, "Expected non-null Inbox folder.");
@@ -8010,17 +8026,21 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestListInboxFallbackAfterEmptyListExtended ()
 		{
-			const ImapCapabilities InitialCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-				ImapCapabilities.AppendLimit | ImapCapabilities.Enable | ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move |
-				ImapCapabilities.ListExtended | ImapCapabilities.Namespace | ImapCapabilities.Quota | ImapCapabilities.Sort |
-				ImapCapabilities.SpecialUse | ImapCapabilities.UidPlus;
-			const ImapCapabilities AuthenticatedCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-				ImapCapabilities.AppendLimit | ImapCapabilities.CreateSpecialUse | ImapCapabilities.Quota | ImapCapabilities.Children |
-				ImapCapabilities.CondStore | ImapCapabilities.Enable | ImapCapabilities.ESort | ImapCapabilities.ESearch | ImapCapabilities.I18NLevel |
-				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | /*ImapCapabilities.ListStatus | ImapCapabilities.ListExtended |*/
-				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | /*ImapCapabilities.Preview |*/ ImapCapabilities.FuzzySearch |
-				ImapCapabilities.Sort | ImapCapabilities.SearchResults | /*ImapCapabilities.SpecialUse |*/ ImapCapabilities.StatusSize |
-				ImapCapabilities.UidPlus | ImapCapabilities.Unselect | ImapCapabilities.Within | ImapCapabilities.XList;
+			var InitialCapabilities = new [] {
+			ImapCapability.IMAP4, ImapCapability.IMAP4rev1, ImapCapability.Status,
+				ImapCapability.AppendLimit, ImapCapability.Enable, ImapCapability.Id, ImapCapability.Idle, ImapCapability.Move,
+				ImapCapability.ListExtended, ImapCapability.Namespace, ImapCapability.Quota, ImapCapability.Sort,
+				ImapCapability.SpecialUse, ImapCapability.UidPlus
+		};
+			var AuthenticatedCapabilities = new [] {
+			ImapCapability.IMAP4, ImapCapability.IMAP4rev1, ImapCapability.Status,
+				ImapCapability.AppendLimit, ImapCapability.CreateSpecialUse, ImapCapability.Quota, ImapCapability.Children,
+				ImapCapability.CondStore, ImapCapability.Enable, ImapCapability.ESort, ImapCapability.ESearch, ImapCapability.I18NLevel,
+				ImapCapability.Id, ImapCapability.Idle, ImapCapability.Move, /*ImapCapability.ListStatus, ImapCapability.ListExtended,*/
+				ImapCapability.LiteralPlus, ImapCapability.Namespace, /*ImapCapability.Preview,*/ ImapCapability.FuzzySearch,
+				ImapCapability.Sort, ImapCapability.SearchResults, /*ImapCapability.SpecialUse,*/ ImapCapability.StatusSize,
+				ImapCapability.UidPlus, ImapCapability.Unselect, ImapCapability.Within, ImapCapability.XList
+		};
 			var commands = CreateListInboxFallbackAfterEmptyListExtendedCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -8032,7 +8052,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (InitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (InitialCapabilities));
 				Assert.That (client.AppendLimit, Is.EqualTo (104857600), "AppendLimit");
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -8044,7 +8064,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (AuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (AuthenticatedCapabilities));
 				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('.'), "PersonalNamespaces[0].DirectorySeparator");
@@ -8060,17 +8080,21 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public async Task TestListInboxFallbackAfterEmptyListExtendedAsync ()
 		{
-			const ImapCapabilities InitialCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-				ImapCapabilities.AppendLimit | ImapCapabilities.Enable | ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move |
-				ImapCapabilities.ListExtended | ImapCapabilities.Namespace | ImapCapabilities.Quota | ImapCapabilities.Sort |
-				ImapCapabilities.SpecialUse | ImapCapabilities.UidPlus;
-			const ImapCapabilities AuthenticatedCapabilities = ImapCapabilities.IMAP4 | ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-				ImapCapabilities.AppendLimit | ImapCapabilities.CreateSpecialUse | ImapCapabilities.Quota | ImapCapabilities.Children |
-				ImapCapabilities.CondStore | ImapCapabilities.Enable | ImapCapabilities.ESort | ImapCapabilities.ESearch | ImapCapabilities.I18NLevel |
-				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | /*ImapCapabilities.ListStatus | ImapCapabilities.ListExtended |*/
-				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | /*ImapCapabilities.Preview |*/ ImapCapabilities.FuzzySearch |
-				ImapCapabilities.Sort | ImapCapabilities.SearchResults | /*ImapCapabilities.SpecialUse |*/ ImapCapabilities.StatusSize |
-				ImapCapabilities.UidPlus | ImapCapabilities.Unselect | ImapCapabilities.Within | ImapCapabilities.XList;
+			var InitialCapabilities = new [] {
+			ImapCapability.IMAP4, ImapCapability.IMAP4rev1, ImapCapability.Status,
+				ImapCapability.AppendLimit, ImapCapability.Enable, ImapCapability.Id, ImapCapability.Idle, ImapCapability.Move,
+				ImapCapability.ListExtended, ImapCapability.Namespace, ImapCapability.Quota, ImapCapability.Sort,
+				ImapCapability.SpecialUse, ImapCapability.UidPlus
+		};
+			var AuthenticatedCapabilities = new [] {
+			ImapCapability.IMAP4, ImapCapability.IMAP4rev1, ImapCapability.Status,
+				ImapCapability.AppendLimit, ImapCapability.CreateSpecialUse, ImapCapability.Quota, ImapCapability.Children,
+				ImapCapability.CondStore, ImapCapability.Enable, ImapCapability.ESort, ImapCapability.ESearch, ImapCapability.I18NLevel,
+				ImapCapability.Id, ImapCapability.Idle, ImapCapability.Move, /*ImapCapability.ListStatus, ImapCapability.ListExtended,*/
+				ImapCapability.LiteralPlus, ImapCapability.Namespace, /*ImapCapability.Preview,*/ ImapCapability.FuzzySearch,
+				ImapCapability.Sort, ImapCapability.SearchResults, /*ImapCapability.SpecialUse,*/ ImapCapability.StatusSize,
+				ImapCapability.UidPlus, ImapCapability.Unselect, ImapCapability.Within, ImapCapability.XList
+		};
 			var commands = CreateListInboxFallbackAfterEmptyListExtendedCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -8082,7 +8106,7 @@ namespace UnitTests.Net.Imap {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (InitialCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (InitialCapabilities));
 				Assert.That (client.AppendLimit, Is.EqualTo (104857600), "AppendLimit");
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -8094,7 +8118,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (AuthenticatedCapabilities));
+				Assert.That (client.Capabilities, Is.EquivalentTo (AuthenticatedCapabilities));
 				Assert.That (client.PersonalNamespaces, Has.Count.EqualTo (1), "PersonalNamespaces.Count");
 				Assert.That (client.PersonalNamespaces[0].Path, Is.EqualTo (string.Empty), "PersonalNamespaces[0].Path");
 				Assert.That (client.PersonalNamespaces[0].DirectorySeparator, Is.EqualTo ('.'), "PersonalNamespaces[0].DirectorySeparator");

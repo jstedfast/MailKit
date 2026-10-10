@@ -483,14 +483,14 @@ namespace MailKit.Net.Imap {
 		/// <para>On the other hand, if the <see cref="FlagChange"/> notification arrives for a message that is not
 		/// located in the currently selected folder, then the events that are emitted will depend on the
 		/// <see cref="ImapCapabilities"/> of the IMAP server.</para>
-		/// <para>If the server supports the <see cref="ImapCapabilities.CondStore"/> capability (or the
-		/// <see cref="ImapCapabilities.QuickResync"/> capability and the client has enabled it via
+		/// <para>If the server supports the <see cref="ImapCapability.CondStore"/> capability (or the
+		/// <see cref="ImapCapability.QuickResync"/> capability and the client has enabled it via
 		/// <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>), then the
 		/// <see cref="IMailFolder.HighestModSeqChanged"/> event will be emitted as well as the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event (if the latter has changed). If the number of
 		/// seen messages has changed, then the <see cref="IMailFolder.UnreadChanged"/> event may also be emitted.</para>
-		/// <para>If the server does not support either the <see cref="ImapCapabilities.CondStore"/> capability nor
-		/// the <see cref="ImapCapabilities.QuickResync"/> capability and the client has not enabled the later capability
+		/// <para>If the server does not support either the <see cref="ImapCapability.CondStore"/> capability nor
+		/// the <see cref="ImapCapability.QuickResync"/> capability and the client has not enabled the later capability
 		/// via <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>, then the server may choose
 		/// only to notify the client of <see cref="IMailFolder.UidValidity"/> changes by emitting the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event.</para>
@@ -508,14 +508,14 @@ namespace MailKit.Net.Imap {
 		/// <para>On the other hand, if the <see cref="AnnotationChange"/> notification arrives for a message that is not
 		/// located in the currently selected folder, then the events that are emitted will depend on the
 		/// <see cref="ImapCapabilities"/> of the IMAP server.</para>
-		/// <para>If the server supports the <see cref="ImapCapabilities.CondStore"/> capability (or the
-		/// <see cref="ImapCapabilities.QuickResync"/> capability and the client has enabled it via
+		/// <para>If the server supports the <see cref="ImapCapability.CondStore"/> capability (or the
+		/// <see cref="ImapCapability.QuickResync"/> capability and the client has enabled it via
 		/// <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>), then the
 		/// <see cref="IMailFolder.HighestModSeqChanged"/> event will be emitted as well as the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event (if the latter has changed). If the number of
 		/// seen messages has changed, then the <see cref="IMailFolder.UnreadChanged"/> event may also be emitted.</para>
-		/// <para>If the server does not support either the <see cref="ImapCapabilities.CondStore"/> capability nor
-		/// the <see cref="ImapCapabilities.QuickResync"/> capability and the client has not enabled the later capability
+		/// <para>If the server does not support either the <see cref="ImapCapability.CondStore"/> capability nor
+		/// the <see cref="ImapCapability.QuickResync"/> capability and the client has not enabled the later capability
 		/// via <see cref="ImapClient.Enable(ImapFeatures,System.Threading.CancellationToken)"/>, then the server may choose
 		/// only to notify the client of <see cref="IMailFolder.UidValidity"/> changes by emitting the
 		/// <see cref="IMailFolder.UidValidityChanged"/> event.</para>
@@ -530,7 +530,7 @@ namespace MailKit.Net.Imap {
 		/// <para>As these notifications are received by the client, the appropriate will be emitted:
 		/// <see cref="MailStore.FolderCreated"/>, <see cref="IMailFolder.Deleted"/>, or
 		/// <see cref="IMailFolder.Renamed"/>, respectively.</para>
-		/// <note type="info">If the server supports <see cref="ImapCapabilities.Acl"/>, granting or revocation of the
+		/// <note type="info">If the server supports <see cref="ImapCapability.Acl"/>, granting or revocation of the
 		/// <see cref="AccessRight.LookupFolder"/> right to the current user on the affected folder will also be
 		/// considered folder creation or deletion, respectively. If a folder is created or deleted, the folder itself
 		/// and its direct parent (whether it is an existing folder or not) are considered to be affected.</note>
@@ -551,7 +551,7 @@ namespace MailKit.Net.Imap {
 		/// An IMAP event notification for changes to folder metadata.
 		/// </summary>
 		/// <remarks>
-		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported
+		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapability.Metadata"/> is supported
 		/// by the server, in which case support for this event type is REQUIRED.</para>
 		/// <para>If the server does support this event, then the <see cref="IMailFolder.MetadataChanged"/> event
 		/// will be emitted whenever metadata changes for any folder included in the <see cref="ImapMailboxFilter"/>.</para>
@@ -562,7 +562,7 @@ namespace MailKit.Net.Imap {
 		/// An IMAP event notification for changes to server metadata.
 		/// </summary>
 		/// <remarks>
-		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapabilities.Metadata"/> is supported
+		/// <para>Support for this event type is OPTIONAL unless <see cref="ImapCapability.Metadata"/> is supported
 		/// by the server, in which case support for this event type is REQUIRED.</para>
 		/// <para>If the server does support this event, then the <see cref="IMailStore.MetadataChanged"/> event
 		/// will be emitted whenever metadata changes.</para>

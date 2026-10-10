@@ -400,8 +400,8 @@ namespace MailKit.Net.Imap {
 
 		static bool CanUseNonSynchronizedLiteral (ImapEngine engine, long length)
 		{
-			return (engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ||
-				(length <= 4096 && (engine.Capabilities & ImapCapabilities.LiteralMinus) != 0);
+			return engine.Capabilities.Contains (ImapCapability.LiteralPlus) ||
+				(length <= 4096 && engine.Capabilities.Contains (ImapCapability.LiteralMinus));
 		}
 
 		static int EstimateStringLength (ImapEngine engine, bool allowAtom, string value, out bool eoln)
@@ -534,7 +534,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public bool Step ()
 		{
-			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
+			var supportsLiteralPlus = Engine.Capabilities.Contains (ImapCapability.LiteralPlus);
 			var response = ImapCommandResponse.None;
 			ImapToken token;
 
@@ -676,7 +676,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public async Task<bool> StepAsync ()
 		{
-			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
+			var supportsLiteralPlus = Engine.Capabilities.Contains (ImapCapability.LiteralPlus);
 			var response = ImapCommandResponse.None;
 			ImapToken token;
 

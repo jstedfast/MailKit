@@ -1863,7 +1863,7 @@ using (var client = new ImapClient ()) {
     
     IMailFolder sentMail;
     
-    if (client.Capabilities.HasFlag (ImapCapabilities.SpecialUse)) {
+    if (client.Capabilities.Contains (ImapCapability.SpecialUse)) {
         sentMail = client.GetFolder (SpecialFolder.Sent);
     } else {
         var personal = client.GetFolder (client.PersonalNamespaces[0]);

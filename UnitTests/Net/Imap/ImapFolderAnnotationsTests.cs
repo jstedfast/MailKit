@@ -182,7 +182,7 @@ namespace UnitTests.Net.Imap {
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.StoreAsync (UniqueIdRange.All, 1, annotations));
 
 				// disable CONDSTORE and verify that we get NotSupportedException when we send modseq
-				client.Capabilities &= ~ImapCapabilities.CondStore;
+				client.Capabilities.Disable (ImapCapability.CondStore);
 				inbox.Open (FolderAccess.ReadWrite);
 
 				Assert.That (inbox.AnnotationAccess, Is.EqualTo (AnnotationAccess.ReadWrite), "AnnotationAccess");
@@ -532,7 +532,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				// Disable the MULTIAPPEND extension and do it again
-				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				client.Capabilities.Disable (ImapCapability.MultiAppend);
 				uids = client.Inbox.Append (requests);
 
 				Assert.That (uids, Has.Count.EqualTo (8), "Unexpected number of messages appended");
@@ -580,7 +580,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				// Disable the MULTIAPPEND extension and do it again
-				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				client.Capabilities.Disable (ImapCapability.MultiAppend);
 				uids = await client.Inbox.AppendAsync (requests);
 
 				Assert.That (uids, Has.Count.EqualTo (8), "Unexpected number of messages appended");
@@ -929,7 +929,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
-				client.Capabilities &= ~ImapCapabilities.Annotate;
+				client.Capabilities.Disable (ImapCapability.Annotate);
 
 				Assert.Throws<NotSupportedException> (() => inbox.Search (query));
 
@@ -975,7 +975,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
-				client.Capabilities &= ~ImapCapabilities.Annotate;
+				client.Capabilities.Disable (ImapCapability.Annotate);
 
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SearchAsync (query));
 
@@ -1040,7 +1040,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
-				client.Capabilities &= ~ImapCapabilities.Annotate;
+				client.Capabilities.Disable (ImapCapability.Annotate);
 
 				Assert.Throws<NotSupportedException> (() => inbox.Sort (SearchQuery.All, new OrderBy[] { orderBy }));
 
@@ -1091,7 +1091,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
 				// disable ANNOTATE-EXPERIMENT-1 and try again
-				client.Capabilities &= ~ImapCapabilities.Annotate;
+				client.Capabilities.Disable (ImapCapability.Annotate);
 
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy }));
 

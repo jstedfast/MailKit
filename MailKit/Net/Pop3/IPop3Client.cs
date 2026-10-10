@@ -41,23 +41,22 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the capabilities supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made 
-		/// and may change once the client is authenticated.
+		/// <para>The capabilities will not be known until a successful connection has been made
+		/// and may change once the client is authenticated.</para>
+		/// <para>To prevent MailKit from using a particular extension, use
+		/// <see cref="Pop3Capabilities.Disable(Pop3Capability)"/>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
-		Pop3Capabilities Capabilities { get; set; }
+		Pop3Capabilities Capabilities { get; }
 
 		/// <summary>
 		/// Gets the expiration policy.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports the EXPIRE capability (<see cref="Pop3Capabilities.Expire"/>), the value
+		/// <para>If the server supports the EXPIRE capability (<see cref="Pop3Capability.Expire"/>), the value
 		/// of the <see cref="ExpirePolicy"/> property will reflect the value advertized by the server.</para>
 		/// <para>A value of <c>-1</c> indicates that messages will never expire.</para>
 		/// <para>A value of <c>0</c> indicates that messages that have been retrieved during the current session
@@ -85,7 +84,7 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the minimum delay, in milliseconds, between logins.
 		/// </summary>
 		/// <remarks>
-		/// If the server supports the LOGIN-DELAY capability (<see cref="Pop3Capabilities.LoginDelay"/>), this value
+		/// If the server supports the LOGIN-DELAY capability (<see cref="Pop3Capability.LoginDelay"/>), this value
 		/// will be set to the minimum number of milliseconds that the client must wait between logins.
 		/// </remarks>
 		/// <example>

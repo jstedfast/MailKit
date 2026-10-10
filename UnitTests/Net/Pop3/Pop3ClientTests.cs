@@ -49,25 +49,39 @@ namespace UnitTests.Net.Pop3 {
 	[TestFixture]
 	public class Pop3ClientTests
 	{
-		static readonly Pop3Capabilities ComcastCapa1 = Pop3Capabilities.Expire | Pop3Capabilities.StartTLS |
-			Pop3Capabilities.Top | Pop3Capabilities.UIDL | Pop3Capabilities.User;
-		static readonly Pop3Capabilities ComcastCapa2 = Pop3Capabilities.Expire | Pop3Capabilities.StartTLS |
-			Pop3Capabilities.Sasl | Pop3Capabilities.Top | Pop3Capabilities.UIDL | Pop3Capabilities.User;
-		static readonly Pop3Capabilities ExchangeCapa = Pop3Capabilities.Sasl | Pop3Capabilities.Top |
-			Pop3Capabilities.UIDL | Pop3Capabilities.User;
-		static readonly Pop3Capabilities GMailCapa1 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
-			Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay | Pop3Capabilities.Top |
-			Pop3Capabilities.UIDL | Pop3Capabilities.Sasl;
-		static readonly Pop3Capabilities GMailCapa2 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
-			Pop3Capabilities.Pipelining | Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay |
-			Pop3Capabilities.Top | Pop3Capabilities.UIDL;
-		static readonly Pop3Capabilities LangCapa1 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
-		    Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay | Pop3Capabilities.Top |
-		    Pop3Capabilities.UIDL | Pop3Capabilities.Sasl | Pop3Capabilities.UTF8 |
-		    Pop3Capabilities.UTF8User | Pop3Capabilities.Lang | Pop3Capabilities.Apop;
-		static readonly Pop3Capabilities LangCapa2 = Pop3Capabilities.User | Pop3Capabilities.ResponseCodes |
-		    Pop3Capabilities.Pipelining | Pop3Capabilities.Expire | Pop3Capabilities.LoginDelay |
-		    Pop3Capabilities.Top | Pop3Capabilities.UIDL | Pop3Capabilities.Lang | Pop3Capabilities.Apop;
+		static readonly Pop3Capability[] ComcastCapa1 = new [] {
+			Pop3Capability.Expire, Pop3Capability.StartTLS,
+			Pop3Capability.Top, Pop3Capability.UIDL, Pop3Capability.User
+		};
+		static readonly Pop3Capability[] ComcastCapa2 = new [] {
+			Pop3Capability.Expire, Pop3Capability.StartTLS,
+			Pop3Capability.Sasl, Pop3Capability.Top, Pop3Capability.UIDL, Pop3Capability.User
+		};
+		static readonly Pop3Capability[] ExchangeCapa = new [] {
+			Pop3Capability.Sasl, Pop3Capability.Top,
+			Pop3Capability.UIDL, Pop3Capability.User
+		};
+		static readonly Pop3Capability[] GMailCapa1 = new [] {
+			Pop3Capability.User, Pop3Capability.ResponseCodes,
+			Pop3Capability.Expire, Pop3Capability.LoginDelay, Pop3Capability.Top,
+			Pop3Capability.UIDL, Pop3Capability.Sasl
+		};
+		static readonly Pop3Capability[] GMailCapa2 = new [] {
+			Pop3Capability.User, Pop3Capability.ResponseCodes,
+			Pop3Capability.Pipelining, Pop3Capability.Expire, Pop3Capability.LoginDelay,
+			Pop3Capability.Top, Pop3Capability.UIDL
+		};
+		static readonly Pop3Capability[] LangCapa1 = new [] {
+			Pop3Capability.User, Pop3Capability.ResponseCodes,
+		    Pop3Capability.Expire, Pop3Capability.LoginDelay, Pop3Capability.Top,
+		    Pop3Capability.UIDL, Pop3Capability.Sasl, Pop3Capability.UTF8,
+		    Pop3Capability.UTF8User, Pop3Capability.Lang, Pop3Capability.Apop
+		};
+		static readonly Pop3Capability[] LangCapa2 = new [] {
+			Pop3Capability.User, Pop3Capability.ResponseCodes,
+		    Pop3Capability.Pipelining, Pop3Capability.Expire, Pop3Capability.LoginDelay,
+		    Pop3Capability.Top, Pop3Capability.UIDL, Pop3Capability.Lang, Pop3Capability.Apop
+		};
 		const CipherAlgorithmType GmxDeCipherAlgorithm = CipherAlgorithmType.Aes256;
 		const int GmxDeCipherStrength = 256;
 #if !MONO
@@ -358,13 +372,12 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 				Assert.That (client.LoginDelay, Is.EqualTo (0));
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
-				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
+				Assert.DoesNotThrow (() => client.Capabilities.Disable (Pop3Capability.UIDL));
 
 				Assert.Throws<ArgumentNullException> (() => client.SetLanguage (null));
 				Assert.Throws<ArgumentException> (() => client.SetLanguage (string.Empty));
@@ -488,13 +501,12 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 				Assert.That (client.LoginDelay, Is.EqualTo (0));
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= Pop3Capabilities.Apop);
-				Assert.DoesNotThrow (() => client.Capabilities &= ~Pop3Capabilities.UIDL);
+				Assert.DoesNotThrow (() => client.Capabilities.Disable (Pop3Capability.UIDL));
 
 				Assert.ThrowsAsync<ArgumentNullException> (async () => await client.SetLanguageAsync (null));
 				Assert.ThrowsAsync<ArgumentException> (async () => await client.SetLanguageAsync (string.Empty));
@@ -1129,7 +1141,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
@@ -1163,7 +1175,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
@@ -1248,7 +1260,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
@@ -1260,7 +1272,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1326,7 +1338,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31), "ExpirePolicy");
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
@@ -1338,7 +1350,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1403,7 +1415,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -1413,7 +1425,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1478,7 +1490,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -1488,7 +1500,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1563,7 +1575,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1573,7 +1585,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User | Pop3Capabilities.UIDL));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User, Pop3Capability.UIDL }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1616,7 +1628,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1626,7 +1638,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User | Pop3Capabilities.UIDL));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User, Pop3Capability.UIDL }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1668,7 +1680,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1678,7 +1690,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1721,7 +1733,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1731,7 +1743,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (Pop3Capabilities.User));
+				Assert.That (client.Capabilities, Is.EquivalentTo (new [] { Pop3Capability.User }));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (0));
 
@@ -1771,7 +1783,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1820,7 +1832,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1871,7 +1883,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1882,7 +1894,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 					Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
@@ -1928,7 +1940,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -1939,7 +1951,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 					Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
@@ -1982,7 +1994,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2026,7 +2038,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2076,7 +2088,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -2086,7 +2098,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2140,7 +2152,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -2150,7 +2162,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2204,7 +2216,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -2214,7 +2226,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2268,7 +2280,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -2278,7 +2290,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2332,7 +2344,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -2342,7 +2354,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2396,7 +2408,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -2406,7 +2418,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 				Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2459,7 +2471,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2470,7 +2482,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -2516,7 +2528,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2527,7 +2539,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -2573,7 +2585,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2584,7 +2596,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -2630,7 +2642,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2641,7 +2653,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -2686,7 +2698,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -2702,7 +2714,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -2745,7 +2757,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -2761,7 +2773,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -2848,7 +2860,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2865,7 +2877,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa2));
 					Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 					Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -2907,7 +2919,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -2924,7 +2936,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+					Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa2));
 					Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 					Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -2967,7 +2979,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -2984,7 +2996,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3031,7 +3043,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3048,7 +3060,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3094,7 +3106,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 					Assert.That (client.AuthenticationMechanisms, Is.Empty);
 					Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -3104,7 +3116,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 					Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -3151,7 +3163,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa1));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa1));
 					Assert.That (client.AuthenticationMechanisms, Is.Empty);
 					Assert.That (client.ExpirePolicy, Is.EqualTo (31));
 
@@ -3161,7 +3173,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (ComcastCapa2));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ComcastCapa2));
 					Assert.That (client.Implementation, Is.EqualTo ("ZimbraInc"));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -3209,7 +3221,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3225,7 +3237,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3272,7 +3284,7 @@ namespace UnitTests.Net.Pop3 {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3288,7 +3300,7 @@ namespace UnitTests.Net.Pop3 {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+					Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 					Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3336,7 +3348,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3354,7 +3366,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3414,7 +3426,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3432,7 +3444,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (ExchangeCapa));
+				Assert.That (client.Capabilities, Is.EquivalentTo (ExchangeCapa));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (4));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("NTLM"), "Expected SASL NTLM auth mechanism");
@@ -3519,7 +3531,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -3530,13 +3542,13 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				if (disablePipelining)
-					client.Capabilities &= ~Pop3Capabilities.Pipelining;
+					client.Capabilities.Disable (Pop3Capability.Pipelining);
 
 				var uids = client.GetMessageUids ();
 				Assert.That (uids, Has.Count.EqualTo (3));
@@ -3765,7 +3777,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -3776,13 +3788,13 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
 
 				if (disablePipelining)
-					client.Capabilities &= ~Pop3Capabilities.Pipelining;
+					client.Capabilities.Disable (Pop3Capability.Pipelining);
 
 				var uids = await client.GetMessageUidsAsync ();
 				Assert.That (uids, Has.Count.EqualTo (3));
@@ -4099,7 +4111,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4110,7 +4122,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
@@ -4159,7 +4171,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4176,7 +4188,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -4233,7 +4245,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (LangCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4250,7 +4262,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (LangCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (LangCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
@@ -4305,7 +4317,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4316,7 +4328,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
@@ -4361,7 +4373,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4372,7 +4384,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");
@@ -4429,7 +4441,7 @@ namespace UnitTests.Net.Pop3 {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa1));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa1));
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
@@ -4440,7 +4452,7 @@ namespace UnitTests.Net.Pop3 {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (GMailCapa2));
+				Assert.That (client.Capabilities, Is.EquivalentTo (GMailCapa2));
 				Assert.That (client.AuthenticationMechanisms, Is.Empty);
 				Assert.That (client, Has.Count.EqualTo (3), "Expected 3 messages");
 				Assert.That (client.Size, Is.EqualTo (221409), "Expected 221409 octets");

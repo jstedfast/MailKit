@@ -72,7 +72,7 @@ namespace MailKit.Examples {
 
 				client.Authenticate ("username", "password");
 
-				if (client.Capabilities.HasFlag (ImapCapabilities.Id)) {
+				if (client.Capabilities.Contains (ImapCapability.Id)) {
 					var clientImplementation = new ImapImplementation { Name = "MailKit", Version = "1.0" };
 					var serverImplementation = client.Identify (clientImplementation);
 
@@ -81,7 +81,7 @@ namespace MailKit.Examples {
 						Console.WriteLine ("  {0} = {1}", property.Key, property.Value);
 				}
 
-				if (client.Capabilities.HasFlag (ImapCapabilities.Acl)) {
+				if (client.Capabilities.Contains (ImapCapability.Acl)) {
 					Console.WriteLine ("The IMAP server supports Access Control Lists.");
 
 					Console.WriteLine ("The IMAP server supports the following access rights: {0}", client.Rights);
@@ -95,7 +95,7 @@ namespace MailKit.Examples {
 					Console.WriteLine ("Your current rights for the Inbox folder are: {0}", myRights);
 				}
 
-				if (client.Capabilities.HasFlag (ImapCapabilities.Quota)) {
+				if (client.Capabilities.Contains (ImapCapability.Quota)) {
 					Console.WriteLine ("The IMAP server supports quotas.");
 
 					Console.WriteLine ("The current quota for the Inbox is:");
@@ -110,7 +110,7 @@ namespace MailKit.Examples {
 					Console.WriteLine ("The quota root is: {0}", quota.QuotaRoot);
 				}
 
-				if (client.Capabilities.HasFlag (ImapCapabilities.Thread)) {
+				if (client.Capabilities.Contains (ImapCapability.Thread)) {
 					if (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.OrderedSubject))
 						Console.WriteLine ("The IMAP server supports threading by subject.");
 					if (client.ThreadingAlgorithms.Contains (ThreadingAlgorithm.References))

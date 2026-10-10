@@ -46,7 +46,7 @@ namespace MailKit.Net.Imap
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously enables compression over the IMAP connection.</para>
-		/// <para>If the IMAP server supports the <see cref="ImapCapabilities.Compress"/> extension,
+		/// <para>If the IMAP server supports the <see cref="ImapCapability.Compress"/> extension,
 		/// it is possible at any point after connecting to enable compression to reduce network
 		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
 		/// </remarks>
@@ -256,7 +256,7 @@ namespace MailKit.Net.Imap
 
 			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
 
-			if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && mechanism.SupportsInitialResponse) {
+			if (engine.Capabilities.Contains (ImapCapability.SaslIR) && mechanism.SupportsInitialResponse) {
 				string ir = await mechanism.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
 				command += " " + ir + "\r\n";
 			} else {
@@ -375,7 +375,7 @@ namespace MailKit.Net.Imap
 
 					var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
 
-					if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && sasl.SupportsInitialResponse) {
+					if (engine.Capabilities.Contains (ImapCapability.SaslIR) && sasl.SupportsInitialResponse) {
 						string ir = await sasl.ChallengeAsync (null, cancellationToken).ConfigureAwait (false);
 
 						command += " " + ir + "\r\n";
@@ -497,10 +497,10 @@ namespace MailKit.Net.Imap
 				if (engine.CapabilitiesVersion == 0)
 					await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & ImapCapabilities.StartTLS) == 0)
+				if (options == SecureSocketOptions.StartTls && !engine.Capabilities.Contains (ImapCapability.StartTLS))
 					throw new NotSupportedException ("The IMAP server does not support the STARTTLS extension.");
 
-				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+				if (starttls && engine.Capabilities.Contains (ImapCapability.StartTLS)) {
 					var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 					await engine.RunAsync (ic).ConfigureAwait (false);

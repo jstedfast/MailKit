@@ -95,7 +95,7 @@ namespace ImapIdle
 		{
 			do {
 				try {
-					if (client.Capabilities.HasFlag (ImapCapabilities.Idle)) {
+					if (client.Capabilities.Contains (ImapCapability.Idle)) {
 						// Note: IMAP servers are only supposed to drop the connection after 30 minutes, so normally
 						// we'd IDLE for a max of, say, ~29 minutes... but GMail seems to drop idle connections after
 						// about 10 minutes, so we'll only idle for 9 minutes.

@@ -518,7 +518,7 @@ namespace MailKit.Net.Imap
 			if (request == null)
 				throw new ArgumentNullException (nameof (request));
 
-			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.GMailExt1))
 				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
 
 			CheckState (true, true);
@@ -713,7 +713,7 @@ namespace MailKit.Net.Imap
 			if (request == null)
 				throw new ArgumentNullException (nameof (request));
 
-			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+			if (!Engine.Capabilities.Contains (ImapCapability.GMailExt1))
 				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
 
 			CheckState (true, true);

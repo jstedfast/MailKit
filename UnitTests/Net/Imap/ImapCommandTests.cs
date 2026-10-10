@@ -39,9 +39,8 @@ namespace UnitTests.Net.Imap {
 
 		public ImapCommandTests ()
 		{
-			Engine = new ImapEngine (CreateImapFolderDelegate) {
-				Capabilities = ImapCapabilities.IMAP4rev1
-			};
+			Engine = new ImapEngine (CreateImapFolderDelegate);
+			Engine.Capabilities.Add (ImapCapability.IMAP4rev1);
 
 			var args = new ImapFolderConstructorArgs (Engine, "INBOX", FolderAttributes.None, '.');
 			Inbox = new ImapFolder (args);
@@ -123,17 +122,18 @@ namespace UnitTests.Net.Imap {
 			Assert.That (length, Is.EqualTo (expected));
 
 			try {
-				Engine.Capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.LiteralPlus;
+				Engine.Capabilities.Add (ImapCapability.LiteralPlus);
 				expected = $"SEARCH TEXT {{{literalLength}+}}\r\n{koreanProverb}".Length;
 				length = ImapCommand.EstimateCommandLength (Engine, "SEARCH TEXT %S", koreanProverb);
 				Assert.That (length, Is.EqualTo (expected), "LITERAL+");
 
-				Engine.Capabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.LiteralMinus;
+				Engine.Capabilities.Disable (ImapCapability.LiteralPlus);
+				Engine.Capabilities.Add (ImapCapability.LiteralMinus);
 				expected = $"SEARCH TEXT {{{literalLength}+}}\r\n{koreanProverb}".Length;
 				length = ImapCommand.EstimateCommandLength (Engine, "SEARCH TEXT %S", koreanProverb);
 				Assert.That (length, Is.EqualTo (expected), "LITERAL-");
 			} finally {
-				Engine.Capabilities = ImapCapabilities.IMAP4rev1;
+				Engine.Capabilities.Disable (ImapCapability.LiteralMinus);
 			}
 		}
 	}

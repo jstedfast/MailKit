@@ -388,7 +388,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable all features
-				client.Capabilities = ImapCapabilities.None;
+				client.Capabilities.Clear ();
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var dates = new List<DateTimeOffset> ();
@@ -693,7 +693,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.AppendLimit), Is.True, "ImapCapabilities.AppendLimit");
+				Assert.That (client.Capabilities.Contains (ImapCapability.AppendLimit), Is.True, "ImapCapability.AppendLimit");
 				Assert.That (client.AppendLimit, Is.Null, "AppendLimit");
 
 				client.Inbox.Status (StatusItems.AppendLimit);
@@ -733,7 +733,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.AppendLimit), Is.True, "ImapCapabilities.AppendLimit");
+				Assert.That (client.Capabilities.Contains (ImapCapability.AppendLimit), Is.True, "ImapCapability.AppendLimit");
 				Assert.That (client.AppendLimit, Is.Null, "AppendLimit");
 
 				await client.Inbox.StatusAsync (StatusItems.AppendLimit);
@@ -1063,7 +1063,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), Is.True, "MULTIAPPEND");
+				Assert.That (client.Capabilities.Contains (ImapCapability.MultiAppend), Is.True, "MULTIAPPEND");
 
 				// Use MULTIAPPEND to append some test messages
 				if (withKeywords) {
@@ -1090,7 +1090,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				// Disable the MULTIAPPEND extension and do it again
-				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				client.Capabilities.Disable (ImapCapability.MultiAppend);
 
 				if (withKeywords) {
 					var requests = new List<IAppendRequest> ();
@@ -1147,7 +1147,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), Is.True, "MULTIAPPEND");
+				Assert.That (client.Capabilities.Contains (ImapCapability.MultiAppend), Is.True, "MULTIAPPEND");
 
 				// Use MULTIAPPEND to append some test messages
 				if (withKeywords) {
@@ -1174,7 +1174,7 @@ namespace UnitTests.Net.Imap {
 					Assert.That (uids[i].Id, Is.EqualTo (i + 1), "Unexpected UID");
 
 				// Disable the MULTIAPPEND extension and do it again
-				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				client.Capabilities.Disable (ImapCapability.MultiAppend);
 
 				if (withKeywords) {
 					var requests = new List<IAppendRequest> ();
@@ -1281,7 +1281,7 @@ namespace UnitTests.Net.Imap {
 				client.AuthenticationMechanisms.Clear ();
 				client.Authenticate ("username", "password");
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), Is.True, "MULTIAPPEND");
+				Assert.That (client.Capabilities.Contains (ImapCapability.MultiAppend), Is.True, "MULTIAPPEND");
 
 				var requests = CreateAppendRequests (messages, flags, out var progress, out var unused);
 				var uids = client.Inbox.Append (requests);
@@ -1289,7 +1289,7 @@ namespace UnitTests.Net.Imap {
 				AssertAggregateProgress (progress, unused, expectedTotal, "MULTIAPPEND");
 
 				// Disable the MULTIAPPEND extension and do it again
-				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				client.Capabilities.Disable (ImapCapability.MultiAppend);
 
 				requests = CreateAppendRequests (messages, flags, out progress, out unused);
 				uids = client.Inbox.Append (requests);
@@ -1314,7 +1314,7 @@ namespace UnitTests.Net.Imap {
 				client.AuthenticationMechanisms.Clear ();
 				await client.AuthenticateAsync ("username", "password");
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.MultiAppend), Is.True, "MULTIAPPEND");
+				Assert.That (client.Capabilities.Contains (ImapCapability.MultiAppend), Is.True, "MULTIAPPEND");
 
 				var requests = CreateAppendRequests (messages, flags, out var progress, out var unused);
 				var uids = await client.Inbox.AppendAsync (requests);
@@ -1322,7 +1322,7 @@ namespace UnitTests.Net.Imap {
 				AssertAggregateProgress (progress, unused, expectedTotal, "MULTIAPPEND");
 
 				// Disable the MULTIAPPEND extension and do it again
-				client.Capabilities &= ~ImapCapabilities.MultiAppend;
+				client.Capabilities.Disable (ImapCapability.MultiAppend);
 
 				requests = CreateAppendRequests (messages, flags, out progress, out unused);
 				uids = await client.Inbox.AppendAsync (requests);
@@ -1450,9 +1450,9 @@ namespace UnitTests.Net.Imap {
 				}
 
 				if (clientSide)
-					client.Capabilities &= ~ImapCapabilities.Replace;
+					client.Capabilities.Disable (ImapCapability.Replace);
 				else
-					Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Replace), Is.True, "REPLACE");
+					Assert.That (client.Capabilities.Contains (ImapCapability.Replace), Is.True, "REPLACE");
 
 				client.Inbox.Open (FolderAccess.ReadWrite);
 
@@ -1515,9 +1515,9 @@ namespace UnitTests.Net.Imap {
 				}
 
 				if (clientSide)
-					client.Capabilities &= ~ImapCapabilities.Replace;
+					client.Capabilities.Disable (ImapCapability.Replace);
 				else
-					Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Replace), Is.True, "REPLACE");
+					Assert.That (client.Capabilities.Contains (ImapCapability.Replace), Is.True, "REPLACE");
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
 
@@ -1668,9 +1668,9 @@ namespace UnitTests.Net.Imap {
 				}
 
 				if (clientSide)
-					client.Capabilities &= ~ImapCapabilities.Replace;
+					client.Capabilities.Disable (ImapCapability.Replace);
 				else
-					Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Replace), Is.True, "REPLACE");
+					Assert.That (client.Capabilities.Contains (ImapCapability.Replace), Is.True, "REPLACE");
 
 				client.Inbox.Open (FolderAccess.ReadWrite);
 
@@ -1733,9 +1733,9 @@ namespace UnitTests.Net.Imap {
 				}
 
 				if (clientSide)
-					client.Capabilities &= ~ImapCapabilities.Replace;
+					client.Capabilities.Disable (ImapCapability.Replace);
 				else
-					Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Replace), Is.True, "REPLACE");
+					Assert.That (client.Capabilities.Contains (ImapCapability.Replace), Is.True, "REPLACE");
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
 
@@ -1986,7 +1986,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), Is.True, "OBJECTID");
+				Assert.That (client.Capabilities.Contains (ImapCapability.ObjectID), Is.True, "OBJECTID");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var toplevel1 = personal.Create ("TopLevel1", true);
@@ -2017,7 +2017,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), Is.True, "OBJECTID");
+				Assert.That (client.Capabilities.Contains (ImapCapability.ObjectID), Is.True, "OBJECTID");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var toplevel1 = await personal.CreateAsync ("TopLevel1", true);
@@ -2065,7 +2065,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var gmail = personal.GetSubfolder ("[Gmail]");
@@ -2104,7 +2104,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var gmail = await personal.GetSubfolderAsync ("[Gmail]");
@@ -2159,7 +2159,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var gmail = personal.GetSubfolder ("[Gmail]");
@@ -2221,7 +2221,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.CreateSpecialUse), Is.True, "CREATE-SPECIAL-USE");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var gmail = await personal.GetSubfolderAsync ("[Gmail]");
@@ -2302,7 +2302,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2318,7 +2318,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (copied.Destination, Has.Count.EqualTo (copied.Source.Count), "Source and Destination UID counts do not match");
 
 				// Disable UIDPLUS and try again (to test GetIndexesAsync() and CopyTo(IList<int>, IMailFolder)
-				client.Capabilities &= ~ImapCapabilities.UidPlus;
+				client.Capabilities.Disable (ImapCapability.UidPlus);
 				copied = inbox.CopyTo (uids, archived);
 
 				Assert.That (copied.Destination, Has.Count.EqualTo (copied.Source.Count), "Source and Destination UID counts do not match");
@@ -2347,7 +2347,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2363,7 +2363,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (copied.Destination, Has.Count.EqualTo (copied.Source.Count), "Source and Destination UID counts do not match");
 
 				// Disable UIDPLUS and try again (to test GetIndexesAsync() and CopyTo(IList<int>, IMailFolder)
-				client.Capabilities &= ~ImapCapabilities.UidPlus;
+				client.Capabilities.Disable (ImapCapability.UidPlus);
 				copied = await inbox.CopyToAsync (uids, archived);
 
 				Assert.That (copied.Destination, Has.Count.EqualTo (copied.Source.Count), "Source and Destination UID counts do not match");
@@ -2408,7 +2408,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2448,7 +2448,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2508,7 +2508,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2520,7 +2520,7 @@ namespace UnitTests.Net.Imap {
 
 				inbox.MoveTo (indexes, archived);
 
-				client.Capabilities &= ~ImapCapabilities.Move;
+				client.Capabilities.Disable (ImapCapability.Move);
 				inbox.MoveTo (indexes, archived);
 
 				client.Disconnect (true);
@@ -2547,7 +2547,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var inbox = client.Inbox;
@@ -2559,7 +2559,7 @@ namespace UnitTests.Net.Imap {
 
 				await inbox.MoveToAsync (indexes, archived);
 
-				client.Capabilities &= ~ImapCapabilities.Move;
+				client.Capabilities.Disable (ImapCapability.Move);
 				await inbox.MoveToAsync (indexes, archived);
 
 				await client.DisconnectAsync (true);
@@ -2615,7 +2615,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces [0]);
 				var inbox = client.Inbox;
@@ -2637,9 +2637,9 @@ namespace UnitTests.Net.Imap {
 				Assert.That (changed, Is.EqualTo (1), "CountChanged event");
 
 				if (disableMove)
-					client.Capabilities &= ~ImapCapabilities.Move;
+					client.Capabilities.Disable (ImapCapability.Move);
 				else
-					client.Capabilities &= ~ImapCapabilities.UidPlus;
+					client.Capabilities.Disable (ImapCapability.UidPlus);
 
 				expunged = changed = 0;
 
@@ -2674,7 +2674,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.UidPlus), Is.True, "Expected UIDPLUS extension");
+				Assert.That (client.Capabilities.Contains (ImapCapability.UidPlus), Is.True, "Expected UIDPLUS extension");
 
 				var personal = client.GetFolder (client.PersonalNamespaces [0]);
 				var inbox = client.Inbox;
@@ -2696,9 +2696,9 @@ namespace UnitTests.Net.Imap {
 				Assert.That (changed, Is.EqualTo (1), "CountChanged event");
 
 				if (disableMove)
-					client.Capabilities &= ~ImapCapabilities.Move;
+					client.Capabilities.Disable (ImapCapability.Move);
 				else
-					client.Capabilities &= ~ImapCapabilities.UidPlus;
+					client.Capabilities.Disable (ImapCapability.UidPlus);
 
 				expunged = changed = 0;
 
@@ -2772,7 +2772,7 @@ namespace UnitTests.Net.Imap {
 				inbox.AddFlags (uids, MessageFlags.Deleted, true);
 
 				if (disableUidPlus)
-					client.Capabilities &= ~ImapCapabilities.UidPlus;
+					client.Capabilities.Disable (ImapCapability.UidPlus);
 
 				uids = new UniqueIdRange (0, 1, 3);
 				inbox.Expunge (uids);
@@ -2818,7 +2818,7 @@ namespace UnitTests.Net.Imap {
 				await inbox.AddFlagsAsync (uids, MessageFlags.Deleted, true);
 
 				if (disableUidPlus)
-					client.Capabilities &= ~ImapCapabilities.UidPlus;
+					client.Capabilities.Disable (ImapCapability.UidPlus);
 
 				uids = new UniqueIdRange (0, 1, 3);
 				await inbox.ExpungeAsync (uids);
@@ -3159,7 +3159,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0);
 
 				// Now make the same query but disable LIST-STATUS
-				client.Capabilities &= ~ImapCapabilities.ListStatus;
+				client.Capabilities.Disable (ImapCapability.ListStatus);
 				folders = gmail.GetSubfolders (all, false);
 				Assert.That (folders, Has.Count.EqualTo (7), "Unexpected folder count.");
 
@@ -3224,7 +3224,7 @@ namespace UnitTests.Net.Imap {
 				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 41234, 0, 0, 1143, 2, 0);
 
 				// Now make the same query but disable LIST-STATUS
-				client.Capabilities &= ~ImapCapabilities.ListStatus;
+				client.Capabilities.Disable (ImapCapability.ListStatus);
 				folders = await gmail.GetSubfoldersAsync (all, false);
 				Assert.That (folders, Has.Count.EqualTo (7), "Unexpected folder count.");
 

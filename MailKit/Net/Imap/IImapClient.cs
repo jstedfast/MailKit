@@ -41,20 +41,19 @@ namespace MailKit.Net.Imap {
 		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made via one of
+		/// <para>The capabilities will not be known until a successful connection has been made via one of
 		/// the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a> methods and may
 		/// change as a side-effect of calling one of the
 		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
-		/// methods.
+		/// methods.</para>
+		/// <para>To prevent MailKit from using a particular extension, use
+		/// <see cref="ImapCapabilities.Disable(ImapCapability)"/>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
-		ImapCapabilities Capabilities { get; set; }
+		ImapCapabilities Capabilities { get; }
 
 		/// <summary>
 		/// Get the maximum size of a message that can be appended to a folder.
@@ -106,7 +105,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Enables compression over the IMAP connection.</para>
-		/// <para>If the IMAP server supports the <see cref="ImapCapabilities.Compress"/> extension,
+		/// <para>If the IMAP server supports the <see cref="ImapCapability.Compress"/> extension,
 		/// it is possible at any point after connecting to enable compression to reduce network
 		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
 		/// </remarks>
@@ -121,7 +120,7 @@ namespace MailKit.Net.Imap {
 		/// Compression must be enabled before a folder has been selected.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the <see cref="ImapCapabilities.Compress"/> extension.
+		/// The IMAP server does not support the <see cref="ImapCapability.Compress"/> extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -142,7 +141,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously enables compression over the IMAP connection.</para>
-		/// <para>If the IMAP server supports the <see cref="ImapCapabilities.Compress"/> extension,
+		/// <para>If the IMAP server supports the <see cref="ImapCapability.Compress"/> extension,
 		/// it is possible at any point after connecting to enable compression to reduce network
 		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
 		/// </remarks>

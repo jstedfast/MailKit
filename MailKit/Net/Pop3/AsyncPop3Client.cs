@@ -66,7 +66,7 @@ namespace MailKit.Net.Pop3
 
 		async Task ProbeCapabilitiesAsync (CancellationToken cancellationToken)
 		{
-			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0 && (probed & ProbedCapabilities.UIDL) == 0) {
+			if (!engine.Capabilities.Contains (Pop3Capability.UIDL) && (probed & ProbedCapabilities.UIDL) == 0) {
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {
@@ -230,7 +230,7 @@ namespace MailKit.Net.Pop3
 				NetworkCredential? cred;
 				string? message = null;
 
-				if ((engine.Capabilities & Pop3Capabilities.Apop) != 0 && (cred = credentials.GetCredential (saslUri, "APOP")) != null) {
+				if (engine.Capabilities.Contains (Pop3Capability.Apop) && (cred = credentials.GetCredential (saslUri, "APOP")) != null) {
 					var apop = GetApopCommand (encoding, cred);
 
 					detector.IsAuthenticating = true;
@@ -249,7 +249,7 @@ namespace MailKit.Net.Pop3
 					}
 				}
 
-				if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
+				if (engine.Capabilities.Contains (Pop3Capability.Sasl)) {
 					foreach (var authmech in SaslMechanism.Rank (engine.AuthenticationMechanisms)) {
 						SaslMechanism? sasl;
 
@@ -325,10 +325,10 @@ namespace MailKit.Net.Pop3
 			try {
 				await engine.QueryCapabilitiesAsync (cancellationToken).ConfigureAwait (false);
 
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & Pop3Capabilities.StartTLS) == 0)
+				if (options == SecureSocketOptions.StartTls && !engine.Capabilities.Contains (Pop3Capability.StartTLS))
 					throw new NotSupportedException ("The POP3 server does not support the STLS extension.");
 
-				if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
+				if (starttls && engine.Capabilities.Contains (Pop3Capability.StartTLS)) {
 					await SendCommandAsync (cancellationToken, "STLS\r\n").ConfigureAwait (false);
 
 					try {
@@ -891,7 +891,7 @@ namespace MailKit.Net.Pop3
 		/// <remarks>
 		/// <para>Gets the UID of the message at the specified index.</para>
 		/// <note type="warning">Not all servers support UIDs, so you should first check the
-		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
+		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capability.UIDL"/> flag or
 		/// the <see cref="SupportsUids"/> convenience property.</note>
 		/// </remarks>
 		/// <returns>The message UID.</returns>
@@ -954,7 +954,7 @@ namespace MailKit.Net.Pop3
 		/// <remarks>
 		/// <para>Gets the full list of available message UIDs.</para>
 		/// <note type="warning">Not all servers support UIDs, so you should first check the
-		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
+		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capability.UIDL"/> flag or
 		/// the <see cref="SupportsUids"/> convenience property.</note>
 		/// </remarks>
 		/// <example>
@@ -1137,7 +1137,7 @@ namespace MailKit.Net.Pop3
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the headers for the messages at the specified indexes.</para>
-		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capability.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
 		/// <see cref="GetMessageHeaders(int,CancellationToken)"/> for each message because
 		/// it will batch the commands to reduce latency.</para>
@@ -1190,7 +1190,7 @@ namespace MailKit.Net.Pop3
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the headers of the messages within the specified range.</para>
-		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capability.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
 		/// <see cref="GetMessageHeaders(int,CancellationToken)"/> for each message because
 		/// it will batch the commands to reduce latency.</para>
@@ -1288,7 +1288,7 @@ namespace MailKit.Net.Pop3
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the messages at the specified indexes.</para>
-		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capability.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
 		/// <see cref="GetMessage(int,CancellationToken,ITransferProgress)"/> for each message
 		/// because it will batch the commands to reduce latency.</para>
@@ -1342,7 +1342,7 @@ namespace MailKit.Net.Pop3
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the messages within the specified range.</para>
-		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capability.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
 		/// <see cref="GetMessage(int,CancellationToken,ITransferProgress)"/> for each message
 		/// because it will batch the commands to reduce latency.</para>
@@ -1442,7 +1442,7 @@ namespace MailKit.Net.Pop3
 		/// </summary>
 		/// <remarks>
 		/// <para>Get the message or header streams at the specified indexes.</para>
-		/// <para>If the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>If the POP3 server supports the <see cref="Pop3Capability.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
 		/// <see cref="GetStream(int,bool,CancellationToken,ITransferProgress)"/> for each message
 		/// because it will batch the commands to reduce latency.</para>
@@ -1497,7 +1497,7 @@ namespace MailKit.Net.Pop3
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the message or header streams within the specified range.</para>
-		/// <para>If the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>If the POP3 server supports the <see cref="Pop3Capability.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
 		/// <see cref="GetStream(int,bool,CancellationToken,ITransferProgress)"/> for each message
 		/// because it will batch the commands to reduce latency.</para>
@@ -1634,7 +1634,7 @@ namespace MailKit.Net.Pop3
 			if (!CheckCanDelete (indexes))
 				return;
 
-			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+			if (!Capabilities.Contains (Pop3Capability.Pipelining)) {
 				for (int i = 0; i < indexes.Count; i++)
 					await SendCommandAsync (cancellationToken, "DELE {0}\r\n", indexes[i] + 1).ConfigureAwait (false);
 
@@ -1692,7 +1692,7 @@ namespace MailKit.Net.Pop3
 			if (!CheckCanDelete (startIndex, count))
 				return;
 
-			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+			if (!Capabilities.Contains (Pop3Capability.Pipelining)) {
 				for (int i = 0; i < count; i++)
 					await SendCommandAsync (cancellationToken, "DELE {0}\r\n", startIndex + i + 1).ConfigureAwait (false);
 

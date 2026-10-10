@@ -230,7 +230,7 @@ If the IMAP server supports the SPECIAL-USE or the XLIST (GMail) extension, you 
 the pre-defined All, Drafts, Flagged (aka Important), Junk, Sent, Trash, etc folders like this:
 
 ```csharp
-if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0) {
+if (client.Capabilities.Contains (ImapCapability.SpecialUse) || client.Capabilities.Contains (ImapCapability.XList)) {
 	var drafts = client.GetFolder (SpecialFolder.Drafts);
 } else {
 	// maybe check the user's preferences for the Drafts folder?

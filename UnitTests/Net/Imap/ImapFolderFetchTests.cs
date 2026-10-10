@@ -433,7 +433,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (client.Inbox.SyncRoot, Is.InstanceOf<ImapEngine> (), "SyncRoot");
 
 				// disable all features
-				client.Capabilities = ImapCapabilities.None;
+				client.Capabilities.Clear ();
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -515,7 +515,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Partial), Is.True, "ImapCapability.Partial");
 
 				var inbox = (ImapFolder) client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -539,7 +539,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId (changedsince)");
 
 				// Now disable the PARTIAL extension and try again...
-				client.Capabilities &= ~ImapCapabilities.Partial;
+				client.Capabilities.Disable (ImapCapability.Partial);
 				Assert.Throws<NotSupportedException> (() => inbox.Fetch (UniqueIdRange.All, request));
 
 				client.Disconnect (false);
@@ -569,7 +569,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Partial), Is.True, "ImapCapabilities.Partial");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Partial), Is.True, "ImapCapability.Partial");
 
 				var inbox = (ImapFolder) client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -593,7 +593,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (messages[0].UniqueId.Id, Is.EqualTo (1), "UniqueId (changedsince)");
 
 				// Now disable the PARTIAL extension and try again...
-				client.Capabilities &= ~ImapCapabilities.Partial;
+				client.Capabilities.Disable (ImapCapability.Partial);
 				Assert.ThrowsAsync<NotSupportedException> (() => inbox.FetchAsync (UniqueIdRange.All, request));
 
 				await client.DisconnectAsync (false);
@@ -840,7 +840,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -899,7 +899,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -975,7 +975,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1032,7 +1032,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1106,7 +1106,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1163,7 +1163,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1246,7 +1246,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1299,7 +1299,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1370,7 +1370,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1424,7 +1424,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1515,7 +1515,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1565,7 +1565,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1632,7 +1632,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1675,7 +1675,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1733,7 +1733,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1778,7 +1778,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1839,7 +1839,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1884,7 +1884,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -1944,7 +1944,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -1993,7 +1993,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -2074,7 +2074,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = personal.GetSubfolders ();
@@ -2142,7 +2142,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// disable LIST-EXTENDED
-				client.Capabilities &= ~ImapCapabilities.ListExtended;
+				client.Capabilities.Disable (ImapCapability.ListExtended);
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = await personal.GetSubfoldersAsync ();
@@ -2204,7 +2204,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), Is.True, "OBJECTID");
+				Assert.That (client.Capabilities.Contains (ImapCapability.ObjectID), Is.True, "OBJECTID");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadOnly);
@@ -2246,7 +2246,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.ObjectID), Is.True, "OBJECTID");
+				Assert.That (client.Capabilities.Contains (ImapCapability.ObjectID), Is.True, "OBJECTID");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
@@ -2303,7 +2303,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "SAVEDATE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.SaveDate), Is.True, "SAVEDATE");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadOnly);
@@ -2343,7 +2343,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.SaveDate), Is.True, "SAVEDATE");
+				Assert.That (client.Capabilities.Contains (ImapCapability.SaveDate), Is.True, "SAVEDATE");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadOnly);
@@ -2400,7 +2400,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -2479,7 +2479,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -2751,7 +2751,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				inbox.Open (FolderAccess.ReadWrite);
@@ -2817,7 +2817,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities.HasFlag (ImapCapabilities.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
+				Assert.That (client.Capabilities.Contains (ImapCapability.Annotate), Is.True, "ANNOTATE-EXPERIMENT-1");
 
 				var inbox = client.Inbox;
 				await inbox.OpenAsync (FolderAccess.ReadWrite);
@@ -3000,9 +3000,11 @@ namespace UnitTests.Net.Imap {
 		public void TestYandexGetBodyPartMissingContent ()
 		{
 			// IMAP4rev1 CHILDREN UNSELECT LITERAL+ NAMESPACE XLIST UIDPLUS ENABLE ID AUTH=PLAIN AUTH=XOAUTH2 IDLE MOVE
-			const ImapCapabilities YandexGreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Children | ImapCapabilities.Unselect |
-				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | ImapCapabilities.XList | ImapCapabilities.UidPlus | ImapCapabilities.Enable |
-				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | ImapCapabilities.Status;
+			var YandexGreetingCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Children, ImapCapability.Unselect,
+				ImapCapability.LiteralPlus, ImapCapability.Namespace, ImapCapability.XList, ImapCapability.UidPlus, ImapCapability.Enable,
+				ImapCapability.Id, ImapCapability.Idle, ImapCapability.Move, ImapCapability.Status
+		};
 			var commands = CreateYandexGetBodyPartMissingContentCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -3012,7 +3014,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (YandexGreetingCapabilities), "Greeting Capabilities");
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3023,7 +3025,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (YandexGreetingCapabilities), "Greeting Capabilities");
 
 				client.Inbox.Open (FolderAccess.ReadWrite);
 
@@ -3048,9 +3050,11 @@ namespace UnitTests.Net.Imap {
 		public async Task TestYandexGetBodyPartMissingContentAsync ()
 		{
 			// IMAP4rev1 CHILDREN UNSELECT LITERAL+ NAMESPACE XLIST UIDPLUS ENABLE ID AUTH=PLAIN AUTH=XOAUTH2 IDLE MOVE
-			const ImapCapabilities YandexGreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Children | ImapCapabilities.Unselect |
-				ImapCapabilities.LiteralPlus | ImapCapabilities.Namespace | ImapCapabilities.XList | ImapCapabilities.UidPlus | ImapCapabilities.Enable |
-				ImapCapabilities.Id | ImapCapabilities.Idle | ImapCapabilities.Move | ImapCapabilities.Status;
+			var YandexGreetingCapabilities = new [] {
+			ImapCapability.IMAP4rev1, ImapCapability.Children, ImapCapability.Unselect,
+				ImapCapability.LiteralPlus, ImapCapability.Namespace, ImapCapability.XList, ImapCapability.UidPlus, ImapCapability.Enable,
+				ImapCapability.Id, ImapCapability.Idle, ImapCapability.Move, ImapCapability.Status
+		};
 			var commands = CreateYandexGetBodyPartMissingContentCommands ();
 
 			using (var client = new ImapClient () { TagPrefix = 'A' }) {
@@ -3060,7 +3064,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (YandexGreetingCapabilities), "Greeting Capabilities");
 				Assert.That (client.AuthenticationMechanisms, Has.Count.EqualTo (2));
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
@@ -3071,7 +3075,7 @@ namespace UnitTests.Net.Imap {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
-				Assert.That (client.Capabilities, Is.EqualTo (YandexGreetingCapabilities), "Greeting Capabilities");
+				Assert.That (client.Capabilities, Is.EquivalentTo (YandexGreetingCapabilities), "Greeting Capabilities");
 
 				await client.Inbox.OpenAsync (FolderAccess.ReadWrite);
 

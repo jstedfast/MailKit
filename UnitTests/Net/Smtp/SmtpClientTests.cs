@@ -1285,7 +1285,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1327,7 +1327,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1378,7 +1378,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1427,7 +1427,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1526,7 +1526,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1569,7 +1569,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1622,7 +1622,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1663,7 +1663,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1716,7 +1716,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1757,7 +1757,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 					Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
@@ -1802,18 +1802,18 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Disconnect (true);
@@ -1839,7 +1839,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 				client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (expected), "Failed to parse SIZE correctly");
 
 				client.Disconnect (true);
@@ -1872,7 +1872,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
-				Assert.That (client.Capabilities, Is.EqualTo (SmtpCapabilities.None), "Capabilities");
+				Assert.That (client.Capabilities, Is.Empty, "Capabilities");
 
 				try {
 					client.Disconnect (true);
@@ -1900,7 +1900,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
-				Assert.That (client.Capabilities, Is.EqualTo (SmtpCapabilities.None), "Capabilities");
+				Assert.That (client.Capabilities, Is.Empty, "Capabilities");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -1941,7 +1941,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.False, "Client should not be connected.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
-				Assert.That (client.Capabilities, Is.EqualTo (SmtpCapabilities.None), "Capabilities");
+				Assert.That (client.Capabilities, Is.Empty, "Capabilities");
 
 				try {
 					client.Disconnect (true);
@@ -1972,7 +1972,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.False, "Client should not be connected.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
-				Assert.That (client.Capabilities, Is.EqualTo (SmtpCapabilities.None), "Capabilities");
+				Assert.That (client.Capabilities, Is.Empty, "Capabilities");
 
 				try {
 					await client.DisconnectAsync (true);
@@ -2032,20 +2032,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2169,20 +2168,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2315,20 +2313,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 
@@ -2359,20 +2356,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2428,20 +2424,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2513,20 +2508,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2609,20 +2603,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2670,20 +2663,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2743,20 +2735,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2797,20 +2788,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2861,20 +2851,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2919,20 +2908,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -2990,20 +2978,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -3041,20 +3028,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -3104,21 +3090,20 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -3166,21 +3151,20 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("DIGEST-MD5"), "Failed to detect the DIGEST-MD5 auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -3239,15 +3223,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3286,15 +3270,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3354,16 +3338,16 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3379,7 +3363,7 @@ namespace UnitTests.Net.Smtp {
 					}
 
 					// Disable SMTPUTF8
-					client.Capabilities &= ~SmtpCapabilities.UTF8;
+					client.Capabilities.Disable (SmtpCapability.UTF8);
 
 					try {
 						client.Send (message, mailbox, new MailboxAddress[] { mailbox });
@@ -3412,16 +3396,16 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.UTF8), Is.True, "Failed to detect SMTPUTF8 extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3437,7 +3421,7 @@ namespace UnitTests.Net.Smtp {
 					}
 
 					// Disable SMTPUTF8
-					client.Capabilities &= ~SmtpCapabilities.UTF8;
+					client.Capabilities.Disable (SmtpCapability.UTF8);
 
 					try {
 						await client.SendAsync (message, mailbox, new MailboxAddress[] { mailbox });
@@ -3511,15 +3495,15 @@ namespace UnitTests.Net.Smtp {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						client.Authenticate ("username", "password");
@@ -3527,8 +3511,8 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), Is.True, "Failed to detect BINARYMIME extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), Is.True, "Failed to detect CHUNKING extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.BinaryMime), Is.True, "Failed to detect BINARYMIME extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Chunking), Is.True, "Failed to detect CHUNKING extension");
 
 					try {
 						if (showProgress) {
@@ -3597,15 +3581,15 @@ namespace UnitTests.Net.Smtp {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
@@ -3613,8 +3597,8 @@ namespace UnitTests.Net.Smtp {
 						Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 					}
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), Is.True, "Failed to detect BINARYMIME extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), Is.True, "Failed to detect CHUNKING extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.BinaryMime), Is.True, "Failed to detect BINARYMIME extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Chunking), Is.True, "Failed to detect CHUNKING extension");
 
 					try {
 						if (showProgress) {
@@ -3669,16 +3653,16 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3727,16 +3711,16 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3796,15 +3780,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3850,15 +3834,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -3915,15 +3899,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -3969,15 +3953,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -4034,15 +4018,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4088,15 +4072,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -4155,15 +4139,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4207,15 +4191,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -4289,15 +4273,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4346,15 +4330,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -4479,15 +4463,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4536,15 +4520,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -4604,15 +4588,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					using (var message = CreateSimpleMessage ())
@@ -4650,15 +4634,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					using (var message = CreateSimpleMessage ())
@@ -4706,15 +4690,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					using (var message = CreateSimpleMessage ())
@@ -4752,15 +4736,15 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					using (var message = CreateSimpleMessage ())
@@ -4846,17 +4830,17 @@ namespace UnitTests.Net.Smtp {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Dsn), Is.True, "Failed to detect DSN extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						client.Authenticate ("username", "password");
@@ -4865,7 +4849,7 @@ namespace UnitTests.Net.Smtp {
 					}
 
 					// disable pipelining
-					client.Capabilities &= ~SmtpCapabilities.Pipelining;
+					client.Capabilities.Disable (SmtpCapability.Pipelining);
 
 					client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
 					client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
@@ -4904,17 +4888,17 @@ namespace UnitTests.Net.Smtp {
 
 					Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 					Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Dsn), Is.True, "Failed to detect DSN extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 					Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-					Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+					Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 					try {
 						await client.AuthenticateAsync ("username", "password");
@@ -4923,7 +4907,7 @@ namespace UnitTests.Net.Smtp {
 					}
 
 					// disable pipelining
-					client.Capabilities &= ~SmtpCapabilities.Pipelining;
+					client.Capabilities.Disable (SmtpCapability.Pipelining);
 
 					client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
 					client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
@@ -4973,17 +4957,17 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Dsn), Is.True, "Failed to detect DSN extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -4992,7 +4976,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				// disable pipelining
-				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+				client.Capabilities.Disable (SmtpCapability.Pipelining);
 
 				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full;
 				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
@@ -5034,17 +5018,17 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Dsn), Is.True, "Failed to detect DSN extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Pipelining), Is.True, "Failed to detect PIPELINING extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Dsn), Is.True, "Failed to detect DSN extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Pipelining), Is.True, "Failed to detect PIPELINING extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -5053,7 +5037,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				// disable pipelining
-				client.Capabilities &= ~SmtpCapabilities.Pipelining;
+				client.Capabilities.Disable (SmtpCapability.Pipelining);
 
 				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full;
 				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
@@ -5113,16 +5097,16 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.RequireTLS), Is.True, "Failed to detect REQUIRETLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.RequireTLS), Is.True, "Failed to detect REQUIRETLS extension");
 
 				try {
 					client.Authenticate ("username", "password");
@@ -5172,16 +5156,16 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.RequireTLS), Is.True, "Failed to detect REQUIRETLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.RequireTLS), Is.True, "Failed to detect REQUIRETLS extension");
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -5259,20 +5243,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;
@@ -5322,20 +5305,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (client.IsConnected, Is.True, "Client failed to connect.");
 				Assert.That (client.IsSecure, Is.False, "IsSecure should be false.");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), Is.True, "Failed to detect AUTH extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Authentication), Is.True, "Failed to detect AUTH extension");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
 				Assert.That (client.AuthenticationMechanisms, Does.Contain ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EightBitMime), Is.True, "Failed to detect 8BITMIME extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.EnhancedStatusCodes), Is.True, "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.Size), Is.True, "Failed to detect SIZE extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.Size), Is.True, "Failed to detect SIZE extension");
 				Assert.That (client.MaxSize, Is.EqualTo (36700160), "Failed to parse SIZE correctly");
 
-				Assert.That (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), Is.True, "Failed to detect STARTTLS extension");
+				Assert.That (client.Capabilities.Contains (SmtpCapability.StartTLS), Is.True, "Failed to detect STARTTLS extension");
 
-				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				Assert.That (client.Timeout, Is.EqualTo (120000), "Timeout");
 				client.Timeout *= 2;

@@ -283,7 +283,7 @@ namespace MailKit.Net.Smtp
 		/// <para>If, on the other hand, authentication is not supported by the SMTP
 		/// server, then this method will throw <see cref="System.NotSupportedException"/>.
 		/// The <see cref="Capabilities"/> property can be checked for the
-		/// <see cref="SmtpCapabilities.Authentication"/> flag to make sure the
+		/// <see cref="SmtpCapability.Authentication"/> flag to make sure the
 		/// SMTP server supports authentication before calling this method.</para>
 		/// <note type="tip"> To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
@@ -452,10 +452,10 @@ namespace MailKit.Net.Smtp
 				// Send EHLO and get a list of supported extensions
 				await EhloAsync (true, cancellationToken).ConfigureAwait (false);
 
-				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
+				if (options == SecureSocketOptions.StartTls && !capabilities.Contains (SmtpCapability.StartTLS))
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
-				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
+				if (starttls && capabilities.Contains (SmtpCapability.StartTLS)) {
 					response = await Stream.SendCommandAsync (SmtpCommand.StartTls, "STARTTLS\r\n", cancellationToken).ConfigureAwait (false);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.StartTls, response);
@@ -563,7 +563,7 @@ namespace MailKit.Net.Smtp
 		{
 			ValidateArguments (host, port);
 
-			capabilities = SmtpCapabilities.None;
+			capabilities.Clear ();
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
@@ -737,7 +737,7 @@ namespace MailKit.Net.Smtp
 		{
 			ValidateArguments (stream, host, port);
 
-			capabilities = SmtpCapabilities.None;
+			capabilities.Clear ();
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
@@ -975,11 +975,11 @@ namespace MailKit.Net.Smtp
 		async Task<string> SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress? progress)
 		{
 			var format = Prepare (options, message, sender, recipients, out var extensions);
-			var pipeline = (capabilities & SmtpCapabilities.Pipelining) != 0;
+			var pipeline = capabilities.Contains (SmtpCapability.Pipelining);
 			var bdat = UseBdatCommand (extensions);
 			long size;
 
-			if (bdat || (Capabilities & SmtpCapabilities.Size) != 0 || progress != null) {
+			if (bdat || Capabilities.Contains (SmtpCapability.Size) || progress != null) {
 				size = await GetSizeAsync (format, message, cancellationToken).ConfigureAwait (false);
 			} else {
 				size = -1;

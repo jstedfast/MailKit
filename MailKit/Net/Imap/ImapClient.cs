@@ -153,27 +153,20 @@ namespace MailKit.Net.Imap {
 		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made via one of
+		/// <para>The capabilities will not be known until a successful connection has been made via one of
 		/// the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a> methods and may
 		/// change as a side-effect of calling one of the
 		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
-		/// methods.
+		/// methods.</para>
+		/// <para>To prevent MailKit from using a particular extension, use
+		/// <see cref="ImapCapabilities.Disable(ImapCapability)"/>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
 		public ImapCapabilities Capabilities {
 			get { return engine.Capabilities; }
-			set {
-				if ((engine.Capabilities | value) > engine.Capabilities)
-					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", nameof (value));
-
-				engine.Capabilities = value;
-			}
 		}
 
 		/// <summary>
@@ -288,7 +281,7 @@ namespace MailKit.Net.Imap {
 			CheckDisposed ();
 			CheckConnected ();
 
-			if ((engine.Capabilities & ImapCapabilities.Compress) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Compress))
 				throw new NotSupportedException ("The IMAP server does not support the COMPRESS extension.");
 
 			if (engine.State >= ImapEngineState.Selected)
@@ -316,7 +309,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Enables compression over the IMAP connection.</para>
-		/// <para>If the IMAP server supports the <see cref="ImapCapabilities.Compress"/> extension,
+		/// <para>If the IMAP server supports the <see cref="ImapCapability.Compress"/> extension,
 		/// it is possible at any point after connecting to enable compression to reduce network
 		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
 		/// </remarks>
@@ -331,7 +324,7 @@ namespace MailKit.Net.Imap {
 		/// Compression must be enabled before a folder has been selected.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the <see cref="ImapCapabilities.Compress"/> extension.
+		/// The IMAP server does not support the <see cref="ImapCapability.Compress"/> extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -374,13 +367,13 @@ namespace MailKit.Net.Imap {
 			if (engine.State != ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("Features need to be enabled immediately after authenticating.");
 
-			if ((features & ImapFeatures.QuickResync) != 0 && (engine.Capabilities & ImapCapabilities.QuickResync) == 0)
+			if ((features & ImapFeatures.QuickResync) != 0 && !engine.Capabilities.Contains (ImapCapability.QuickResync))
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
-			if ((features & ImapFeatures.UTF8Accept) != 0 && (engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+			if ((features & ImapFeatures.UTF8Accept) != 0 && !engine.Capabilities.Contains (ImapCapability.UTF8Accept))
 				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
 
-			if ((features & ImapFeatures.IMAP4rev2) != 0 && (engine.Capabilities & ImapCapabilities.IMAP4rev2) == 0)
+			if ((features & ImapFeatures.IMAP4rev2) != 0 && !engine.Capabilities.Contains (ImapCapability.IMAP4rev2))
 				throw new NotSupportedException ("The IMAP server does not support the IMAP4rev2 protocol.");
 
 			var command = new StringBuilder ("ENABLE");
@@ -478,7 +471,7 @@ namespace MailKit.Net.Imap {
 			CheckDisposed ();
 			CheckConnected ();
 
-			if ((engine.Capabilities & ImapCapabilities.Id) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Id))
 				throw new NotSupportedException ("The IMAP server does not support the ID extension.");
 
 			var command = new StringBuilder ("ID ");
@@ -1099,7 +1092,7 @@ namespace MailKit.Net.Imap {
 
 			var command = string.Format ("AUTHENTICATE {0}", mechanism.MechanismName);
 
-			if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && mechanism.SupportsInitialResponse) {
+			if (engine.Capabilities.Contains (ImapCapability.SaslIR) && mechanism.SupportsInitialResponse) {
 				string ir = mechanism.Challenge (null, cancellationToken);
 
 				command += " " + ir + "\r\n";
@@ -1160,7 +1153,7 @@ namespace MailKit.Net.Imap {
 
 		void CheckCanLogin (ImapCommand? ic)
 		{
-			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0) {
+			if (Capabilities.Contains (ImapCapability.LoginDisabled)) {
 				if (ic == null)
 					throw new AuthenticationException ("The LOGIN command is disabled.");
 
@@ -1245,7 +1238,7 @@ namespace MailKit.Net.Imap {
 
 					var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
 
-					if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && sasl.SupportsInitialResponse) {
+					if (engine.Capabilities.Contains (ImapCapability.SaslIR) && sasl.SupportsInitialResponse) {
 						string ir = sasl.Challenge (null, cancellationToken);
 
 						command += " " + ir + "\r\n";
@@ -1430,10 +1423,10 @@ namespace MailKit.Net.Imap {
 				if (engine.CapabilitiesVersion == 0)
 					engine.QueryCapabilities (cancellationToken);
 
-				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & ImapCapabilities.StartTLS) == 0)
+				if (options == SecureSocketOptions.StartTls && !engine.Capabilities.Contains (ImapCapability.StartTLS))
 					throw new NotSupportedException ("The IMAP server does not support the STARTTLS extension.");
 
-				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+				if (starttls && engine.Capabilities.Contains (ImapCapability.StartTLS)) {
 					var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 					engine.Run (ic);
@@ -1870,7 +1863,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & ImapCapabilities.Idle) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Idle))
 				throw new NotSupportedException ("The IMAP server does not support the IDLE extension.");
 
 			if (engine.State != ImapEngineState.Selected)
@@ -1973,7 +1966,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & ImapCapabilities.Notify) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Notify))
 				throw new NotSupportedException ("The IMAP server does not support the NOTIFY extension.");
 
 			notifySelectedNewExpunge = false;
@@ -2069,7 +2062,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & ImapCapabilities.Notify) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Notify))
 				throw new NotSupportedException ("The IMAP server does not support the NOTIFY extension.");
 
 			var ic = new ImapCommand (engine, cancellationToken, null, "NOTIFY NONE\r\n");
@@ -2175,7 +2168,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value><see langword="true" /> if the mail store supports quotas; otherwise, <see langword="false" />.</value>
 		public override bool SupportsQuotas {
-			get { return (engine.Capabilities & ImapCapabilities.Quota) != 0; }
+			get { return engine.Capabilities.Contains (ImapCapability.Quota); }
 		}
 
 		/// <summary>
@@ -2213,8 +2206,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Not all IMAP servers support special folders. Only IMAP servers
-		/// supporting the <see cref="ImapCapabilities.SpecialUse"/> or
-		/// <see cref="ImapCapabilities.XList"/> extensions may have
+		/// supporting the <see cref="ImapCapability.SpecialUse"/> or
+		/// <see cref="ImapCapability.XList"/> extensions may have
 		/// special folders.
 		/// </remarks>
 		/// <returns>The folder if available; otherwise <see langword="null" />.</returns>
@@ -2240,7 +2233,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) == 0)
+			if (!Capabilities.Contains (ImapCapability.SpecialUse) && !Capabilities.Contains (ImapCapability.XList))
 				throw new NotSupportedException ("The IMAP server does not support the SPECIAL-USE nor XLIST extensions.");
 
 			switch (folder) {
@@ -2403,7 +2396,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Metadata) && !engine.Capabilities.Contains (ImapCapability.MetadataServer))
 				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
 
 			var ic = new ImapCommand (engine, cancellationToken, null, "GETMETADATA \"\" %S\r\n", tag.Id);
@@ -2490,7 +2483,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Metadata) && !engine.Capabilities.Contains (ImapCapability.MetadataServer))
 				throw new NotSupportedException ("The IMAP server does not support the METADATA or METADATA-SERVER extension.");
 
 			var command = new StringBuilder ("GETMETADATA \"\"");
@@ -2614,7 +2607,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			if ((engine.Capabilities & (ImapCapabilities.Metadata | ImapCapabilities.MetadataServer)) == 0)
+			if (!engine.Capabilities.Contains (ImapCapability.Metadata) && !engine.Capabilities.Contains (ImapCapability.MetadataServer))
 				throw new NotSupportedException ("The IMAP server does not support the METADATA or METADATA-SERVER extension.");
 
 			if (metadata.Count == 0) {

@@ -65,33 +65,33 @@ namespace MailKit.Examples {
 			using (var client = new Pop3Client ()) {
 				client.Connect ("pop.gmail.com", 995, SecureSocketOptions.SslOnConnect);
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.SASL)) {
+				if (client.Capabilities.Contains (Pop3Capability.Sasl)) {
 					var mechanisms = string.Join (", ", client.AuthenticationMechanisms);
 					Console.WriteLine ("The POP3 server supports the following SASL mechanisms: {0}", mechanisms);
 				}
 
 				client.Authenticate ("username", "password");
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.Apop))
+				if (client.Capabilities.Contains (Pop3Capability.Apop))
 					Console.WriteLine ("The server supports APOP authentication.");
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.Expire)) {
+				if (client.Capabilities.Contains (Pop3Capability.Expire)) {
 					if (client.ExpirePolicy > 0)
 						Console.WriteLine ("The POP3 server automatically expires messages after {0} days", client.ExpirePolicy);
 					else
 						Console.WriteLine ("The POP3 server will never expire messages.");
 				}
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.LoginDelay))
+				if (client.Capabilities.Contains (Pop3Capability.LoginDelay))
 					Console.WriteLine ("The minimum number of seconds between login attempts is {0}.", client.LoginDelay);
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.Pipelining))
+				if (client.Capabilities.Contains (Pop3Capability.Pipelining))
 					Console.WriteLine ("The POP3 server can pipeline commands, so using client.GetMessages() will be faster.");
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.Top))
+				if (client.Capabilities.Contains (Pop3Capability.Top))
 					Console.WriteLine ("The POP3 server supports the TOP command, so it's possible to download message headers.");
 
-				if (client.Capabilities.HasFlag (Pop3Capabilities.UIDL))
+				if (client.Capabilities.Contains (Pop3Capability.UIDL))
 					Console.WriteLine ("The POP3 server supports the UIDL command which means we can track messages by UID.");
 
 				client.Disconnect (true);
@@ -152,7 +152,7 @@ namespace MailKit.Examples {
 
 				client.Authenticate ("username", "password");
 
-				if (!client.Capabilities.HasFlag (Pop3Capabilities.UIDL))
+				if (!client.Capabilities.Contains (Pop3Capability.UIDL))
 					throw new Exception ("The POP3 server does not support UIDs!");
 
 				var uids = client.GetMessageUids ();
@@ -209,7 +209,7 @@ namespace MailKit.Examples {
 				}
 
 				// for the sake of this example, let's assume GMail supports the UIDL extension
-				if (client.Capabilities.HasFlag (Pop3Capabilities.UIDL)) {
+				if (client.Capabilities.Contains (Pop3Capability.UIDL)) {
 					try {
 						uids = client.GetMessageUids ();
 					} catch (Pop3CommandException ex) {

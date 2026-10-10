@@ -477,7 +477,7 @@ namespace UnitTests.Net.Imap {
 			var (client, inbox, archived) = await ConnectAsync (commands, async);
 			var request = new RecordingMoveRequest (archived);
 
-			client.Capabilities &= ~ImapCapabilities.Move;
+			client.Capabilities.Disable (ImapCapability.Move);
 
 			var map = async ? await inbox.MoveToAsync (Uids, request) : inbox.MoveTo (Uids, request);
 

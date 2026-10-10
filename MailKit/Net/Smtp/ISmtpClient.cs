@@ -42,16 +42,15 @@ namespace MailKit.Net.Smtp {
 		/// Get the capabilities supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made 
-		/// and may change once the client is authenticated.
+		/// <para>The capabilities will not be known until a successful connection has been made
+		/// and may change once the client is authenticated.</para>
+		/// <para>To prevent MailKit from using a particular extension, use
+		/// <see cref="SmtpCapabilities.Disable(SmtpCapability)"/>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
-		/// <exception cref="System.ArgumentException">
-		/// Capabilities cannot be enabled, they may only be disabled.
-		/// </exception>
 		SmtpCapabilities Capabilities { get; }
 
 		/// <summary>
@@ -72,7 +71,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>The maximum message size will not be known until a successful connection has
 		/// been made and may change once the client is authenticated.</para>
 		/// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
-		/// the <see cref="SmtpCapabilities.Size"/> flag. The value will never be negative.</note>
+		/// the <see cref="SmtpCapability.Size"/> flag. The value will never be negative.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
@@ -89,7 +88,7 @@ namespace MailKit.Net.Smtp {
 		/// that a message passes through on its way to the recipient is required to use a TLS connection in
 		/// order to transfer the message to the next SMTP server.</para>
 		/// <note type="note">This feature is only available if <see cref="Capabilities"/> contains the
-		/// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
+		/// <see cref="SmtpCapability.RequireTLS"/> flag when sending the message.</note>
 		/// </remarks>
 		/// <value><see langword="true" /> if the REQUIRETLS extension should be used; otherwise, <see langword="false" />.</value>
 		bool RequireTLS { get; set; }
