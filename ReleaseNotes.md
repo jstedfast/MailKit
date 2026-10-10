@@ -170,6 +170,10 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   `IMailStore`, `IMailTransport` and `IMailSpool`) that do not derive from `MailService` must implement
   `DisposeAsync ()`. On .NET Framework and .NET Standard 2.0, MailKit now depends on
   `Microsoft.Bcl.AsyncInterfaces`.
+* `AccessControlList` no longer derives from `List<AccessControl>`. It now implements
+  `IList<AccessControl>` and `IReadOnlyList<AccessControl>` (and keeps `AddRange ()`), and its methods throw
+  `ArgumentNullException` when given a `null` access control. Use LINQ in place
+  of `List<T>`-only methods such as `Find ()`, `Sort ()` or `ForEach ()`.
 
 ### New Features
 

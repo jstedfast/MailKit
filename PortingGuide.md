@@ -49,6 +49,7 @@ extension methods in that namespace, so make sure that files calling `Send ()`, 
 | Custom `IMailFolder`/`MailFolder`/`IMailTransport` implementations, or mocks | Interface members not implemented, or mock setups fail | [7](#7-custom-implementations-and-mocks) |
 | `SaslMechanism.Create ()` null checks | Exception instead of `null` | [8](#8-other-api-changes) |
 | `Compress ()` on .NET Framework/.NET Standard | Missing method | [8](#8-other-api-changes) |
+| `AccessControlList` `List<T>` methods (`Find`, `Sort`, `ForEach`, ...) | Missing method or conversion to `List<AccessControl>` fails | [8](#8-other-api-changes) |
 | Removed obsolete APIs | Missing constructors or properties | [9](#9-removed-obsolete-apis) |
 
 ---
@@ -405,6 +406,14 @@ listed above.
   `ArgumentException` for empty components (a leading or trailing `.`, or `..`), NUL or non-ASCII
   characters, or misplaced `priv`/`shared` components.
   * **Fix:** Correct the specifier string.
+* **`AccessControlList`** no longer derives from `List<AccessControl>`. It implements
+  `IList<AccessControl>` and `IReadOnlyList<AccessControl>`, and keeps `AddRange ()`. Its methods
+  throw `ArgumentNullException` for `null` access controls.
+  * **Detect:** `List<T>`-only methods on an `AccessControlList`, such as `Find`, `FindAll`,
+    `Exists`, `Sort`, `ForEach`, `ConvertAll`, `ToArray` or `RemoveAll`, or passing one where a
+    `List<AccessControl>` is expected.
+  * **Fix:** Use LINQ (`FirstOrDefault`, `Where`, `Any`, `OrderBy`, `ToArray`, ...), a `foreach`
+    loop, or `new List<AccessControl> (acl)`.
 
 ---
 
