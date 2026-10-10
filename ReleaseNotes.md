@@ -6,6 +6,9 @@ MailKit 5.0 is a major release containing a number of breaking changes. The head
 MailKit no longer depends on BouncyCastle, allowing it to depend on the new `MimeKit.Core` package
 rather than the full MimeKit cryptography stack.
 
+See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting a project from MailKit
+4.x. The guide is also included in the NuGet package (`docs/PortingGuide.md`).
+
 ### Breaking Changes
 
 * `MailKitLite` has been retired. Now that MailKit no longer depends on BouncyCastle, `MailKitLite` was
@@ -29,13 +32,6 @@ rather than the full MimeKit cryptography stack.
     compression.
 * Moved `DeliveryStatusNotificationType` from the `MailKit.Net.Smtp` namespace to the `MailKit`
   namespace. Add a `using MailKit;` directive if you get a compile error.
-* `IMailFolder.GetMessage ()`, `GetMessageAsync ()` and `IMailSpool.GetMessage[s] ()`,
-  `GetMessage[s]Async ()` now return `IMimeMessage` (or `IList<IMimeMessage>`) instead of
-  `MimeMessage`, making it possible to mock the returned messages in unit tests. `IMailFolder` and
-  `IMailSpool` (and therefore `ImapFolder` and `Pop3Client`) now implement
-  `IEnumerable<IMimeMessage>` rather than `IEnumerable<MimeMessage>`. The returned objects are still
-  `MimeMessage` instances, so code that needs `MimeMessage`-specific APIs can cast.
-  (issue [#1933](https://github.com/jstedfast/MailKit/issues/1933))
 * Message sizes, line counts, byte offsets and byte counts are now 64-bit (`long`) values. RFC 3501
   defines these as 32-bit *unsigned* integers, so messages larger than 2 GB could overflow MailKit's
   `int` APIs, and IMAP4rev2 (RFC 9051) widens them to 63 bits. None of the new values will ever be
@@ -100,7 +96,7 @@ rather than the full MimeKit cryptography stack.
   available via the new `SmtpProtocolException.LastResponse` property instead.
   (issue [#1748](https://github.com/jstedfast/MailKit/issues/1748))
 * Multi-line SMTP responses are now joined using `\r\n` rather than `\n`, matching the line endings used
-  on the wire. This affects `SmtpResponse.Response` as well as the new `SmtpCommandException.ResponseText`
+  on the wire. This affects `SmtpResponse.ResponseText` as well as the new `SmtpCommandException.ResponseText`
   and `SmtpProtocolException.LastResponse` properties. Code that splits multi-line responses on `'\n'`
   should be updated to split on `"\r\n"` (or trim the trailing `'\r'` from each line).
 * The `error.type` values reported by MailKit's metrics are now more specific. See
@@ -147,8 +143,43 @@ rather than the full MimeKit cryptography stack.
     `client.Capabilities.GetValues ("AUTH")`). `Disable ()` does not affect the raw names.
   * The public constructors can be used to create capability sets when mocking the client interfaces.
 
+* Renamed `SmtpResponse.Response` to `SmtpResponse.ResponseText` for consistency with
+  `SmtpCommandException.ResponseText` and `SendResult.ResponseText`.
+* Reworked the `IMailTransport` send API around request objects
+  (`ISendRequest`/`SendRequest` and `ISmtpSendRequest`/`SmtpSendRequest`):
+  * `IMailTransport` and `MailTransport` now only declare `Send ()`/`SendAsync ()` methods that take an
+    `ISendRequest` (with or without `FormatOptions`). The previous `Send (MimeMessage, ...)` and
+    `Send (MimeMessage, MailboxAddress, IEnumerable<MailboxAddress>, ...)` overloads are now extension
+    methods in the `MailKit` namespace, so existing calls continue to compile as long as there is a
+    `using MailKit;` directive.
+  * The `Send ()` and `SendAsync ()` methods now return a `SendResult` instead of a `string`. The
+    server's final response text is available via `SendResult.ResponseText`. `SmtpClient` returns an
+    `SmtpSendResult` (cast the result to access its `StatusCode`).
+  * Removed the protected `SmtpClient.OnSenderAccepted ()`, `OnSenderNotAccepted ()`,
+    `OnRecipientAccepted ()`, `OnRecipientNotAccepted ()`, `OnNoRecipientsAccepted ()`,
+    `GetEnvelopeId ()` and `GetDeliveryStatusNotifications ()` virtual methods. Rather than subclassing
+    `SmtpClient`, subclass `SmtpSendRequest` and override the equivalent methods, or set its
+    `EnvelopeId` and `DeliveryStatusNotifications` properties.
+  * Removed the `SmtpClient.DeliveryStatusNotificationType` and
+    `ISmtpClient.DeliveryStatusNotificationType` properties. Use
+    `SmtpSendRequest.DeliveryStatusNotificationType` instead.
+  * The `MessageSentEventArgs` constructor now takes an `ISendRequest` and a `SendResult`, and the
+    event args expose new `Request` and `Result` properties. `MessageSentEventArgs.Response` has
+    been renamed to `ResponseText`.
+
 ### New Features
 
+* Added `ISendRequest`/`SendRequest` and `ISmtpSendRequest`/`SmtpSendRequest`, which bundle a message
+  with its envelope sender, recipients, transfer progress and (for SMTP) DSN options, making it
+  possible to customize a single send operation without subclassing `SmtpClient`.
+  * `OnStarted ()` is called once the server is ready to receive the message data and
+    `OnCompleted ()` is called after the server has accepted the message.
+  * `SmtpSendRequest` also has virtual `OnSenderAccepted ()`, `OnSenderNotAccepted ()`,
+    `OnRecipientAccepted ()`, `OnRecipientNotAccepted ()` and `OnNoRecipientsAccepted ()` callbacks.
+    Overriding `OnRecipientNotAccepted ()` to not throw allows a message to be delivered to the
+    remaining recipients.
+* Added `SendResult` (and the SMTP-specific `SmtpSendResult`), which reports the server's final
+  response along with the lists of accepted and rejected recipients.
 * Added request callbacks that make it possible to observe exactly which changes the IMAP server has
   applied, laying the groundwork for an offline/sync layer
   (issue [#2023](https://github.com/jstedfast/MailKit/issues/2023)):

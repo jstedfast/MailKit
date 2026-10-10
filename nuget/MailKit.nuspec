@@ -91,6 +91,7 @@ Features include:
     <file src="..\README.md" target="docs\README.md" />
     <file src="..\ExchangeOAuth2.md" target="docs\ExchangeOAuth2.md" />
     <file src="..\GMailOAuth2.md" target="docs\GMailOAuth2.md" />
+    <file src="..\PortingGuide.md" target="docs\PortingGuide.md" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.dll" target="lib\netstandard2.0\MailKit.dll" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.pdb" target="lib\netstandard2.0\MailKit.pdb" />
     <file src="..\MailKit\bin\Release\netstandard2.0\MailKit.xml" target="lib\netstandard2.0\MailKit.xml" />
