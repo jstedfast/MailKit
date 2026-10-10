@@ -39,7 +39,7 @@ namespace ImapClientDemo.iOS
 {
 	public class MessageViewController : DialogViewController
 	{
-		public MessageViewController (IMimeMessage msg) : base (UITableViewStyle.Grouped, null, true)
+		public MessageViewController (MimeMessage msg) : base (UITableViewStyle.Grouped, null, true)
 		{
 			Root = new RootElement ("Details") {
 				new Section {

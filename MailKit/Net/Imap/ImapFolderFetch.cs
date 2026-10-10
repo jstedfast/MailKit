@@ -3362,7 +3362,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (uid, cancellationToken, progress, out var ctx);
 
@@ -3417,7 +3417,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<IMimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override async Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (uid, cancellationToken, progress, out var ctx);
 
@@ -3498,7 +3498,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IMimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (index, cancellationToken, progress, out var ctx);
 
@@ -3553,7 +3553,7 @@ namespace MailKit.Net.Imap
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<IMimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override async Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			var ic = QueueGetMessageCommand (index, cancellationToken, progress, out var ctx);
 

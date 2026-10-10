@@ -6392,7 +6392,7 @@ namespace MailKit.Net.Imap {
 			request.OnCompleted (this, indexes);
 		}
 
-		#region IEnumerable<IMimeMessage> implementation
+		#region IEnumerable<MimeMessage> implementation
 
 		/// <summary>
 		/// Get an enumerator for the messages in the folder.
@@ -6413,7 +6413,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		public override IEnumerator<IMimeMessage> GetEnumerator ()
+		public override IEnumerator<MimeMessage> GetEnumerator ()
 		{
 			CheckState (true, false);
 

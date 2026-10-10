@@ -46,7 +46,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by message stores such as <see cref="MailKit.Net.Imap.ImapClient"/>
 	/// </remarks>
-	public interface IMailFolder : IEnumerable<IMimeMessage>
+	public interface IMailFolder : IEnumerable<MimeMessage>
 	{
 		/// <summary>
 		/// Gets an object that can be used to synchronize access to the folder.
@@ -4627,7 +4627,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -4672,7 +4672,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IMimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -4717,7 +4717,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -4762,7 +4762,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		Task<IMimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
+		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null);
 
 		/// <summary>
 		/// Get the specified body part.

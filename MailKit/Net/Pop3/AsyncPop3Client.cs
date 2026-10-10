@@ -1274,7 +1274,7 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IMimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			CheckCanDownload (index);
 
@@ -1327,10 +1327,10 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<IMimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (indexes))
-				return Task.FromResult ((IList<IMimeMessage>) Array.Empty<IMimeMessage> ());
+				return Task.FromResult ((IList<MimeMessage>) Array.Empty<MimeMessage> ());
 
 			var ctx = new DownloadMessageContext (this, parser, progress);
 
@@ -1383,10 +1383,10 @@ namespace MailKit.Net.Pop3
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<IList<IMimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (startIndex, count))
-				return Task.FromResult ((IList<IMimeMessage>) Array.Empty<IMimeMessage> ());
+				return Task.FromResult ((IList<MimeMessage>) Array.Empty<MimeMessage> ());
 
 			var ctx = new DownloadMessageContext (this, parser, progress);
 

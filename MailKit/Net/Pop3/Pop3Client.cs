@@ -2519,7 +2519,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		class DownloadMessageContext : DownloadContext<IMimeMessage>
+		class DownloadMessageContext : DownloadContext<MimeMessage>
 		{
 			readonly MimeParser parser;
 
@@ -2528,7 +2528,7 @@ namespace MailKit.Net.Pop3 {
 				this.parser = parser;
 			}
 
-			protected override IMimeMessage Parse (Pop3Stream data, CancellationToken cancellationToken)
+			protected override MimeMessage Parse (Pop3Stream data, CancellationToken cancellationToken)
 			{
 				using (var stream = new ProgressStream (data, Update)) {
 					parser.SetStream (stream);
@@ -2537,12 +2537,12 @@ namespace MailKit.Net.Pop3 {
 				}
 			}
 
-			protected override async Task<IMimeMessage> ParseAsync (Pop3Stream data, CancellationToken cancellationToken)
+			protected override Task<MimeMessage> ParseAsync (Pop3Stream data, CancellationToken cancellationToken)
 			{
 				using (var stream = new ProgressStream (data, Update)) {
 					parser.SetStream (stream);
 
-					return await parser.ParseMessageAsync (cancellationToken).ConfigureAwait (false);
+					return parser.ParseMessageAsync (cancellationToken);
 				}
 			}
 		}
@@ -2776,7 +2776,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IMimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			CheckCanDownload (index);
 
@@ -2829,10 +2829,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<IMimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (indexes))
-				return Array.Empty<IMimeMessage> ();
+				return Array.Empty<MimeMessage> ();
 
 			var ctx = new DownloadMessageContext (this, parser, progress);
 
@@ -2885,10 +2885,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<IMimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
 		{
 			if (!CheckCanDownload (startIndex, count))
-				return Array.Empty<IMimeMessage> ();
+				return Array.Empty<MimeMessage> ();
 
 			var ctx = new DownloadMessageContext (this, parser, progress);
 
@@ -3328,7 +3328,7 @@ namespace MailKit.Net.Pop3 {
 
 		#endregion
 
-		#region IEnumerable<IMimeMessage> implementation
+		#region IEnumerable<MimeMessage> implementation
 
 		/// <summary>
 		/// Get an enumerator for the messages in the folder.
@@ -3358,7 +3358,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IEnumerator<IMimeMessage> GetEnumerator ()
+		public override IEnumerator<MimeMessage> GetEnumerator ()
 		{
 			CheckDisposed ();
 			CheckConnected ();
