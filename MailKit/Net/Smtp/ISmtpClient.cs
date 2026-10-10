@@ -94,18 +94,6 @@ namespace MailKit.Net.Smtp {
 		bool RequireTLS { get; set; }
 
 		/// <summary>
-		/// Get or set how much of the message to include in any failed delivery status notifications.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets how much of the message to include in any failed delivery status notifications.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
-		/// </example>
-		/// <value>A value indicating how much of the message to include in a failure delivery status notification.</value>
-		DeliveryStatusNotificationType DeliveryStatusNotificationType { get; set; }
-
-		/// <summary>
 		/// Expand a mailing address alias.
 		/// </summary>
 		/// <remarks>

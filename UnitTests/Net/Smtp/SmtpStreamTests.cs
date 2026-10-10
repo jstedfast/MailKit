@@ -139,7 +139,7 @@ namespace UnitTests.Net.Smtp {
 				var response = stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None);
 
 				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
-				Assert.That (response.Response, Is.EqualTo (expected));
+				Assert.That (response.ResponseText, Is.EqualTo (expected));
 			}
 		}
 
@@ -173,7 +173,7 @@ namespace UnitTests.Net.Smtp {
 				var response = stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None);
 
 				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
-				Assert.That (response.Response, Is.EqualTo (expected));
+				Assert.That (response.ResponseText, Is.EqualTo (expected));
 			}
 		}
 
@@ -206,7 +206,7 @@ namespace UnitTests.Net.Smtp {
 				var response = stream.ReadResponse (SmtpCommand.Unknown, CancellationToken.None);
 
 				Assert.That ((int) response.StatusCode, Is.EqualTo (250));
-				Assert.That (response.Response, Is.EqualTo (expected));
+				Assert.That (response.ResponseText, Is.EqualTo (expected));
 			}
 		}
 

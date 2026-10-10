@@ -238,15 +238,19 @@ namespace UnitTests {
 		public void TestMessageSentEventArgs ()
 		{
 			var message = new MimeMessage ();
+			var request = new SendRequest (message);
+			var result = new SendResult ("response", Array.Empty<MailboxAddress> (), Array.Empty<MailboxAddress> ());
 			MessageSentEventArgs args;
 
-			args = new MessageSentEventArgs (message, "response");
+			args = new MessageSentEventArgs (request, result);
 
+			Assert.That (args.Request, Is.EqualTo (request));
 			Assert.That (args.Message, Is.EqualTo (message));
-			Assert.That (args.Response, Is.EqualTo ("response"));
+			Assert.That (args.Result, Is.EqualTo (result));
+			Assert.That (args.ResponseText, Is.EqualTo ("response"));
 
-			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (null, "response"));
-			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (message, null));
+			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (null, result));
+			Assert.Throws<ArgumentNullException> (() => new MessageSentEventArgs (request, null));
 		}
 
 		[Test]

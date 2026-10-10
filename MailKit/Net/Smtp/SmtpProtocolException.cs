@@ -214,7 +214,7 @@ namespace MailKit.Net.Smtp {
 
 			info.AddValue ("Command", (int) Command);
 			info.AddValue ("LastResponseStatusCode", (int) (LastResponse?.StatusCode ?? 0));
-			info.AddValue ("LastResponseText", LastResponse?.Response);
+			info.AddValue ("LastResponseText", LastResponse?.ResponseText);
 		}
 #endif
 	}

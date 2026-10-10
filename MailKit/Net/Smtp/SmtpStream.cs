@@ -237,7 +237,7 @@ namespace MailKit.Net.Smtp {
 			string message;
 
 			if (lastResponse is not null)
-				message = $"The SMTP server has unexpectedly disconnected: {lastResponse.Response}";
+				message = $"The SMTP server has unexpectedly disconnected: {lastResponse.ResponseText}";
 			else
 				message = "The SMTP server has unexpectedly disconnected.";
 

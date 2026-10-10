@@ -633,19 +633,6 @@ namespace MailKit.Net.Smtp {
 			return valid;
 		}
 
-		/// <summary>
-		/// Invoked only when no recipients were accepted by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// If <see cref="OnRecipientNotAccepted"/> is overridden to not throw
-		/// an exception, this method should be overridden to throw an appropriate
-		/// exception instead.
-		/// </remarks>
-		/// <param name="message">The message being sent.</param>
-		protected virtual void OnNoRecipientsAccepted (MimeMessage message)
-		{
-		}
-
 		void QueueCommand (SmtpCommand type, string command, CancellationToken cancellationToken)
 		{
 			Stream!.QueueCommand (command, cancellationToken);
@@ -664,7 +651,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		QueueResults ParseCommandQueueResponses (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, List<SmtpResponse> responses, Exception? readResponseException)
+		QueueResults ParseCommandQueueResponses (SendState state, List<SmtpResponse> responses, Exception? readResponseException)
 		{
 			Exception? firstException = null;
 			int recipientsAccepted = 0;
@@ -676,14 +663,14 @@ namespace MailKit.Net.Smtp {
 					switch (queued[i]) {
 					case SmtpCommand.MailFrom:
 						try {
-							ParseMailFromResponse (message, sender, responses[i]);
+							ParseMailFromResponse (state, responses[i]);
 						} catch (Exception ex) {
 							firstException ??= ex;
 						}
 						break;
 					case SmtpCommand.RcptTo:
 						try {
-							if (ParseRcptToResponse (message, recipients[rcpt++], responses[i]))
+							if (ParseRcptToResponse (state, state.Recipients[rcpt++], responses[i]))
 								recipientsAccepted++;
 						} catch (Exception ex) {
 							firstException ??= ex;
@@ -698,7 +685,7 @@ namespace MailKit.Net.Smtp {
 			return new QueueResults (recipientsAccepted, firstException ?? readResponseException);
 		}
 
-		QueueResults FlushCommandQueue (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		QueueResults FlushCommandQueue (SendState state, CancellationToken cancellationToken)
 		{
 			try {
 				// Note: Queued commands are buffered by the stream
@@ -727,7 +714,7 @@ namespace MailKit.Net.Smtp {
 				rex = ex;
 			}
 
-			return ParseCommandQueueResponses (message, sender, recipients, responses, rex);
+			return ParseCommandQueueResponses (state, responses, rex);
 		}
 
 		SmtpResponse SendCommandInternal (SmtpCommand command, string commandText, CancellationToken cancellationToken)
@@ -895,7 +882,7 @@ namespace MailKit.Net.Smtp {
 			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
-			string text = response.Response;
+			string text = response.ResponseText;
 			int index = 0;
 
 			// Skip the first line of the EHLO response which is the server's greeting.
@@ -1083,11 +1070,11 @@ namespace MailKit.Net.Smtp {
 					response = SendCommandInternal (SmtpCommand.Auth, command, cancellationToken);
 
 					if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
-						throw new AuthenticationException (response.Response);
+						throw new AuthenticationException (response.ResponseText);
 
 					try {
 						while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
-							challenge = mechanism.Challenge (response.Response, cancellationToken);
+							challenge = mechanism.Challenge (response.ResponseText, cancellationToken);
 							response = SendCommandInternal (SmtpCommand.Auth, challenge + "\r\n", cancellationToken);
 						}
 
@@ -1105,11 +1092,11 @@ namespace MailKit.Net.Smtp {
 					if (mechanism.NegotiatedSecurityLayer)
 						Ehlo (false, cancellationToken);
 					authenticated = true;
-					OnAuthenticated (response.Response);
+					OnAuthenticated (response.ResponseText);
 					return;
 				}
 
-				var message = string.Format (CultureInfo.InvariantCulture, "{0}: {1}", (int) response.StatusCode, response.Response);
+				var message = string.Format (CultureInfo.InvariantCulture, "{0}: {1}", (int) response.StatusCode, response.ResponseText);
 
 				if (saslException != null)
 					throw new AuthenticationException (message, saslException);
@@ -1244,7 +1231,7 @@ namespace MailKit.Net.Smtp {
 
 						try {
 							while (response.StatusCode == SmtpStatusCode.AuthenticationChallenge) {
-								challenge = sasl.Challenge (response.Response, cancellationToken);
+								challenge = sasl.Challenge (response.ResponseText, cancellationToken);
 								response = SendCommandInternal (SmtpCommand.Auth, challenge + "\r\n", cancellationToken);
 							}
 
@@ -1262,11 +1249,11 @@ namespace MailKit.Net.Smtp {
 						if (sasl.NegotiatedSecurityLayer)
 							Ehlo (false, cancellationToken);
 						authenticated = true;
-						OnAuthenticated (response.Response);
+						OnAuthenticated (response.ResponseText);
 						return;
 					}
 
-					var message = string.Format (CultureInfo.InvariantCulture, "{0}: {1}", (int) response.StatusCode, response.Response);
+					var message = string.Format (CultureInfo.InvariantCulture, "{0}: {1}", (int) response.StatusCode, response.ResponseText);
 					Exception inner;
 
 					if (saslException != null)
@@ -1866,66 +1853,73 @@ namespace MailKit.Net.Smtp {
 			return recipients;
 		}
 
-		/// <summary>
-		/// Invoked when the sender is accepted by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// The default implementation does nothing.
-		/// </remarks>
-		/// <param name="message">The message being sent.</param>
-		/// <param name="mailbox">The mailbox used in the <c>MAIL FROM</c> command.</param>
-		/// <param name="response">The response to the <c>MAIL FROM</c> command.</param>
-		protected virtual void OnSenderAccepted (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
+		sealed class SendState
 		{
-		}
+			public readonly List<MailboxAddress> AcceptedRecipients = new List<MailboxAddress> ();
+			public readonly List<MailboxAddress> RejectedRecipients = new List<MailboxAddress> ();
+			public readonly IList<MailboxAddress> Recipients;
+			public readonly ISmtpSendRequest? SmtpRequest;
+			public readonly MailboxAddress Sender;
+			public readonly ISendRequest Request;
 
-		/// <summary>
-		/// Invoked when the sender is not accepted by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// The default implementation throws an appropriate <see cref="SmtpCommandException"/>.
-		/// </remarks>
-		/// <param name="message">The message being sent.</param>
-		/// <param name="mailbox">The mailbox used in the <c>MAIL FROM</c> command.</param>
-		/// <param name="response">The response to the <c>MAIL FROM</c> command.</param>
-		protected virtual void OnSenderNotAccepted (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
-		{
-			throw new SmtpCommandException (SmtpErrorCode.SenderNotAccepted, SmtpCommand.MailFrom, response, mailbox);
-		}
+			public SendState (ISendRequest request, MailboxAddress sender, IList<MailboxAddress> recipients)
+			{
+				SmtpRequest = request as ISmtpSendRequest;
+				Recipients = recipients;
+				Request = request;
+				Sender = sender;
+			}
 
-		/// <summary>
-		/// Get the envelope identifier to be used with delivery status notifications.
-		/// </summary>
-		/// <remarks>
-		/// <para>The envelope identifier, if non-empty, is useful in determining which message a delivery
-		/// status notification was issued for.</para>
-		/// <para>The envelope identifier should be unique and may be up to 100 characters in length, but
-		/// must consist only of printable ASCII characters and no white space.</para>
-		/// <para>For more information, see
-		/// <a href="https://tools.ietf.org/html/rfc3461#section-4.4">rfc3461, section 4.4</a>.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
-		/// </example>
-		/// <returns>The envelope identifier.</returns>
-		/// <param name="message">The message.</param>
-		protected virtual string? GetEnvelopeId (MimeMessage message)
-		{
-			return null;
-		}
+			public MimeMessage Message {
+				get { return Request.Message; }
+			}
 
-		/// <summary>
-		/// Get or set how much of the message to include in any failed delivery status notifications.
-		/// </summary>
-		/// <remarks>
-		/// Gets or sets how much of the message to include in any failed delivery status notifications.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
-		/// </example>
-		/// <value>A value indicating how much of the message to include in a failure delivery status notification.</value>
-		public DeliveryStatusNotificationType DeliveryStatusNotificationType {
-			get; set;
+			public string? EnvelopeId {
+				get { return SmtpRequest?.EnvelopeId; }
+			}
+
+			public DeliveryStatusNotificationType DeliveryStatusNotificationType {
+				get { return SmtpRequest?.DeliveryStatusNotificationType ?? DeliveryStatusNotificationType.Unspecified; }
+			}
+
+			public DeliveryStatusNotification? GetDeliveryStatusNotifications (MailboxAddress recipient)
+			{
+				return SmtpRequest?.GetDeliveryStatusNotifications (recipient);
+			}
+
+			public void OnSenderAccepted (SmtpResponse response)
+			{
+				SmtpRequest?.OnSenderAccepted (Sender, response);
+			}
+
+			public void OnSenderNotAccepted (SmtpResponse response)
+			{
+				if (SmtpRequest == null)
+					throw new SmtpCommandException (SmtpErrorCode.SenderNotAccepted, SmtpCommand.MailFrom, response, Sender);
+
+				SmtpRequest.OnSenderNotAccepted (Sender, response);
+			}
+
+			public void OnRecipientAccepted (MailboxAddress recipient, SmtpResponse response)
+			{
+				AcceptedRecipients.Add (recipient);
+				SmtpRequest?.OnRecipientAccepted (recipient, response);
+			}
+
+			public void OnRecipientNotAccepted (MailboxAddress recipient, SmtpResponse response)
+			{
+				RejectedRecipients.Add (recipient);
+
+				if (SmtpRequest == null)
+					throw new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpCommand.RcptTo, response, recipient);
+
+				SmtpRequest.OnRecipientNotAccepted (recipient, response);
+			}
+
+			public void OnNoRecipientsAccepted ()
+			{
+				SmtpRequest?.OnNoRecipientsAccepted ();
+			}
 		}
 
 		static void AppendHexEncoded (StringBuilder builder, string value)
@@ -1978,12 +1972,12 @@ namespace MailKit.Net.Smtp {
 			UTF8 = 1 << 2,
 		}
 
-		string CreateMailFromCommand (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size)
+		string CreateMailFromCommand (FormatOptions options, SendState state, SmtpExtensions extensions, long size)
 		{
 			var idnEncode = (extensions & SmtpExtensions.UTF8) == 0;
 			var builder = new StringBuilder ("MAIL FROM:<");
 
-			var addrspec = mailbox.GetAddress (idnEncode);
+			var addrspec = state.Sender.GetAddress (idnEncode);
 			builder.Append (addrspec);
 			builder.Append ('>');
 
@@ -2001,14 +1995,14 @@ namespace MailKit.Net.Smtp {
 				builder.Append (" BODY=8BITMIME");
 
 			if (capabilities.Contains (SmtpCapability.Dsn)) {
-				var envid = GetEnvelopeId (message);
+				var envid = state.EnvelopeId;
 
 				if (!string.IsNullOrEmpty (envid)) {
 					builder.Append (" ENVID=");
 					AppendHexEncoded (builder, envid!);
 				}
 
-				switch (DeliveryStatusNotificationType) {
+				switch (state.DeliveryStatusNotificationType) {
 				case DeliveryStatusNotificationType.HeadersOnly:
 					builder.Append (" RET=HDRS");
 					break;
@@ -2020,7 +2014,7 @@ namespace MailKit.Net.Smtp {
 
 			if (RequireTLS && Capabilities.Contains (SmtpCapability.RequireTLS)) {
 				// Check to see if the message has a TLS-Required header. If it does, then the only defined value it can have is "No".
-				var index = message.Headers.IndexOf (HeaderId.TLSRequired);
+				var index = state.Message.Headers.IndexOf (HeaderId.TLSRequired);
 
 				if (index == -1)
 					builder.Append (" REQUIRETLS");
@@ -2031,22 +2025,22 @@ namespace MailKit.Net.Smtp {
 			return builder.ToString ();
 		}
 
-		void ParseMailFromResponse (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
+		void ParseMailFromResponse (SendState state, SmtpResponse response)
 		{
 			if (response.StatusCode >= SmtpStatusCode.Ok && response.StatusCode < (SmtpStatusCode) 260) {
-				OnSenderAccepted (message, mailbox, response);
+				state.OnSenderAccepted (response);
 				return;
 			}
 
 			if (response.StatusCode == SmtpStatusCode.AuthenticationRequired)
 				throw new SmtpServiceNotAuthenticatedException (SmtpCommand.MailFrom, response);
 
-			OnSenderNotAccepted (message, mailbox, response);
+			state.OnSenderNotAccepted (response);
 		}
 
-		void MailFrom (FormatOptions options, MimeMessage message, MailboxAddress mailbox, SmtpExtensions extensions, long size, bool pipeline, CancellationToken cancellationToken)
+		void MailFrom (FormatOptions options, SendState state, SmtpExtensions extensions, long size, bool pipeline, CancellationToken cancellationToken)
 		{
-			var command = CreateMailFromCommand (options, message, mailbox, extensions, size);
+			var command = CreateMailFromCommand (options, state, extensions, size);
 
 			if (pipeline) {
 				QueueCommand (SmtpCommand.MailFrom, command, cancellationToken);
@@ -2055,51 +2049,7 @@ namespace MailKit.Net.Smtp {
 
 			var response = Stream!.SendCommand (SmtpCommand.MailFrom, command, cancellationToken);
 
-			ParseMailFromResponse (message, mailbox, response);
-		}
-
-		/// <summary>
-		/// Invoked when a recipient is accepted by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// The default implementation does nothing.
-		/// </remarks>
-		/// <param name="message">The message being sent.</param>
-		/// <param name="mailbox">The mailbox used in the <c>RCPT TO</c> command.</param>
-		/// <param name="response">The response to the <c>RCPT TO</c> command.</param>
-		protected virtual void OnRecipientAccepted (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
-		{
-		}
-
-		/// <summary>
-		/// Invoked when a recipient is not accepted by the SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// The default implementation throws an appropriate <see cref="SmtpCommandException"/>.
-		/// </remarks>
-		/// <param name="message">The message being sent.</param>
-		/// <param name="mailbox">The mailbox used in the <c>RCPT TO</c> command.</param>
-		/// <param name="response">The response to the <c>RCPT TO</c> command.</param>
-		protected virtual void OnRecipientNotAccepted (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
-		{
-			throw new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, SmtpCommand.RcptTo, response, mailbox);
-		}
-
-		/// <summary>
-		/// Get the types of delivery status notification desired for the specified recipient mailbox.
-		/// </summary>
-		/// <remarks>
-		/// Gets the types of delivery status notification desired for the specified recipient mailbox.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
-		/// </example>
-		/// <returns>The desired delivery status notification type.</returns>
-		/// <param name="message">The message being sent.</param>
-		/// <param name="mailbox">The recipient mailbox.</param>
-		protected virtual DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
-		{
-			return null;
+			ParseMailFromResponse (state, response);
 		}
 
 		/// <summary>
@@ -2111,11 +2061,10 @@ namespace MailKit.Net.Smtp {
 		/// address. Likewise, when a mailing list submits a message via SMTP to be distributed to the list subscribers, the address returned by
 		/// this method MUST match the new RCPT TO address of each recipient, not the address specified by the original sender of the message.)</para>
 		/// </remarks>
-		/// <param name="message">The message being sent.</param>
 		/// <param name="mailbox">The recipient mailbox.</param>
 		/// <param name="addrType">The original recipient address type.</param>
 		/// <param name="address">The original recipient address.</param>
-		void GetOriginalRecipientAddress (MimeMessage message, MailboxAddress mailbox, out string addrType, out string address)
+		void GetOriginalRecipientAddress (MailboxAddress mailbox, out string addrType, out string address)
 		{
 			var idnEncode = !Capabilities.Contains (SmtpCapability.UTF8);
 
@@ -2142,7 +2091,7 @@ namespace MailKit.Net.Smtp {
 			return value.TrimEnd (',');
 		}
 
-		string CreateRcptToCommand (FormatOptions options, MimeMessage message, MailboxAddress mailbox)
+		string CreateRcptToCommand (FormatOptions options, SendState state, MailboxAddress mailbox)
 		{
 			var idnEncode = !Capabilities.Contains (SmtpCapability.UTF8);
 			var command = new StringBuilder ("RCPT TO:<");
@@ -2151,13 +2100,13 @@ namespace MailKit.Net.Smtp {
 			command.Append ('>');
 
 			if (capabilities.Contains (SmtpCapability.Dsn)) {
-				var notify = GetDeliveryStatusNotifications (message, mailbox);
+				var notify = state.GetDeliveryStatusNotifications (mailbox);
 
 				if (notify.HasValue) {
 					command.Append (" NOTIFY=");
 					command.Append (GetNotifyString (notify.Value));
 
-					GetOriginalRecipientAddress (message, mailbox, out var addrType, out var address);
+					GetOriginalRecipientAddress (mailbox, out var addrType, out var address);
 					command.Append (" ORCPT=");
 					command.Append (addrType);
 					command.Append (';');
@@ -2170,24 +2119,24 @@ namespace MailKit.Net.Smtp {
 			return command.ToString ();
 		}
 
-		bool ParseRcptToResponse (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
+		bool ParseRcptToResponse (SendState state, MailboxAddress mailbox, SmtpResponse response)
 		{
 			if (response.StatusCode < (SmtpStatusCode) 300) {
-				OnRecipientAccepted (message, mailbox, response);
+				state.OnRecipientAccepted (mailbox, response);
 				return true;
 			}
 
 			if (response.StatusCode == SmtpStatusCode.AuthenticationRequired)
 				throw new SmtpServiceNotAuthenticatedException (SmtpCommand.RcptTo, response);
 
-			OnRecipientNotAccepted (message, mailbox, response);
+			state.OnRecipientNotAccepted (mailbox, response);
 
 			return false;
 		}
 
-		bool RcptTo (FormatOptions options, MimeMessage message, MailboxAddress mailbox, bool pipeline, CancellationToken cancellationToken)
+		bool RcptTo (FormatOptions options, SendState state, MailboxAddress mailbox, bool pipeline, CancellationToken cancellationToken)
 		{
-			var command = CreateRcptToCommand (options, message, mailbox);
+			var command = CreateRcptToCommand (options, state, mailbox);
 
 			if (pipeline) {
 				QueueCommand (SmtpCommand.RcptTo, command, cancellationToken);
@@ -2196,7 +2145,7 @@ namespace MailKit.Net.Smtp {
 
 			var response = Stream!.SendCommand (SmtpCommand.RcptTo, command, cancellationToken);
 
-			return ParseRcptToResponse (message, mailbox, response);
+			return ParseRcptToResponse (state, mailbox, response);
 		}
 
 		class SendContext
@@ -2222,7 +2171,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		string ParseBdatResponse (MimeMessage message, SmtpResponse response)
+		SendResult ParseBdatResponse (SendState state, SmtpResponse response)
 		{
 			switch (response.StatusCode) {
 			default:
@@ -2230,32 +2179,41 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.AuthenticationRequired:
 				throw new SmtpServiceNotAuthenticatedException (SmtpCommand.Bdat, response);
 			case SmtpStatusCode.Ok:
-				OnMessageSent (new MessageSentEventArgs (message, response.Response));
-				return response.Response;
+				return OnSendCompleted (state, response);
 			}
 		}
 
-		string Bdat (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress? progress)
+		SendResult Bdat (FormatOptions options, SendState state, long size, CancellationToken cancellationToken)
 		{
 			var command = string.Format (CultureInfo.InvariantCulture, "BDAT {0} LAST\r\n", size);
 
 			Stream!.QueueCommand (command, cancellationToken);
 
-			if (progress != null) {
+			if (state.Request.TransferProgress is ITransferProgress progress) {
 				var ctx = new SendContext (progress, size);
 
 				using (var stream = new ProgressStream (Stream, ctx.Update)) {
-					message.WriteTo (options, stream, cancellationToken);
+					state.Message.WriteTo (options, stream, cancellationToken);
 					stream.Flush (cancellationToken);
 				}
 			} else {
-				message.WriteTo (options, Stream, cancellationToken);
+				state.Message.WriteTo (options, Stream, cancellationToken);
 				Stream.Flush (cancellationToken);
 			}
 
 			var response = Stream.ReadResponse (SmtpCommand.Bdat, cancellationToken);
 
-			return ParseBdatResponse (message, response);
+			return ParseBdatResponse (state, response);
+		}
+
+		SendResult OnSendCompleted (SendState state, SmtpResponse response)
+		{
+			var result = new SmtpSendResult (response.StatusCode, response.ResponseText, state.AcceptedRecipients.ToArray (), state.RejectedRecipients.ToArray ());
+
+			state.Request.OnCompleted (this, result);
+			OnMessageSent (new MessageSentEventArgs (state.Request, result));
+
+			return result;
 		}
 
 		static void ParseDataResponse (SmtpResponse response)
@@ -2264,7 +2222,7 @@ namespace MailKit.Net.Smtp {
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.Data, response);
 		}
 
-		string ParseMessageDataResponse (MimeMessage message, SmtpResponse response)
+		SendResult ParseMessageDataResponse (SendState state, SmtpResponse response)
 		{
 			switch (response.StatusCode) {
 			default:
@@ -2272,21 +2230,20 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.AuthenticationRequired:
 				throw new SmtpServiceNotAuthenticatedException (SmtpCommand.MessageData, response);
 			case SmtpStatusCode.Ok:
-				OnMessageSent (new MessageSentEventArgs (message, response.Response));
-				return response.Response;
+				return OnSendCompleted (state, response);
 			}
 		}
 
-		string MessageData (FormatOptions options, MimeMessage message, long size, CancellationToken cancellationToken, ITransferProgress? progress)
+		SendResult MessageData (FormatOptions options, SendState state, long size, CancellationToken cancellationToken)
 		{
-			if (progress != null) {
+			if (state.Request.TransferProgress is ITransferProgress progress) {
 				var ctx = new SendContext (progress, size);
 
 				using (var stream = new ProgressStream (Stream!, ctx.Update)) {
 					using (var filtered = new FilteredStream (stream)) {
 						filtered.Add (new SmtpDataFilter ());
 
-						message.WriteTo (options, filtered, cancellationToken);
+						state.Message.WriteTo (options, filtered, cancellationToken);
 						filtered.Flush (cancellationToken);
 					}
 				}
@@ -2294,7 +2251,7 @@ namespace MailKit.Net.Smtp {
 				using (var filtered = new FilteredStream (Stream!)) {
 					filtered.Add (new SmtpDataFilter ());
 
-					message.WriteTo (options, filtered, cancellationToken);
+					state.Message.WriteTo (options, filtered, cancellationToken);
 					filtered.Flush (cancellationToken);
 				}
 			}
@@ -2304,7 +2261,7 @@ namespace MailKit.Net.Smtp {
 
 			var response = Stream.ReadResponse (SmtpCommand.MessageData, cancellationToken);
 
-			return ParseMessageDataResponse (message, response);
+			return ParseMessageDataResponse (state, response);
 		}
 
 		void Reset (CancellationToken cancellationToken)
@@ -2357,7 +2314,7 @@ namespace MailKit.Net.Smtp {
 		/// methods in the following conditions:</para>
 		/// <list type="bullet">
 		/// <item>The SMTP server supports the <c>SIZE=</c> parameter in the <c>MAIL FROM</c> command.</item>
-		/// <item>The <see cref="ITransferProgress"/> parameter is non-null.</item>
+		/// <item>The <see cref="ISendRequest.TransferProgress"/> is non-null.</item>
 		/// <item>The SMTP server supports the <c>CHUNKING</c> extension.</item>
 		/// </list>
 		/// </remarks>
@@ -2375,7 +2332,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		[MemberNotNull (nameof (Stream), nameof (uri))]
-		FormatOptions Prepare (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, out SmtpExtensions extensions)
+		FormatOptions Prepare (FormatOptions options, SendState state, out SmtpExtensions extensions)
 		{
 			CheckDisposed ();
 
@@ -2401,12 +2358,12 @@ namespace MailKit.Net.Smtp {
 			else
 				constraint = EncodingConstraint.SevenBit;
 
-			Prepare (format, message, constraint, MaxLineLength);
+			Prepare (format, state.Message, constraint, MaxLineLength);
 
 			// figure out which SMTP extensions we need to use
 			extensions = SmtpExtensions.None;
 
-			using (var iter = new MimeIterator (message)) {
+			using (var iter = new MimeIterator (state.Message)) {
 				while (iter.MoveNext ()) {
 					if (iter.Current is MimePart part) {
 						if (part.ContentTransferEncoding == ContentEncoding.EightBit) {
@@ -2429,7 +2386,7 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			if (Capabilities.Contains (SmtpCapability.UTF8) && (format.International || sender.IsInternational || recipients.Any (x => x.IsInternational)))
+			if (Capabilities.Contains (SmtpCapability.UTF8) && (format.International || state.Sender.IsInternational || state.Recipients.Any (x => x.IsInternational)))
 				extensions |= SmtpExtensions.UTF8;
 
 			return format;
@@ -2441,15 +2398,15 @@ namespace MailKit.Net.Smtp {
 			return (extensions & SmtpExtensions.BinaryMime) != 0 || (PreferSendAsBinaryData && (Capabilities.Contains (SmtpCapability.BinaryMime) || Capabilities.Contains (SmtpCapability.Chunking)));
 		}
 
-		string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress? progress)
+		SendResult Send (FormatOptions options, SendState state, CancellationToken cancellationToken)
 		{
-			var format = Prepare (options, message, sender, recipients, out var extensions);
+			var format = Prepare (options, state, out var extensions);
 			var pipeline = capabilities.Contains (SmtpCapability.Pipelining);
 			var bdat = UseBdatCommand (extensions);
 			long size;
 
-			if (bdat || Capabilities.Contains (SmtpCapability.Size) || progress != null) {
-				size = GetSize (format, message, cancellationToken);
+			if (bdat || Capabilities.Contains (SmtpCapability.Size) || state.Request.TransferProgress != null) {
+				size = GetSize (format, state.Message, cancellationToken);
 			} else {
 				size = -1;
 			}
@@ -2459,11 +2416,11 @@ namespace MailKit.Net.Smtp {
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
-				MailFrom (format, message, sender, extensions, size, pipeline, cancellationToken);
+				MailFrom (format, state, extensions, size, pipeline, cancellationToken);
 
 				int recipientsAccepted = 0;
-				for (int i = 0; i < recipients.Count; i++) {
-					if (RcptTo (format, message, recipients[i], pipeline, cancellationToken))
+				for (int i = 0; i < state.Recipients.Count; i++) {
+					if (RcptTo (format, state, state.Recipients[i], pipeline, cancellationToken))
 						recipientsAccepted++;
 				}
 
@@ -2471,7 +2428,7 @@ namespace MailKit.Net.Smtp {
 					// Note: if PIPELINING is supported, this will flush all outstanding
 					// MAIL FROM and RCPT TO commands to the server and then process
 					// all of their responses.
-					var results = FlushCommandQueue (message, sender, recipients, cancellationToken);
+					var results = FlushCommandQueue (state, cancellationToken);
 
 					recipientsAccepted = results.RecipientsAccepted;
 
@@ -2480,18 +2437,23 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (recipientsAccepted == 0) {
-					OnNoRecipientsAccepted (message);
+					state.OnNoRecipientsAccepted ();
 					throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpStatusCode.TransactionFailed, "No recipients were accepted.") { Command = SmtpCommand.RcptTo };
 				}
 
-				if (bdat)
-					return Bdat (format, message, size, cancellationToken, progress);
+				if (bdat) {
+					state.Request.OnStarted (this);
+
+					return Bdat (format, state, size, cancellationToken);
+				}
 
 				var dataResponse = Stream.SendCommand (SmtpCommand.Data, "DATA\r\n", cancellationToken);
 
 				ParseDataResponse (dataResponse);
 
-				return MessageData (format, message, size, cancellationToken, progress);
+				state.Request.OnStarted (this);
+
+				return MessageData (format, state, size, cancellationToken);
 			} catch (ServiceNotAuthenticatedException ex) {
 				operation.SetError (ex);
 
@@ -2512,50 +2474,64 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		static void ValidateArguments (FormatOptions options, MimeMessage message, out MailboxAddress sender, out IList<MailboxAddress> recipients)
+		static SendState CreateSendState (FormatOptions options, ISendRequest request)
 		{
 			if (options == null)
 				throw new ArgumentNullException (nameof (options));
 
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
-			var mailbox = GetMessageSender (message);
+			var sender = request.Sender ?? GetMessageSender (request.Message);
 
-			if (mailbox == null)
+			if (sender == null)
 				throw new InvalidOperationException ("No sender has been specified.");
 
-			sender = mailbox;
-			recipients = GetMessageRecipients (message);
+			IList<MailboxAddress> recipients;
+
+			if (request.Recipients != null) {
+				var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+				var rcpts = new List<MailboxAddress> ();
+
+				AddUnique (rcpts, unique, request.Recipients);
+				recipients = rcpts;
+			} else {
+				recipients = GetMessageRecipients (request.Message);
+			}
 
 			if (recipients.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
+
+			return new SendState (request, sender, recipients);
 		}
 
 		/// <summary>
-		/// Send the specified message.
+		/// Send a message.
 		/// </summary>
 		/// <remarks>
-		/// <para>Sends the specified message.</para>
-		/// <para>The sender address is determined by checking the following
-		/// message headers (in order of precedence): Resent-Sender,
-		/// Resent-From, Sender, and From.</para>
-		/// <para>If either the Resent-Sender or Resent-From addresses are present,
-		/// the recipients are collected from the Resent-To, Resent-Cc, and
-		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+		/// <para>Sends the message specified by the request.</para>
+		/// <para>If the <see cref="ISendRequest.Sender"/> is <see langword="null" />, the sender
+		/// address is determined by checking the following message headers (in order of precedence):
+		/// Resent-Sender, Resent-From, Sender, and From.</para>
+		/// <para>If the <see cref="ISendRequest.Recipients"/> is <see langword="null" />, the
+		/// recipients are collected from the Resent-To, Resent-Cc, and Resent-Bcc headers if either
+		/// the Resent-Sender or Resent-From addresses are present, otherwise the To, Cc, and Bcc
+		/// headers are used.</para>
+		/// <para>If the request implements <see cref="ISmtpSendRequest"/>, it may also be used to
+		/// request delivery status notifications and to handle the server's response to each
+		/// <c>MAIL FROM</c> and <c>RCPT TO</c> command.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
 		/// </example>
-		/// <returns>The final free-form text response from the server.</returns>
+		/// <returns>The result of sending the message as an <see cref="SmtpSendResult"/>.</returns>
 		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
+		/// <param name="request">The send request.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -2586,94 +2562,11 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override string Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
+		public override SendResult Send (FormatOptions options, ISendRequest request, CancellationToken cancellationToken = default)
 		{
-			ValidateArguments (options, message, out var sender, out var recipients);
+			var state = CreateSendState (options, request);
 
-			return Send (options, message, sender, recipients, cancellationToken, progress);
-		}
-
-		static List<MailboxAddress> ValidateArguments (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients)
-		{
-			if (options == null)
-				throw new ArgumentNullException (nameof (options));
-
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
-
-			if (sender == null)
-				throw new ArgumentNullException (nameof (sender));
-
-			if (recipients == null)
-				throw new ArgumentNullException (nameof (recipients));
-
-			var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
-			var rcpts = new List<MailboxAddress> ();
-
-			AddUnique (rcpts, unique, recipients);
-
-			if (rcpts.Count == 0)
-				throw new InvalidOperationException ("No recipients have been specified.");
-
-			return rcpts;
-		}
-
-		/// <summary>
-		/// Send the specified message using the supplied sender and recipients.
-		/// </summary>
-		/// <remarks>
-		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
-		/// </remarks>
-		/// <returns>The final free-form text response from the server.</returns>
-		/// <param name="options">The formatting options.</param>
-		/// <param name="message">The message.</param>
-		/// <param name="sender">The mailbox address to use for sending the message.</param>
-		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="options"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="message"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="sender"/> is <see langword="null" />.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="recipients"/> is <see langword="null" />.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="SmtpClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// Authentication is required before sending a message.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>A sender has not been specified.</para>
-		/// <para>-or-</para>
-		/// <para>No recipients have been specified.</para>
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// Internationalized formatting was requested but is not supported by the server.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol exception occurred.
-		/// </exception>
-		public override string Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default, ITransferProgress? progress = null)
-		{
-			var rcpts = ValidateArguments (options, message, sender, recipients);
-
-			return Send (options, message, sender, rcpts, cancellationToken, progress);
+			return Send (options, state, cancellationToken);
 		}
 
 		#endregion
@@ -2702,7 +2595,7 @@ namespace MailKit.Net.Smtp {
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.Expn, response);
 
-			var lines = response.Response.Split (CRLF, StringSplitOptions.RemoveEmptyEntries);
+			var lines = response.ResponseText.Split (CRLF, StringSplitOptions.RemoveEmptyEntries);
 			var list = new InternetAddressList ();
 
 			for (int i = 0; i < lines.Length; i++) {
@@ -2781,7 +2674,7 @@ namespace MailKit.Net.Smtp {
 		static MailboxAddress ParseVerifyResponse (SmtpResponse response)
 		{
 			if (response.StatusCode == SmtpStatusCode.Ok)
-				return MailboxAddress.Parse (response.Response);
+				return MailboxAddress.Parse (response.ResponseText);
 
 			throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.Vrfy, response);
 		}

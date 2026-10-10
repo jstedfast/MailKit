@@ -77,7 +77,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public SmtpServiceNotAuthenticatedException (SmtpCommand command, SmtpResponse response) : base (GetResponseText (response))
 		{
-			ResponseText = response.Response;
+			ResponseText = response.ResponseText;
 			StatusCode = response.StatusCode;
 			Command = command;
 		}
@@ -87,7 +87,7 @@ namespace MailKit.Net.Smtp {
 			if (response == null)
 				throw new ArgumentNullException (nameof (response));
 
-			return response.Response;
+			return response.ResponseText;
 		}
 
 		/// <summary>

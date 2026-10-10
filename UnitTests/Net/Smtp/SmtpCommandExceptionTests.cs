@@ -80,19 +80,19 @@ namespace UnitTests.Net.Smtp {
 			Assert.That (ex.ErrorCode, Is.EqualTo (SmtpErrorCode.RecipientNotAccepted), "ErrorCode");
 			Assert.That (ex.StatusCode, Is.EqualTo (SmtpStatusCode.MailboxUnavailable), "StatusCode");
 			Assert.That (ex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
-			Assert.That (ex.ResponseText, Is.EqualTo (response.Response), "ResponseText");
-			Assert.That (ex.Message, Is.EqualTo (response.Response), "Message");
+			Assert.That (ex.ResponseText, Is.EqualTo (response.ResponseText), "ResponseText");
+			Assert.That (ex.Message, Is.EqualTo (response.ResponseText), "Message");
 			Assert.That (ex.Mailbox, Is.SameAs (mailbox), "Mailbox");
 
 			ex = new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, SmtpCommand.MessageData, response, inner);
 			Assert.That (ex.Command, Is.EqualTo (SmtpCommand.MessageData), "Command");
-			Assert.That (ex.ResponseText, Is.EqualTo (response.Response), "ResponseText");
+			Assert.That (ex.ResponseText, Is.EqualTo (response.ResponseText), "ResponseText");
 			Assert.That (ex.InnerException, Is.SameAs (inner), "InnerException");
 			Assert.That (ex.Mailbox, Is.Null, "Mailbox");
 
 			ex = new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpCommand.Noop, response);
 			Assert.That (ex.Command, Is.EqualTo (SmtpCommand.Noop), "Command");
-			Assert.That (ex.ResponseText, Is.EqualTo (response.Response), "ResponseText");
+			Assert.That (ex.ResponseText, Is.EqualTo (response.ResponseText), "ResponseText");
 
 			ex = new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, SmtpStatusCode.MailboxUnavailable, "message");
 			Assert.That (ex.Command, Is.EqualTo (SmtpCommand.Unknown), "Default Command");
@@ -113,8 +113,8 @@ namespace UnitTests.Net.Smtp {
 			Assert.That (ex, Is.InstanceOf<ServiceNotAuthenticatedException> ());
 			Assert.That (ex.Command, Is.EqualTo (SmtpCommand.MailFrom), "Command");
 			Assert.That (ex.StatusCode, Is.EqualTo (SmtpStatusCode.AuthenticationRequired), "StatusCode");
-			Assert.That (ex.ResponseText, Is.EqualTo (response.Response), "ResponseText");
-			Assert.That (ex.Message, Is.EqualTo (response.Response), "Message");
+			Assert.That (ex.ResponseText, Is.EqualTo (response.ResponseText), "ResponseText");
+			Assert.That (ex.Message, Is.EqualTo (response.ResponseText), "Message");
 
 			Assert.Throws<ArgumentNullException> (() => new SmtpServiceNotAuthenticatedException (SmtpCommand.MailFrom, null));
 		}

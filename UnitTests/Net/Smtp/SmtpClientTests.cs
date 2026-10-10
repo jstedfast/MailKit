@@ -2105,7 +2105,7 @@ namespace UnitTests.Net.Smtp {
 					string response;
 
 					try {
-						response = client.Send (message);
+						response = client.Send (message).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2114,7 +2114,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
-						response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+						response = client.Send (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2123,7 +2123,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
-						response = client.Send (options, message);
+						response = client.Send (options, message).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2132,7 +2132,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
-						response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+						response = client.Send (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2241,7 +2241,7 @@ namespace UnitTests.Net.Smtp {
 					string response;
 
 					try {
-						response = await client.SendAsync (message);
+						response = (await client.SendAsync (message)).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2250,7 +2250,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
-						response = await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+						response = (await client.SendAsync (message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes)).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2259,7 +2259,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
-						response = await client.SendAsync (options, message);
+						response = (await client.SendAsync (options, message)).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2268,7 +2268,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (response, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"));
 
 					try {
-						response = await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes);
+						response = (await client.SendAsync (options, message, message.From.Mailboxes.FirstOrDefault (), message.To.Mailboxes)).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2461,7 +2461,7 @@ namespace UnitTests.Net.Smtp {
 					message.ResentBcc.Add (new MailboxAddress ("Resent Bcc", "resent-bcc@example.com"));
 
 					try {
-						response = client.Send (message);
+						response = client.Send (message).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2472,7 +2472,7 @@ namespace UnitTests.Net.Smtp {
 					message.ResentSender = null;
 
 					try {
-						response = client.Send (message);
+						response = client.Send (message).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2545,7 +2545,7 @@ namespace UnitTests.Net.Smtp {
 					message.ResentBcc.Add (new MailboxAddress ("Resent Bcc", "resent-bcc@example.com"));
 
 					try {
-						response = await client.SendAsync (message);
+						response = (await client.SendAsync (message)).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -2556,7 +2556,7 @@ namespace UnitTests.Net.Smtp {
 					message.ResentSender = null;
 
 					try {
-						response = await client.SendAsync (message);
+						response = (await client.SendAsync (message)).ResponseText;
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 						return;
@@ -4229,19 +4229,23 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		class NoRecipientsAcceptedSmtpClient : SmtpClient
+		class NoRecipientsAcceptedSendRequest : SmtpSendRequest
 		{
 			public bool NoRecipientsAccepted;
 			public int NotAccepted;
 
-			protected override void OnRecipientNotAccepted (MimeMessage message, MailboxAddress mailbox, SmtpResponse response)
+			public NoRecipientsAcceptedSendRequest (MimeMessage message) : base (message)
+			{
+			}
+
+			public override void OnRecipientNotAccepted (MailboxAddress recipient, SmtpResponse response)
 			{
 				NotAccepted++;
 			}
 
-			protected override void OnNoRecipientsAccepted (MimeMessage message)
+			public override void OnNoRecipientsAccepted ()
 			{
-				base.OnNoRecipientsAccepted (message);
+				base.OnNoRecipientsAccepted ();
 				NoRecipientsAccepted = true;
 			}
 		}
@@ -4264,7 +4268,7 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = CreateNoRecipientsAcceptedCommands ();
 
-			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
+			using (var client = new SmtpClient ()) {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
@@ -4289,9 +4293,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
+				var request = new NoRecipientsAcceptedSendRequest (CreateSimpleMessage ());
+
 				try {
-					using (var message = CreateSimpleMessage ())
-						client.Send (message);
+					using (request.Message)
+						client.Send (request);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
@@ -4301,8 +4307,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
-				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
+				Assert.That (request.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (request.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
 				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
@@ -4321,7 +4327,7 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = CreateNoRecipientsAcceptedCommands ();
 
-			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
+			using (var client = new SmtpClient ()) {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
@@ -4346,9 +4352,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
+				var request = new NoRecipientsAcceptedSendRequest (CreateSimpleMessage ());
+
 				try {
-					using (var message = CreateSimpleMessage ())
-						await client.SendAsync (message);
+					using (request.Message)
+						await client.SendAsync (request);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
@@ -4358,8 +4366,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
-				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
+				Assert.That (request.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (request.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
 				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
@@ -4370,6 +4378,200 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				Assert.That (client.IsConnected, Is.False, "Failed to disconnect");
+			}
+		}
+
+		class TrackingSendRequest : SmtpSendRequest
+		{
+			public readonly List<string> Events = new List<string> ();
+			public SendResult Result;
+
+			public TrackingSendRequest (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients) : base (message, sender, recipients)
+			{
+			}
+
+			public override void OnStarted (IMailTransport transport)
+			{
+				Events.Add ("Started");
+			}
+
+			public override void OnCompleted (IMailTransport transport, SendResult result)
+			{
+				Events.Add ("Completed");
+				Result = result;
+			}
+
+			public override void OnSenderAccepted (MailboxAddress sender, SmtpResponse response)
+			{
+				Events.Add ($"SenderAccepted:{sender.Address}");
+			}
+
+			public override void OnRecipientAccepted (MailboxAddress recipient, SmtpResponse response)
+			{
+				Events.Add ($"RecipientAccepted:{recipient.Address}");
+			}
+
+			public override void OnRecipientNotAccepted (MailboxAddress recipient, SmtpResponse response)
+			{
+				Events.Add ($"RecipientNotAccepted:{recipient.Address}");
+			}
+		}
+
+		static List<SmtpReplayCommand> CreateSendRequestCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<envelope@example.com>\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<unknown@example.com>\r\n", "mailbox-unavailable.txt"),
+				new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
+		static TrackingSendRequest CreateTrackingSendRequest ()
+		{
+			var recipients = new[] {
+				new MailboxAddress ("", "unknown@example.com"),
+				new MailboxAddress ("", "recipient@example.com"),
+				new MailboxAddress ("", "RECIPIENT@example.com")
+			};
+
+			return new TrackingSendRequest (CreateSimpleMessage (), new MailboxAddress ("", "envelope@example.com"), recipients);
+		}
+
+		static void AssertSendRequestResults (TrackingSendRequest request, SendResult result, MessageSentEventArgs sent)
+		{
+			Assert.That (request.Events, Is.EqualTo (new[] {
+				"SenderAccepted:envelope@example.com",
+				"RecipientNotAccepted:unknown@example.com",
+				"RecipientAccepted:recipient@example.com",
+				"Started",
+				"Completed"
+			}), "Events");
+
+			Assert.That (request.Result, Is.SameAs (result), "OnCompleted result");
+			Assert.That (result, Is.InstanceOf<SmtpSendResult> (), "Result type");
+			Assert.That (((SmtpSendResult) result).StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "StatusCode");
+			Assert.That (result.ResponseText, Is.EqualTo ("2.0.0 1Yat1n00V1sBWGw3SYaubg mail accepted for delivery"), "ResponseText");
+			Assert.That (result.AcceptedRecipients.Select (x => x.Address), Is.EqualTo (new[] { "recipient@example.com" }), "AcceptedRecipients");
+			Assert.That (result.RejectedRecipients.Select (x => x.Address), Is.EqualTo (new[] { "unknown@example.com" }), "RejectedRecipients");
+
+			Assert.That (sent, Is.Not.Null, "MessageSent");
+			Assert.That (sent.Request, Is.SameAs (request), "MessageSent.Request");
+			Assert.That (sent.Message, Is.SameAs (request.Message), "MessageSent.Message");
+			Assert.That (sent.Result, Is.SameAs (result), "MessageSent.Result");
+			Assert.That (sent.ResponseText, Is.EqualTo (result.ResponseText), "MessageSent.ResponseText");
+		}
+
+		[Test]
+		public void TestSendRequest ()
+		{
+			var commands = CreateSendRequestCommands ();
+			var request = CreateTrackingSendRequest ();
+			MessageSentEventArgs sent = null;
+
+			using (var client = new SmtpClient ()) {
+				client.MessageSent += (sender, e) => sent = e;
+
+				client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
+				client.Authenticate ("username", "password");
+
+				SendResult result;
+
+				using (request.Message)
+					result = client.Send (request);
+
+				AssertSendRequestResults (request, result, sent);
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestSendRequestAsync ()
+		{
+			var commands = CreateSendRequestCommands ();
+			var request = CreateTrackingSendRequest ();
+			MessageSentEventArgs sent = null;
+
+			using (var client = new SmtpClient ()) {
+				client.MessageSent += (sender, e) => sent = e;
+
+				await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
+				await client.AuthenticateAsync ("username", "password");
+
+				SendResult result;
+
+				using (request.Message)
+					result = await client.SendAsync (request);
+
+				AssertSendRequestResults (request, result, sent);
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		[Test]
+		public void TestSendRequestArgumentExceptions ()
+		{
+			var message = CreateSimpleMessage ();
+			var sender = new MailboxAddress ("", "sender@example.com");
+			var recipients = new[] { new MailboxAddress ("", "recipient@example.com") };
+
+			Assert.Throws<ArgumentNullException> (() => new SendRequest (null));
+			Assert.Throws<ArgumentNullException> (() => new SendRequest (null, sender, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SendRequest (message, null, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SendRequest (message, sender, null));
+
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendRequest (null));
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendRequest (null, sender, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendRequest (message, null, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendRequest (message, sender, null));
+
+			Assert.Throws<ArgumentNullException> (() => new SendResult (null, recipients, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SendResult ("OK", null, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SendResult ("OK", recipients, null));
+
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendResult (SmtpStatusCode.Ok, null, recipients, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendResult (SmtpStatusCode.Ok, "OK", null, recipients));
+			Assert.Throws<ArgumentNullException> (() => new SmtpSendResult (SmtpStatusCode.Ok, "OK", recipients, null));
+
+			var request = new SmtpSendRequest (message, sender, recipients);
+			var response = new SmtpResponse (SmtpStatusCode.MailboxUnavailable, "nope");
+
+			Assert.That (request.Sender, Is.SameAs (sender));
+			Assert.That (request.Recipients, Is.EqualTo (recipients));
+			Assert.That (request.GetDeliveryStatusNotifications (sender), Is.Null);
+			request.DeliveryStatusNotifications = DeliveryStatusNotification.Failure;
+			Assert.That (request.GetDeliveryStatusNotifications (sender), Is.EqualTo (DeliveryStatusNotification.Failure));
+
+			var ex = Assert.Throws<SmtpCommandException> (() => request.OnSenderNotAccepted (sender, response));
+			Assert.That (ex.ErrorCode, Is.EqualTo (SmtpErrorCode.SenderNotAccepted));
+			Assert.That (ex.Mailbox, Is.SameAs (sender));
+
+			ex = Assert.Throws<SmtpCommandException> (() => request.OnRecipientNotAccepted (recipients[0], response));
+			Assert.That (ex.ErrorCode, Is.EqualTo (SmtpErrorCode.RecipientNotAccepted));
+			Assert.That (ex.Mailbox, Is.SameAs (recipients[0]));
+
+			var result = new SmtpSendResult (SmtpStatusCode.Ok, "OK", recipients, Array.Empty<MailboxAddress> ());
+			Assert.That (result.StatusCode, Is.EqualTo (SmtpStatusCode.Ok));
+			Assert.That (result.ResponseText, Is.EqualTo ("OK"));
+			Assert.That (result.AcceptedRecipients, Is.SameAs (recipients));
+			Assert.That (result.RejectedRecipients, Is.Empty);
+		}
+
+		[Test]
+		public void TestSendRequestNullArguments ()
+		{
+			using (var client = new SmtpClient ()) {
+				Assert.Throws<ArgumentNullException> (() => client.Send ((ISendRequest) null));
+				Assert.Throws<ArgumentNullException> (() => client.Send (null, new SendRequest (CreateSimpleMessage ())));
+				Assert.ThrowsAsync<ArgumentNullException> (() => client.SendAsync ((ISendRequest) null));
+				Assert.ThrowsAsync<ArgumentNullException> (() => client.SendAsync (null, new SendRequest (CreateSimpleMessage ())));
 			}
 		}
 
@@ -4401,7 +4603,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (spe.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 					Assert.That (spe.LastResponse, Is.Not.Null, "LastResponse");
 					Assert.That (spe.LastResponse!.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "LastResponse.StatusCode");
-					Assert.That (spe.LastResponse.Response, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.Response");
+					Assert.That (spe.LastResponse.ResponseText, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -4428,7 +4630,7 @@ namespace UnitTests.Net.Smtp {
 					Assert.That (spe.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 					Assert.That (spe.LastResponse, Is.Not.Null, "LastResponse");
 					Assert.That (spe.LastResponse!.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "LastResponse.StatusCode");
-					Assert.That (spe.LastResponse.Response, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.Response");
+					Assert.That (spe.LastResponse.ResponseText, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.ResponseText");
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
@@ -4454,7 +4656,7 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = CreateNoRecipientsAcceptedPipelinedCommands ();
 
-			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
+			using (var client = new SmtpClient ()) {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
@@ -4479,9 +4681,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
+				var request = new NoRecipientsAcceptedSendRequest (CreateSimpleMessage ());
+
 				try {
-					using (var message = CreateSimpleMessage ())
-						client.Send (message);
+					using (request.Message)
+						client.Send (request);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
@@ -4491,8 +4695,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
-				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
+				Assert.That (request.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (request.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
 				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
@@ -4511,7 +4715,7 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = CreateNoRecipientsAcceptedPipelinedCommands ();
 
-			using (var client = new NoRecipientsAcceptedSmtpClient ()) {
+			using (var client = new SmtpClient ()) {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
@@ -4536,9 +4740,11 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
 				}
 
+				var request = new NoRecipientsAcceptedSendRequest (CreateSimpleMessage ());
+
 				try {
-					using (var message = CreateSimpleMessage ())
-						await client.SendAsync (message);
+					using (request.Message)
+						await client.SendAsync (request);
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.That (sex.ErrorCode, Is.EqualTo (SmtpErrorCode.MessageNotAccepted), "Unexpected SmtpErrorCode");
@@ -4548,8 +4754,8 @@ namespace UnitTests.Net.Smtp {
 					Assert.Fail ($"Did not expect this exception in Send: {ex}");
 				}
 
-				Assert.That (client.NotAccepted, Is.EqualTo (1), "NotAccepted");
-				Assert.That (client.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
+				Assert.That (request.NotAccepted, Is.EqualTo (1), "NotAccepted");
+				Assert.That (request.NoRecipientsAccepted, Is.True, "NoRecipientsAccepted");
 
 				Assert.That (client.IsConnected, Is.True, "Expected the client to still be connected");
 
@@ -4768,35 +4974,6 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
-		class DsnSmtpClient : SmtpClient
-		{
-			public DsnSmtpClient ()
-			{
-			}
-
-			protected override string GetEnvelopeId (MimeMessage message)
-			{
-				var id = base.GetEnvelopeId (message);
-
-				Assert.That (id, Is.Null);
-
-				return message.MessageId;
-			}
-
-			public DeliveryStatusNotification? DeliveryStatusNotifications {
-				get; set;
-			}
-
-			protected override DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
-			{
-				var notify = base.GetDeliveryStatusNotifications (message, mailbox);
-
-				Assert.That (notify.HasValue, Is.False);
-
-				return DeliveryStatusNotifications;
-			}
-		}
-
 		static List<SmtpReplayCommand> CreateDeliveryStatusNotificationCommands (MimeMessage message)
 		{
 			var mailFrom = string.Format ("MAIL FROM:<sender@example.com> BODY=8BITMIME ENVID={0} RET=HDRS\r\n", message.MessageId);
@@ -4821,7 +4998,7 @@ namespace UnitTests.Net.Smtp {
 
 				var commands = CreateDeliveryStatusNotificationCommands (message);
 
-				using (var client = new DsnSmtpClient ()) {
+				using (var client = new SmtpClient ()) {
 					try {
 						client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
@@ -4851,11 +5028,14 @@ namespace UnitTests.Net.Smtp {
 					// disable pipelining
 					client.Capabilities.Disable (SmtpCapability.Pipelining);
 
-					client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
-					client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+					var request = new SmtpSendRequest (message) {
+						EnvelopeId = message.MessageId,
+						DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly,
+						DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success
+					};
 
 					try {
-						client.Send (message);
+						client.Send (request);
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
@@ -4879,7 +5059,7 @@ namespace UnitTests.Net.Smtp {
 
 				var commands = CreateDeliveryStatusNotificationCommands (message);
 
-				using (var client = new DsnSmtpClient ()) {
+				using (var client = new SmtpClient ()) {
 					try {
 						await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 					} catch (Exception ex) {
@@ -4909,11 +5089,14 @@ namespace UnitTests.Net.Smtp {
 					// disable pipelining
 					client.Capabilities.Disable (SmtpCapability.Pipelining);
 
-					client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly;
-					client.DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success;
+					var request = new SmtpSendRequest (message) {
+						EnvelopeId = message.MessageId,
+						DeliveryStatusNotificationType = DeliveryStatusNotificationType.HeadersOnly,
+						DeliveryStatusNotifications = DeliveryStatusNotification.Delay | DeliveryStatusNotification.Failure | DeliveryStatusNotification.Success
+					};
 
 					try {
-						await client.SendAsync (message);
+						await client.SendAsync (request);
 					} catch (Exception ex) {
 						Assert.Fail ($"Did not expect an exception in Send: {ex}");
 					}
@@ -4948,7 +5131,7 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = CreateDeliveryStatusNotificationWithHexEncodeCommands ();
 
-			using (var client = new DsnSmtpClient ()) {
+			using (var client = new SmtpClient ()) {
 				try {
 					client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
@@ -4978,9 +5161,6 @@ namespace UnitTests.Net.Smtp {
 				// disable pipelining
 				client.Capabilities.Disable (SmtpCapability.Pipelining);
 
-				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full;
-				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
-
 				try {
 					using (var message = CreateEightBitMessage ()) {
 						message.MessageId = "123456789+=abc@名がドメイン.com";
@@ -4988,7 +5168,13 @@ namespace UnitTests.Net.Smtp {
 						message.To.Clear ();
 						message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
 
-						client.Send (message);
+						var request = new SmtpSendRequest (message) {
+							EnvelopeId = message.MessageId,
+							DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full,
+							DeliveryStatusNotifications = DeliveryStatusNotification.Never
+						};
+
+						client.Send (request);
 					}
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Send: {ex}");
@@ -5009,7 +5195,7 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = CreateDeliveryStatusNotificationWithHexEncodeCommands ();
 
-			using (var client = new DsnSmtpClient ()) {
+			using (var client = new SmtpClient ()) {
 				try {
 					await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
 				} catch (Exception ex) {
@@ -5039,9 +5225,6 @@ namespace UnitTests.Net.Smtp {
 				// disable pipelining
 				client.Capabilities.Disable (SmtpCapability.Pipelining);
 
-				client.DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full;
-				client.DeliveryStatusNotifications = DeliveryStatusNotification.Never;
-
 				try {
 					using (var message = CreateEightBitMessage ()) {
 						message.MessageId = "123456789+=abc@名がドメイン.com";
@@ -5049,7 +5232,13 @@ namespace UnitTests.Net.Smtp {
 						message.To.Clear ();
 						message.To.Add (new MailboxAddress ("", "recipient@名がドメイン.com"));
 
-						await client.SendAsync (message);
+						var request = new SmtpSendRequest (message) {
+							EnvelopeId = message.MessageId,
+							DeliveryStatusNotificationType = DeliveryStatusNotificationType.Full,
+							DeliveryStatusNotifications = DeliveryStatusNotification.Never
+						};
+
+						await client.SendAsync (request);
 					}
 				} catch (Exception ex) {
 					Assert.Fail ($"Did not expect an exception in Send: {ex}");
@@ -5272,7 +5461,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (response, Is.Not.Null, "VRFY result");
 				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "VRFY response code");
-				Assert.That (response.Response, Is.EqualTo ("Fred Smith <Smith@USC-ISIF.ARPA>"), "VRFY response");
+				Assert.That (response.ResponseText, Is.EqualTo ("Fred Smith <Smith@USC-ISIF.ARPA>"), "VRFY response");
 
 				try {
 					response = client.SendCommand ("EXPN Example-People");
@@ -5282,7 +5471,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (response, Is.Not.Null, "EXPN result");
 				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "EXPN response code");
-				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\r\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\r\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\r\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\r\n<joe@foo-unix.ARPA>\r\n<xyz@bar-unix.ARPA>"), "EXPN response");
+				Assert.That (response.ResponseText, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\r\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\r\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\r\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\r\n<joe@foo-unix.ARPA>\r\n<xyz@bar-unix.ARPA>"), "EXPN response");
 			}
 		}
 
@@ -5334,7 +5523,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (response, Is.Not.Null, "VRFY result");
 				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "VRFY response code");
-				Assert.That (response.Response, Is.EqualTo ("Fred Smith <Smith@USC-ISIF.ARPA>"), "VRFY response");
+				Assert.That (response.ResponseText, Is.EqualTo ("Fred Smith <Smith@USC-ISIF.ARPA>"), "VRFY response");
 
 				try {
 					response = await client.SendCommandAsync ("EXPN Example-People");
@@ -5344,7 +5533,7 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.That (response, Is.Not.Null, "EXPN result");
 				Assert.That (response.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "EXPN response code");
-				Assert.That (response.Response, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\r\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\r\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\r\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\r\n<joe@foo-unix.ARPA>\r\n<xyz@bar-unix.ARPA>"), "EXPN response");
+				Assert.That (response.ResponseText, Is.EqualTo ("Jon Postel <Postel@USC-ISIF.ARPA>\r\nFred Fonebone <Fonebone@USC-ISIQ.ARPA>\r\nSam Q. Smith <SQSmith@USC-ISIQ.ARPA>\r\nQuincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>\r\n<joe@foo-unix.ARPA>\r\n<xyz@bar-unix.ARPA>"), "EXPN response");
 			}
 		}
 	}

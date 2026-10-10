@@ -113,7 +113,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public SmtpCommandException (SmtpErrorCode code, SmtpCommand command, SmtpResponse response, Exception innerException) : base (GetResponseText (response), innerException)
 		{
-			ResponseText = response.Response;
+			ResponseText = response.ResponseText;
 			StatusCode = response.StatusCode;
 			Command = command;
 			ErrorCode = code;
@@ -133,7 +133,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public SmtpCommandException (SmtpErrorCode code, SmtpCommand command, SmtpResponse response) : base (GetResponseText (response))
 		{
-			ResponseText = response.Response;
+			ResponseText = response.ResponseText;
 			StatusCode = response.StatusCode;
 			Command = command;
 			ErrorCode = code;
@@ -210,7 +210,7 @@ namespace MailKit.Net.Smtp {
 			if (response == null)
 				throw new ArgumentNullException (nameof (response));
 
-			return response.Response;
+			return response.ResponseText;
 		}
 
 #if SERIALIZABLE

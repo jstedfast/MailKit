@@ -43,23 +43,34 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="MessageSentEventArgs"/>.
 		/// </remarks>
-		/// <param name="message">The message that was just sent.</param>
-		/// <param name="response">The response from the server.</param>
+		/// <param name="request">The send request.</param>
+		/// <param name="result">The result of sending the message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <see langword="null" />.</para>
+		/// <para><paramref name="request"/> is <see langword="null" />.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="response"/> is <see langword="null" />.</para>
+		/// <para><paramref name="result"/> is <see langword="null" />.</para>
 		/// </exception>
-		public MessageSentEventArgs (MimeMessage message, string response)
+		public MessageSentEventArgs (ISendRequest request, SendResult result)
 		{
-			if (message == null)
-				throw new ArgumentNullException (nameof (message));
+			if (request == null)
+				throw new ArgumentNullException (nameof (request));
 
-			if (response == null)
-				throw new ArgumentNullException (nameof (response));
+			if (result == null)
+				throw new ArgumentNullException (nameof (result));
 
-			Message = message;
-			Response = response;
+			Request = request;
+			Result = result;
+		}
+
+		/// <summary>
+		/// Get the send request.
+		/// </summary>
+		/// <remarks>
+		/// Gets the send request.
+		/// </remarks>
+		/// <value>The send request.</value>
+		public ISendRequest Request {
+			get;
 		}
 
 		/// <summary>
@@ -70,18 +81,30 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The message.</value>
 		public MimeMessage Message {
-			get; private set;
+			get { return Request.Message; }
 		}
 
 		/// <summary>
-		/// Get the server's response.
+		/// Get the result of sending the message.
 		/// </summary>
 		/// <remarks>
-		/// Gets the server's response.
+		/// Gets the result of sending the message.
 		/// </remarks>
-		/// <value>The response.</value>
-		public string Response {
-			get; private set;
+		/// <value>The result.</value>
+		public SendResult Result {
+			get;
+		}
+
+		/// <summary>
+		/// Get the server's response text.
+		/// </summary>
+		/// <remarks>
+		/// Gets the server's response text. This is equivalent to
+		/// <c>Result.ResponseText</c>.
+		/// </remarks>
+		/// <value>The response text.</value>
+		public string ResponseText {
+			get { return Result.ResponseText; }
 		}
 	}
 }

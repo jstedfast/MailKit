@@ -49,7 +49,7 @@ namespace MailKit.Net.Smtp {
 		/// Gets the response text.
 		/// </remarks>
 		/// <value>The response text.</value>
-		public string Response { get; private set; }
+		public string ResponseText { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpResponse"/> class.
@@ -58,11 +58,11 @@ namespace MailKit.Net.Smtp {
 		/// Creates a new <see cref="SmtpResponse"/>.
 		/// </remarks>
 		/// <param name="code">The status code.</param>
-		/// <param name="response">The response text.</param>
-		public SmtpResponse (SmtpStatusCode code, string response)
+		/// <param name="responseText">The response text.</param>
+		public SmtpResponse (SmtpStatusCode code, string responseText)
 		{
 			StatusCode = code;
-			Response = response;
+			ResponseText = responseText;
 		}
 	}
 }

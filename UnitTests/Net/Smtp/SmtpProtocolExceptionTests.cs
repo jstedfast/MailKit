@@ -67,7 +67,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (ex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 				Assert.That (ex.LastResponse, Is.Not.Null, "LastResponse");
 				Assert.That (ex.LastResponse.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "LastResponse.StatusCode");
-				Assert.That (ex.LastResponse.Response, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.Response");
+				Assert.That (ex.LastResponse.ResponseText, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.ResponseText");
 				Assert.That (ex.Message, Is.EqualTo ("The SMTP server has unexpectedly disconnected: 2.1.0 sender ok"), "Message");
 			}
 		}
@@ -93,7 +93,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.That (ex.Command, Is.EqualTo (SmtpCommand.RcptTo), "Command");
 				Assert.That (ex.LastResponse, Is.Not.Null, "LastResponse");
 				Assert.That (ex.LastResponse.StatusCode, Is.EqualTo (SmtpStatusCode.Ok), "LastResponse.StatusCode");
-				Assert.That (ex.LastResponse.Response, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.Response");
+				Assert.That (ex.LastResponse.ResponseText, Is.EqualTo ("2.1.0 sender ok"), "LastResponse.ResponseText");
 			}
 		}
 

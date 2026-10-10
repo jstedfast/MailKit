@@ -127,6 +127,7 @@
     <Compile Include="Net\Proxy\WebProxyClient.cs" />
     <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
     <Compile Include="Net\Smtp\ISmtpClient.cs" />
+    <Compile Include="Net\Smtp\ISmtpSendRequest.cs" />
     <Compile Include="Net\Smtp\SmtpAuthenticationSecretDetector.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpCapability.cs" />
@@ -137,6 +138,8 @@
     <Compile Include="Net\Smtp\SmtpErrorCode.cs" />
     <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
+    <Compile Include="Net\Smtp\SmtpSendRequest.cs" />
+    <Compile Include="Net\Smtp\SmtpSendResult.cs" />
     <Compile Include="Net\Smtp\SmtpServiceNotAuthenticatedException.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
@@ -259,10 +262,12 @@
     <Compile Include="IMailSpool.cs" />
     <Compile Include="IMailStore.cs" />
     <Compile Include="IMailTransport.cs" />
+    <Compile Include="IMailTransportExtensions.cs" />
     <Compile Include="IMessageSummary.cs" />
     <Compile Include="IMoveRequest.cs" />
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="IReplaceRequest.cs" />
+    <Compile Include="ISendRequest.cs" />
     <Compile Include="IStoreFlagsRequest.cs" />
     <Compile Include="IStoreAnnotationsRequest.cs" />
     <Compile Include="IStoreLabelsRequest.cs" />
@@ -301,6 +306,8 @@
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="ReplaceRequest.cs" />
+    <Compile Include="SendRequest.cs" />
+    <Compile Include="SendResult.cs" />
     <Compile Include="ServiceNotAuthenticatedException.cs" />
     <Compile Include="ServiceNotConnectedException.cs" />
     <Compile Include="SpecialFolder.cs" />
