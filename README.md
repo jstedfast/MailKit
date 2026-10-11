@@ -86,7 +86,8 @@ motivate me to continue working on the project.
   [MOVE](https://tools.ietf.org/html/rfc6851), [UTF8=ACCEPT / UTF8=ONLY](https://tools.ietf.org/html/rfc6855), [LITERAL-](https://tools.ietf.org/html/rfc7888),
   [APPENDLIMIT](https://tools.ietf.org/html/rfc7889), [STATUS=SIZE](https://tools.ietf.org/html/rfc8438), [OBJECTID](https://tools.ietf.org/html/rfc8474),
   [REPLACE](https://tools.ietf.org/html/rfc8508), [SAVEDATE](https://tools.ietf.org/html/rfc8514), [PREVIEW](https://tools.ietf.org/html/rfc8970),
-  [QUOTA=RES-* / QUOTASET](https://tools.ietf.org/html/rfc9208), [PARTIAL](https://tools.ietf.org/html/rfc9394), [XLIST](https://developers.google.com/gmail/imap_extensions),
+  [QUOTA=RES-* / QUOTASET](https://tools.ietf.org/html/rfc9208), [PARTIAL](https://tools.ietf.org/html/rfc9394),
+  [INPROGRESS](https://tools.ietf.org/html/rfc9585), [XLIST](https://developers.google.com/gmail/imap_extensions),
   and [X-GM-EXT1](https://developers.google.com/gmail/imap_extensions) (X-GM-MSGID, X-GM-THRID, X-GM-RAW and X-GM-LABELS)
   * All APIs are cancellable.
   * Async APIs are available.

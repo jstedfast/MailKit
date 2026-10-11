@@ -4357,6 +4357,7 @@ namespace MailKit.Net.Imap {
 
 				request.OnStarted (this, chunk);
 
+				ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
@@ -4468,6 +4469,7 @@ namespace MailKit.Net.Imap {
 
 				request.OnStarted (this, chunk);
 
+				ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -5699,6 +5701,7 @@ namespace MailKit.Net.Imap {
 
 				request.OnStarted (this, chunk);
 
+				ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
@@ -5797,6 +5800,7 @@ namespace MailKit.Net.Imap {
 
 				request.OnStarted (this, chunk);
 
+				ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -5922,6 +5926,7 @@ namespace MailKit.Net.Imap {
 
 				request.OnStarted (this, chunk);
 
+				ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 				Engine.QueueCommand (ic);
 				Engine.Run (ic);
 
@@ -6040,6 +6045,7 @@ namespace MailKit.Net.Imap {
 
 				request.OnStarted (this, chunk);
 
+				ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 				Engine.QueueCommand (ic);
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -6148,6 +6154,7 @@ namespace MailKit.Net.Imap {
 
 			request.OnStarted (this, indexes);
 
+			ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
@@ -6219,6 +6226,7 @@ namespace MailKit.Net.Imap {
 
 			request.OnStarted (this, indexes);
 
+			ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
@@ -6334,6 +6342,7 @@ namespace MailKit.Net.Imap {
 
 			request.OnStarted (this, indexes);
 
+			ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 			Engine.QueueCommand (ic);
 			Engine.Run (ic);
 
@@ -6426,6 +6435,7 @@ namespace MailKit.Net.Imap {
 
 			request.OnStarted (this, indexes);
 
+			ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 			Engine.QueueCommand (ic);
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 

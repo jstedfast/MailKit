@@ -561,6 +561,16 @@ namespace MailKit.Net.Imap {
 		WebAlert,
 
 		/// <summary>
+		/// The <c>INPROGRESS</c> response code indicates that the server is still processing a command
+		/// and may include an indication of how far it has progressed.
+		/// </summary>
+		/// <remarks>
+		/// <para>Defined in <a href="https://tools.ietf.org/html/rfc9585">rfc9585</a>.</para>
+		/// <para>This response code is represented by <see cref="InProgressResponseCode"/>.</para>
+		/// </remarks>
+		InProgress,
+
+		/// <summary>
 		/// An unrecognized response code.
 		/// </summary>
 		/// <remarks>
@@ -728,6 +738,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UndefinedFilter:
 			case ImapResponseCodeType.MailboxId:
 			case ImapResponseCodeType.WebAlert:
+			case ImapResponseCodeType.InProgress:
 				return true;
 			default:
 				return false;
@@ -759,6 +770,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.NotificationOverflow:
 			case ImapResponseCodeType.MailboxId:
 			case ImapResponseCodeType.WebAlert:
+			case ImapResponseCodeType.InProgress:
 				return false;
 			default:
 				return true;
@@ -787,6 +799,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UndefinedFilter:      return new UndefinedFilterResponseCode (type);
 			case ImapResponseCodeType.MailboxId:            return new MailboxIdResponseCode (type);
 			case ImapResponseCodeType.WebAlert:             return new WebAlertResponseCode (type);
+			case ImapResponseCodeType.InProgress:           return new InProgressResponseCode (type);
 			default:                                        return new ImapResponseCode (type, IsErrorByDefault (type));
 			}
 		}
@@ -1713,6 +1726,91 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The URL.</value>
 		public Uri? WebUri {
+			get; internal set;
+		}
+	}
+
+	/// <summary>
+	/// An <c>INPROGRESS</c> response code.
+	/// </summary>
+	/// <remarks>
+	/// <para>The <c>INPROGRESS</c> response code is sent by the server in an untagged <c>OK</c> response
+	/// to indicate that it is still processing a command and, optionally, how far it has progressed.</para>
+	/// <para>Defined in <a href="https://tools.ietf.org/html/rfc9585">rfc9585</a>.</para>
+	/// </remarks>
+	public sealed class InProgressResponseCode : ImapResponseCode
+	{
+		/// <summary>
+		/// Initialize a new instance of the <see cref="InProgressResponseCode"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="InProgressResponseCode"/>.
+		/// </remarks>
+		/// <param name="tag">The tag of the command that is in progress, or <see langword="null" /> if unknown.</param>
+		/// <param name="progress">The number of items processed so far, or <see langword="null" /> if unknown.</param>
+		/// <param name="goal">The total number of items to process, or <see langword="null" /> if unknown.</param>
+		/// <param name="message">The human-readable text that followed the response code.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <see langword="null" />.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="progress"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="goal"/> is less than <c>1</c>, less than <paramref name="progress"/>,
+		/// or specified without a <paramref name="progress"/>.</para>
+		/// </exception>
+		public InProgressResponseCode (string? tag, long? progress, long? goal, string message) : base (ImapResponseCodeType.InProgress, false, "INPROGRESS", false, message)
+		{
+			if (progress < 0)
+				throw new ArgumentOutOfRangeException (nameof (progress));
+
+			if (goal.HasValue && (goal.Value < 1 || !progress.HasValue || progress.Value > goal.Value))
+				throw new ArgumentOutOfRangeException (nameof (goal));
+
+			Progress = progress;
+			Goal = goal;
+			Tag = tag;
+		}
+
+		internal InProgressResponseCode (ImapResponseCodeType type) : base (type, false)
+		{
+		}
+
+		/// <summary>
+		/// Get the tag of the command that is in progress.
+		/// </summary>
+		/// <remarks>
+		/// Gets the tag of the command that is in progress, or <see langword="null" /> if the server
+		/// did not specify it.
+		/// </remarks>
+		/// <value>The tag.</value>
+		public string? Tag {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Get the number of items processed so far.
+		/// </summary>
+		/// <remarks>
+		/// Gets the number of items that the server has processed so far, or <see langword="null" />
+		/// if the server did not specify it.
+		/// </remarks>
+		/// <value>The number of items processed so far.</value>
+		public long? Progress {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Get the total number of items to process.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the total number of items that the server expects to process, or <see langword="null" />
+		/// if the server did not specify it.</para>
+		/// <para>If the server is unable to count items, then it may report progress as a percentage, in
+		/// which case the goal will be <c>100</c>.</para>
+		/// </remarks>
+		/// <value>The total number of items to process.</value>
+		public long? Goal {
 			get; internal set;
 		}
 	}

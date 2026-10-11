@@ -1,4 +1,4 @@
-//
+﻿//
 // ImapRequestCallbackTests.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
@@ -669,6 +669,370 @@ namespace UnitTests.Net.Imap {
 			Assert.That (request.CompletedIndexes, Is.Empty);
 
 			await DisconnectAsync (client, async);
+		}
+
+		class ProgressLog
+		{
+			public readonly List<(long? Processed, long? Total)> Values = new List<(long? Processed, long? Total)> ();
+
+			public void Add (long? processed, long? total)
+			{
+				Values.Add ((processed, total));
+			}
+		}
+
+		class ProgressCopyRequest : CopyRequest
+		{
+			public readonly ProgressLog Progress = new ProgressLog ();
+
+			public ProgressCopyRequest (IMailFolder destination) : base (destination)
+			{
+			}
+
+			public override void OnProgress (IMailFolder folder, long? processed, long? total)
+			{
+				Progress.Add (processed, total);
+			}
+		}
+
+		class ProgressMoveRequest : MoveRequest
+		{
+			public readonly ProgressLog Progress = new ProgressLog ();
+
+			public ProgressMoveRequest (IMailFolder destination) : base (destination)
+			{
+			}
+
+			public override void OnProgress (IMailFolder folder, long? processed, long? total)
+			{
+				Progress.Add (processed, total);
+			}
+		}
+
+		class ProgressStoreFlagsRequest : StoreFlagsRequest
+		{
+			public readonly ProgressLog Progress = new ProgressLog ();
+
+			public ProgressStoreFlagsRequest (StoreAction action, MessageFlags flags) : base (action, flags)
+			{
+			}
+
+			public override void OnProgress (IMailFolder folder, long? processed, long? total)
+			{
+				Progress.Add (processed, total);
+			}
+		}
+
+		class ProgressExpungeRequest : ExpungeRequest
+		{
+			public readonly ProgressLog Progress = new ProgressLog ();
+
+			public override void OnProgress (IMailFolder folder, long? processed, long? total)
+			{
+				Progress.Add (processed, total);
+			}
+		}
+
+		class RecordingFetchRequest : FetchRequest
+		{
+			public readonly List<IList<UniqueId>> StartedUids = new List<IList<UniqueId>> ();
+			public readonly List<IList<int>> StartedIndexes = new List<IList<int>> ();
+			public readonly List<IList<UniqueId>> CompletedUids = new List<IList<UniqueId>> ();
+			public readonly List<IList<int>> CompletedIndexes = new List<IList<int>> ();
+			public readonly List<IMailFolder> Folders = new List<IMailFolder> ();
+			public readonly ProgressLog Progress = new ProgressLog ();
+
+			public RecordingFetchRequest (MessageSummaryItems items) : base (items)
+			{
+			}
+
+			public override void OnStarted (IMailFolder folder, IList<UniqueId> uids)
+			{
+				Folders.Add (folder);
+				StartedUids.Add (uids.ToArray ());
+			}
+
+			public override void OnStarted (IMailFolder folder, IList<int> indexes)
+			{
+				Folders.Add (folder);
+				StartedIndexes.Add (indexes.ToArray ());
+			}
+
+			public override void OnCompleted (IMailFolder folder, IList<UniqueId> uids)
+			{
+				CompletedUids.Add (uids.ToArray ());
+			}
+
+			public override void OnCompleted (IMailFolder folder, IList<int> indexes)
+			{
+				CompletedIndexes.Add (indexes.ToArray ());
+			}
+
+			public override void OnProgress (IMailFolder folder, long? processed, long? total)
+			{
+				Progress.Add (processed, total);
+			}
+		}
+
+		static ImapReplayCommand Respond (string command, string[] untagged, string response)
+		{
+			var tag = command.Substring (0, 9);
+			var builder = new StringBuilder ();
+
+			foreach (var line in untagged)
+				builder.Append (line).Append ("\r\n");
+
+			builder.Append (tag).Append (' ').Append (response).Append ("\r\n");
+
+			return new ImapReplayCommand (command, Latin1.GetBytes (builder.ToString ()));
+		}
+
+		static readonly (long? Processed, long? Total)[] ExpectedProgress = {
+			(1, 3), (2, 3), (null, null), (5, null), (null, null), (null, null), (3, 3)
+		};
+
+		// Note: The INPROGRESS response codes include a matching tag, a NIL tag, a bare INPROGRESS, a NIL goal,
+		// an invalid goal of 0, progress > goal, and a mismatched tag (which should be ignored).
+		static string[] CreateInProgress (string tag)
+		{
+			return new string[] {
+				$"* OK [INPROGRESS (\"{tag}\" 1 3)] Working",
+				$"* OK [INPROGRESS (NIL 2 3)] Working",
+				"* OK [INPROGRESS] Working",
+				$"* OK [INPROGRESS (\"{tag}\" 5 NIL)] Working",
+				$"* OK [INPROGRESS (\"{tag}\" 1 0)] Working",
+				$"* OK [INPROGRESS (\"{tag}\" 4 3)] Working",
+				"* OK [INPROGRESS (\"Z00000000\" 9 10)] Working",
+				$"* OK [INPROGRESS (\"{tag}\" 3 3)] Working",
+			};
+		}
+
+		[Test]
+		public async Task TestCopyProgress ([Values] bool async)
+		{
+			var commands = CreateSession ();
+			commands.Add (Respond ("A00000007 UID COPY 1:3 \"Archived Messages\"\r\n", CreateInProgress ("A00000007"), "OK [COPYUID 85 1:3 101:103] Copy completed"));
+			commands.Add (Respond ("A00000008 COPY 1:3 \"Archived Messages\"\r\n", CreateInProgress ("A00000008"), "OK Copy completed"));
+			commands.Add (new ImapReplayCommand ("A00000009 LOGOUT\r\n", "gmail.logout.txt"));
+
+			var (client, inbox, archived) = await ConnectAsync (commands, async);
+			var request = new ProgressCopyRequest (archived);
+
+			if (async)
+				await inbox.CopyToAsync (Uids, request);
+			else
+				inbox.CopyTo (Uids, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			request.Progress.Values.Clear ();
+
+			if (async)
+				await inbox.CopyToAsync (Indexes, request);
+			else
+				inbox.CopyTo (Indexes, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public async Task TestMoveProgress ([Values] bool async)
+		{
+			var commands = CreateSession ();
+			commands.Add (Respond ("A00000007 UID MOVE 1:3 \"Archived Messages\"\r\n", CreateInProgress ("A00000007"), "OK [COPYUID 85 1:3 101:103] Move completed"));
+			commands.Add (Respond ("A00000008 MOVE 1:3 \"Archived Messages\"\r\n", CreateInProgress ("A00000008"), "OK Move completed"));
+			commands.Add (new ImapReplayCommand ("A00000009 LOGOUT\r\n", "gmail.logout.txt"));
+
+			var (client, inbox, archived) = await ConnectAsync (commands, async);
+			var request = new ProgressMoveRequest (archived);
+
+			if (async)
+				await inbox.MoveToAsync (Uids, request);
+			else
+				inbox.MoveTo (Uids, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			request.Progress.Values.Clear ();
+
+			if (async)
+				await inbox.MoveToAsync (Indexes, request);
+			else
+				inbox.MoveTo (Indexes, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public async Task TestStoreProgress ([Values] bool async)
+		{
+			var commands = CreateSession ();
+			commands.Add (Respond ("A00000007 UID STORE 1:3 +FLAGS.SILENT (\\Deleted)\r\n", CreateInProgress ("A00000007"), "OK Store completed"));
+			commands.Add (Respond ("A00000008 STORE 1:3 +FLAGS.SILENT (\\Deleted)\r\n", CreateInProgress ("A00000008"), "OK Store completed"));
+			commands.Add (new ImapReplayCommand ("A00000009 LOGOUT\r\n", "gmail.logout.txt"));
+
+			var (client, inbox, _) = await ConnectAsync (commands, async);
+			var request = new ProgressStoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true };
+
+			if (async)
+				await inbox.StoreAsync (Uids, request);
+			else
+				inbox.Store (Uids, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			request.Progress.Values.Clear ();
+
+			if (async)
+				await inbox.StoreAsync (Indexes, request);
+			else
+				inbox.Store (Indexes, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public async Task TestExpungeProgress ([Values] bool async)
+		{
+			var commands = CreateSession ();
+			commands.Add (Respond ("A00000007 UID EXPUNGE 1:3\r\n", CreateInProgress ("A00000007"), "OK Expunge completed"));
+			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
+
+			var (client, inbox, _) = await ConnectAsync (commands, async);
+			var request = new ProgressExpungeRequest ();
+
+			if (async)
+				await inbox.ExpungeAsync (Uids, request);
+			else
+				inbox.Expunge (Uids, request);
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public async Task TestInProgressNotIncludedInCommandException ([Values] bool async)
+		{
+			var commands = CreateSession ();
+			commands.Add (Respond ("A00000007 UID EXPUNGE 1:3\r\n", CreateInProgress ("A00000007"), "NO Expunge failed"));
+			commands.Add (new ImapReplayCommand ("A00000008 LOGOUT\r\n", "gmail.logout.txt"));
+
+			var (client, inbox, _) = await ConnectAsync (commands, async);
+			var request = new ProgressExpungeRequest ();
+			ImapCommandException? ex;
+
+			if (async)
+				ex = Assert.ThrowsAsync<ImapCommandException> (() => inbox.ExpungeAsync (Uids, request));
+			else
+				ex = Assert.Throws<ImapCommandException> (() => inbox.Expunge (Uids, request));
+
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+			Assert.That (ex!.ResponseCodes.OfType<InProgressResponseCode> (), Is.Empty);
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public async Task TestFetchCallbacks ([Values] bool async)
+		{
+			var commands = CreateSession ();
+			commands.Add (Respond ("A00000007 NOOP\r\n", new string[] { "* 5 EXISTS" }, "OK NOOP completed"));
+			commands.Add (Respond ("A00000008 UID FETCH 1:3 (UID FLAGS)\r\n", CreateInProgress ("A00000008"), "OK Fetch completed"));
+			commands.Add (Respond ("A00000009 FETCH 1:3 (UID FLAGS)\r\n", CreateInProgress ("A00000009"), "OK Fetch completed"));
+			commands.Add (Respond ("A00000010 FETCH 3:* (UID FLAGS)\r\n", new string[] { "* OK [INPROGRESS (\"A00000010\" 1 3)] Working" }, "OK Fetch completed"));
+			commands.Add (Respond ("A00000011 FETCH 2:3 (UID FLAGS)\r\n", Array.Empty<string> (), "OK Fetch completed"));
+			commands.Add (new ImapReplayCommand ("A00000012 LOGOUT\r\n", "gmail.logout.txt"));
+
+			var (client, inbox, _) = await ConnectAsync (commands, async);
+			var request = new RecordingFetchRequest (MessageSummaryItems.UniqueId | MessageSummaryItems.Flags);
+
+			if (async) {
+				await client.NoOpAsync ();
+				await inbox.FetchAsync (Uids, request);
+			} else {
+				client.NoOp ();
+				inbox.Fetch (Uids, request);
+			}
+
+			Assert.That (inbox.Count, Is.EqualTo (5));
+			Assert.That (request.StartedUids, Has.Count.EqualTo (1));
+			Assert.That (request.StartedUids[0], Is.EqualTo (Uids));
+			Assert.That (request.CompletedUids, Has.Count.EqualTo (1));
+			Assert.That (request.CompletedUids[0], Is.EqualTo (Uids));
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			request.Progress.Values.Clear ();
+
+			if (async)
+				await inbox.FetchAsync (Indexes, request);
+			else
+				inbox.Fetch (Indexes, request);
+
+			Assert.That (request.StartedIndexes, Has.Count.EqualTo (1));
+			Assert.That (request.StartedIndexes[0], Is.EqualTo (Indexes));
+			Assert.That (request.CompletedIndexes, Has.Count.EqualTo (1));
+			Assert.That (request.CompletedIndexes[0], Is.EqualTo (Indexes));
+			Assert.That (request.Progress.Values, Is.EqualTo (ExpectedProgress));
+
+			request.Progress.Values.Clear ();
+
+			if (async)
+				await inbox.FetchAsync (2, -1, request);
+			else
+				inbox.Fetch (2, -1, request);
+
+			Assert.That (request.StartedIndexes, Has.Count.EqualTo (2));
+			Assert.That (request.StartedIndexes[1], Is.EqualTo (new int[] { 2, 3, 4 }));
+			Assert.That (request.CompletedIndexes, Has.Count.EqualTo (2));
+			Assert.That (request.CompletedIndexes[1], Is.EqualTo (new int[] { 2, 3, 4 }));
+			Assert.That (request.Progress.Values, Is.EqualTo (new (long?, long?)[] { (1, 3) }));
+
+			if (async)
+				await inbox.FetchAsync (1, 2, request);
+			else
+				inbox.Fetch (1, 2, request);
+
+			Assert.That (request.StartedIndexes, Has.Count.EqualTo (3));
+			Assert.That (request.StartedIndexes[2], Is.EqualTo (new int[] { 1, 2 }));
+			Assert.That (request.CompletedIndexes, Has.Count.EqualTo (3));
+			Assert.That (request.CompletedIndexes[2], Is.EqualTo (new int[] { 1, 2 }));
+			Assert.That (request.Folders, Is.All.SameAs (inbox));
+
+			await DisconnectAsync (client, async);
+		}
+
+		[Test]
+		public void TestInProgressResponseCode ()
+		{
+			var code = new InProgressResponseCode ("A00000001", 5, 10, "Working");
+
+			Assert.That (code.Type, Is.EqualTo (ImapResponseCodeType.InProgress));
+			Assert.That (code.Tag, Is.EqualTo ("A00000001"));
+			Assert.That (code.Progress, Is.EqualTo (5));
+			Assert.That (code.Goal, Is.EqualTo (10));
+			Assert.That (code.Message, Is.EqualTo ("Working"));
+			Assert.That (code.IsError, Is.False);
+
+			code = new InProgressResponseCode (null, null, null, "Working");
+			Assert.That (code.Tag, Is.Null);
+			Assert.That (code.Progress, Is.Null);
+			Assert.That (code.Goal, Is.Null);
+
+			code = new InProgressResponseCode (null, 7, null, "Working");
+			Assert.That (code.Progress, Is.EqualTo (7));
+			Assert.That (code.Goal, Is.Null);
+
+			Assert.Throws<ArgumentOutOfRangeException> (() => new InProgressResponseCode (null, -1, null, "Working"));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new InProgressResponseCode (null, 0, 0, "Working"));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new InProgressResponseCode (null, null, 10, "Working"));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new InProgressResponseCode (null, 11, 10, "Working"));
 		}
 	}
 }

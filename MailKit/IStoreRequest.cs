@@ -100,5 +100,24 @@ namespace MailKit {
 		/// <param name="unmodified">The indexes of the messages that were not updated because they were modified since
 		/// <see cref="UnchangedSince"/>.</param>
 		void OnCompleted (IMailFolder folder, IList<int> indexes, IList<int> unmodified);
+
+		/// <summary>
+		/// Called when the server reports the progress of a command.
+		/// </summary>
+		/// <remarks>
+		/// <para>Called when the server reports the progress of the command that is updating the subset of messages
+		/// most recently passed to <c>OnStarted</c>. Progress is reported per command, so if the operation is split
+		/// into multiple commands, the progress will start over for each subset of messages.</para>
+		/// <para>The values are reported as-is from the server. The <paramref name="processed"/> value may decrease or the
+		/// <paramref name="total"/> may change if the server discovers additional work. If the server is unable to count
+		/// items, then it may report progress as a percentage, in which case <paramref name="total"/> will be <c>100</c>.
+		/// If both values are <see langword="null" />, then the server has only indicated that the command is still in progress.</para>
+		/// <note type="note">Progress is only reported by IMAP servers that support the
+		/// <a href="https://tools.ietf.org/html/rfc9585">INPROGRESS</a> extension.</note>
+		/// </remarks>
+		/// <param name="folder">The folder that the messages belong to.</param>
+		/// <param name="processed">The number of items processed so far, or <see langword="null" /> if unknown.</param>
+		/// <param name="total">The total number of items to process, or <see langword="null" /> if unknown.</param>
+		void OnProgress (IMailFolder folder, long? processed, long? total);
 	}
 }

@@ -49,6 +49,70 @@ namespace MailKit.Net.Imap
 		const int PreviewTextLength = 512;
 		const int BufferSize = 4096;
 
+		sealed class IndexRange : IList<int>, IReadOnlyList<int>
+		{
+			readonly int start;
+
+			public IndexRange (int min, int max)
+			{
+				start = min;
+				Count = max >= min ? (max - min) + 1 : 0;
+			}
+
+			public int Count { get; }
+
+			public bool IsReadOnly => true;
+
+			public int this[int index] {
+				get {
+					if (index < 0 || index >= Count)
+						throw new ArgumentOutOfRangeException (nameof (index));
+
+					return start + index;
+				}
+				set => throw new NotSupportedException ();
+			}
+
+			public int IndexOf (int item)
+			{
+				return item >= start && item - start < Count ? item - start : -1;
+			}
+
+			public bool Contains (int item)
+			{
+				return IndexOf (item) != -1;
+			}
+
+			public void CopyTo (int[] array, int arrayIndex)
+			{
+				if (array == null)
+					throw new ArgumentNullException (nameof (array));
+
+				if (arrayIndex < 0 || arrayIndex > array.Length - Count)
+					throw new ArgumentOutOfRangeException (nameof (arrayIndex));
+
+				for (int i = 0; i < Count; i++)
+					array[arrayIndex + i] = start + i;
+			}
+
+			public IEnumerator<int> GetEnumerator ()
+			{
+				for (int i = 0; i < Count; i++)
+					yield return start + i;
+			}
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+			{
+				return GetEnumerator ();
+			}
+
+			public void Add (int item) => throw new NotSupportedException ();
+			public void Clear () => throw new NotSupportedException ();
+			public void Insert (int index, int item) => throw new NotSupportedException ();
+			public bool Remove (int item) => throw new NotSupportedException ();
+			public void RemoveAt (int index) => throw new NotSupportedException ();
+		}
+
 		class FetchSummaryContext
 		{
 			public readonly List<IMessageSummary> Messages;
@@ -1227,14 +1291,21 @@ namespace MailKit.Net.Imap
 
 			try {
 				foreach (var ic in CreateFetchCommands (uids, request, command, cancellationToken)) {
+					var chunk = ic.UniqueIds!;
+
 					ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 					ic.UserData = ctx;
 
+					request.OnStarted (this, chunk);
+
+					ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 					Engine.QueueCommand (ic);
 
 					Engine.Run (ic);
 
 					ProcessFetchResponse (ic);
+
+					request.OnCompleted (this, chunk);
 				}
 			} finally {
 				MessageExpunged -= ctx.OnMessageExpunged;
@@ -1316,14 +1387,21 @@ namespace MailKit.Net.Imap
 
 			try {
 				foreach (var ic in CreateFetchCommands (uids, request, command, cancellationToken)) {
+					var chunk = ic.UniqueIds!;
+
 					ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 					ic.UserData = ctx;
 
+					request.OnStarted (this, chunk);
+
+					ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 					Engine.QueueCommand (ic);
 
 					await Engine.RunAsync (ic).ConfigureAwait (false);
 
 					ProcessFetchResponse (ic);
+
+					request.OnCompleted (this, chunk);
 				}
 			} finally {
 				MessageExpunged -= ctx.OnMessageExpunged;
@@ -1371,6 +1449,9 @@ namespace MailKit.Net.Imap
 			ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 			ic.UserData = ctx;
 
+			request.OnStarted (this, indexes);
+
+			ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 			Engine.QueueCommand (ic);
 
 			return ic;
@@ -1440,6 +1521,8 @@ namespace MailKit.Net.Imap
 			Engine.Run (ic);
 
 			ProcessFetchResponse (ic);
+
+			request.OnCompleted (this, indexes);
 
 			if (previewText)
 				GetPreviewText (ctx, cancellationToken);
@@ -1512,6 +1595,8 @@ namespace MailKit.Net.Imap
 
 			ProcessFetchResponse (ic);
 
+			request.OnCompleted (this, indexes);
+
 			if (previewText)
 				await GetPreviewTextAsync (ctx, cancellationToken).ConfigureAwait (false);
 
@@ -1528,6 +1613,18 @@ namespace MailKit.Net.Imap
 			var maxValue = max != -1 ? (max + 1).ToString (CultureInfo.InvariantCulture) : "*";
 
 			return string.Format (CultureInfo.InvariantCulture, "{0}:{1}", minValue, maxValue);
+		}
+
+		IList<int> GetFetchIndexes (int min, int max)
+		{
+			int last = Count - 1;
+
+			if (max == -1) {
+				// Note: "min:*" always includes the last message, even if min is beyond the end of the folder.
+				return new IndexRange (Math.Min (min, last), last);
+			}
+
+			return new IndexRange (min, Math.Min (max, last));
 		}
 
 		bool CheckCanFetch (int min, int max, IFetchRequest request)
@@ -1553,7 +1650,7 @@ namespace MailKit.Net.Imap
 			return Count > 0 && !IsEmptyFetchRequest (request);
 		}
 
-		ImapCommand QueueFetchCommand (int min, int max, IFetchRequest request, CancellationToken cancellationToken, out bool previewText)
+		ImapCommand QueueFetchCommand (int min, int max, IFetchRequest request, CancellationToken cancellationToken, out bool previewText, out IList<int> indexes)
 		{
 			int capacity = Math.Max (max < 0 || max > Count ? Count : max, min) - min;
 			var query = FormatSummaryItems (Engine, request, out previewText);
@@ -1570,6 +1667,10 @@ namespace MailKit.Net.Imap
 			ic.RegisterUntaggedHandler ("FETCH", UntaggedFetchSummaryItemsHandler);
 			ic.UserData = ctx;
 
+			indexes = GetFetchIndexes (min, max);
+			request.OnStarted (this, indexes);
+
+			ic.InProgressHandler = (processed, total) => request.OnProgress (this, processed, total);
 			Engine.QueueCommand (ic);
 
 			return ic;
@@ -1635,12 +1736,14 @@ namespace MailKit.Net.Imap
 			if (!CheckCanFetch (min, max, request))
 				return Array.Empty<IMessageSummary> ();
 
-			var ic = QueueFetchCommand (min, max, request, cancellationToken, out bool previewText);
+			var ic = QueueFetchCommand (min, max, request, cancellationToken, out bool previewText, out var indexes);
 			var ctx = (FetchSummaryContext) ic.UserData!;
 
 			Engine.Run (ic);
 
 			ProcessFetchResponse (ic);
+
+			request.OnCompleted (this, indexes);
 
 			if (previewText)
 				GetPreviewText (ctx, cancellationToken);
@@ -1708,12 +1811,14 @@ namespace MailKit.Net.Imap
 			if (!CheckCanFetch (min, max, request))
 				return Array.Empty<IMessageSummary> ();
 
-			var ic = QueueFetchCommand (min, max, request, cancellationToken, out bool previewText);
+			var ic = QueueFetchCommand (min, max, request, cancellationToken, out bool previewText, out var indexes);
 			var ctx = (FetchSummaryContext) ic.UserData!;
 
 			await Engine.RunAsync (ic).ConfigureAwait (false);
 
 			ProcessFetchResponse (ic);
+
+			request.OnCompleted (this, indexes);
 
 			if (previewText)
 				await GetPreviewTextAsync (ctx, cancellationToken).ConfigureAwait (false);

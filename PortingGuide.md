@@ -349,6 +349,8 @@ also affects mocking frameworks, which can't mock extension methods.
 | `IMailFolder`/`MailFolder` | `Store (..., IList<Annotation>, ...)` and `Store (..., ulong modseq, IList<Annotation>, ...)` | `Store (..., IStoreAnnotationsRequest, ...)` |
 | `IMailFolder` | none | `DeletedCount` and `DeletedStorageSize` properties and `DeletedCountChanged` and `DeletedStorageSizeChanged` events (already provided by `MailFolder`) |
 | `IStoreRequest`, `IAppendRequest` (and derived interfaces) | none | `OnStarted ()` and `OnCompleted ()` methods (no-ops in the built-in classes) |
+| `IStoreRequest` (and derived interfaces) | none | `OnProgress ()` method (no-op in the built-in classes) |
+| `IFetchRequest` | none | `OnStarted ()`, `OnCompleted ()` and `OnProgress ()` methods (no-ops in `FetchRequest`) |
 | `IMailService` (and `IMailStore`, `IMailTransport`, `IMailSpool`) | none | `ValueTask DisposeAsync ()` (already provided by `MailService`) |
 | `IImapClient` | none | `ImapIdleSession CreateIdleSession (ImapIdleOptions? options = null)` (already provided by `ImapClient`) |
 

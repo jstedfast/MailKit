@@ -101,6 +101,7 @@ namespace MailKit.Net.Imap {
 		public ImapCommandStatus Status { get; internal set; }
 		public ImapCommandResponse Response { get; internal set; }
 		public ITransferProgress? Progress { get; internal set; }
+		public Action<long?, long?>? InProgressHandler { get; internal set; }
 		public long TotalSize { get { return totalSize; } }
 		public Exception? Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
@@ -520,6 +521,22 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Add a response code to the command, routing <c>INPROGRESS</c> response codes to the progress handler.
+		/// </summary>
+		/// <param name="code">The response code.</param>
+		internal void AddResponseCode (ImapResponseCode code)
+		{
+			if (code is InProgressResponseCode inprogress) {
+				// Note: Progress updates are not accumulated in RespCodes because a long-running command may receive a large number of them.
+				if (inprogress.Tag == null || inprogress.Tag == Tag)
+					InProgressHandler?.Invoke (inprogress.Progress, inprogress.Goal);
+				return;
+			}
+
+			RespCodes.Add (code);
+		}
+
+		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
 		/// <returns><see langword="true" /> if there are more command parts to send; otherwise, <see langword="false" />.</returns>
@@ -623,7 +640,7 @@ namespace MailKit.Net.Imap {
 					token = Engine.ReadToken (CancellationToken);
 					if (token.Type == ImapTokenType.OpenBracket) {
 						var code = Engine.ParseResponseCode (true, CancellationToken);
-						RespCodes.Add (code);
+						AddResponseCode (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
 						var line = Engine.ReadLine (CancellationToken).TrimEnd ();
@@ -639,7 +656,7 @@ namespace MailKit.Net.Imap {
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
 					var code = Engine.ParseResponseCode (false, CancellationToken);
-					RespCodes.Add (code);
+					AddResponseCode (code);
 				} else {
 					// no clue what we got...
 					throw ImapEngine.UnexpectedToken ("Syntax error in response. Unexpected token: {0}", token);
@@ -765,7 +782,7 @@ namespace MailKit.Net.Imap {
 					token = await Engine.ReadTokenAsync (CancellationToken).ConfigureAwait (false);
 					if (token.Type == ImapTokenType.OpenBracket) {
 						var code = await Engine.ParseResponseCodeAsync (true, CancellationToken).ConfigureAwait (false);
-						RespCodes.Add (code);
+						AddResponseCode (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// consume the rest of the line...
 						var line = (await Engine.ReadLineAsync (CancellationToken).ConfigureAwait (false)).TrimEnd ();
@@ -781,7 +798,7 @@ namespace MailKit.Net.Imap {
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
 					var code = await Engine.ParseResponseCodeAsync (false, CancellationToken).ConfigureAwait (false);
-					RespCodes.Add (code);
+					AddResponseCode (code);
 				} else {
 					// no clue what we got...
 					throw ImapEngine.UnexpectedToken ("Syntax error in response. Unexpected token: {0}", token);

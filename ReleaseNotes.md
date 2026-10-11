@@ -126,6 +126,10 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   Custom implementations of these interfaces will need to implement the new methods. The built-in
   `StoreFlagsRequest`, `StoreLabelsRequest`, `AppendRequest` and `ReplaceRequest` classes implement
   them as virtual no-ops.
+* Added `OnStarted ()`, `OnCompleted ()` and `OnProgress ()` methods to the `IFetchRequest` interface and
+  an `OnProgress ()` method to the `IStoreRequest` interface. Custom implementations of these interfaces
+  will need to implement the new methods. The built-in `FetchRequest`, `StoreFlagsRequest`,
+  `StoreLabelsRequest` and `StoreAnnotationsRequest` classes implement them as virtual no-ops.
 * Removed the `IMessageSummary.Folder` property and the `MessageSummary (IMailFolder, int)` constructor.
   Summaries no longer hold a reference to the folder they were fetched from, which makes it possible to
   cache, serialize and rehydrate them independently of a live `IMailFolder` instance. Applications that
@@ -206,6 +210,8 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   (issue [#2023](https://github.com/jstedfast/MailKit/issues/2023)):
   * Added the `ICopyRequest`/`CopyRequest`, `IMoveRequest`/`MoveRequest`,
     `IExpungeRequest`/`ExpungeRequest` and `IStoreAnnotationsRequest`/`StoreAnnotationsRequest` types.
+  * `IFetchRequest` now has `OnStarted ()` and `OnCompleted ()` callbacks that report the UIDs or indexes
+    of the messages fetched by each `FETCH` command.
   * `OnStarted ()` is called immediately before each command is sent to the server, and `OnCompleted ()`
     is called only after the server has successfully completed that command. Large operations may be
     split into multiple commands, in which case the callbacks are called once per subset of messages.
@@ -240,8 +246,17 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   `URLAUTH` (rfc4467), `URLAUTH=BINARY` (rfc5524), `URL-PARTIAL` (rfc5550), `IMAPSIEVE` (rfc6785),
   `QUOTASET` and `QUOTA=RES-*` (rfc9208), `INPROGRESS` (rfc9585), `UIDONLY` (rfc9586),
   `LIST-METADATA` (rfc9590), `JMAPACCESS` (rfc9698), `MESSAGELIMIT` and `SAVELIMIT` (rfc9738)
-  and `UIDBATCHES` (rfc10022). MailKit doesn't use these extensions itself yet. Advertised values,
-  such as the `MESSAGELIMIT` limit, can be read with `client.Capabilities.GetValues ("MESSAGELIMIT")`.
+  and `UIDBATCHES` (rfc10022). Other than `INPROGRESS`, MailKit doesn't use these extensions itself
+  yet. Advertised values, such as the `MESSAGELIMIT` limit, can be read with `client.Capabilities.GetValues ("MESSAGELIMIT")`.
+* Added support for the IMAP `INPROGRESS` extension (rfc9585), which allows servers to report the progress
+  of long-running commands. Progress is reported via the new `OnProgress ()` callback on the fetch, store,
+  copy, move and expunge request types:
+  * `processed` and `total` are reported as-is from the server and may be `null` if the server does not
+    know them. If both are `null`, the server has only indicated that the command is still in progress.
+  * Progress is reported per command, so if an operation is split into multiple commands, the progress
+    starts over for each subset of messages.
+  * Added `ImapResponseCodeType.InProgress` and `InProgressResponseCode`. `INPROGRESS` response codes are
+    not included in `ImapCommandException.ResponseCodes`.
 * Added `ImapIdleSession`, created with `ImapClient.CreateIdleSession ()`, which waits for changes to the
   selected folder without having to manage the `IDLE` command manually:
   * `WaitForChanges ()`/`WaitForChangesAsync ()` return an `ImapIdleChanges` batch of events
