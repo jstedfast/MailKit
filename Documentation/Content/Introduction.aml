@@ -63,11 +63,15 @@
                 <para>Supports SSL and TLS.</para>
               </listItem>
               <listItem>
+                <para>Supports IMAP4rev1 and IMAP4rev2.</para>
+              </listItem>
+              <listItem>
                 <para>Supports the ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS,
-                MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-ID, COMPRESS, WITHIN, ENABLE, QRESYNC,
+                MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC,
                 SORT, THREAD, ANNOTATE, LIST-EXTENDED, ESORT, METADATA, METADATA-SERVER, NOTIFY, FILTERS, LIST-STATUS,
                 SORT=DISPLAY, SPECIAL-USE, CREATE-SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT, UTF8=ONLY, LITERAL-,
-                APPENDLIMIT, STATUS=SIZE, OBJECTID, REPLACE, SAVEDATE, XLIST, and Google Mail (X-GM-EXT-1) extensions.</para>
+                APPENDLIMIT, STATUS=SIZE, OBJECTID, REPLACE, SAVEDATE, PREVIEW, QUOTA=RES-*, QUOTASET, PARTIAL,
+                INPROGRESS, XLIST, and Google Mail (X-GM-EXT-1) extensions.</para>
               </listItem>
             </list>
           </listItem>
