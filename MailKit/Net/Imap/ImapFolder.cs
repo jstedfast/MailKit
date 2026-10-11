@@ -3618,10 +3618,10 @@ namespace MailKit.Net.Imap {
 
 		class Quota
 		{
-			public uint? MessageLimit;
-			public uint? StorageLimit;
-			public uint? CurrentMessageCount;
-			public uint? CurrentStorageSize;
+			public long? MessageLimit;
+			public long? StorageLimit;
+			public long? CurrentMessageCount;
+			public long? CurrentStorageSize;
 		}
 
 		class QuotaContext
@@ -3639,6 +3639,12 @@ namespace MailKit.Net.Imap {
 			public Dictionary<string, Quota> Quotas {
 				get; private set;
 			}
+		}
+
+		// Note: rfc9208 defines quota values as number64 (0 to 2^63-1), but clamp out-of-range values rather than fail.
+		static long ClampQuotaValue (ulong value)
+		{
+			return value > long.MaxValue ? long.MaxValue : (long) value;
 		}
 
 		static void ParseQuotaRoot (ImapEngine engine, ImapCommand ic)
@@ -3731,11 +3737,11 @@ namespace MailKit.Net.Imap {
 				limit = ImapEngine.ParseNumber64 (token, false, format, token);
 
 				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentMessageCount = (uint) (used & 0xffffffff);
-					quota.MessageLimit = (uint) (limit & 0xffffffff);
+					quota.CurrentMessageCount = ClampQuotaValue (used);
+					quota.MessageLimit = ClampQuotaValue (limit);
 				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentStorageSize = (uint) (used & 0xffffffff);
-					quota.StorageLimit = (uint) (limit & 0xffffffff);
+					quota.CurrentStorageSize = ClampQuotaValue (used);
+					quota.StorageLimit = ClampQuotaValue (limit);
 				}
 
 				token = engine.PeekToken (ic.CancellationToken);
@@ -3781,11 +3787,11 @@ namespace MailKit.Net.Imap {
 				limit = ImapEngine.ParseNumber64 (token, false, format, token);
 
 				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentMessageCount = (uint) (used & 0xffffffff);
-					quota.MessageLimit = (uint) (limit & 0xffffffff);
+					quota.CurrentMessageCount = ClampQuotaValue (used);
+					quota.MessageLimit = ClampQuotaValue (limit);
 				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentStorageSize = (uint) (used & 0xffffffff);
-					quota.StorageLimit = (uint) (limit & 0xffffffff);
+					quota.CurrentStorageSize = ClampQuotaValue (used);
+					quota.StorageLimit = ClampQuotaValue (limit);
 				}
 
 				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
@@ -3961,8 +3967,14 @@ namespace MailKit.Net.Imap {
 			};
 		}
 
-		ImapCommand QueueSetQuotaCommand (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken)
+		ImapCommand QueueSetQuotaCommand (long? messageLimit, long? storageLimit, CancellationToken cancellationToken)
 		{
+			if (messageLimit < 0)
+				throw new ArgumentOutOfRangeException (nameof (messageLimit));
+
+			if (storageLimit < 0)
+				throw new ArgumentOutOfRangeException (nameof (storageLimit));
+
 			CheckState (false, false);
 
 			if (!Engine.Capabilities.Contains (ImapCapability.Quota))
@@ -4025,6 +4037,11 @@ namespace MailKit.Net.Imap {
 		/// <param name="messageLimit">If not <see langword="null" />, sets the maximum number of messages to allow.</param>
 		/// <param name="storageLimit">If not <see langword="null" />, sets the maximum storage size (in kilobytes).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="messageLimit"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="storageLimit"/> is negative.</para>
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -4049,7 +4066,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
+		public override FolderQuota SetQuota (long? messageLimit, long? storageLimit, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueSetQuotaCommand (messageLimit, storageLimit, cancellationToken);
 
@@ -4070,6 +4087,11 @@ namespace MailKit.Net.Imap {
 		/// <param name="messageLimit">If not <see langword="null" />, sets the maximum number of messages to allow.</param>
 		/// <param name="storageLimit">If not <see langword="null" />, sets the maximum storage size (in kilobytes).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="messageLimit"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="storageLimit"/> is negative.</para>
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -4094,7 +4116,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override async Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default)
+		public override async Task<FolderQuota> SetQuotaAsync (long? messageLimit, long? storageLimit, CancellationToken cancellationToken = default)
 		{
 			var ic = QueueSetQuotaCommand (messageLimit, storageLimit, cancellationToken);
 

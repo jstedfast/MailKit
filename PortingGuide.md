@@ -286,7 +286,7 @@ must now use `IImapClient` (or `ImapClient`).
 
 ## 5. 64-bit sizes and offsets
 
-Message sizes, line counts, byte offsets and byte counts are now `long`:
+Message sizes, line counts, quota values, byte offsets and byte counts are now `long`:
 
 | API | 4.x type | 5.0 type |
 |:----|:---------|:---------|
@@ -299,6 +299,8 @@ Message sizes, line counts, byte offsets and byte counts are now `long`:
 | `IMailSpool.GetMessageSize ()` | `int` | `long` |
 | `IMailSpool.GetMessageSizes ()` | `IList<int>` | `IList<long>` |
 | `ISmtpClient.MaxSize`, `SmtpClient.MaxSize` | `uint` | `long` |
+| `FolderQuota.MessageLimit`, `StorageLimit`, `CurrentMessageCount`, `CurrentStorageSize` | `uint?` | `long?` |
+| `IMailFolder.SetQuota ()`, `SetQuotaAsync ()` messageLimit/storageLimit | `uint?` | `long?` |
 
 **Detect:** Conversion errors involving `long`, `int`, `uint` or `ulong` around these members.
 

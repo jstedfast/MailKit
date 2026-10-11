@@ -50,6 +50,10 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   * `ISmtpClient.MaxSize` and `SmtpClient.MaxSize` are now `long` instead of `uint`. RFC 1870 allows
     SIZE values of up to 20 digits, so a value larger than `long.MaxValue` is clamped to
     `long.MaxValue`.
+  * `FolderQuota.MessageLimit`, `StorageLimit`, `CurrentMessageCount` and `CurrentStorageSize`
+    are now `long?` instead of `uint?`, and the `messageLimit` and `storageLimit` arguments of
+    `IMailFolder.SetQuota ()` and `SetQuotaAsync ()` are now `long?` instead of `uint?`. This also
+    applies to `MailFolder` and `ImapFolder`. Negative limits throw `ArgumentOutOfRangeException`.
 * `SaslMechanism.Create ()` now returns a non-nullable `SaslMechanism` and throws
   `NotSupportedException` if the requested mechanism is not supported, rather than returning `null`.
   Code that checked the result of `Create ()` for `null` should be updated to use the new
@@ -323,6 +327,9 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 * Fixed `Socks4Client` and `Socks5Client` to throw a `ProxyProtocolException` (with an `ErrorType` of
   `ProtocolErrorType.UnexpectedDisconnect`) if the proxy server disconnects in the middle of a reply.
   Previously, `Connect ()` and `ConnectAsync ()` would spin in an infinite loop.
+* Fixed `ImapFolder.GetQuota ()` to preserve IMAP quota values larger than 32 bits (such as those
+  reported by Gmail). Previously, these values were silently truncated to their lower 32 bits. Values
+  larger than `long.MaxValue` are now clamped to `long.MaxValue`.
 
 ## MailKit 4.18.1 (2026-09-27)
 

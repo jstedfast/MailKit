@@ -73,7 +73,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The message limit.</value>
-		public uint? MessageLimit {
+		public long? MessageLimit {
 			get; set;
 		}
 
@@ -87,7 +87,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The storage limit, in kilobytes.</value>
-		public uint? StorageLimit {
+		public long? StorageLimit {
 			get; set;
 		}
 
@@ -101,7 +101,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The current message count.</value>
-		public uint? CurrentMessageCount {
+		public long? CurrentMessageCount {
 			get; set;
 		}
 
@@ -115,7 +115,7 @@ namespace MailKit {
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The size of the current storage, in kilobytes.</value>
-		public uint? CurrentStorageSize {
+		public long? CurrentStorageSize {
 			get; set;
 		}
 	}

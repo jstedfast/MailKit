@@ -102,10 +102,10 @@ namespace MailKit.Examples {
 					var quota = client.Inbox.GetQuota ();
 
 					if (quota.StorageLimit.HasValue)
-						Console.WriteLine ("  Limited by storage space. Using {0} out of {1} bytes.", quota.CurrentStorageSize.Value, quota.StorageLimit.Value);
+						Console.WriteLine ("  Limited by storage space. Using {0} out of {1} kilobytes.", quota.CurrentStorageSize.Value, quota.StorageLimit.Value);
 
 					if (quota.MessageLimit.HasValue)
-						Console.WriteLine ("  Limited by the number of messages. Using {0} out of {1} bytes.", quota.CurrentMessageCount.Value, quota.MessageLimit.Value);
+						Console.WriteLine ("  Limited by the number of messages. Using {0} out of {1} messages.", quota.CurrentMessageCount.Value, quota.MessageLimit.Value);
 
 					Console.WriteLine ("The quota root is: {0}", quota.QuotaRoot);
 				}

@@ -2302,6 +2302,11 @@ namespace MailKit {
 		/// <param name="messageLimit">If not <see langword="null" />, sets the maximum number of messages to allow.</param>
 		/// <param name="storageLimit">If not <see langword="null" />, sets the maximum storage size (in kilobytes).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="messageLimit"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="storageLimit"/> is negative.</para>
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
@@ -2326,7 +2331,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default);
+		public abstract FolderQuota SetQuota (long? messageLimit, long? storageLimit, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Asynchronously set the quota limits for the folder.
@@ -2340,6 +2345,11 @@ namespace MailKit {
 		/// <param name="messageLimit">If not <see langword="null" />, sets the maximum number of messages to allow.</param>
 		/// <param name="storageLimit">If not <see langword="null" />, sets the maximum storage size (in kilobytes).</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="messageLimit"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="storageLimit"/> is negative.</para>
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
@@ -2364,7 +2374,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default);
+		public abstract Task<FolderQuota> SetQuotaAsync (long? messageLimit, long? storageLimit, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Get the specified metadata.

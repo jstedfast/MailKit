@@ -4500,6 +4500,87 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateGetQuota64BitCommands ()
+		{
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "gmail.greeting.txt"),
+				new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"),
+				new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"),
+				new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"),
+				new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "gmail.list-inbox.txt"),
+				new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"),
+				new ImapReplayCommand ("A00000005 GETQUOTAROOT INBOX\r\n", "gmail.getquota-64bit.txt")
+			};
+		}
+
+		static void AssertGetQuota64Bit (FolderQuota quota)
+		{
+			Assert.That (quota, Is.Not.Null, "Expected a non-null GETQUOTAROOT response.");
+			Assert.That (quota.CurrentStorageSize, Is.EqualTo (17417480L), "CurrentStorageSize");
+			Assert.That (quota.StorageLimit, Is.EqualTo (7881299347898368L), "StorageLimit");
+			Assert.That (quota.CurrentMessageCount, Is.EqualTo (4294967296L), "CurrentMessageCount");
+			Assert.That (quota.MessageLimit, Is.EqualTo (long.MaxValue), "MessageLimit");
+		}
+
+		[Test]
+		public void TestGetQuota64Bit ()
+		{
+			var commands = CreateGetQuota64BitCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.SetQuota (-1, null));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Inbox.SetQuota (null, -1));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (() => client.Inbox.SetQuotaAsync (-1, null));
+				Assert.ThrowsAsync<ArgumentOutOfRangeException> (() => client.Inbox.SetQuotaAsync (null, -1));
+
+				AssertGetQuota64Bit (client.Inbox.GetQuota ());
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestGetQuota64BitAsync ()
+		{
+			var commands = CreateGetQuota64BitCommands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				AssertGetQuota64Bit (await client.Inbox.GetQuotaAsync ());
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static MimeMessage CreateThreadableMessage (string subject, string msgid, string references, DateTimeOffset date)
 		{
 			var message = new MimeMessage ();
