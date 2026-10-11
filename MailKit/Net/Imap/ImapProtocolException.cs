@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -39,29 +35,8 @@ namespace MailKit.Net.Imap {
 	/// <see cref="ImapProtocolException"/> is typically fatal and requires the <see cref="ImapClient"/>
 	/// to be reconnected.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class ImapProtocolException : ProtocolException
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="ImapProtocolException"/> from the serialized data.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>

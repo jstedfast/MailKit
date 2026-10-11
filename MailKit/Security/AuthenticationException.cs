@@ -25,9 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit.Security {
 	/// <summary>
@@ -36,28 +33,8 @@ namespace MailKit.Security {
 	/// <remarks>
 	/// The exception that is thrown when there is an authentication error.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class AuthenticationException : Exception
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="AuthenticationException"/> from the serialized data.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		protected AuthenticationException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>

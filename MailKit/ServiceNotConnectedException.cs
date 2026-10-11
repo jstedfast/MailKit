@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit {
 	/// <summary>
@@ -38,29 +34,8 @@ namespace MailKit {
 	/// This exception is thrown when an operation on a service could not be completed
 	/// due to the service not being connected.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class ServiceNotConnectedException : InvalidOperationException
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.ServiceNotConnectedException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Deserializes a <see cref="ServiceNotConnectedException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected ServiceNotConnectedException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ServiceNotConnectedException"/> class.
 		/// </summary>

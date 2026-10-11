@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
@@ -38,32 +34,8 @@ namespace MailKit.Net.Smtp {
 	/// The exception that is thrown when the SMTP server responds to a command with
 	/// <see cref="SmtpStatusCode.AuthenticationRequired"/>.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class SmtpServiceNotAuthenticatedException : ServiceNotAuthenticatedException
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpServiceNotAuthenticatedException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Deserializes a <see cref="SmtpServiceNotAuthenticatedException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected SmtpServiceNotAuthenticatedException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			Command = (SmtpCommand) info.GetInt32 ("Command");
-			StatusCode = (SmtpStatusCode) info.GetInt32 ("StatusCode");
-			ResponseText = info.GetString ("ResponseText") ?? string.Empty;
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpServiceNotAuthenticatedException"/> class.
 		/// </summary>
@@ -123,28 +95,5 @@ namespace MailKit.Net.Smtp {
 			get; private set;
 		}
 
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Serializes the state of the <see cref="SmtpServiceNotAuthenticatedException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecurityCritical]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			info.AddValue ("Command", (int) Command);
-			info.AddValue ("StatusCode", (int) StatusCode);
-			info.AddValue ("ResponseText", ResponseText);
-		}
-#endif
 	}
 }

@@ -425,6 +425,7 @@ listed above.
 | Parameterless `MailFolder` constructor | `MailFolder (string fullName, char directorySeparator, FolderAttributes attributes)` |
 | `ImapFolderConstructorArgs.Name` | Derive the name from `FullName` and `DirectorySeparator` |
 | `SslCipherAlgorithm`, `SslCipherStrength`, `SslHashAlgorithm`, `SslHashStrength`, `SslKeyExchangeAlgorithm`, `SslKeyExchangeStrength` (**.NET 10.0 build only**) | `SslCipherSuite` |
+| `[Serializable]`, the protected `(SerializationInfo, StreamingContext)` constructors, and the `GetObjectData ()` overrides on all MailKit exceptions (**.NET Framework build only**) | None. Legacy exception serialization ([SYSLIB0051](https://learn.microsoft.com/en-us/dotnet/fundamentals/syslib-diagnostics/syslib0051)) is obsolete and `BinaryFormatter` is [insecure](https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide). Remove the serialization constructor from exception subclasses and log or transport the relevant properties instead |
 
 ---
 

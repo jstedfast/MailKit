@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
@@ -42,35 +38,8 @@ namespace MailKit.Net.Smtp {
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 	/// </example>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class SmtpProtocolException : ProtocolException
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="SmtpProtocolException"/> from the serialized data.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			Command = (SmtpCommand) info.GetInt32 ("Command");
-
-			var text = info.GetString ("LastResponseText");
-
-			if (text != null)
-				LastResponse = new SmtpResponse ((SmtpStatusCode) info.GetInt32 ("LastResponseStatusCode"), text);
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
 		/// </summary>
@@ -194,28 +163,5 @@ namespace MailKit.Net.Smtp {
 			get; private set;
 		}
 
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Serializes the state of the <see cref="SmtpProtocolException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecurityCritical]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			info.AddValue ("Command", (int) Command);
-			info.AddValue ("LastResponseStatusCode", (int) (LastResponse?.StatusCode ?? 0));
-			info.AddValue ("LastResponseText", LastResponse?.ResponseText);
-		}
-#endif
 	}
 }

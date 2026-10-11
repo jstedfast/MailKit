@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit {
 	/// <summary>
@@ -40,29 +36,8 @@ namespace MailKit {
 	/// <see cref="CommandException"/> is typically non-fatal (meaning that it does
 	/// not force the client to disconnect).
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public abstract class CommandException : Exception
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="CommandException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>

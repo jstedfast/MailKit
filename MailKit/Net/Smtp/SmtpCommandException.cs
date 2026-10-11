@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 using MimeKit;
 
@@ -43,38 +39,8 @@ namespace MailKit.Net.Smtp {
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 	/// </example>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class SmtpCommandException : CommandException
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="SmtpCommandException"/> from the serialized data.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			var value = info.GetString ("Mailbox");
-
-			if (!string.IsNullOrEmpty (value) && MailboxAddress.TryParse (value, out var mailbox))
-				Mailbox = mailbox;
-
-			ErrorCode = (SmtpErrorCode) info.GetValue ("ErrorCode", typeof (SmtpErrorCode));
-			StatusCode = (SmtpStatusCode) info.GetValue ("StatusCode", typeof (SmtpStatusCode));
-			Command = (SmtpCommand) info.GetValue ("Command", typeof (SmtpCommand));
-			ResponseText = info.GetString ("ResponseText");
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
@@ -212,36 +178,6 @@ namespace MailKit.Net.Smtp {
 
 			return response.ResponseText;
 		}
-
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Serializes the state of the <see cref="SmtpCommandException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecurityCritical]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			if (Mailbox != null)
-				info.AddValue ("Mailbox", Mailbox.ToString ());
-			else
-				info.AddValue ("Mailbox", string.Empty);
-
-			info.AddValue ("ErrorCode", ErrorCode, typeof (SmtpErrorCode));
-			info.AddValue ("StatusCode", StatusCode, typeof (SmtpStatusCode));
-			info.AddValue ("Command", Command, typeof (SmtpCommand));
-			info.AddValue ("ResponseText", ResponseText);
-		}
-#endif
 
 		/// <summary>
 		/// Get the command that resulted in the error.

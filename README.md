@@ -3,8 +3,8 @@
 |  Package  |Latest Release|Latest Build|
 |:----------|:------------:|:----------:|
 |**MimeKit**|[![MimeKit NuGet](https://img.shields.io/nuget/v/MimeKit.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MimeKit)![MimeKit NuGet Downloads](https://img.shields.io/nuget/dt/MimeKit.svg?style=flat-square)|[![MimeKit MyGet](https://img.shields.io/myget/mimekit/v/MimeKit.svg?logo=nuget&style=flat-square&label=myget)](https://www.myget.org/feed/mimekit/package/nuget/MimeKit)|
-|**MimeKit.Core**|[![MimeKit.Core NuGet](https://img.shields.io/nuget/v/MimeKit.Core.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MimeKit.Core)![MimeKit.Core NuGet Downloads](https://img.shields.io/nuget/dt/MimeKit.Core.svg?style=flat-square)||
-|**MimeKit.Cryptography**|[![MimeKit.Cryptography NuGet](https://img.shields.io/nuget/v/MimeKit.Cryptography.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MimeKit.Cryptography)![MimeKit.Cryptography NuGet Downloads](https://img.shields.io/nuget/dt/MimeKit.Cryptography.svg?style=flat-square)||
+|**MimeKit.Core**|[![MimeKit.Core NuGet](https://img.shields.io/nuget/v/MimeKit.Core.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MimeKit.Core)![MimeKit.Core NuGet Downloads](https://img.shields.io/nuget/dt/MimeKit.Core.svg?style=flat-square)|[![MimeKit.Core MyGet](https://img.shields.io/myget/mimekit/v/MimeKit.Core.svg?logo=nuget&style=flat-square&label=myget)](https://www.myget.org/feed/mimekit/package/nuget/MimeKit.Core)|
+|**MimeKit.Cryptography**|[![MimeKit.Cryptography NuGet](https://img.shields.io/nuget/v/MimeKit.Cryptography.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MimeKit.Cryptography)![MimeKit.Cryptography NuGet Downloads](https://img.shields.io/nuget/dt/MimeKit.Cryptography.svg?style=flat-square)|[![MimeKit.Cryptography MyGet](https://img.shields.io/myget/mimekit/v/MimeKit.Cryptography.svg?logo=nuget&style=flat-square&label=myget)](https://www.myget.org/feed/mimekit/package/nuget/MimeKit.Cryptography)|
 |**MailKit**|[![MailKit NuGet](https://img.shields.io/nuget/v/MailKit.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MailKit)![MailKit NuGet Downloads](https://img.shields.io/nuget/dt/MailKit.svg?style=flat-square)|[![MailKit MyGet](https://img.shields.io/myget/mimekit/v/MailKit.svg?logo=nuget&style=flat-square&label=myget)](https://www.myget.org/feed/mimekit/package/nuget/MailKit)|
 
 
@@ -12,6 +12,13 @@
 |:------------|:----------:|:-----------:|:-------------:|
 |**Linux/Mac**|[![Build Status](https://github.com/jstedfast/MailKit/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/jstedfast/MailKit/actions/workflows/main.yml)|[![Code Coverage](https://img.shields.io/coverallsCoverage/github/jstedfast/MailKit?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://img.shields.io/coverity/scan/3202)](https://scan.coverity.com/projects/3202)|
 |**Windows**  |[![Build Status](https://github.com/jstedfast/MailKit/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/jstedfast/MailKit/actions/workflows/main.yml)|[![Code Coverage](https://img.shields.io/coverallsCoverage/github/jstedfast/MailKit?branch=master)](https://coveralls.io/r/jstedfast/MailKit?branch=master)|[![Static Analysis](https://img.shields.io/coverity/scan/3202)](https://scan.coverity.com/projects/3202)|
+
+
+**Obsolete Packages:**
+|  Package  |Latest Release|
+|:----------|:------------:|
+|**MimeKitLite**|[![MimeKitLite NuGet](https://img.shields.io/nuget/v/MimeKitLite.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MimeKitLite)![MimeKit NuGet Downloads](https://img.shields.io/nuget/dt/MimeKitLite.svg?style=flat-square)|
+|**MailKitLite**|[![MailKitLite NuGet](https://img.shields.io/nuget/v/MailKitLite.svg?logo=nuget&style=flat-square)](https://www.nuget.org/packages/MailKitLite)![MailKitLite NuGet Downloads](https://img.shields.io/nuget/dt/MailKitLite.svg?style=flat-square)|
 
 ## What is MailKit?
 
@@ -64,6 +71,7 @@ motivate me to continue working on the project.
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "imaps" protocol.
   * Supports client SSL/TLS certificates.
+  * Supports [IMAP4rev1](https://tools.ietf.org/html/rfc3501) and [IMAP4rev2](https://tools.ietf.org/html/rfc9051).
   * Supports the following extensions: [ACL](https://tools.ietf.org/html/rfc4314), [QUOTA](https://tools.ietf.org/html/rfc2087),
   [LITERAL+](https://tools.ietf.org/html/rfc2088), [IDLE](https://tools.ietf.org/html/rfc2177), [NAMESPACE](https://tools.ietf.org/html/rfc2342),
   [ID](https://tools.ietf.org/html/rfc2971), [CHILDREN](https://tools.ietf.org/html/rfc3348), [LOGINDISABLED](https://tools.ietf.org/html/rfc3501),
@@ -77,8 +85,8 @@ motivate me to continue working on the project.
   [SPECIAL-USE / CREATE-SPECIAL-USE](https://tools.ietf.org/html/rfc6154), [SEARCH=FUZZY](https://tools.ietf.org/html/rfc6203),
   [MOVE](https://tools.ietf.org/html/rfc6851), [UTF8=ACCEPT / UTF8=ONLY](https://tools.ietf.org/html/rfc6855), [LITERAL-](https://tools.ietf.org/html/rfc7888),
   [APPENDLIMIT](https://tools.ietf.org/html/rfc7889), [STATUS=SIZE](https://tools.ietf.org/html/rfc8438), [OBJECTID](https://tools.ietf.org/html/rfc8474),
-  [REPLACE](https://tools.ietf.org/html/rfc8508), [SAVEDATE](https://tools.ietf.org/html/rfc8514), [PARTIAL](https://tools.ietf.org/html/rfc9394),
-  [XLIST](https://developers.google.com/gmail/imap_extensions),
+  [REPLACE](https://tools.ietf.org/html/rfc8508), [SAVEDATE](https://tools.ietf.org/html/rfc8514), [PREVIEW](https://tools.ietf.org/html/rfc8970),
+  [QUOTA=RES-* / QUOTASET](https://tools.ietf.org/html/rfc9208), [PARTIAL](https://tools.ietf.org/html/rfc9394), [XLIST](https://developers.google.com/gmail/imap_extensions),
   and [X-GM-EXT1](https://developers.google.com/gmail/imap_extensions) (X-GM-MSGID, X-GM-THRID, X-GM-RAW and X-GM-LABELS)
   * All APIs are cancellable.
   * Async APIs are available.

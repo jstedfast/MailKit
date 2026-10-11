@@ -69,11 +69,13 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
     `MailService`, `SmtpClient`, `ImapClient` and `Pop3Client` have been removed from the .NET 10.0
     build of MailKit, where the underlying `SslStream` APIs are obsolete. Use `SslCipherSuite`
     instead. They remain available on .NET Framework, .NET Standard and .NET 8.0.
-* Removed the dead `[Obsolete]` annotations on the legacy serialization members of MailKit's
-  exceptions. The `#if NET8_0_OR_GREATER` guard around `GetObjectData ()` could never be satisfied
-  (`SERIALIZABLE` is only defined for .NET Framework), and the unconditional attribute on the
-  protected serialization constructors emitted a spurious `CS0618` for .NET Framework consumers
-  subclassing these exceptions.
+* Removed legacy exception serialization support from all of MailKit's exceptions on .NET
+  Framework: the `[Serializable]` attribute, the protected `(SerializationInfo, StreamingContext)`
+  constructors and the `GetObjectData ()` overrides. These APIs are obsolete
+  ([SYSLIB0051](https://learn.microsoft.com/en-us/dotnet/fundamentals/syslib-diagnostics/syslib0051))
+  and `BinaryFormatter`-based serialization is
+  [insecure](https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide).
+  Exception subclasses that chained to the serialization constructors must remove them.
 * The `AnnotationAttribute (string)` constructor now validates the specifier according to
   [rfc5257](https://tools.ietf.org/html/rfc5257) section 3.2 and throws `ArgumentException` if it
   contains empty components (e.g. a leading or trailing `.` or `..`), NUL or non-ASCII characters,

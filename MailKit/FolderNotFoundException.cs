@@ -25,10 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit {
 	/// <summary>
@@ -37,29 +33,8 @@ namespace MailKit {
 	/// <remarks>
 	/// This exception is thrown by <see cref="IMailFolder.GetSubfolder(string,System.Threading.CancellationToken)"/>.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class FolderNotFoundException : Exception
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Deserializes a <see cref="FolderNotFoundException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		protected FolderNotFoundException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			FolderName = info.GetString ("FolderName");
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
@@ -124,26 +99,5 @@ namespace MailKit {
 			get; private set;
 		}
 
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Serializes the state of the <see cref="FolderNotFoundException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecurityCritical]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			info.AddValue ("FolderName", FolderName);
-		}
-#endif
 	}
 }

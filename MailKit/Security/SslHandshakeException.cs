@@ -31,10 +31,6 @@ using System.Formats.Asn1;
 using System.Net.Security;
 using System.Globalization;
 using System.Collections.Generic;
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
 using System.Security.Cryptography.X509Certificates;
 
 namespace MailKit.Security
@@ -57,39 +53,10 @@ namespace MailKit.Security
 	/// value and/or prompt the user to accept the certificate (similar to what you've probably seen web
 	/// browsers do when they encounter untrusted certificates).</para>
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class SslHandshakeException : Exception
 	{
 		const string SslHandshakeHelpLink = "https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ssl-handshake-exception";
 		const string DefaultMessage = "An error occurred while attempting to establish an SSL or TLS connection.";
-
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SslHandshakeException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="SslHandshakeException"/> from the serialized data.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		protected SslHandshakeException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			var base64 = info.GetString ("ServerCertificate");
-
-			if (base64 != null)
-				ServerCertificate = new X509Certificate2 (Convert.FromBase64String (base64));
-
-			base64 = info.GetString ("RootCertificateAuthority");
-
-			if (base64 != null)
-				RootCertificateAuthority = new X509Certificate2 (Convert.FromBase64String (base64));
-		}
-#endif
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SslHandshakeException"/> class.
@@ -148,37 +115,6 @@ namespace MailKit.Security
 		public X509Certificate? RootCertificateAuthority {
 			get; private set;
 		}
-
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecurityCritical]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			if (ServerCertificate != null)
-				info.AddValue ("ServerCertificate", Convert.ToBase64String (ServerCertificate.GetRawCertData ()));
-			else
-				info.AddValue ("ServerCertificate", null, typeof (string));
-
-			if (RootCertificateAuthority != null)
-				info.AddValue ("RootCertificateAuthority", Convert.ToBase64String (RootCertificateAuthority.GetRawCertData ()));
-			else
-				info.AddValue ("RootCertificateAuthority", null, typeof (string));
-		}
-#endif
 
 		internal static SslHandshakeException Create (ref SslCertificateValidationInfo? validationInfo, Exception ex, bool starttls, string protocol, string host, int port, int sslPort, params int[] standardPorts)
 		{

@@ -28,11 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-#if SERIALIZABLE
-using System.Security;
-using System.Runtime.Serialization;
-#endif
-
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An exception that is thrown when an IMAP command returns NO or BAD.
@@ -41,34 +36,9 @@ namespace MailKit.Net.Imap {
 	/// The exception that is thrown when an IMAP command fails. Unlike a <see cref="ImapProtocolException"/>,
 	/// a <see cref="ImapCommandException"/> does not require the <see cref="ImapClient"/> to be reconnected.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class ImapCommandException : CommandException
 	{
 		static readonly IReadOnlyList<ImapResponseCode> EmptyResponseCodes = new ReadOnlyCollection<ImapResponseCode> (Array.Empty<ImapResponseCode> ());
-
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// <para>Creates a new <see cref="ImapCommandException"/> from the serialized data.</para>
-		/// <para>The <see cref="ResponseCodes"/> are not serialized and will be empty.</para>
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecuritySafeCritical]
-		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			Response = (ImapCommandResponse) info.GetValue ("Response", typeof (ImapCommandResponse));
-			ResponseText = info.GetString ("ResponseText");
-			ResponseCodes = EmptyResponseCodes;
-		}
-#endif
 
 		/// <summary>
 		/// Create a new <see cref="ImapCommandException"/> based on the specified command name and <see cref="ImapCommand"/> state.
@@ -346,27 +316,5 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Serializes the state of the <see cref="ImapCommandException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		[SecurityCritical]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			info.AddValue ("Response", Response, typeof (ImapCommandResponse));
-			info.AddValue ("ResponseText", ResponseText);
-		}
-#endif
 	}
 }

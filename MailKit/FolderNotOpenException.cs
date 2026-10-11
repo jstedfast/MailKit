@@ -25,9 +25,6 @@
 //
 
 using System;
-#if SERIALIZABLE
-using System.Runtime.Serialization;
-#endif
 
 namespace MailKit {
 	/// <summary>
@@ -40,36 +37,8 @@ namespace MailKit {
 	/// method will throw a <see cref="FolderNotOpenException"/> if the folder is not
 	/// current open.
 	/// </remarks>
-#if SERIALIZABLE
-	[Serializable]
-#endif
 	public class FolderNotOpenException : InvalidOperationException
 	{
-#if SERIALIZABLE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.FolderNotOpenException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Deserializes a <see cref="FolderNotOpenException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		protected FolderNotOpenException (SerializationInfo info, StreamingContext context) : base (info, context)
-		{
-			var value = info.GetString ("FolderAccess");
-
-			if (!Enum.TryParse (value, out FolderAccess access))
-				FolderAccess = FolderAccess.ReadOnly;
-			else
-				FolderAccess = access;
-
-			FolderName = info.GetString ("FolderName");
-		}
-#endif
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotOpenException"/> class.
 		/// </summary>
@@ -158,26 +127,5 @@ namespace MailKit {
 			return "The folder is not currently open.";
 		}
 
-#if SERIALIZABLE
-		/// <summary>
-		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
-		/// with information about the exception.
-		/// </summary>
-		/// <remarks>
-		/// Serializes the state of the <see cref="FolderNotOpenException"/>.
-		/// </remarks>
-		/// <param name="info">The serialization info.</param>
-		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <see langword="null" />.
-		/// </exception>
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			base.GetObjectData (info, context);
-
-			info.AddValue ("FolderAccess", FolderAccess.ToString ());
-			info.AddValue ("FolderName", FolderName);
-		}
-#endif
 	}
 }

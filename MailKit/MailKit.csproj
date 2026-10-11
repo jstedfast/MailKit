@@ -46,11 +46,6 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <!-- Enable serializable support for net4.x -->
-  <PropertyGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
-    <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup>
     <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
   </PropertyGroup>
