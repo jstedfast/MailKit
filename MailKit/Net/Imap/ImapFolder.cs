@@ -3618,10 +3618,7 @@ namespace MailKit.Net.Imap {
 
 		class Quota
 		{
-			public long? MessageLimit;
-			public long? StorageLimit;
-			public long? CurrentMessageCount;
-			public long? CurrentStorageSize;
+			public readonly List<FolderQuotaResource> Resources = new List<FolderQuotaResource> ();
 		}
 
 		class QuotaContext
@@ -3645,6 +3642,44 @@ namespace MailKit.Net.Imap {
 		static long ClampQuotaValue (ulong value)
 		{
 			return value > long.MaxValue ? long.MaxValue : (long) value;
+		}
+
+		static bool SupportsRfc9208Quota (ImapCapabilities capabilities)
+		{
+			return capabilities.Contains (ImapCapability.QuotaResourceStorage) ||
+				capabilities.Contains (ImapCapability.QuotaResourceMessage) ||
+				capabilities.Contains (ImapCapability.QuotaResourceMailbox) ||
+				capabilities.Contains (ImapCapability.QuotaResourceAnnotationStorage);
+		}
+
+		static FolderQuota CreateFolderQuota (IMailFolder quotaRoot, Quota quota)
+		{
+			var folderQuota = new FolderQuota (quotaRoot);
+
+			foreach (var resource in quota.Resources) {
+				folderQuota.Resources[resource.Name] = resource;
+
+				switch (resource.Name.ToUpperInvariant ()) {
+				case "STORAGE":
+					folderQuota.CurrentStorageSize = resource.Usage;
+					folderQuota.StorageLimit = resource.Limit;
+					break;
+				case "MESSAGE":
+					folderQuota.CurrentMessageCount = resource.Usage;
+					folderQuota.MessageLimit = resource.Limit;
+					break;
+				case "MAILBOX":
+					folderQuota.CurrentMailboxCount = resource.Usage;
+					folderQuota.MailboxLimit = resource.Limit;
+					break;
+				case "ANNOTATION-STORAGE":
+					folderQuota.CurrentAnnotationStorageSize = resource.Usage;
+					folderQuota.AnnotationStorageLimit = resource.Limit;
+					break;
+				}
+			}
+
+			return folderQuota;
 		}
 
 		static void ParseQuotaRoot (ImapEngine engine, ImapCommand ic)
@@ -3714,6 +3749,8 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
+			token = engine.PeekToken (ic.CancellationToken);
+
 			while (token.Type != ImapTokenType.CloseParen) {
 				ulong used, limit;
 				string resource;
@@ -3736,13 +3773,7 @@ namespace MailKit.Net.Imap {
 				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
 				limit = ImapEngine.ParseNumber64 (token, false, format, token);
 
-				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentMessageCount = ClampQuotaValue (used);
-					quota.MessageLimit = ClampQuotaValue (limit);
-				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentStorageSize = ClampQuotaValue (used);
-					quota.StorageLimit = ClampQuotaValue (limit);
-				}
+				quota.Resources.Add (new FolderQuotaResource (resource, ClampQuotaValue (used), ClampQuotaValue (limit)));
 
 				token = engine.PeekToken (ic.CancellationToken);
 			}
@@ -3764,6 +3795,8 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
+			token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
+
 			while (token.Type != ImapTokenType.CloseParen) {
 				ulong used, limit;
 				string resource;
@@ -3786,13 +3819,7 @@ namespace MailKit.Net.Imap {
 				// See https://github.com/jstedfast/MailKit/issues/1602 for details.
 				limit = ImapEngine.ParseNumber64 (token, false, format, token);
 
-				if (resource.Equals ("MESSAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentMessageCount = ClampQuotaValue (used);
-					quota.MessageLimit = ClampQuotaValue (limit);
-				} else if (resource.Equals ("STORAGE", StringComparison.OrdinalIgnoreCase)) {
-					quota.CurrentStorageSize = ClampQuotaValue (used);
-					quota.StorageLimit = ClampQuotaValue (limit);
-				}
+				quota.Resources.Add (new FolderQuotaResource (resource, ClampQuotaValue (used), ClampQuotaValue (limit)));
 
 				token = await engine.PeekTokenAsync (ic.CancellationToken).ConfigureAwait (false);
 			}
@@ -3906,12 +3933,7 @@ namespace MailKit.Net.Imap {
 
 			var quotaRoot = Engine.GetQuotaRootFolder (encodedName, cancellationToken);
 
-			return new FolderQuota (quotaRoot) {
-				CurrentMessageCount = quota.CurrentMessageCount,
-				CurrentStorageSize = quota.CurrentStorageSize,
-				MessageLimit = quota.MessageLimit,
-				StorageLimit = quota.StorageLimit
-			};
+			return CreateFolderQuota (quotaRoot, quota);
 		}
 
 		/// <summary>
@@ -3959,12 +3981,7 @@ namespace MailKit.Net.Imap {
 
 			var quotaRoot = await Engine.GetQuotaRootFolderAsync (encodedName, cancellationToken).ConfigureAwait (false);
 
-			return new FolderQuota (quotaRoot) {
-				CurrentMessageCount = quota.CurrentMessageCount,
-				CurrentStorageSize = quota.CurrentStorageSize,
-				MessageLimit = quota.MessageLimit,
-				StorageLimit = quota.StorageLimit
-			};
+			return CreateFolderQuota (quotaRoot, quota);
 		}
 
 		ImapCommand QueueSetQuotaCommand (long? messageLimit, long? storageLimit, CancellationToken cancellationToken)
@@ -3980,19 +3997,22 @@ namespace MailKit.Net.Imap {
 			if (!Engine.Capabilities.Contains (ImapCapability.Quota))
 				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
+			// Note: rfc9208 servers (which advertise QUOTA=RES-*) must also advertise QUOTASET if they support SETQUOTA.
+			if (!Engine.Capabilities.Contains (ImapCapability.QuotaSet) && SupportsRfc9208Quota (Engine.Capabilities))
+				throw new NotSupportedException ("The IMAP server does not support the QUOTASET extension.");
+
 			var command = new StringBuilder ("SETQUOTA %F (");
 			if (messageLimit.HasValue) {
 				command.Append ("MESSAGE ");
 				command.Append (messageLimit.Value.ToString (CultureInfo.InvariantCulture));
-				command.Append (' ');
 			}
 			if (storageLimit.HasValue) {
+				if (messageLimit.HasValue)
+					command.Append (' ');
 				command.Append ("STORAGE ");
 				command.Append (storageLimit.Value.ToString (CultureInfo.InvariantCulture));
-				command.Append (' ');
 			}
-			command[command.Length - 1] = ')';
-			command.Append ("\r\n");
+			command.Append (")\r\n");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
 			var ctx = new QuotaContext ();
@@ -4013,14 +4033,8 @@ namespace MailKit.Net.Imap {
 
 			ic.ThrowIfNotOk ("SETQUOTA");
 
-			if (ctx.Quotas.TryGetValue (EncodedName, out var quota)) {
-				return new FolderQuota (this) {
-					CurrentMessageCount = quota.CurrentMessageCount,
-					CurrentStorageSize = quota.CurrentStorageSize,
-					MessageLimit = quota.MessageLimit,
-					StorageLimit = quota.StorageLimit
-				};
-			}
+			if (ctx.Quotas.TryGetValue (EncodedName, out var quota))
+				return CreateFolderQuota (this, quota);
 
 			return new FolderQuota (null);
 		}
@@ -4030,6 +4044,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Sets the quota limits for the folder.</para>
+		/// <para>Any limit that is not specified is removed. If both <paramref name="messageLimit"/>
+		/// and <paramref name="storageLimit"/> are <see langword="null" />, then all limits are removed.</para>
 		/// <para>To determine if a quotas are supported, check the 
 		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
 		/// </remarks>
@@ -4052,7 +4068,8 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the QUOTA extension.
+		/// The IMAP server does not support the QUOTA extension or does not support setting quota
+		/// limits (it advertises one or more <c>QUOTA=RES-*</c> capabilities but not <c>QUOTASET</c>).
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4080,6 +4097,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Sets the quota limits for the folder.</para>
+		/// <para>Any limit that is not specified is removed. If both <paramref name="messageLimit"/>
+		/// and <paramref name="storageLimit"/> are <see langword="null" />, then all limits are removed.</para>
 		/// <para>To determine if a quotas are supported, check the 
 		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
 		/// </remarks>
@@ -4102,7 +4121,8 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the QUOTA extension.
+		/// The IMAP server does not support the QUOTA extension or does not support setting quota
+		/// limits (it advertises one or more <c>QUOTA=RES-*</c> capabilities but not <c>QUOTASET</c>).
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6739,6 +6759,18 @@ namespace MailKit.Net.Imap {
 			Engine.IdleSession?.OnEvent (new FolderStatusChangedIdleEvent (this, StatusItems.Deleted));
 
 			OnDeletedCountChanged ();
+		}
+
+		internal void UpdateDeletedStorageSize (long? size)
+		{
+			if (DeletedStorageSize == size)
+				return;
+
+			DeletedStorageSize = size;
+
+			Engine.IdleSession?.OnEvent (new FolderStatusChangedIdleEvent (this, StatusItems.DeletedStorage));
+
+			OnDeletedStorageSizeChanged ();
 		}
 
 		internal void UpdateId (string id)

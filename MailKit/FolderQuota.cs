@@ -24,6 +24,9 @@
 // THE SOFTWARE.
 //
 
+using System;
+using System.Collections.Generic;
+
 namespace MailKit {
 	/// <summary>
 	/// A folder quota.
@@ -118,5 +121,66 @@ namespace MailKit {
 		public long? CurrentStorageSize {
 			get; set;
 		}
+
+		/// <summary>
+		/// Get or set the mailbox limit.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the maximum number of mailboxes (folders) allowed by the quota root.
+		/// </remarks>
+		/// <value>The mailbox limit.</value>
+		public long? MailboxLimit {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the current mailbox count.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the current number of mailboxes (folders) governed by the quota root.
+		/// </remarks>
+		/// <value>The current mailbox count.</value>
+		public long? CurrentMailboxCount {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the annotation storage limit, in kilobytes.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the maximum size of all annotations and metadata governed by the
+		/// quota root, in kilobytes.
+		/// </remarks>
+		/// <value>The annotation storage limit, in kilobytes.</value>
+		public long? AnnotationStorageLimit {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get or set the size of the current annotation storage, in kilobytes.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the current size of all annotations and metadata governed by the
+		/// quota root, in kilobytes.
+		/// </remarks>
+		/// <value>The size of the current annotation storage, in kilobytes.</value>
+		public long? CurrentAnnotationStorageSize {
+			get; set;
+		}
+
+		/// <summary>
+		/// Get the quota resources.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets all of the quota resources reported by the server, keyed by resource name
+		/// (case-insensitive).</para>
+		/// <para>This includes the well-known <c>STORAGE</c>, <c>MESSAGE</c>, <c>MAILBOX</c> and
+		/// <c>ANNOTATION-STORAGE</c> resources that are also exposed by the other properties of
+		/// this class, as well as any other resource types that the server reports.</para>
+		/// </remarks>
+		/// <value>The quota resources.</value>
+		public IDictionary<string, FolderQuotaResource> Resources {
+			get;
+		} = new Dictionary<string, FolderQuotaResource> (StringComparer.OrdinalIgnoreCase);
 	}
 }

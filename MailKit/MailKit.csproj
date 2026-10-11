@@ -250,6 +250,7 @@
     <Compile Include="FolderNotFoundException.cs" />
     <Compile Include="FolderNotOpenException.cs" />
     <Compile Include="FolderQuota.cs" />
+    <Compile Include="FolderQuotaResource.cs" />
     <Compile Include="FolderRenamedEventArgs.cs" />
     <Compile Include="HeaderSet.cs" />
     <Compile Include="IAuthenticationSecretDetector.cs" />

@@ -2722,6 +2722,12 @@ namespace MailKit.Net.Imap {
 				count = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
 
 				folder?.UpdateDeletedCount ((int) count);
+			} else if (atom.Equals ("DELETED-STORAGE", StringComparison.OrdinalIgnoreCase)) {
+				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
+
+				var size = ParseNumber63 (token, false, GenericItemSyntaxErrorFormat, atom, token);
+
+				folder?.UpdateDeletedStorageSize (size);
 			} else {
 				// This is probably the MAILBOXID value which is multiple tokens and can't be handled here.
 				return false;
@@ -4128,9 +4134,14 @@ namespace MailKit.Net.Imap {
 					flags += "SIZE ";
 			}
 
-			if (ProtocolVersion == ImapProtocolVersion.IMAP4rev2) {
+			if (ProtocolVersion == ImapProtocolVersion.IMAP4rev2 || Capabilities.Contains (ImapCapability.QuotaResourceMessage)) {
 				if ((items & StatusItems.Deleted) != 0)
 					flags += "DELETED ";
+			}
+
+			if (Capabilities.Contains (ImapCapability.QuotaResourceStorage)) {
+				if ((items & StatusItems.DeletedStorage) != 0)
+					flags += "DELETED-STORAGE ";
 			}
 
 			if (Capabilities.Contains (ImapCapability.ObjectID)) {

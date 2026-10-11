@@ -305,6 +305,18 @@ namespace MailKit {
 		int? DeletedCount { get; }
 
 		/// <summary>
+		/// Get the amount of storage that would be reclaimed by expunging the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the amount of storage, in kilobytes, that would be reclaimed by expunging the messages in the
+		/// folder that have the <see cref="MessageFlags.Deleted"/> flag set.</para>
+		/// <note type="note">If the value is not set, then the amount of storage is unknown. This value is only
+		/// set when the folder's status is queried using <see cref="StatusItems.DeletedStorage"/>.</note>
+		/// </remarks>
+		/// <value>The amount of storage that would be reclaimed by expunging the folder, in kilobytes.</value>
+		long? DeletedStorageSize { get; }
+
+		/// <summary>
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>
@@ -8820,6 +8832,14 @@ namespace MailKit {
 		/// Emitted when the <see cref="DeletedCount"/> property changes.
 		/// </remarks>
 		event EventHandler<EventArgs> DeletedCountChanged;
+
+		/// <summary>
+		/// Occurs when the amount of storage that would be reclaimed by expunging the folder changes.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the <see cref="DeletedStorageSize"/> property changes.
+		/// </remarks>
+		event EventHandler<EventArgs> DeletedStorageSizeChanged;
 
 		/// <summary>
 		/// Occurs when the message count changes.

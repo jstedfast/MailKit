@@ -41,6 +41,11 @@ namespace UnitTests {
 			Assert.Throws<ArgumentException> (() => new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.Size, SortOrder.Ascending));
 			Assert.Throws<ArgumentException> (() => new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.PrivateSize, SortOrder.Ascending));
 			Assert.Throws<ArgumentException> (() => new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedSize, SortOrder.Ascending));
+
+			Assert.Throws<ArgumentNullException> (() => new FolderQuotaResource (null, 0, 0));
+			Assert.Throws<ArgumentException> (() => new FolderQuotaResource (string.Empty, 0, 0));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new FolderQuotaResource ("STORAGE", -1, 0));
+			Assert.Throws<ArgumentOutOfRangeException> (() => new FolderQuotaResource ("STORAGE", 0, -1));
 		}
 	}
 }

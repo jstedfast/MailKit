@@ -85,8 +85,12 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   enum, so multiple features can be enabled with a single `ENABLE` command, e.g.
   `client.Enable (ImapFeatures.QuickResync | ImapFeatures.UTF8Accept)`. `EnableUTF8 ()` has also been removed
   from `IImapClient`, and `EnableQuickResync ()` has been removed from `IMailStore` and `MailStore`.
-* Added an `IMailFolder.DeletedCount` property and a `DeletedCountChanged` event. Custom `IMailFolder`
-  implementations that do not derive from `MailFolder` will need to implement them.
+* Added `IMailFolder.DeletedCount` and `DeletedStorageSize` properties and `DeletedCountChanged` and
+  `DeletedStorageSizeChanged` events. Custom `IMailFolder` implementations that do not derive from
+  `MailFolder` will need to implement them.
+* `ImapFolder.SetQuota ()` and `SetQuotaAsync ()` now throw `NotSupportedException` if the server
+  advertises rfc9208 quota resources (`QUOTA=RES-*`) but not the `QUOTASET` capability, since such servers
+  do not support the `SETQUOTA` command.
 * `SmtpClient` now throws the new `SmtpServiceNotAuthenticatedException` (which derives from
   `ServiceNotAuthenticatedException`) when the server responds with `530 Authentication required`.
   Code that catches `ServiceNotAuthenticatedException` is unaffected, but code that checks for the exact
@@ -252,7 +256,15 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   uses UTF-8 mailbox names and assumes the extensions implied by IMAP4rev2.
 * Added `StatusItems.Deleted`, which updates the new `IMailFolder.DeletedCount` property (and emits the
   `DeletedCountChanged` event) with the number of messages marked `\Deleted`. This is only supported when
-  IMAP4rev2 is in use.
+  IMAP4rev2 is in use or when the server advertises `QUOTA=RES-MESSAGE`.
+* Added `StatusItems.DeletedStorage`, which updates the new `IMailFolder.DeletedStorageSize` property (and
+  emits the `DeletedStorageSizeChanged` event) with the amount of storage, in kilobytes, that expunging the
+  folder would reclaim. This is only supported when the server advertises `QUOTA=RES-STORAGE` (rfc9208).
+* Added support for the rfc9208 `MAILBOX` and `ANNOTATION-STORAGE` quota resources via the new
+  `FolderQuota.MailboxLimit`, `CurrentMailboxCount`, `AnnotationStorageLimit` and
+  `CurrentAnnotationStorageSize` properties. All quota resources reported by the server (including
+  unrecognized ones) are also available via the new `FolderQuota.Resources` dictionary of
+  `FolderQuotaResource` values.
 * Added `ProxyProtocolException (string, ProtocolErrorType)` and
   `ProxyProtocolException (string, ProtocolErrorType, Exception)` constructors.
 * Added more context to SMTP exceptions to make it easier to diagnose why sending a message failed
@@ -330,6 +342,9 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 * Fixed `ImapFolder.GetQuota ()` to preserve IMAP quota values larger than 32 bits (such as those
   reported by Gmail). Previously, these values were silently truncated to their lower 32 bits. Values
   larger than `long.MaxValue` are now clamped to `long.MaxValue`.
+* Fixed `ImapFolder.SetQuota (null, null)` to send `SETQUOTA <root> ()` (which removes all limits).
+  Previously, it sent a malformed `SETQUOTA <root> )` command.
+* Fixed `ImapFolder` to correctly parse `QUOTA` responses with an empty list of resources.
 
 ## MailKit 4.18.1 (2026-09-27)
 

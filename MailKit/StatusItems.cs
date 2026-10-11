@@ -89,8 +89,17 @@ namespace MailKit {
 		/// Updates <see cref="IMailFolder.DeletedCount"/>.
 		/// </summary>
 		/// <remarks>
-		/// This item is only supported by IMAP servers that use the IMAP4rev2 protocol.
+		/// This item is only supported by IMAP servers that use the IMAP4rev2 protocol or that
+		/// advertise the <c>QUOTA=RES-MESSAGE</c> capability.
 		/// </remarks>
 		Deleted        = 1 << 9,
+
+		/// <summary>
+		/// Updates <see cref="IMailFolder.DeletedStorageSize"/>.
+		/// </summary>
+		/// <remarks>
+		/// This item is only supported by IMAP servers that advertise the <c>QUOTA=RES-STORAGE</c> capability.
+		/// </remarks>
+		DeletedStorage = 1 << 10,
 	}
 }

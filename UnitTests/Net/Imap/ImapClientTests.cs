@@ -4581,6 +4581,148 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static List<ImapReplayCommand> CreateQuotaRfc9208Commands ()
+		{
+			const string rfc9208 = "IMAP4rev1 NAMESPACE LIST-EXTENDED SPECIAL-USE QUOTA QUOTA=RES-STORAGE QUOTA=RES-MESSAGE QUOTA=RES-MAILBOX QUOTA=RES-ANNOTATION-STORAGE";
+
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", Encoding.ASCII.GetBytes ("* OK [CAPABILITY IMAP4rev1 AUTH=PLAIN] Service Ready\r\n")),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", Encoding.ASCII.GetBytes ($"A00000000 OK [CAPABILITY {rfc9208}] Logged in\r\n")),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", Encoding.ASCII.GetBytes ("* NAMESPACE ((\"\" \"/\")) NIL NIL\r\nA00000001 OK Namespace completed.\r\n")),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("* LIST (\\Subscribed \\HasNoChildren) \"/\" INBOX\r\nA00000002 OK List completed.\r\n")),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", Encoding.ASCII.GetBytes ("A00000003 OK List completed.\r\n")),
+				new ImapReplayCommand ("A00000004 GETQUOTAROOT INBOX\r\n", Encoding.ASCII.GetBytes ("* QUOTAROOT INBOX \"\"\r\n* QUOTA \"\" (STORAGE 10 512 MESSAGE 2 100 MAILBOX 3 50 ANNOTATION-STORAGE 1 64 X-VENDOR 7 9)\r\nA00000004 OK Getquotaroot completed.\r\n")),
+				new ImapReplayCommand ("A00000005 STATUS INBOX (DELETED DELETED-STORAGE)\r\n", Encoding.ASCII.GetBytes ("* STATUS INBOX (DELETED 2 DELETED-STORAGE 8)\r\nA00000005 OK Status completed.\r\n")),
+				new ImapReplayCommand ("A00000006 NOOP\r\n", Encoding.ASCII.GetBytes ($"* CAPABILITY {rfc9208} QUOTASET\r\nA00000006 OK NOOP completed.\r\n")),
+				new ImapReplayCommand ("A00000007 SETQUOTA INBOX ()\r\n", Encoding.ASCII.GetBytes ("* QUOTA INBOX ()\r\nA00000007 OK Setquota completed.\r\n")),
+				new ImapReplayCommand ("A00000008 SETQUOTA INBOX (STORAGE 1024)\r\n", Encoding.ASCII.GetBytes ("* QUOTA INBOX (STORAGE 10 1024)\r\nA00000008 OK Setquota completed.\r\n")),
+				new ImapReplayCommand ("A00000009 LOGOUT\r\n", Encoding.ASCII.GetBytes ("* BYE Logging out.\r\nA00000009 OK Logout completed.\r\n"))
+			};
+		}
+
+		static void AssertQuotaRfc9208 (FolderQuota quota)
+		{
+			Assert.That (quota.QuotaRoot, Is.Not.Null, "QuotaRoot");
+			Assert.That (quota.CurrentStorageSize, Is.EqualTo (10), "CurrentStorageSize");
+			Assert.That (quota.StorageLimit, Is.EqualTo (512), "StorageLimit");
+			Assert.That (quota.CurrentMessageCount, Is.EqualTo (2), "CurrentMessageCount");
+			Assert.That (quota.MessageLimit, Is.EqualTo (100), "MessageLimit");
+			Assert.That (quota.CurrentMailboxCount, Is.EqualTo (3), "CurrentMailboxCount");
+			Assert.That (quota.MailboxLimit, Is.EqualTo (50), "MailboxLimit");
+			Assert.That (quota.CurrentAnnotationStorageSize, Is.EqualTo (1), "CurrentAnnotationStorageSize");
+			Assert.That (quota.AnnotationStorageLimit, Is.EqualTo (64), "AnnotationStorageLimit");
+
+			Assert.That (quota.Resources, Has.Count.EqualTo (5), "Resources.Count");
+			Assert.That (quota.Resources.ContainsKey ("storage"), Is.True, "Resources is case-insensitive");
+			Assert.That (quota.Resources["X-VENDOR"].Name, Is.EqualTo ("X-VENDOR"), "X-VENDOR Name");
+			Assert.That (quota.Resources["X-VENDOR"].Usage, Is.EqualTo (7), "X-VENDOR Usage");
+			Assert.That (quota.Resources["X-VENDOR"].Limit, Is.EqualTo (9), "X-VENDOR Limit");
+		}
+
+		[Test]
+		public void TestQuotaRfc9208 ()
+		{
+			var commands = CreateQuotaRfc9208Commands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					client.Connect (new ImapReplayStream (commands, false), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					client.Authenticate ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var inbox = client.Inbox;
+
+				AssertQuotaRfc9208 (inbox.GetQuota ());
+
+				// rfc9208 servers must advertise QUOTASET in order to support SETQUOTA
+				Assert.Throws<NotSupportedException> (() => inbox.SetQuota (null, 1024));
+
+				int changed = 0;
+				inbox.DeletedStorageSizeChanged += (sender, e) => changed++;
+
+				inbox.Status (StatusItems.Deleted | StatusItems.DeletedStorage);
+				Assert.That (inbox.DeletedCount, Is.EqualTo (2), "DeletedCount");
+				Assert.That (inbox.DeletedStorageSize, Is.EqualTo (8), "DeletedStorageSize");
+				Assert.That (changed, Is.EqualTo (1), "DeletedStorageSizeChanged");
+
+				client.NoOp ();
+				Assert.That (client.Capabilities.Contains (ImapCapability.QuotaSet), Is.True, "QUOTASET");
+
+				var quota = inbox.SetQuota (null, null);
+				Assert.That (quota.QuotaRoot, Is.EqualTo (inbox), "SETQUOTA () QuotaRoot");
+				Assert.That (quota.Resources, Is.Empty, "SETQUOTA () Resources");
+				Assert.That (quota.StorageLimit, Is.Null, "SETQUOTA () StorageLimit");
+
+				quota = inbox.SetQuota (null, 1024);
+				Assert.That (quota.CurrentStorageSize, Is.EqualTo (10), "SETQUOTA CurrentStorageSize");
+				Assert.That (quota.StorageLimit, Is.EqualTo (1024), "SETQUOTA StorageLimit");
+				Assert.That (quota.MessageLimit, Is.Null, "SETQUOTA MessageLimit");
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestQuotaRfc9208Async ()
+		{
+			var commands = CreateQuotaRfc9208Commands ();
+
+			using (var client = new ImapClient () { TagPrefix = 'A' }) {
+				try {
+					await client.ConnectAsync (new ImapReplayStream (commands, true), "localhost", 143, SecureSocketOptions.None);
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Connect: {ex}");
+				}
+
+				client.AuthenticationMechanisms.Clear ();
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ($"Did not expect an exception in Authenticate: {ex}");
+				}
+
+				var inbox = client.Inbox;
+
+				AssertQuotaRfc9208 (await inbox.GetQuotaAsync ());
+
+				// rfc9208 servers must advertise QUOTASET in order to support SETQUOTA
+				Assert.ThrowsAsync<NotSupportedException> (() => inbox.SetQuotaAsync (null, 1024));
+
+				int changed = 0;
+				inbox.DeletedStorageSizeChanged += (sender, e) => changed++;
+
+				await inbox.StatusAsync (StatusItems.Deleted | StatusItems.DeletedStorage);
+				Assert.That (inbox.DeletedCount, Is.EqualTo (2), "DeletedCount");
+				Assert.That (inbox.DeletedStorageSize, Is.EqualTo (8), "DeletedStorageSize");
+				Assert.That (changed, Is.EqualTo (1), "DeletedStorageSizeChanged");
+
+				await client.NoOpAsync ();
+				Assert.That (client.Capabilities.Contains (ImapCapability.QuotaSet), Is.True, "QUOTASET");
+
+				var quota = await inbox.SetQuotaAsync (null, null);
+				Assert.That (quota.QuotaRoot, Is.EqualTo (inbox), "SETQUOTA () QuotaRoot");
+				Assert.That (quota.Resources, Is.Empty, "SETQUOTA () Resources");
+				Assert.That (quota.StorageLimit, Is.Null, "SETQUOTA () StorageLimit");
+
+				quota = await inbox.SetQuotaAsync (null, 1024);
+				Assert.That (quota.CurrentStorageSize, Is.EqualTo (10), "SETQUOTA CurrentStorageSize");
+				Assert.That (quota.StorageLimit, Is.EqualTo (1024), "SETQUOTA StorageLimit");
+				Assert.That (quota.MessageLimit, Is.Null, "SETQUOTA MessageLimit");
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
 		static MimeMessage CreateThreadableMessage (string subject, string msgid, string references, DateTimeOffset date)
 		{
 			var message = new MimeMessage ();

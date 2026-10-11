@@ -419,6 +419,20 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the amount of storage that would be reclaimed by expunging the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the amount of storage, in kilobytes, that would be reclaimed by expunging the messages in the
+		/// folder that have the <see cref="MessageFlags.Deleted"/> flag set.</para>
+		/// <note type="note">If the value is not set, then the amount of storage is unknown. This value is only
+		/// set when the folder's status is queried using <see cref="StatusItems.DeletedStorage"/>.</note>
+		/// </remarks>
+		/// <value>The amount of storage that would be reclaimed by expunging the folder, in kilobytes.</value>
+		public long? DeletedStorageSize {
+			get; protected set;
+		}
+
+		/// <summary>
 		/// Get the index of the first unread message in the folder.
 		/// </summary>
 		/// <remarks>
@@ -9551,6 +9565,25 @@ namespace MailKit {
 		protected virtual void OnDeletedCountChanged ()
 		{
 			DeletedCountChanged?.Invoke (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the amount of storage that would be reclaimed by expunging the folder changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="DeletedStorageSizeChanged"/> event is emitted whenever the <see cref="DeletedStorageSize"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs>? DeletedStorageSizeChanged;
+
+		/// <summary>
+		/// Raise the deleted storage size changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the deleted storage size changed event.
+		/// </remarks>
+		protected virtual void OnDeletedStorageSizeChanged ()
+		{
+			DeletedStorageSizeChanged?.Invoke (this, EventArgs.Empty);
 		}
 
 		/// <summary>

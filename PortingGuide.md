@@ -347,7 +347,7 @@ also affects mocking frameworks, which can't mock extension methods.
 | `IMailFolder`/`MailFolder` | `CopyTo (..., IMailFolder destination, ...)`, `MoveTo (..., IMailFolder destination, ...)` | `CopyTo (IList<UniqueId>/IList<int>, ICopyRequest, ...)`, `MoveTo (IList<UniqueId>/IList<int>, IMoveRequest, ...)` |
 | `IMailFolder`/`MailFolder` | `Expunge (IList<UniqueId>, ...)` | `Expunge (IList<UniqueId>, IExpungeRequest, ...)` |
 | `IMailFolder`/`MailFolder` | `Store (..., IList<Annotation>, ...)` and `Store (..., ulong modseq, IList<Annotation>, ...)` | `Store (..., IStoreAnnotationsRequest, ...)` |
-| `IMailFolder` | none | `DeletedCount` property and `DeletedCountChanged` event (already provided by `MailFolder`) |
+| `IMailFolder` | none | `DeletedCount` and `DeletedStorageSize` properties and `DeletedCountChanged` and `DeletedStorageSizeChanged` events (already provided by `MailFolder`) |
 | `IStoreRequest`, `IAppendRequest` (and derived interfaces) | none | `OnStarted ()` and `OnCompleted ()` methods (no-ops in the built-in classes) |
 | `IMailService` (and `IMailStore`, `IMailTransport`, `IMailSpool`) | none | `ValueTask DisposeAsync ()` (already provided by `MailService`) |
 | `IImapClient` | none | `ImapIdleSession CreateIdleSession (ImapIdleOptions? options = null)` (already provided by `ImapClient`) |
@@ -473,6 +473,8 @@ These are not required to port, but they often simplify code that worked around 
   `ExpungeRequest`, `StoreFlagsRequest`, `StoreLabelsRequest`, `StoreAnnotationsRequest`,
   `AppendRequest`, `ReplaceRequest` and `SendRequest` to observe exactly what the server applied.
 * `ImapFeatures.IMAP4rev2` and `StatusItems.Deleted`/`IMailFolder.DeletedCount`.
+* `StatusItems.DeletedStorage`/`IMailFolder.DeletedStorageSize` and `FolderQuota.Resources` (plus the
+  `MAILBOX` and `ANNOTATION-STORAGE` limits) for rfc9208 quota servers.
 * `await using var client = new ImapClient ();` now works because `MailService` implements
   `IAsyncDisposable`. It does not log out, so keep calling `DisconnectAsync (true)` first.
 * `ImapIdleSession` (`client.CreateIdleSession ()`) instead of a hand-written `Idle ()` loop with
