@@ -446,6 +446,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
@@ -467,6 +468,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
@@ -488,6 +490,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
@@ -506,6 +509,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
@@ -527,6 +531,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
@@ -548,6 +553,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>
@@ -569,6 +575,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="SslConnectionInformation"/>

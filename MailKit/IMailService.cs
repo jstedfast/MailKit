@@ -86,6 +86,7 @@ namespace MailKit {
 		/// <note type="note">This property should be set before calling any of the
 		/// <a href="Overload_MailKit_IMailService_Connect.htm">Connect</a> or
 		/// <a href="Overload_MailKit_IMailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
 		CipherSuitesPolicy? SslCipherSuitesPolicy { get; set; }
@@ -95,6 +96,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		TlsCipherSuite? SslCipherSuite { get; }
@@ -248,6 +250,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
 		CipherAlgorithmType? SslCipherAlgorithm { get; }
@@ -259,6 +262,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
 		int? SslCipherStrength { get; }
@@ -270,6 +274,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
 		HashAlgorithmType? SslHashAlgorithm { get; }
@@ -281,6 +286,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
 		int? SslHashStrength { get; }
@@ -292,6 +298,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
 		ExchangeAlgorithmType? SslKeyExchangeAlgorithm { get; }
@@ -303,6 +310,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
 		int? SslKeyExchangeStrength { get; }

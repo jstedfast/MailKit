@@ -18,15 +18,63 @@
       <title>Adding MailKit to your project via NuGet</title>
       <content>
         <para>
-          In <application>Visual Studio</application>'s
+          Using the <application>.NET CLI</application>, enter the following command from within
+          your project directory:
+        </para>
+        <para>
+          <command>dotnet add package MailKit</command>
+        </para>
+        <para>
+          Or, in <application>Visual Studio</application>'s
           <externalLink>
             <linkText>Package Manager Console</linkText>
-            <linkUri>http://docs.nuget.org/docs/start-here/using-the-package-manager-console</linkUri>
+            <linkUri>https://learn.microsoft.com/nuget/consume-packages/install-use-packages-powershell</linkUri>
+            <linkTarget>_blank</linkTarget>
           </externalLink>, enter the following command:
         </para>
         <para>
           <command>Install-Package MailKit</command>
         </para>
+      </content>
+    </section>
+
+    <section address="Cryptography">
+      <title>Adding S/MIME, OpenPGP, DKIM and ARC support</title>
+      <content>
+        <para>
+          As of MimeKit 5.0, MimeKit's S/MIME, PGP/MIME, DKIM, ARC and DMARC support lives in the
+          separate <application>MimeKit.Cryptography</application> package. If your application
+          needs any of these features, you'll also need to add a reference to it:
+        </para>
+        <para>
+          <command>dotnet add package MimeKit.Cryptography</command>
+        </para>
+        <para>
+          In order for the parser to create cryptographic MIME entities such as
+          <codeEntityReference>T:MimeKit.Cryptography.MultipartSigned</codeEntityReference>,
+          <codeEntityReference>T:MimeKit.Cryptography.MultipartEncrypted</codeEntityReference> and
+          <codeEntityReference>T:MimeKit.Cryptography.ApplicationPkcs7Mime</codeEntityReference>
+          (instead of a plain <codeEntityReference>T:MimeKit.Multipart</codeEntityReference> or
+          <codeEntityReference>T:MimeKit.MimePart</codeEntityReference>), the cryptography module
+          must be initialized before any messages are parsed. The best place to do this is during
+          your application's startup:
+        </para>
+        <code language="c#">
+          using MimeKit.Cryptography;
+
+          CryptographyModule.Initialize ();
+        </code>
+        <alert class="note">
+          <para>
+            The cryptography module is also initialized automatically the first time the
+            <codeEntityReference>T:MimeKit.Cryptography.CryptographyContext</codeEntityReference>
+            class is used (for example, when calling
+            <codeEntityReference autoUpgrade="true">Overload:MimeKit.Cryptography.CryptographyContext.Register</codeEntityReference>),
+            and it is safe to call
+            <codeEntityReference>M:MimeKit.Cryptography.CryptographyModule.Initialize</codeEntityReference>
+            more than once.
+          </para>
+        </alert>
       </content>
     </section>
 
@@ -59,8 +107,8 @@
         <list class="bullet">
           <listItem>
             <para>
-              <application>MailKit.sln</application> includes projects for .NET 4.5.2, .NET 4.6, .NET 4.7,
-              .NET 4.8, .NET 5.0, .NET 6.0, .NETStandard 2.0, .NETStandard 2.1, and the unit tests.
+              <application>MailKit.sln</application> includes projects for .NET Framework 4.6.2, 4.7 and 4.8,
+              .NETStandard 2.0 and 2.1, .NET 8.0, .NET 10.0, and the unit tests.
             </para>
           </listItem>
           <listItem>
@@ -72,9 +120,8 @@
         </list>
         <para>
           Once you've opened the appropriate <application>MailKit</application> solution
-          file in either <application>Xamarin Studio</application> or
-          <application>Visual Studio</application> (either will work), you can
-          choose the <application>Debug</application> or <application>Release</application>
+          file in <application>Visual Studio</application> (or any other IDE that supports
+          SDK-style projects), you can choose the <application>Debug</application> or <application>Release</application>
           build configuration and then build.
         </para>
       </content>

@@ -80,6 +80,7 @@ namespace MailKit.Security {
 		/// </summary>
 		/// <remarks>
 		/// Creates a new NTLM SASL context using the default network credentials.
+		/// <note type="note">This constructor is not available on .NET Framework 4.6.2 or 4.7.</note>
 		/// </remarks>
 		public SaslMechanismNtlm () : this (CredentialCache.DefaultNetworkCredentials)
 		{

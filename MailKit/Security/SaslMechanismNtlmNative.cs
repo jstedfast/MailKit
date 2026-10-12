@@ -48,6 +48,7 @@ namespace MailKit.Security {
 	/// (<a href="T_MailKit_Security_SaslMechanismGssapi.htm">GSSAPI</a>)
 	/// or modern alternatives.</para>
 	/// </note>
+	/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 	/// </remarks>
 	public class SaslMechanismNtlmNative : SaslMechanismNegotiateBase
 	{

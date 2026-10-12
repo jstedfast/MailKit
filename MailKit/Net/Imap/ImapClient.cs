@@ -312,6 +312,7 @@ namespace MailKit.Net.Imap {
 		/// <para>If the IMAP server supports the <see cref="ImapCapability.Compress"/> extension,
 		/// it is possible at any point after connecting to enable compression to reduce network
 		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
+		/// <note type="note">This method is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -701,6 +702,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
@@ -722,6 +724,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
@@ -743,6 +746,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
@@ -761,6 +765,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
@@ -782,6 +787,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
@@ -803,6 +809,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>
@@ -824,6 +831,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="SslConnectionInformation"/>

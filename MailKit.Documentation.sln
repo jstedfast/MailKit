@@ -7,6 +7,8 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit", "submodules\MimeKit\MimeKit\MimeKit.csproj", "{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MimeKit.Cryptography", "submodules\MimeKit\MimeKit.Cryptography\MimeKit.Cryptography.csproj", "{67D6AC33-1EC3-7714-8649-A2710C6DFCE0}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailKit", "MailKit\MailKit.csproj", "{E543A427-93DE-4E65-ADF2-44412E440FB1}"
 EndProject
 Global
@@ -22,6 +24,10 @@ Global
 		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAEC8A91-6983-4ED9-A414-09C6B65B13BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67D6AC33-1EC3-7714-8649-A2710C6DFCE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67D6AC33-1EC3-7714-8649-A2710C6DFCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67D6AC33-1EC3-7714-8649-A2710C6DFCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67D6AC33-1EC3-7714-8649-A2710C6DFCE0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E543A427-93DE-4E65-ADF2-44412E440FB1}.Release|Any CPU.ActiveCfg = Release|Any CPU

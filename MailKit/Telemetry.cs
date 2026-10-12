@@ -38,6 +38,7 @@ namespace MailKit {
 	/// </summary>
 	/// <remarks>
 	/// Telemetry constants for MailKit.
+	/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 	/// </remarks>
 	public static class Telemetry
 	{
@@ -46,6 +47,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The socket-level telemetry information.
+		/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		public static class Socket
 		{
@@ -108,6 +110,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The SmtpClient-level telemetry information.
+		/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		public static class SmtpClient
 		{
@@ -193,6 +196,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The Pop3Client-level telemetry information.
+		/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		public static class Pop3Client
 		{
@@ -278,6 +282,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The ImapClient-level telemetry information.
+		/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		public static class ImapClient
 		{

@@ -18,34 +18,49 @@
       <title>Creating your own S/MIME Context</title>
       <content>
         <para>
-          Before you can begin using MimeKit's S/MIME support, you will need to decide which
-          database to use for certificate storage.
+          Before you can begin using MimeKit's S/MIME support, you will need to add a reference to the
+          <application>MimeKit.Cryptography</application> package and decide which S/MIME
+          implementation to use.
         </para>
         <para>
-          If you are targeting any of the <application>Xamarin</application> platforms
-          (or Linux), you won't need to do anything (although you certainly can if you want to)
-          because, by default, MimeKit will automatically use the
-          <application>Mono.Data.Sqlite</application> binding to
-          <externalLink>
-            <linkText>SQLite</linkText>
-            <linkUri>https://www.sqlite.org/</linkUri>
-            <linkTarget>_blank</linkTarget>
-          </externalLink>.
+          If your application runs exclusively on <application>Windows</application>, you'll probably
+          want to use the
+          <codeEntityReference>T:MimeKit.Cryptography.WindowsSecureMimeContext</codeEntityReference>
+          backend which is based on the Windows Certificate Store and uses Microsoft's built-in
+          S/MIME implementation.
         </para>
         <para>
-          If you are, however, on any of the <application>Windows</application> platforms,
-          you'll need to pick a <codeEntityReference>N:System.Data</codeEntityReference>
-          provider such as
-          <externalLink>
-            <linkText>System.Data.SQLite</linkText>
-            <linkUri>https://www.nuget.org/packages/System.Data.SQLite</linkUri>
-            <linkTarget>_blank</linkTarget>
-          </externalLink>. Once you've made your choice and installed it (via NuGet or however),
-          you'll need to implement your own
-          <codeEntityReference>T:MimeKit.Cryptography.SecureMimeContext</codeEntityReference>
-          subclass. Luckily, it's very simple to do. Assuming you've chosen
-          <application>System.Data.SQLite</application>, here's how you'd implement your own
-          <codeEntityReference>T:MimeKit.Cryptography.SecureMimeContext</codeEntityReference>
+          On the other hand, if your application or service runs on other platforms such as
+          Linux, macOS, iOS, or Android or is expected to run cross-platform, then you will need
+          to use one of the BouncyCastle-based S/MIME context classes:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              The <codeEntityReference>T:MimeKit.Cryptography.TemporarySecureMimeContext</codeEntityReference>
+              backend uses an in-memory certificate store and will require your application to load
+              all of the certificates it expects to use into the context before it can be used.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              The <codeEntityReference>T:MimeKit.Cryptography.DefaultSecureMimeContext</codeEntityReference>
+              backend is designed to use a SQL database for certificate storage such as
+              <externalLink>
+                <linkText>System.Data.SQLite</linkText>
+                <linkUri>https://www.nuget.org/packages/System.Data.SQLite</linkUri>
+                <linkTarget>_blank</linkTarget>
+              </externalLink>.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          If you opt for using the
+          <codeEntityReference>T:MimeKit.Cryptography.DefaultSecureMimeContext</codeEntityReference>
+          backend, you'll need to implement your own subclass. Luckily, it's very simple to do.
+          Assuming you've chosen <application>System.Data.SQLite</application>, here's how you'd
+          implement your own
+          <codeEntityReference>T:MimeKit.Cryptography.DefaultSecureMimeContext</codeEntityReference>
           class:
         </para>
         <code language="c#" source="Examples\SMimeExamples.cs" region="MySecureMimeContext"/>
@@ -56,6 +71,14 @@
         <para>
           Now you are ready to encrypt, decrypt, sign and verify messages using S/MIME!
         </para>
+        <alert class="note">
+          <para>
+            If you choose to use the
+            <codeEntityReference>T:MimeKit.Cryptography.WindowsSecureMimeContext</codeEntityReference>
+            or <codeEntityReference>T:MimeKit.Cryptography.TemporarySecureMimeContext</codeEntityReference>
+            backend, you should register that class instead.
+          </para>
+        </alert>
       </content>
     </section>
 

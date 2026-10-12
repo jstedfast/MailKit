@@ -713,6 +713,56 @@ var attachments = message.BodyParts.OfType&lt;MimePart&gt; ().Where (part => !st
       </content>
     </section>
     
+    <section address="LoadMessages">
+      <title>How do I parse messages?</title>
+      <content>
+        <para>
+          One of the more common operations that MimeKit is meant for is parsing email messages from arbitrary
+          streams. There are two ways of accomplishing this task.
+        </para>
+        <para>
+          The first way is to use one of the <codeEntityReference>Overload:MimeKit.MimeMessage.Load</codeEntityReference>
+          methods:
+        </para>
+        <code language="c#">
+// Load a MimeMessage from a stream
+var message = MimeMessage.Load (stream);
+        </code>
+        <para>
+          Or you can load a message from a file path:
+        </para>
+        <code language="c#">
+// Load a MimeMessage from a file path
+var message = MimeMessage.Load ("message.eml");
+        </code>
+        <para>
+          The second way is to use the <codeEntityReference>T:MimeKit.MimeParser</codeEntityReference> class. For
+          the most part, using the <literal>MimeParser</literal> directly is not necessary unless you wish to parse
+          a Unix mbox file stream. However, this is how you would do it:
+        </para>
+        <code language="c#">
+// Load a MimeMessage from a stream
+var parser = new MimeParser (stream, MimeFormat.Entity);
+var message = parser.ParseMessage ();
+        </code>
+        <para>
+          For Unix mbox file streams, you would use the parser like this:
+        </para>
+        <code language="c#">
+// Load every message from a Unix mbox
+var parser = new MimeParser (stream, MimeFormat.Mbox);
+while (!parser.IsEndOfStream) {
+    var message = parser.ParseMessage ();
+
+    // do something with the message
+}
+        </code>
+        <para>
+          For more details, see <link xlink:href="Parsing-Messages" />.
+        </para>
+      </content>
+    </section>
+    
     <section address="SaveMessages">
       <title>How do I save messages?</title>
       <content>
@@ -1026,21 +1076,6 @@ message.WriteTo (options, stream);
       </content>
     </section>
 
-    <section address="UnreadMessages">
-      <title>How do I get all of the unread messages in a folder?</title>
-      <content>
-        <para>
-          The easiest way is to search for all of the messages that do not have the
-          <literal>\Seen</literal> flag on them, like so:
-        </para>
-        <code language="c#">
-foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
-    var message = folder.GetMessage (uid);
-}
-        </code>
-      </content>
-    </section>
-
     <section address="ParseWebRequestFormData">
       <title>How would I parse multipart/form-data from an HTTP web request?</title>
       <content>
@@ -1067,6 +1102,541 @@ foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
           approach:
         </para>
         <code language="c#" source="Examples\MultipartFormDataExamples.cs" region="ParseMultipartFormDataComplex"/>
+      </content>
+    </section>
+
+    <section address="ImapUnreadCount">
+      <title>How do I get the number of unread messages in a folder?</title>
+      <content>
+        <para>
+          If the folder is open (via <codeEntityReference>Overload:MailKit.Net.Imap.ImapFolder.Open</codeEntityReference>),
+          then the <codeEntityReference qualifyHint="true">P:MailKit.MailFolder.Unread</codeEntityReference> property
+          will be kept up to date (at least as-of the latest command issued to the server).
+        </para>
+        <para>
+          If the folder <legacyItalic>isn't</legacyItalic> open, then you will need to query the unread state of the
+          folder using the
+          <codeEntityReference qualifyHint="true">M:MailKit.Net.Imap.ImapFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)</codeEntityReference>
+          method with the appropriate <codeEntityReference>T:MailKit.StatusItems</codeEntityReference> flag(s).
+        </para>
+        <para>
+          For example, to get the total <legacyItalic>and</legacyItalic> unread counts, you can do this:
+        </para>
+        <code language="c#">
+folder.Status (StatusItems.Count | StatusItems.Unread);
+
+int total = folder.Count;
+int unread = folder.Unread;
+        </code>
+      </content>
+    </section>
+
+    <section address="UnreadMessages">
+      <title>How do I get all of the unread messages in a folder?</title>
+      <content>
+        <para>
+          The easiest way is to search for all of the messages that do not have the
+          <literal>\Seen</literal> flag on them, like so:
+        </para>
+        <code language="c#">
+foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
+    var message = folder.GetMessage (uid);
+}
+        </code>
+      </content>
+    </section>
+
+    <section address="ImapSearchDateRange">
+      <title>How do I search for messages delivered between two dates?</title>
+      <content>
+        <para>
+          The obvious solution is:
+        </para>
+        <code language="c#">
+var query = SearchQuery.DeliveredAfter (dateRange.BeginDate)
+    .And (SearchQuery.DeliveredBefore (dateRange.EndDate));
+var results = folder.Search (query);
+        </code>
+        <para>
+          However, it has been reported that this doesn't work reliably depending on the IMAP server
+          implementation.
+        </para>
+        <para>
+          If you find that this query doesn't get the expected results for your IMAP server, here's another
+          solution that should always work:
+        </para>
+        <code language="c#">
+var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate)
+    .Or (SearchQuery.DeliveredAfter (dateRange.EndDate)));
+var results = folder.Search (query);
+        </code>
+      </content>
+    </section>
+
+    <section address="ImapClientBusy">
+      <title>What does "The ImapClient is currently busy processing a command." mean?</title>
+      <content>
+        <para>
+          If you get an <codeEntityReference>T:System.InvalidOperationException</codeEntityReference> with the
+          message, "The ImapClient is currently busy processing a command.", it means that you are trying to use
+          the <codeEntityReference>T:MailKit.Net.Imap.ImapClient</codeEntityReference> and/or one of its
+          <codeEntityReference>T:MailKit.Net.Imap.ImapFolder</codeEntityReference>s from multiple threads.
+        </para>
+        <para>
+          To avoid this situation, you'll need to lock the
+          <codeEntityReference qualifyHint="true">P:MailKit.Net.Imap.ImapClient.SyncRoot</codeEntityReference>
+          property when performing operations on the <literal>ImapClient</literal> or any of its folders.
+        </para>
+        <para>
+          For example:
+        </para>
+        <code language="c#">
+lock (client.SyncRoot) {
+    client.NoOp ();
+}
+        </code>
+        <alert class="note">
+          <para>
+            Locking the <literal>SyncRoot</literal> is only necessary when using the synchronous APIs. All
+            <literal>Async</literal> method variants already do this locking for you.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="ImapFolderNotOpen">
+      <title>Why do I get InvalidOperationException: "The folder is not currently open."?</title>
+      <content>
+        <para>
+          If you get this exception, it's probably because you thought you had to open the destination folder
+          that you passed as an argument to one of the
+          <codeEntityReference>Overload:MailKit.IMailFolderExtensions.CopyTo</codeEntityReference> or
+          <codeEntityReference>Overload:MailKit.IMailFolderExtensions.MoveTo</codeEntityReference> methods. When
+          you opened that destination folder, you also inadvertently closed the source folder which is why you
+          are getting this exception.
+        </para>
+        <para>
+          The IMAP server can only have a single folder open at a time. Whenever you open a folder, you
+          automatically close the previously opened folder.
+        </para>
+        <para>
+          When copying or moving messages from one folder to another, you only need to have the source folder
+          open.
+        </para>
+      </content>
+    </section>
+
+    <section address="ImapMoveDoesNotMove">
+      <title>Why doesn't ImapFolder.MoveTo() move the message out of the source folder?</title>
+      <content>
+        <para>
+          If you look at the source code for the <literal>ImapFolder.MoveTo()</literal> method, what you'll
+          notice is that there are several code paths depending on the features that the IMAP server supports.
+        </para>
+        <para>
+          If the IMAP server supports the <literal>MOVE</literal> extension, then MailKit's
+          <literal>MoveTo()</literal> method will use the <literal>MOVE</literal> command. If you are seeing this
+          problem, your server most likely does not support the <literal>MOVE</literal> command.
+        </para>
+        <para>
+          When the IMAP server does not support the <literal>MOVE</literal> command, MailKit has to use the
+          <literal>COPY</literal> command to copy the message(s) to the destination folder. Once the
+          <literal>COPY</literal> command has completed, it will then mark the messages that you asked it to move
+          for deletion by setting the <literal>\Deleted</literal> flag on those messages.
+        </para>
+        <para>
+          If the server supports the <literal>UIDPLUS</literal> extension, then MailKit will attempt to
+          <literal>EXPUNGE</literal> the subset of messages that it just marked for deletion, however, if the
+          <literal>UIDPLUS</literal> extension is not supported by the IMAP server, then it cannot safely expunge
+          just that subset of messages and so it stops there.
+        </para>
+        <para>
+          Chances are that your server supports neither <literal>MOVE</literal> nor <literal>UIDPLUS</literal> and
+          that is why clients like Outlook continue to see the messages in your folder. Outlook does, however,
+          have a setting to show deleted messages with a strikeout (which you have probably disabled).
+        </para>
+        <para>
+          So to answer your question more succinctly: After calling <literal>folder.MoveTo (...);</literal>, if
+          you are confident that the messages marked for deletion should be expunged, call
+          <literal>folder.Expunge ();</literal>
+        </para>
+      </content>
+    </section>
+
+    <section address="ImapMarkAsRead">
+      <title>How do I mark messages as read using IMAP?</title>
+      <content>
+        <para>
+          The way to mark messages as read using the IMAP protocol is to set the <literal>\Seen</literal> flag on
+          the message(s).
+        </para>
+        <para>
+          To do this using MailKit, you will first need to know either the index(es) or the UID(s) of the
+          messages that you would like to set the <literal>\Seen</literal> flag on. Once you have that
+          information, you will want to call one of the
+          <codeEntityReference>Overload:MailKit.IMailFolderExtensions.AddFlags</codeEntityReference> methods on
+          the folder. For example:
+        </para>
+        <code language="c#">
+folder.AddFlags (uids, MessageFlags.Seen, true);
+        </code>
+        <para>
+          To mark messages as unread, you would <legacyItalic>remove</legacyItalic> the <literal>\Seen</literal>
+          flag using one of the
+          <codeEntityReference>Overload:MailKit.IMailFolderExtensions.RemoveFlags</codeEntityReference> methods,
+          like so:
+        </para>
+        <code language="c#">
+folder.RemoveFlags (uids, MessageFlags.Seen, true);
+        </code>
+      </content>
+    </section>
+
+    <section address="ImapFolderResync">
+      <title>How do I re-synchronize the cache for an IMAP folder?</title>
+      <content>
+        <para>
+          Assuming your IMAP server does not support the <literal>QRESYNC</literal> extension (which simplifies
+          this procedure a ton), here is some simple code to illustrate how to go about re-synchronizing your
+          cache with the remote IMAP server.
+        </para>
+        <code language="c#"><![CDATA[
+/// <summary>
+/// Just a simple class to represent the cached information about a message.
+/// </summary>
+class CachedMessageInfo
+{
+    public UniqueId UniqueId;
+    public MessageFlags Flags;
+    public IEnumerable<string> Keywords;
+    public Envelope Envelope;
+    public BodyPart Body;
+}
+
+/// <summary>
+/// Resynchronize the cache with the remote IMAP folder.
+/// </summary>
+/// <param name="folder">The IMAP folder.</param>
+/// <param name="cache">The local cache of message metadata.</param>
+/// <param name="cachedUidValidity">The cached UIDVALIDITY value of the IMAP folder from a previous session.</param>
+static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref uint cachedUidValidity)
+{
+    IList<IMessageSummary> summaries;
+
+    // Step 1: Open the folder.
+
+    // Note: we only need read-only access to update our cache, but depending on
+    // what you plan to do with the folder after resynchronizing, you may want
+    // to open the folder in read-write mode instead.
+    folder.Open (FolderAccess.ReadOnly);
+
+    if (cache.Count > 0) {
+        if (folder.UidValidity == cachedUidValidity) {
+            // Step 2: Remove messages from our cache that no longer exist on the server.
+
+            // get the full list of UIDs on the server...
+            var all = folder.Search (SearchQuery.All);
+
+            // remove any messages from our cache that no longer exist...
+            for (int i = 0; i < cache.Count; i++) {
+                if (!all.Contains (cache[i].UniqueId)) {
+                    cache.RemoveAt (i);
+                    i--;
+                }
+            }
+
+            // Step 3: Sync any flag changes for our cached messages.
+
+            // get a list of known uids... astute observers will note that an easy
+            // optimization to make here would be to merge this loop with the above
+            // loop.
+            var known = new UniqueIdSet (SortOrder.Ascending);
+            for (int i = 0; i < cache.Count; i++)
+                known.Add (cache[i].UniqueId);
+
+            // fetch the flags for our known messages...
+            summaries = folder.Fetch (known, MessageSummaryItems.Flags);
+            for (int i = 0; i < summaries.Count; i++) {
+                // Note: the indexes should match up with our cache, but it wouldn't
+                // hurt to add error checking to make sure. I'm not bothering to here
+                // for simplicity reasons.
+                cache[i].Flags = summaries[i].Flags.Value;
+                cache[i].Keywords = summaries[i].Keywords;
+            }
+        } else {
+            // The UIDVALIDITY of the folder has changed. This means that our entire
+            // cache is obsolete. We need to clear our cache and start from scratch.
+            cachedUidValidity = folder.UidValidity;
+            cache.Clear ();
+        }
+    } else {
+        // We have nothing cached, so just start from scratch.
+        cachedUidValidity = folder.UidValidity;
+    }
+
+    // Step 4: Fetch the messages we don't already know about and add them to our cache.
+
+    summaries = folder.Fetch (cache.Count, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.Flags | MessageSummaryItems.Envelope | MessageSummaryItems.BodyStructure);
+    for (int i = 0; i < summaries.Count; i++) {
+        cache.Add (new CachedMessageInfo {
+            UniqueId = summaries[i].UniqueId,
+            Flags = summaries[i].Flags.Value,
+            Keywords = summaries[i].Keywords,
+            Envelope = summaries[i].Envelope,
+            Body = summaries[i].Body
+        });
+    }
+
+    // Tada! Now we are resynchronized with the server!
+}
+]]></code>
+      </content>
+    </section>
+
+    <section address="Office365SharedMailboxes">
+      <title>How do I log in to a shared mailbox in Office365?</title>
+      <content>
+        <code language="c#">
+var result = await GetPublicClientOAuth2CredentialsAsync ("IMAP", "sharedMailboxName@custom-domain.com");
+
+// Note: We always use result.Account.Username instead of `Username` because the user may have selected an alternative account.
+var oauth2 = new SaslMechanismOAuth2 (result.Account.Username, result.AccessToken);
+
+using (var client = new ImapClient ()) {
+    await client.ConnectAsync ("outlook.office365.com", 993, SecureSocketOptions.SslOnConnect);
+    await client.AuthenticateAsync (oauth2);
+
+    // ...
+
+    await client.DisconnectAsync (true);
+}
+        </code>
+        <alert class="note">
+          <para>
+            The <literal>GetPublicClientOAuth2CredentialsAsync()</literal> method used in this example code
+            snippet can be found in the
+            <externalLink>
+              <linkText>ExchangeOAuth2.md</linkText>
+              <linkUri>https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md#desktop-and-mobile-applications</linkUri>
+              <linkTarget>_blank</linkTarget>
+            </externalLink>
+            documentation.
+          </para>
+          <para>
+            Some users have reported that they need to use
+            <literal>"username@custom-domain.com\sharedMailboxName"</literal> as their username instead of
+            <literal>"sharedMailboxName@custom-domain.com"</literal>.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="SmtpSentFolder">
+      <title>Why doesn't the message show up in the "Sent Mail" folder after sending it?</title>
+      <content>
+        <para>
+          It seems to be a common misunderstanding that messages sent via SMTP will magically show up in the
+          account's "Sent Mail" folder.
+        </para>
+        <para>
+          In order for the message to show up in the "Sent Mail" folder, you will need to append the message to
+          the "Sent Mail" folder yourself because the SMTP protocol does not support doing this automatically.
+        </para>
+        <para>
+          If the "Sent Mail" folder is a local mbox folder, you'll need to append it like this:
+        </para>
+        <code language="c#">
+using (var mbox = File.Open ("C:\\path\\to\\Sent Mail.mbox", FileMode.Append, FileAccess.Write)) {
+    var marker = string.Format ("From MAILER-DAEMON {0}{1}", DateTime.Now.ToString ("ddd MMM d HH:mm:ss yyyy", CultureInfo.InvariantCulture), Environment.NewLine);
+    var bytes = Encoding.ASCII.GetBytes (marker);
+
+    // Write the mbox marker bytes.
+    mbox.Write (bytes, 0, bytes.Length);
+
+    // Write the message, making sure to escape any line that looks like an mbox From-marker.
+    using (var filtered = new FilteredStream (mbox)) {
+        filtered.Add (new MboxFromFilter ());
+        message.WriteTo (filtered);
+        filtered.Flush ();
+    }
+
+    mbox.Flush ();
+}
+        </code>
+        <para>
+          If the "Sent Mail" folder exists on an IMAP server, you would need to do something more like this:
+        </para>
+        <code language="c#">
+using (var client = new ImapClient ()) {
+    client.Connect ("imap.server.com", 993, SecureSocketOptions.SslOnConnect);
+    client.Authenticate ("username", "password");
+
+    IMailFolder sentMail;
+
+    if (client.Capabilities.Contains (ImapCapability.SpecialUse)) {
+        sentMail = client.GetFolder (SpecialFolder.Sent);
+    } else {
+        var personal = client.GetFolder (client.PersonalNamespaces[0]);
+
+        // Note: This assumes that the "Sent Mail" folder lives at the root of the folder hierarchy
+        // and is named "Sent Mail" as opposed to "Sent" or "Sent Items" or any other variation.
+        sentMail = personal.GetSubfolder ("Sent Mail");
+    }
+
+    sentMail.Append (message, MessageFlags.Seen);
+
+    client.Disconnect (true);
+}
+        </code>
+      </content>
+    </section>
+
+    <section address="SmtpSpecifiedPickupDirectory">
+      <title>How do I send email to a SpecifiedPickupDirectory?</title>
+      <content>
+        <para>
+          Based on Microsoft's
+          <externalLink>
+            <linkText>referencesource</linkText>
+            <linkUri>https://github.com/Microsoft/referencesource/blob/master/System/net/System/Net/mail/SmtpClient.cs#L401</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>,
+          when <literal>SmtpDeliveryMethod.SpecifiedPickupDirectory</literal> is used, the
+          <literal>System.Net.Mail.SmtpClient</literal> saves the message to the specified pickup directory
+          location using a randomly generated filename based on
+          <literal>Guid.NewGuid ().ToString () + ".eml"</literal>, so to achieve the same results with MailKit,
+          you could do something like this:
+        </para>
+        <code language="c#">
+public static void SaveToPickupDirectory (MimeMessage message, string pickupDirectory)
+{
+    do {
+        // Generate a random file name to save the message to.
+        var path = Path.Combine (pickupDirectory, Guid.NewGuid ().ToString () + ".eml");
+        Stream stream;
+
+        try {
+            // Attempt to create the new file.
+            stream = File.Open (path, FileMode.CreateNew);
+        } catch (IOException) {
+            // If the file already exists, try again with a new Guid.
+            if (File.Exists (path))
+                continue;
+
+            // Otherwise, fail immediately since it probably means that there is
+            // no graceful way to recover from this error.
+            throw;
+        }
+
+        try {
+            using (stream) {
+                // IIS pickup directories expect the message to be "byte-stuffed"
+                // which means that lines beginning with "." need to be escaped
+                // by adding an extra "." to the beginning of the line.
+                //
+                // Use an SmtpDataFilter "byte-stuff" the message as it is written
+                // to the file stream. This is the same process that an SmtpClient
+                // would use when sending the message in a `DATA` command.
+                using (var filtered = new FilteredStream (stream)) {
+                    filtered.Add (new SmtpDataFilter ());
+
+                    // Make sure to write the message in DOS (CRLF) format.
+                    var options = FormatOptions.Default.Clone ();
+                    options.NewLineFormat = NewLineFormat.Dos;
+
+                    message.WriteTo (options, filtered);
+                    filtered.Flush ();
+                    return;
+                }
+            }
+        } catch {
+            // An exception here probably means that the disk is full.
+            //
+            // Delete the file that was created above so that incomplete files are not
+            // left behind for IIS to send accidentally.
+            File.Delete (path);
+            throw;
+        }
+    } while (true);
+}
+        </code>
+      </content>
+    </section>
+
+    <section address="SmtpRequestReadReceipt">
+      <title>How do I request a notification when the message is read by the user?</title>
+      <content>
+        <para>
+          The first thing to make clear is that requesting a notification does not guarantee that you'll
+          actually get one. In order for you to receive a notification that the message was read by its
+          recipient, the recipient's mail client needs to know how to send such a notification
+          <legacyItalic>and</legacyItalic> the user must have enabled it to do so.
+        </para>
+        <para>
+          That said, here's how you can request a notification when the recipient reads the message that has
+          been sent:
+        </para>
+        <code language="c#">
+// Add the following header to tell the recipient's client that you want to receive a
+// notification when the message has been read by the user.
+message.Headers[HeaderId.DispositionNotificationTo] = new MailboxAddress ("My Name", "me@example.com").ToString (true);
+        </code>
+        <para>
+          For more information on this topic, read
+          <externalLink>
+            <linkText>rfc3798</linkText>
+            <linkUri>https://tools.ietf.org/html/rfc3798</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>.
+        </para>
+      </content>
+    </section>
+
+    <section address="SmtpProcessReadReceipt">
+      <title>How do I process a read receipt notification?</title>
+      <content>
+        <para>
+          A read receipt notification comes in the form of a MIME message with a top-level MIME part with a
+          MIME-type of <literal>multipart/report</literal> that has a <literal>report-type</literal> parameter
+          with a value of <literal>disposition-notification</literal>.
+        </para>
+        <para>
+          You could check for this in code like this:
+        </para>
+        <code language="c#"><![CDATA[
+var report = message.Body as MultipartReport;
+if (report != null && report.ReportType.Equals ("disposition-notification", StringComparison.OrdinalIgnoreCase)) {
+    // This is a read receipt notification.
+}
+]]></code>
+        <para>
+          The first part of the <literal>multipart/report</literal> will be a human-readable explanation of the
+          notification.
+        </para>
+        <para>
+          The second part will have a MIME-type of <literal>message/disposition-notification</literal> and be
+          represented by a <codeEntityReference>T:MimeKit.MessageDispositionNotification</codeEntityReference>.
+        </para>
+        <para>
+          This notification part will contain a list of header-like fields containing information about the
+          message that this notification is for such as the <literal>Original-Message-Id</literal>,
+          <literal>Original-Recipient</literal>, etc.
+        </para>
+        <code language="c#">
+var notification = report[1] as MessageDispositionNotification;
+if (notification != null) {
+    // Get the Message-Id of the message this notification is for...
+    var messageId = notification.Fields["Original-Message-Id"];
+}
+        </code>
+        <para>
+          For more information on this topic, read
+          <externalLink>
+            <linkText>rfc3798</linkText>
+            <linkUri>https://tools.ietf.org/html/rfc3798</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>.
+        </para>
       </content>
     </section>
 

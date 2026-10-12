@@ -71,7 +71,7 @@ namespace Examples {
                 var entities = new Dictionary<MimeEntity, MimeOffsets> ();
                 MimeOffsets messageOffsets = null;
 
-                var parser = new MimeParser (stream, MimeFormat.Entity);
+                var parser = new LegacyMimeParser (stream, MimeFormat.Entity);
 
                 // Connect a handler to track MimeMessage begin offsets
                 parser.MimeMessageBegin += delegate (sender, args) {
@@ -150,10 +150,10 @@ namespace Examples {
                     var offsets = entities[bodyPart];
 
                     Console.WriteLine ($"The offsets for the MIME part for {bodyPart.ContentType} are:");
-                    Console.WriteLine ($"  - LineNumber: {offsets.LineNumber}")
+                    Console.WriteLine ($"  - LineNumber: {offsets.LineNumber}");
                     Console.WriteLine ($"  - BeginOffset: {offsets.BeginOffset}");
                     Console.WriteLine ($"  - HeadersEndOffset: {offsets.HeadersEndOffset}"); // Note: This is also where the *content* begins.
-                    Console.WriteLine ($"  - EndOffset: {offsets.BeginOffset}");
+                    Console.WriteLine ($"  - EndOffset: {offsets.EndOffset}");
                     Console.WriteLine ($"  - Octets: {offsets.Octets}");
                     Console.WriteLine ($"  - Lines: {offsets.Lines}");
                 }

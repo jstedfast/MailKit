@@ -163,6 +163,7 @@ namespace MailKit {
 		/// <note type="note">This property should be set before calling any of the
 		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> or
 		/// <a href="Overload_MailKit_MailService_ConnectAsync.htm">ConnectAsync</a> methods.</note>
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
 		public CipherSuitesPolicy? SslCipherSuitesPolicy {
@@ -174,6 +175,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public abstract TlsCipherSuite? SslCipherSuite {
@@ -339,6 +341,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm.</value>
 		public abstract CipherAlgorithmType? SslCipherAlgorithm {
@@ -352,6 +355,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher algorithm strength.</value>
 		public abstract int? SslCipherStrength {
@@ -365,6 +369,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm.</value>
 		public abstract HashAlgorithmType? SslHashAlgorithm {
@@ -378,6 +383,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS hash algorithm strength.</value>
 		public abstract int? SslHashStrength {
@@ -391,6 +397,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm.</value>
 		public abstract ExchangeAlgorithmType? SslKeyExchangeAlgorithm {
@@ -404,6 +411,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS key exchange algorithm strength.</value>
 		public abstract int? SslKeyExchangeStrength {
@@ -459,6 +467,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// Gets the SSL/TLS client authentication options for use with .NET5's SslStream.AuthenticateAsClient() API.
+		/// <note type="note">This method is only available on .NETStandard 2.1 and .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <param name="host">The target host that the client is connected to.</param>
 		/// <param name="remoteCertificateValidationCallback">The remote certificate validation callback.</param>

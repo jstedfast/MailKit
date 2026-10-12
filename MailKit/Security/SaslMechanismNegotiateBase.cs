@@ -41,6 +41,7 @@ namespace MailKit.Security
 	/// </summary>
 	/// <remarks>
 	/// The base class for .NET Core's <see cref="NegotiateAuthentication"/>-based SASL mechanisms.
+	/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 	/// </remarks>
 	public abstract class SaslMechanismNegotiateBase : SaslMechanism
 	{

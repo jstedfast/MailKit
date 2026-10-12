@@ -37,6 +37,7 @@ namespace MailKit.Security {
 	/// </summary>
 	/// <remarks>
 	/// Implements the GSSAPI for KERBEROS SASL mechanism.
+	/// <note type="note">This class is only available on .NET 8.0 and later.</note>
 	/// </remarks>
 	public class SaslMechanismGssapi : SaslMechanismNegotiateBase
 	{

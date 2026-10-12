@@ -286,6 +286,7 @@ namespace MailKit.Security {
 		/// </summary>
 		/// <remarks>
 		/// Tries to get the specified channel-binding.
+		/// <note type="note">This method is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <param name="kind">The kind of channel-binding desired.</param>
 		/// <param name="channelBinding">A buffer containing the channel-binding.</param>

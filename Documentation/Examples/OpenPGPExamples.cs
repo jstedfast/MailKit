@@ -6,6 +6,8 @@ using System.Text;
 using MimeKit;
 using MimeKit.Cryptography;
 
+using Org.BouncyCastle.Bcpg.OpenPgp;
+
 namespace Examples
 {
 	#region MyGnuPGContext

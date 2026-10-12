@@ -57,6 +57,7 @@ namespace MailKit.Net.Proxy
 		/// </summary>
 		/// <remarks>
 		/// Gets a client for the default system proxy.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>A client for the default system proxy.</value>
 		public static IProxyClient SystemProxy {

@@ -126,6 +126,7 @@ namespace MailKit.Net.Proxy {
 		/// Specifies the cipher suites allowed to be used when negotiating an SSL or TLS connection.
 		/// When set to <see langword="null" />, the operating system default is used. Use extreme caution when
 		/// changing this setting.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The cipher algorithms allowed for use when negotiating SSL or TLS encryption.</value>
 		public CipherSuitesPolicy? SslCipherSuitesPolicy {

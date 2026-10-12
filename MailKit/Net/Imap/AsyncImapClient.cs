@@ -49,6 +49,7 @@ namespace MailKit.Net.Imap
 		/// <para>If the IMAP server supports the <see cref="ImapCapability.Compress"/> extension,
 		/// it is possible at any point after connecting to enable compression to reduce network
 		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
+		/// <note type="note">This method is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>

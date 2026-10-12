@@ -181,6 +181,7 @@ namespace MailKit.Net.Smtp {
 		/// Depending on whether the SMTP server requires authenticating or not, you may also need to
 		/// authenticate using one of the
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a> methods.
+		/// <note type="note">This constructor is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <param name="meterFactory">The meter factory.</param>
@@ -446,6 +447,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
@@ -467,6 +469,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
@@ -488,6 +491,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS cipher suite once an SSL or TLS connection has been made.
+		/// <note type="note">This property is only available on .NET 8.0 and later.</note>
 		/// </remarks>
 		/// <value>The negotiated SSL or TLS cipher suite.</value>
 		public override TlsCipherSuite? SslCipherSuite {
@@ -506,6 +510,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
@@ -527,6 +532,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS hash algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
@@ -548,6 +554,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
@@ -569,6 +576,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Gets the negotiated SSL or TLS key exchange algorithm strength once an SSL or TLS connection has been made.
+		/// <note type="note">This property is not available on .NET 10.0 and later.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>

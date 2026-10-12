@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Data.SQLite;
+using System.Security.Cryptography.X509Certificates;
 
 using MimeKit;
 using MimeKit.Cryptography;

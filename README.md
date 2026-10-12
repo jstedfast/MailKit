@@ -194,20 +194,23 @@ directory and select **Git Sync...** in the menu. Once you do that, you'll need 
 
 ## Building
 
+MailKit requires the [.NET 10.0 SDK](https://dotnet.microsoft.com/download) (or later) to build. The .NET 8.0 runtime
+is also required to run the unit tests.
+
 In the top-level MailKit directory, there are a number of solution files; they are:
 
-* **MailKit.sln** - includes the projects for .NET Framework 4.6.2/4.7/4.8, .NETStandard 2.0/2.1, .NET6.0 as well as the unit tests.
+* **MailKit.sln** - includes the projects for .NET Framework 4.6.2/4.7/4.8, .NETStandard 2.0/2.1, .NET 8.0/10.0 as well as the unit tests.
 * **MailKit.Coverity.sln** - this is used to generate Coverity static analysis builds and is not generally useful.
 * **MailKit.Documentation.sln** - this is used to generate the documentation found at https://mimekit.net/docs
+and requires [Sandcastle Help File Builder](https://github.com/EWSoftware/SHFB).
 
-Once you've opened the appropriate MailKit solution file in [Visual Studio](https://www.visualstudio.com/downloads/),
-you can choose the **Debug** or **Release** build configuration and then build.
+To build from the command-line, run the following commands in the top-level MailKit directory:
 
-Both Visual Studio 2017 and Visual Studio 2019 should be able to build MailKit without any issues, but older versions such as
-Visual Studio 2015 will require modifications to the projects in order to build correctly. It has been reported that adding
-NuGet package references to [Microsoft.Net.Compilers](https://www.nuget.org/packages/Microsoft.Net.Compilers/) >= 3.6.0
-and [System.ValueTuple](https://www.nuget.org/packages/System.ValueTuple/) >= 4.5.0 to the MimeKit and MailKit projects will
-allow them to build successfully.
+    dotnet build MailKit.sln -c Release
+    dotnet test UnitTests/UnitTests.csproj -c Release
+
+Alternatively, you can open **MailKit.sln** in [Visual Studio 2026](https://visualstudio.microsoft.com/downloads/) (or later),
+choose the **Debug** or **Release** build configuration and then build.
 
 Note: The **Release** build will generate the xml API documentation, but the **Debug** build will not.
 

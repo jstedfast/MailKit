@@ -19,7 +19,8 @@
       <content>
         <para>
           Before you can start working with <application>OpenPGP</application> in MimeKit,
-          you will first need to create and register your own
+          you will first need to add a reference to the
+          <application>MimeKit.Cryptography</application> package and then create and register your own
           <codeEntityReference>T:MimeKit.Cryptography.OpenPgpContext</codeEntityReference>.
           For the sake of simplicity, MimeKit includes a
           <codeEntityReference>T:MimeKit.Cryptography.GnuPGContext</codeEntityReference>

@@ -1716,7 +1716,7 @@ class CachedMessageInfo
 {
     public UniqueId UniqueId;
     public MessageFlags Flags;
-    public HashSet<string> Keywords;
+    public IEnumerable<string> Keywords;
     public Envelope Envelope;
     public BodyPart Body;
 }
@@ -1735,7 +1735,7 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
 
     // Note: we only need read-only access to update our cache, but depending on
     // what you plan to do with the folder after resynchronizing, you may want
-    // top open the folder in read-write mode instead.
+    // to open the folder in read-write mode instead.
     folder.Open (FolderAccess.ReadOnly);
 
     if (cache.Count > 0) {
@@ -1799,7 +1799,7 @@ static void ResyncFolder (ImapFolder folder, List<CachedMessageInfo> cache, ref 
 }
 ```
 
-### <a href="office365-shared-mailboxes">Q: How can I login using a shared mailbox in Office365?</a>
+### <a id="office365-shared-mailboxes">Q: How can I login using a shared mailbox in Office365?</a>
 
 ```csharp
 var result = await GetPublicClientOAuth2CredentialsAsync ("IMAP", "sharedMailboxName@custom-domain.com");
@@ -1837,15 +1837,15 @@ If the "Sent Mail" folder is a local mbox folder, you'll need to append it like 
 
 ```csharp
 using (var mbox = File.Open ("C:\\path\\to\\Sent Mail.mbox", FileMode.Append, FileAccess.Write)) {
-    var marker = string.Format ("From MAILER-DAEMON {0}{1}", DateTime.Now.ToString (CultureInfo.InvariantCulture, "ddd MMM d HH:mm:ss yyyy"), Environment.NewLine);
+    var marker = string.Format ("From MAILER-DAEMON {0}{1}", DateTime.Now.ToString ("ddd MMM d HH:mm:ss yyyy", CultureInfo.InvariantCulture), Environment.NewLine);
     var bytes = Encoding.ASCII.GetBytes (marker);
     
     // Write the mbox marker bytes.
     mbox.Write (bytes, 0, bytes.Length);
     
     // Write the message, making sure to escape any line that looks like an mbox From-marker.
-    using (var filtered = new FilteredStream (stream)) {
-        filtered.Add (new MboxFromMarker ());
+    using (var filtered = new FilteredStream (mbox)) {
+        filtered.Add (new MboxFromFilter ());
         message.WriteTo (filtered);
         filtered.Flush ();
     }
