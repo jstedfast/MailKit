@@ -459,6 +459,15 @@ These changes don't cause build errors. Search for the patterns below and review
    * **Fix:** See the "Telemetry changes" table in ReleaseNotes.md.
 5. **IMAP `COMPRESS`** now flushes with `Z_SYNC_FLUSH` instead of `Z_FULL_FLUSH`. No code changes
    are required.
+6. **`Envelope` serialization no longer treats `"localhost"` as a placeholder domain.** Older versions
+   of `Envelope.ToString ()` wrote `"localhost"` as the domain of a domain-less mailbox (such as
+   `fejj`). In 5.0, `Envelope.TryParse ()` reads `"localhost"` literally. As a result, envelope strings
+   that were cached by 4.x deserialize such mailboxes as `fejj@localhost`. Strings serialized by 5.0
+   use an empty domain and round-trip correctly.
+   * **Detect:** Code that persists `Envelope.ToString ()` output (e.g. an offline cache) and parses
+     it later with `Envelope.TryParse ()`.
+   * **Fix:** Usually nothing; domain-less addresses are rare. If they matter, re-fetch the envelopes
+     or rebuild the cache.
 
 ---
 

@@ -362,6 +362,27 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 * Fixed `ImapFolder.SetQuota (null, null)` to send `SETQUOTA <root> ()` (which removes all limits).
   Previously, it sent a malformed `SETQUOTA <root> )` command.
 * Fixed `ImapFolder` to correctly parse `QUOTA` responses with an empty list of resources.
+* Fixed `Envelope.ToString ()` and `Envelope.TryParse ()` so that envelopes reliably round-trip:
+  * `Date` values with fractional seconds, or with years earlier than 1000, are now serialized using the
+    ISO 8601 round-trip format. Previously, the fractional seconds were lost and a year of `0001`
+    became `2001`.
+  * `MessageId` and `InReplyTo` values are now preserved exactly. This includes values that are
+    already wrapped in angle brackets, values that contain spaces or multiple msg-ids, and `<>`.
+  * Mailboxes without a domain (such as `fejj`) are now serialized with an empty domain instead of
+    `"localhost"`. As a result, an address such as `root@localhost` now round-trips correctly.
+    **Note:** a `"localhost"` domain in strings serialized by older versions of MailKit is now
+    parsed literally, so a domain-less address that was serialized by an older version
+    deserializes as `user@localhost`.
+* Fixed `BodyPart.ToString ()` and `BodyPart.TryParse ()` so that body structures reliably round-trip:
+  * `ContentLocation` is now serialized using `Uri.OriginalString`. Previously, `Uri.ToString ()`
+    unescaped values such as `a%20b.png`, so they were dropped when parsed.
+  * An empty `ContentLanguage` array is now preserved instead of becoming `null`.
+  * The type of each deserialized part (`BodyPartBasic`, `BodyPartText` or `BodyPartMessage`) now
+    matches the serialized part, regardless of its MIME type. For example, a `BodyPartBasic` with a
+    `text/*` type, or a `BodyPartMessage` with a `message/global` type, now round-trips.
+  * `BodyPart.TryParse ()` now returns `false` for invalid input instead of throwing an
+    `ArgumentException`. Examples of invalid input are an invalid or duplicate parameter name, an
+    invalid disposition, or a number that overflows.
 
 ## MailKit 4.18.1 (2026-09-27)
 

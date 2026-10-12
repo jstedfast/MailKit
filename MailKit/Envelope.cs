@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Linq;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -202,8 +203,10 @@ namespace MailKit {
 				builder.Append (' ');
 				MimeUtils.AppendQuoted (builder, domain);
 			} else {
+				// Note: Use an empty domain (rather than NIL) for mailboxes without a domain so
+				// that they cannot be confused with group-start markers.
 				MimeUtils.AppendQuoted (builder, mailbox.Address);
-				builder.Append (" \"localhost\"");
+				builder.Append (" \"\"");
 			}
 
 			builder.Append (')');
@@ -241,7 +244,7 @@ namespace MailKit {
 
 			if (Date.HasValue) {
 				builder.Append ('"');
-				builder.Append (DateUtils.FormatDate (Date.Value));
+				builder.Append (FormatDate (Date.Value));
 				builder.Append ("\" ");
 			} else {
 				builder.Append ("NIL ");
@@ -297,33 +300,47 @@ namespace MailKit {
 			}
 
 			if (InReplyTo != null) {
-				string inReplyTo;
-
-				if (InReplyTo.Length > 1 && InReplyTo[0] != '<' && InReplyTo[InReplyTo.Length - 1] != '>')
-					inReplyTo = '<' + InReplyTo + '>';
-				else
-					inReplyTo = InReplyTo;
-
-				MimeUtils.AppendQuoted (builder, inReplyTo);
+				MimeUtils.AppendQuoted (builder, '<' + InReplyTo + '>');
 				builder.Append (' ');
 			} else {
 				builder.Append ("NIL ");
 			}
 
 			if (MessageId != null) {
-				string messageId;
-
-				if (MessageId.Length > 1 && MessageId[0] != '<' && MessageId[MessageId.Length - 1] != '>')
-					messageId = '<' + MessageId + '>';
-				else
-					messageId = MessageId;
-
-				MimeUtils.AppendQuoted (builder, messageId);
+				MimeUtils.AppendQuoted (builder, '<' + MessageId + '>');
 			} else {
 				builder.Append ("NIL");
 			}
 
 			builder.Append (')');
+		}
+
+		static string FormatDate (DateTimeOffset date)
+		{
+			// Note: The RFC 5322 date format cannot represent fractional seconds and DateUtils.TryParse()
+			// treats years below 100 as 2-digit years, so fall back to the ISO 8601 round-trip format
+			// whenever the RFC 5322 format would be lossy.
+			if (date.Year >= 1000 && date.Ticks % TimeSpan.TicksPerSecond == 0)
+				return DateUtils.FormatDate (date);
+
+			return date.ToString ("o", CultureInfo.InvariantCulture);
+		}
+
+		static bool TryParseDate (string text, out DateTimeOffset date)
+		{
+			if (DateTimeOffset.TryParseExact (text, "o", CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+				return true;
+
+			return DateUtils.TryParse (text, out date);
+		}
+
+		static string UnwrapMessageId (string value)
+		{
+			// Note: The serializer always wraps the msg-id in angle brackets, so simply strip them off.
+			if (value.Length >= 2 && value[0] == '<' && value[value.Length - 1] == '>')
+				return value.Substring (1, value.Length - 2);
+
+			return MimeUtils.EnumerateReferences (value).FirstOrDefault () ?? value;
 		}
 
 		/// <summary>
@@ -429,8 +446,8 @@ namespace MailKit {
 			if (domain != null) {
 				user ??= "NIL";
 
-				// Note: The serializer injects "localhost" as the domain when provided a UNIX mailbox or the special <> mailbox.
-				var address = domain == "localhost" ? user : user + "@" + domain;
+				// Note: The serializer uses an empty domain for UNIX mailboxes and the special <> mailbox.
+				var address = domain.Length == 0 ? user : user + "@" + domain;
 
 				if (route != null && DomainList.TryParse (route, out var domains))
 					addr = new MailboxAddress (name, domains, address);
@@ -532,7 +549,7 @@ namespace MailKit {
 				return false;
 
 			if (nstring != null) {
-				if (!DateUtils.TryParse (nstring, out DateTimeOffset value))
+				if (!TryParseDate (nstring, out DateTimeOffset value))
 					return false;
 
 				date = value;
@@ -579,8 +596,8 @@ namespace MailKit {
 				To = to,
 				Cc = cc,
 				Bcc = bcc,
-				InReplyTo = inreplyto != null ? MimeUtils.EnumerateReferences (inreplyto).FirstOrDefault () ?? inreplyto : null,
-				MessageId = messageid != null ? MimeUtils.EnumerateReferences (messageid).FirstOrDefault () ?? messageid : null
+				InReplyTo = inreplyto != null ? UnwrapMessageId (inreplyto) : null,
+				MessageId = messageid != null ? UnwrapMessageId (messageid) : null
 			};
 
 			return true;
