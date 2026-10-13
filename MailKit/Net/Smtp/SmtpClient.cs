@@ -47,6 +47,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using MimeKit;
 using MimeKit.IO;
+using MimeKit.Utils;
 using MimeKit.Cryptography;
 
 using MailKit.Security;
@@ -2357,6 +2358,11 @@ namespace MailKit.Net.Smtp {
 			if (format.International && !Capabilities.Contains (SmtpCapability.EightBitMime))
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
+			bool utf8 = Capabilities.Contains (SmtpCapability.UTF8) && (format.International || state.Sender.IsInternational || state.Recipients.Any (x => x.IsInternational));
+
+			if (utf8)
+				ValidateSmtpUtf8Addresses (state);
+
 			EncodingConstraint constraint;
 
 			if (Capabilities.Contains (SmtpCapability.BinaryMime))
@@ -2394,10 +2400,31 @@ namespace MailKit.Net.Smtp {
 				}
 			}
 
-			if (Capabilities.Contains (SmtpCapability.UTF8) && (format.International || state.Sender.IsInternational || state.Recipients.Any (x => x.IsInternational)))
+			if (utf8)
 				extensions |= SmtpExtensions.UTF8;
 
 			return format;
+		}
+
+		static void ValidateSmtpUtf8Address (MailboxAddress mailbox)
+		{
+			if (!SmtpUtf8AddressValidator.TryValidate (mailbox, SmtpUtf8AddressValidationOptions.None, out var error))
+				throw new SmtpUtf8AddressException (mailbox, error);
+		}
+
+		static void ValidateSmtpUtf8Addresses (SendState state)
+		{
+			// Note: An empty sender address is the null reverse-path (MAIL FROM:<>) used for bounces.
+			if (state.Sender.Address.Length > 0)
+				ValidateSmtpUtf8Address (state.Sender);
+
+			foreach (var recipient in state.Recipients) {
+				// Note: rfc5321 allows the domain-less "Postmaster" address in the RCPT TO command.
+				if (recipient.Address.Equals ("postmaster", StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				ValidateSmtpUtf8Address (recipient);
+			}
 		}
 
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
@@ -2557,6 +2584,10 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="SmtpUtf8AddressException">
+		/// The message is being sent using the SMTPUTF8 extension and the sender or one of the recipients
+		/// is not a valid SMTPUTF8 address.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.

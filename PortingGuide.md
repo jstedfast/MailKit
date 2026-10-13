@@ -468,6 +468,15 @@ These changes don't cause build errors. Search for the patterns below and review
      it later with `Envelope.TryParse ()`.
    * **Fix:** Usually nothing; domain-less addresses are rare. If they matter, re-fetch the envelopes
      or rebuild the cache.
+7. **`SmtpClient` validates addresses when sending with `SMTPUTF8`.** If the server supports
+   `SMTPUTF8` and the message requires it (an internationalized sender or recipient address, or
+   `FormatOptions.International`), every sender and recipient address is checked with
+   `SmtpUtf8AddressValidator`. An invalid address (e.g. one that mixes scripts or contains disallowed
+   code points) causes `Send`/`SendAsync` to throw `SmtpUtf8AddressException` before any SMTP commands
+   are sent. The client stays connected.
+   * **Detect:** Code that sends to internationalized addresses that the server previously accepted.
+   * **Fix:** Catch `SmtpUtf8AddressException` (or `ArgumentException`) and check its `Mailbox` and
+     `Error` properties.
 
 ---
 

@@ -143,6 +143,7 @@
     <Compile Include="Net\Smtp\SmtpServiceNotAuthenticatedException.cs" />
     <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="Net\Smtp\SmtpStream.cs" />
+    <Compile Include="Net\Smtp\SmtpUtf8AddressException.cs" />
     <Compile Include="Net\CapabilityNameTable.cs" />
     <Compile Include="Net\ClientMetrics.cs" />
     <Compile Include="Net\ExtendedSslStream.cs" />

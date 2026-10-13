@@ -3440,6 +3440,103 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		static List<SmtpReplayCommand> CreateInvalidSmtpUtf8AddressCommands (out MailboxAddress sender, out MailboxAddress valid, out MailboxAddress invalid, out MailboxAddress postmaster)
+		{
+			sender = new MailboxAddress (string.Empty, string.Empty);
+			valid = new MailboxAddress (string.Empty, "úßerñame@example.com");
+			postmaster = new MailboxAddress (string.Empty, "Postmaster");
+
+			// Note: Greek and Cyrillic letters in the same address are rejected as mixed scripts.
+			invalid = new MailboxAddress (string.Empty, "αж@example.com");
+
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+smtputf8.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+				new SmtpReplayCommand ("MAIL FROM:<> SMTPUTF8 BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ($"RCPT TO:<{valid.Address}>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("RCPT TO:<Postmaster>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
+		[Test]
+		public void TestInvalidSmtpUtf8Address ()
+		{
+			var commands = CreateInvalidSmtpUtf8AddressCommands (out var sender, out var valid, out var invalid, out var postmaster);
+
+			using (var client = new SmtpClient ()) {
+				client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
+				client.Authenticate ("username", "password");
+
+				using (var message = CreateEightBitMessage ()) {
+					var ex = Assert.Throws<SmtpUtf8AddressException> (() => client.Send (message, valid, new MailboxAddress[] { valid, invalid }));
+					Assert.That (ex.Mailbox, Is.SameAs (invalid), "Mailbox");
+					Assert.That (ex.Error, Is.EqualTo (SmtpUtf8AddressError.MixedScripts), "Error");
+					Assert.That (ex.Message, Does.Contain (invalid.Address), "Message");
+
+					ex = Assert.Throws<SmtpUtf8AddressException> (() => client.Send (message, invalid, new MailboxAddress[] { valid }));
+					Assert.That (ex.Mailbox, Is.SameAs (invalid), "Sender Mailbox");
+
+					Assert.That (client.IsConnected, Is.True, "Expected the client to remain connected.");
+
+					// The null reverse-path and the domain-less Postmaster address are exempt from validation.
+					client.Send (message, sender, new MailboxAddress[] { valid, postmaster });
+				}
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestInvalidSmtpUtf8AddressAsync ()
+		{
+			var commands = CreateInvalidSmtpUtf8AddressCommands (out var sender, out var valid, out var invalid, out var postmaster);
+
+			using (var client = new SmtpClient ()) {
+				await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
+				await client.AuthenticateAsync ("username", "password");
+
+				using (var message = CreateEightBitMessage ()) {
+					var ex = Assert.ThrowsAsync<SmtpUtf8AddressException> (() => client.SendAsync (message, valid, new MailboxAddress[] { valid, invalid }));
+					Assert.That (ex.Mailbox, Is.SameAs (invalid), "Mailbox");
+					Assert.That (ex.Error, Is.EqualTo (SmtpUtf8AddressError.MixedScripts), "Error");
+
+					ex = Assert.ThrowsAsync<SmtpUtf8AddressException> (() => client.SendAsync (message, invalid, new MailboxAddress[] { valid }));
+					Assert.That (ex.Mailbox, Is.SameAs (invalid), "Sender Mailbox");
+
+					Assert.That (client.IsConnected, Is.True, "Expected the client to remain connected.");
+
+					// The null reverse-path and the domain-less Postmaster address are exempt from validation.
+					await client.SendAsync (message, sender, new MailboxAddress[] { valid, postmaster });
+				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		[Test]
+		public void TestSmtpUtf8AddressExceptionArguments ()
+		{
+			var mailbox = new MailboxAddress (string.Empty, "αж@example.com");
+
+			Assert.Throws<ArgumentNullException> (() => new SmtpUtf8AddressException (null, SmtpUtf8AddressError.MixedScripts));
+			Assert.Throws<ArgumentNullException> (() => new SmtpUtf8AddressException (null, SmtpUtf8AddressError.MixedScripts, "message"));
+
+			var ex = new SmtpUtf8AddressException (mailbox, SmtpUtf8AddressError.Syntax, "custom message");
+			Assert.That (ex.Message, Is.EqualTo ("custom message"));
+			Assert.That (ex.Mailbox, Is.SameAs (mailbox));
+			Assert.That (ex.Error, Is.EqualTo (SmtpUtf8AddressError.Syntax));
+			Assert.That (ex, Is.InstanceOf<ArgumentException> ());
+
+			foreach (SmtpUtf8AddressError error in Enum.GetValues (typeof (SmtpUtf8AddressError))) {
+				ex = new SmtpUtf8AddressException (mailbox, error);
+				Assert.That (ex.Message, Does.Contain (mailbox.Address), error.ToString ());
+			}
+		}
+
 		static long Measure (MimeMessage message)
 		{
 			var options = FormatOptions.Default.Clone ();

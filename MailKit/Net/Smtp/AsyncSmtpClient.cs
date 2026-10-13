@@ -1090,6 +1090,10 @@ namespace MailKit.Net.Smtp
 		/// <exception cref="System.NotSupportedException">
 		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
+		/// <exception cref="SmtpUtf8AddressException">
+		/// The message is being sent using the SMTPUTF8 extension and the sender or one of the recipients
+		/// is not a valid SMTPUTF8 address.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
 		/// </exception>

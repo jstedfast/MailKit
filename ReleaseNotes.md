@@ -295,6 +295,11 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
     server responded to before the error occurred.
   * Added `SmtpServiceNotAuthenticatedException` with `Command`, `StatusCode` and `ResponseText`
     properties.
+* `SmtpClient` now validates the sender and recipient addresses with MimeKit's
+  `SmtpUtf8AddressValidator` whenever a message is sent using the `SMTPUTF8` extension. If an address
+  is not valid, the new `SmtpUtf8AddressException` (which derives from `ArgumentException`) is thrown
+  before any commands are sent. The exception's `Mailbox` and `Error` properties identify the address
+  and why it was rejected. The null reverse-path (`MAIL FROM:<>`) and `Postmaster` are exempt.
 
 ### Telemetry changes
 
