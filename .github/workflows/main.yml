@@ -53,32 +53,6 @@ jobs:
           Write-Host "version_num=${VERSION_NUM}"
           [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "version_num=${VERSION_NUM}$([Environment]::NewLine)")
 
-      - if: ${{ env.PUBLISH == 'true' }}
-        name: Get latest tag
-        id: get_latest_tag
-        shell: pwsh
-        run: |
-          $LATEST_TAG = git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags "https://github.com/$env:GIT_URL.git" '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3
-          Write-Host "tag=$LATEST_TAG"
-          [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "tag=${LATEST_TAG}$([Environment]::NewLine)")
-        env:
-          GIT_URL: ${{ github.repository }}
-
-      - if: ${{ env.PUBLISH == 'true' && steps.semantic_version.outputs.version_num != steps.get_latest_tag.outputs.tag }}
-        name: Add new tag to repo
-        id: add_new_tag_to_repo
-        continue-on-error: true
-        shell: pwsh
-        run: |
-          git config --global user.name $env:GIT_USER_NAME
-          git config --global user.email $env:GIT_USER_EMAIL
-          git tag -a -m "Tagged for $env:NEW_VERSION_NUM" $env:NEW_VERSION_NUM
-          git push --follow-tags
-        env:
-          GIT_USER_NAME: ${{ github.event.head_commit.author.username }}
-          GIT_USER_EMAIL: ${{ github.event.head_commit.author.email }}
-          NEW_VERSION_NUM: ${{ steps.semantic_version.outputs.version_num }}
-
       - name: Run .NET restore
         shell: pwsh
         run: |
@@ -91,7 +65,6 @@ jobs:
 
       - name: Build solution
         id: build_solution
-        continue-on-error: true
         shell: pwsh
         run: |
           dotnet msbuild $env:SOLUTION_PATH -property:Platform=$env:BUILD_PLATFORM -property:Configuration=$env:BUILD_CONFIGURATION -property:MonoRuntime=$env:MONO_RUNTIME
@@ -101,11 +74,10 @@ jobs:
         continue-on-error: true
         shell: pwsh
         run: |
-          & ./scripts/test.ps1 -Configuration:$env:BUILD_CONFIGURATION -GenerateCodeCoverage:$env:GENERATE_CODE_COVERAGE
+          & ./scripts/test.ps1 -Configuration "$env:BUILD_CONFIGURATION" -GenerateCodeCoverage "$env:GENERATE_CODE_COVERAGE"
 
       - name: Upload unit test results
         id: upload_test_results
-        continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
           name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}-${{ matrix.os }}-${{ matrix.build-configuration }}-TestResults.xml
@@ -114,7 +86,6 @@ jobs:
       - if: ${{ env.GENERATE_CODE_COVERAGE == 'true' }}
         name: Upload code coverage data to coveralls.io
         id: upload_to_coveralls
-        shell: pwsh
         run: |
           & ./scripts/coveralls.ps1
         env:
@@ -141,9 +112,10 @@ jobs:
         id: create_nuget_package
         shell: pwsh
         run: |
-          nuget pack nuget/MailKit.nuspec -Version "$env:LATEST_VERSION.$env:GITHUB_RUN_NUMBER"
+          nuget pack nuget/MailKit.nuspec -Version "$env:LATEST_VERSION.$env:BUILD_NUMBER"
         env:
           LATEST_VERSION: ${{ steps.semantic_version.outputs.version_num }}
+          BUILD_NUMBER: ${{ github.run_number }}
 
       - if: ${{ env.PUBLISH == 'true' }}
         name: Push NuGet package to MyGet
