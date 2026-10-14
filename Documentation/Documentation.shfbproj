@@ -13,7 +13,7 @@
     <RootNamespace>Documentation</RootNamespace>
     <Name>Documentation</Name>
     <!-- SHFB properties -->
-    <FrameworkVersion>Cross-platform (.NET Core/.NET Standard)</FrameworkVersion>
+    <FrameworkVersion>.NET Core/.NET Standard/.NET 5.0+</FrameworkVersion>
     <OutputPath>bin\docs\</OutputPath>
     <HtmlHelpName>Documentation</HtmlHelpName>
     <Language>en-US</Language>
@@ -198,6 +198,11 @@
       <Project>{67d6ac33-1ec3-7714-8649-a2710c6dfce0}</Project>
       <Private>True</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Cryptography">
+      <HintPath>$(USERPROFILE)\.nuget\packages\bouncycastle.cryptography\2.7.0\lib\net6.0\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
