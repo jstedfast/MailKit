@@ -48,8 +48,7 @@ jobs:
       uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
+        config-file: ./.github/codeql/codeql-config.yml
         # Prefix the list here with "+" to use these queries and those in the config file.
 
         # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
@@ -64,4 +63,23 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
+        category: "/language:${{matrix.language}}"
+        output: sarif-results
+        upload: failure-only
+
+    # paths-ignore doesn't work for built C# code, so drop alerts for the
+    # unit tests and the MimeKit submodule (which is scanned in its own repo).
+    - name: Filter SARIF
+      uses: advanced-security/filter-sarif@v1.1
+      with:
+        patterns: |
+          -UnitTests/**
+          -submodules/**
+        input: sarif-results/${{ matrix.language }}.sarif
+        output: sarif-results/${{ matrix.language }}.sarif
+
+    - name: Upload SARIF
+      uses: github/codeql-action/upload-sarif@v4
+      with:
+        sarif_file: sarif-results/${{ matrix.language }}.sarif
         category: "/language:${{matrix.language}}"

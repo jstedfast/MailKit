@@ -1,0 +1,12 @@
+name: "MailKit CodeQL config"
+
+# Run the security and reliability queries, but skip the purely stylistic
+# maintainability/readability queries (nested-if, missed-ternary, linq
+# missed-where, local-shadows-member, etc).
+#
+# Note: paths-ignore has no effect for C# when the code is built, so
+# alerts in UnitTests/ and submodules/ are filtered out of the SARIF
+# results in .github/workflows/codeql.yml instead.
+query-filters:
+  - exclude:
+      tags contain: maintainability
