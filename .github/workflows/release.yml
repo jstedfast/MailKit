@@ -1,0 +1,285 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'The full 40-character commit hash to release (the version is read from the nuspec file at that commit)'
+        required: true
+        type: string
+      sign:
+        description: 'Code-sign the assemblies and NuGet package (using the .NET Foundation code-signing certificate)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      BUILD_PLATFORM: Any CPU
+    outputs:
+      version: ${{ steps.release_version.outputs.version }}
+
+    steps:
+
+    # Validate that the input looks like a commit hash (before using it for anything)
+    - name: Validate Commit Hash
+      shell: pwsh
+      env:
+        RELEASE_COMMIT: ${{ inputs.commit }}
+      run: |
+        if ($env:RELEASE_COMMIT -cnotmatch '^[0-9a-fA-F]{40}$') {
+          Write-Host "::error::Invalid commit hash (must be the full 40-character SHA): '$env:RELEASE_COMMIT'"
+          exit 1
+        }
+
+    - name: Setup/Install the .NET SDKs
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: |
+          8.0.x
+          10.0.x
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v3
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v4
+
+    - name: Checkout repository
+      uses: actions/checkout@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        ref: ${{ inputs.commit }}
+        submodules: recursive
+        fetch-depth: 0
+
+    # MailKit's version and its MimeKit.Core dependency are validated independently.
+    - name: Determine Release Version
+      id: release_version
+      shell: pwsh
+      run: |
+        $commit = git rev-parse HEAD
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+        $errors = @()
+        $versions = @{}
+
+        [xml] $nuspec = Get-Content 'nuget\MailKit.nuspec'
+        $version = $nuspec.package.metadata.version
+        $versions['nuget\MailKit.nuspec <version>'] = $version
+
+        [xml] $csproj = Get-Content 'MailKit\MailKit.csproj'
+        $versions['MailKit\MailKit.csproj <VersionPrefix>'] = ($csproj.Project.PropertyGroup.VersionPrefix | Where-Object { $_ } | Select-Object -First 1)
+
+        if ($version -notmatch '^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$') {
+          $errors += "Invalid release version: '$version'"
+        }
+
+        foreach ($entry in $versions.GetEnumerator() | Sort-Object Key) {
+          Write-Host "$($entry.Key): $($entry.Value)"
+
+          if ($entry.Value -ne $version) {
+            $errors += "$($entry.Key) is '$($entry.Value)' (expected '$version')"
+          }
+        }
+
+        [xml] $mimekit = Get-Content 'submodules\MimeKit\MimeKit\MimeKit.csproj'
+        $mimekitVersion = ($mimekit.Project.PropertyGroup.VersionPrefix | Where-Object { $_ } | Select-Object -First 1)
+
+        foreach ($group in $nuspec.package.metadata.dependencies.group) {
+          $dependency = @($group.dependency | Where-Object { $_.id -eq 'MimeKit.Core' })
+
+          if ($dependency.Count -ne 1 -or $dependency[0].version -ne $mimekitVersion) {
+            $errors += "nuget\MailKit.nuspec MimeKit.Core dependency ($($group.targetFramework)) must match the submodule version '$mimekitVersion'"
+          }
+        }
+
+        # Fail early if this version has already been tagged on a different commit.
+        $tagged = git rev-parse -q --verify "refs/tags/${version}^{commit}"
+        if ($tagged -and $tagged -ne $commit) {
+          $errors += "Tag '$version' already exists and points to $tagged (not $commit)"
+        }
+
+        if ($errors.Count -gt 0) {
+          $errors | ForEach-Object { Write-Host "::error::$_" }
+          exit 1
+        }
+
+        Write-Host "Releasing MailKit $version from $commit"
+        [IO.File]::AppendAllText($env:GITHUB_OUTPUT, "version=${version}$([Environment]::NewLine)")
+
+        # A missing release tag is normal, but git rev-parse leaves $LASTEXITCODE set to 1.
+        exit 0
+
+    - name: Run .NET tool restore
+      shell: pwsh
+      run: |
+        dotnet tool restore
+
+    - name: Restore MailKit.sln
+      shell: pwsh
+      run: |
+        dotnet restore MailKit.sln
+
+    - name: Build MailKit
+      shell: pwsh
+      run: |
+        dotnet msbuild MailKit.sln -property:Platform=$env:BUILD_PLATFORM -property:Configuration=Release
+
+    - name: Create MailKit NuGet package
+      shell: pwsh
+      run: |
+        nuget pack nuget\MailKit.nuspec
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: BuildArtifacts
+        if-no-files-found: error
+        path: MailKit.${{ steps.release_version.outputs.version }}.nupkg
+
+  sign:
+    needs: build
+    runs-on: windows-latest
+    environment: release
+    permissions:
+      id-token: write # Required for Azure login, attestations, and NuGet trusted publishing
+      attestations: write
+      contents: read
+
+    steps:
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v4
+
+    - name: Download Build Artifacts
+      uses: actions/download-artifact@v8
+      with:
+        name: BuildArtifacts
+        path: .\
+
+    # Only code-signing is conditional; unsigned releases are still attested and published.
+    - name: Setup .NET
+      if: inputs.sign
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Install Sign CLI tool
+      if: inputs.sign
+      run: dotnet tool install --tool-path . --prerelease sign
+
+    - name: 'Az CLI login'
+      if: inputs.sign
+      uses: azure/login@v3
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    # Sign the assemblies inside the package first, then the package itself.
+    - name: Sign MailKit NuGet Package
+      if: inputs.sign
+      shell: pwsh
+      run: >
+        .\sign code azure-key-vault
+        MailKit.${{ needs.build.outputs.version }}.nupkg
+        --base-directory "${{ github.workspace }}"
+        --publisher-name "MimeKit"
+        --description "MailKit"
+        --description-url "https://github.com/jstedfast/MailKit"
+        --azure-credential-type "azure-cli"
+        --azure-key-vault-url "https://sc-mimekit.vault.azure.net/"
+        --azure-key-vault-certificate "SC-MIMEKIT"
+
+    # Extract after signing so the attested assemblies match the published package.
+    # NuGet.org's repository signature changes the package hash, but not assembly hashes.
+    - name: Extract Assemblies
+      shell: pwsh
+      env:
+        RELEASE_VERSION: ${{ needs.build.outputs.version }}
+      run: |
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [IO.Compression.ZipFile]::ExtractToDirectory("MailKit.$env:RELEASE_VERSION.nupkg", 'ExtractedAssemblies\MailKit')
+
+        $assemblies = Get-ChildItem -Path ExtractedAssemblies -Filter *.dll -Recurse
+        if ($assemblies.Count -eq 0) {
+          Write-Host "::error::No assemblies were found in the NuGet package"
+          exit 1
+        }
+
+        $assemblies | ForEach-Object { Write-Host $_.FullName }
+
+    # Verify with: gh attestation verify <file> --repo jstedfast/MailKit
+    - name: Attest Build Provenance
+      uses: actions/attest@v4
+      with:
+        subject-path: |
+          MailKit.${{ needs.build.outputs.version }}.nupkg
+          ExtractedAssemblies/**/*.dll
+
+    - name: Upload Release Artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: ReleaseArtifacts
+        if-no-files-found: error
+        path: MailKit.${{ needs.build.outputs.version }}.nupkg
+
+    - name: Get NuGet API Key
+      uses: NuGet/login@v1
+      id: nuget_login
+      with:
+        user: ${{ secrets.NUGET_USER }}
+
+    - name: Push MailKit package to NuGet.org
+      shell: pwsh
+      run: |
+        nuget push $env:NUGET_PKG_PATH -ApiKey $env:NUGET_API_KEY -Source https://api.nuget.org/v3/index.json
+      env:
+        NUGET_PKG_PATH: MailKit.${{ needs.build.outputs.version }}.nupkg
+        NUGET_API_KEY: ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
+
+  tag:
+    needs: [build, sign]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v6
+      with:
+        ref: ${{ inputs.commit }}
+        fetch-depth: 0
+
+    - name: Create Release Tag
+      shell: pwsh
+      env:
+        RELEASE_VERSION: ${{ needs.build.outputs.version }}
+        RELEASE_COMMIT: ${{ inputs.commit }}
+        TAGGER_NAME: ${{ github.actor }}
+        TAGGER_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+      run: |
+        $tagged = git rev-parse -q --verify "refs/tags/$($env:RELEASE_VERSION)^{commit}"
+
+        if ($tagged) {
+          if ($tagged -ne $env:RELEASE_COMMIT) {
+            Write-Host "::error::Tag '$env:RELEASE_VERSION' already exists and points to $tagged (not $env:RELEASE_COMMIT)"
+            exit 1
+          }
+
+          Write-Host "Tag '$env:RELEASE_VERSION' already exists for $env:RELEASE_COMMIT"
+          exit 0
+        }
+
+        git -c "user.name=$env:TAGGER_NAME" -c "user.email=$env:TAGGER_EMAIL" tag -a $env:RELEASE_VERSION -m "Tagged for $env:RELEASE_VERSION" $env:RELEASE_COMMIT
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+        git push origin "refs/tags/$($env:RELEASE_VERSION)"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
