@@ -132,7 +132,5 @@ jobs:
         id: upload_nuget_package
         uses: actions/upload-artifact@v7
         with:
-          name: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}.nupkg
+          name: nuget-packages
           path: MailKit.${{ steps.semantic_version.outputs.version_num }}.${{ github.run_number }}.nupkg
-
-# Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
