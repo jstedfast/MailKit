@@ -24,6 +24,29 @@
 
 MailKit is a cross-platform mail client library built on top of [MimeKit](https://github.com/jstedfast/MimeKit).
 
+**Upgrading from MailKit 4.x?** MailKit 5.0 contains a number of breaking changes. See the
+[Porting Guide](https://github.com/jstedfast/MailKit/blob/master/PortingGuide.md) for step-by-step migration instructions and the [Release Notes](https://github.com/jstedfast/MailKit/blob/master/ReleaseNotes.md)
+for the complete list of changes.
+
+## Contents
+
+* [Donate](#donate)
+* [Features](#features)
+* [Goals](#goals)
+* [License Information](#license-information)
+* [Installing via NuGet](#installing-via-nuget)
+* [Getting the Source Code](#getting-the-source-code)
+* [Building](#building)
+* [Using MailKit](#using-mailkit)
+  * [Sending Messages](#sending-messages)
+* [Retrieving Messages (via Pop3)](#retrieving-messages-via-pop3)
+* [Using IMAP](#using-imap)
+  * [Monitoring an IMAP Folder for Changes](#monitoring-an-imap-folder-for-changes)
+* [Contributing](#contributing)
+* [Reporting Bugs](#reporting-bugs)
+* [Documentation](#documentation)
+* [.NET Foundation](#net-foundation)
+
 ## Donate
 
 MailKit is a personal open source project that I have put thousands of hours into perfecting with the
@@ -155,42 +178,58 @@ THE SOFTWARE.
 
 ## Installing via NuGet
 
-The easiest way to install MailKit is via [NuGet](https://www.nuget.org/packages/MailKit/).
+The easiest way to install MailKit is via [NuGet](https://www.nuget.org/packages/MailKit/):
 
-In Visual Studio's [Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console),
-enter the following command:
+```bash
+dotnet add package MailKit
+```
 
-    Install-Package MailKit
+Or, in Visual Studio's [Package Manager Console](https://learn.microsoft.com/nuget/consume-packages/install-use-packages-powershell):
+
+```powershell
+Install-Package MailKit
+```
+
+MailKit depends on [MimeKit.Core](https://www.nuget.org/packages/MimeKit.Core), which provides MIME parsing and
+message construction.
+
+### Cryptography Support (S/MIME, OpenPGP, DKIM and ARC)
+
+MailKit itself does not need any cryptography packages, but if you want to sign, encrypt, decrypt or verify
+messages using S/MIME, OpenPGP, DKIM or ARC, you will also need to add a reference to
+[MimeKit.Cryptography](https://www.nuget.org/packages/MimeKit.Cryptography) (or to the
+[MimeKit](https://www.nuget.org/packages/MimeKit) meta-package, which references both MimeKit.Core and
+MimeKit.Cryptography):
+
+```bash
+dotnet add package MimeKit.Cryptography
+```
+
+Then initialize MimeKit's cryptography support once at startup, before using any of those features:
+
+```csharp
+using MimeKit.Cryptography;
+
+CryptographyModule.Initialize ();
+```
+
+For more information, see MimeKit's documentation on
+[using its cryptography support](https://github.com/jstedfast/MimeKit#initializing-mimekits-cryptography-support).
 
 ## Getting the Source Code
 
-First, you'll need to clone MailKit from my GitHub repository. To do this using the command-line version of Git,
-you'll need to issue the following command in your terminal:
+MailKit includes MimeKit as a git submodule, so make sure to clone recursively:
 
-    git clone --recursive https://github.com/jstedfast/MailKit.git
+```bash
+git clone --recursive https://github.com/jstedfast/MailKit.git
+```
 
-If you are using [TortoiseGit](https://tortoisegit.org) on Windows, you'll need to right-click in the directory
-where you'd like to clone MailKit and select **Git Clone...** in the menu. Once you do that, you'll get the
-following dialog:
+To update an existing clone later:
 
-![Download the source code using TortoiseGit](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/clone.png)
-
-Fill in the areas outlined in red and then click **OK**. This will recursively clone MailKit onto your local machine.
-
-## Updating the Source Code
-
-Occasionally you might want to update your local copy of the source code if I have made changes to MailKit since you
-downloaded the source code in the step above. To do this using the command-line version of Git, you'll need to issue
-the following commands in your terminal within the MailKit directory:
-
-    git pull
-    git submodule update
-
-If you are using [TortoiseGit](https://tortoisegit.org) on Windows, you'll need to right-click on the MailKit
-directory and select **Git Sync...** in the menu. Once you do that, you'll need to click the **Pull** and
-**Submodule Update** buttons in the following dialog:
-
-![Update the source code using TortoiseGit](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/update.png)
+```bash
+git pull
+git submodule update --init --recursive
+```
 
 ## Building
 
@@ -251,13 +290,44 @@ I just wanted to let you know that Monica and I were going to go play some paint
                 // Note: only needed if the SMTP server requires authentication
                 client.Authenticate ("joey", "password");
 
-                client.Send (message);
+                var result = client.Send (message);
+                Console.WriteLine ("The server accepted the message: {0}", result.ResponseText);
+
                 client.Disconnect (true);
             }
         }
     }
 }
 ```
+
+`Send ()` returns a [SendResult](https://www.mimekit.net/docs/html/T_MailKit_SendResult.htm) that contains the
+server's response along with the lists of accepted and rejected recipients.
+
+By default, `SmtpClient` throws an `SmtpCommandException` if the server rejects any of the recipients. To deliver
+the message to the remaining recipients instead, use an `SmtpSendRequest` that overrides `OnRecipientNotAccepted ()`:
+
+```csharp
+class LenientSendRequest : SmtpSendRequest
+{
+    public LenientSendRequest (MimeMessage message) : base (message)
+    {
+    }
+
+    public override void OnRecipientNotAccepted (MailboxAddress recipient, SmtpResponse response)
+    {
+        // Don't throw; the recipient will be listed in SendResult.RejectedRecipients instead.
+    }
+}
+
+// ...
+
+var result = client.Send (new LenientSendRequest (message));
+
+foreach (var recipient in result.RejectedRecipients)
+    Console.WriteLine ("Rejected: {0}", recipient);
+```
+
+`SmtpSendRequest` is also how you request per-message SMTP options such as delivery status notifications (DSN).
 
 ## Retrieving Messages (via Pop3)
 
@@ -340,7 +410,7 @@ the messages in a folder without having to first download all of them.
 
 Using the [Fetch](https://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_Fetch.htm) and
 [FetchAsync](https://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_ImapFolder_FetchAsync.htm) method overloads
-(or the convenient [extension methods](https://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderExtensions_Fetch.htm)),
+(or the convenient [extension methods](https://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderFetchExtensions_Fetch.htm)),
 it's possible to obtain any subset of summary information for any range of messages in a given folder.
 
 ```csharp
@@ -509,10 +579,36 @@ Sent folder, Drafts folder, Trash folder, etc.
 
 How you handle this is up to you.
 
+### Monitoring an IMAP Folder for Changes
+
+To be notified when new messages arrive (or when messages are deleted or their flags change), use an
+[ImapIdleSession](https://www.mimekit.net/docs/html/T_MailKit_Net_Imap_ImapIdleSession.htm). It uses the
+`IDLE` command when the server supports it (restarting it periodically so that the connection isn't dropped)
+and falls back to polling with `NOOP` when the server doesn't:
+
+```csharp
+await client.Inbox.OpenAsync (FolderAccess.ReadOnly);
+
+var session = client.CreateIdleSession ();
+
+// Cancel the token to stop monitoring; the IDLE command is ended gracefully and the client remains usable.
+try {
+    await foreach (var changes in session.ReadChangesAsync (cancellationToken)) {
+        if (changes.MessagesArrived)
+            Console.WriteLine ("New messages have arrived! The Inbox now has {0} messages.", client.Inbox.Count);
+    }
+} catch (OperationCanceledException) {
+}
+```
+
+The `IDLE` command has already been ended by the time each batch of changes is returned, so it is safe to issue
+other commands (such as fetching the new messages) while processing them. For a more complete example, see
+[ImapIdleSessionExample.cs](https://github.com/jstedfast/MailKit/blob/master/Documentation/Examples/ImapIdleSessionExample.cs).
+
 ## Contributing
 
 The first thing you'll need to do is fork MailKit to your own GitHub repository. For instructions on how to
-do that, see the section titled **Getting the Source Code**.
+clone it, see the section titled **Getting the Source Code**.
 
 If you use [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) or [MonoDevelop](https://monodevelop.com),
 all of the solution files are configured with the coding style used by MailKit. If you use Visual Studio on Windows

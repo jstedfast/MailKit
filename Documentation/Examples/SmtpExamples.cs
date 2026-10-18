@@ -432,23 +432,13 @@ namespace MailKit.Examples {
 
 				Console.WriteLine ($"Negotiated the following SSL options with {host}:");
 				Console.WriteLine ($"        Protocol Version: {client.SslProtocol}");
-				Console.WriteLine ($"        Cipher Algorithm: {client.SslCipherAlgorithm}");
-				Console.WriteLine ($"         Cipher Strength: {client.SslCipherStrength}");
-				Console.WriteLine ($"          Hash Algorithm: {client.SslHashAlgorithm}");
-				Console.WriteLine ($"           Hash Strength: {client.SslHashStrength}");
-				Console.WriteLine ($"  Key-Exchange Algorithm: {client.SslKeyExchangeAlgorithm}");
-				Console.WriteLine ($"   Key-Exchange Strength: {client.SslKeyExchangeStrength}");
+				Console.WriteLine ($"            Cipher Suite: {client.SslCipherSuite}");
 
 				// Example Log:
 				//
 				// Negotiated the following SSL options with smtp.gmail.com:
 				//         Protocol Version: Tls12
-				//         Cipher Algorithm: Aes128
-				//          Cipher Strength: 128
-				//           Hash Algorithm: Sha256
-				//            Hash Strength: 0
-				//   Key-Exchange Algorithm: 44550
-				//    Key-Exchange Strength: 255
+				//             Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 
 				client.Disconnect (true);
 			}

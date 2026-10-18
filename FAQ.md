@@ -71,7 +71,7 @@ System.Text.Encoding.RegisterProvider (System.Text.CodePagesEncodingProvider.Ins
 
 .NET Core (and ASP.NET Core by extension) and .NET 5 (and later) only provide the Unicode encodings, ASCII and ISO-8859-1 by default.
 Other text encodings are not available to your application unless your application
-[registers](https://docs.microsoft.com/en-us/dotnet/api/system.text.encoding.registerprovider?view=net-5.0) the encoding
+[registers](https://learn.microsoft.com/en-us/dotnet/api/system.text.encoding.registerprovider) the encoding
 provider that provides all of the additional encodings.
 
 First, add a package reference for the [System.Text.Encoding.CodePages](https://www.nuget.org/packages/System.Text.Encoding.CodePages)
@@ -214,9 +214,9 @@ a wide range of mail servers.
 
 The best approach would be to prompt the user with a dialog explaining that the certificate is
 not trusted for the reasons enumerated by the
-[SslPolicyErrors](https://docs.microsoft.com/en-us/dotnet/api/system.net.security.sslpolicyerrors?view=netframework-4.8)
+[SslPolicyErrors](https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslpolicyerrors)
 argument as well as potentially the errors provided in the
-[X509Chain](https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509chain?view=netframework-4.8).
+[X509Chain](https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509chain).
 If the user wishes to accept the risks of trusting the certificate, your program could then `return true`.
 
 For more details on writing a custom SSL certificate validation callback, it may be worth checking out the
@@ -251,7 +251,7 @@ POP3 and IMAP clients will fail to connect to servers that are still using older
 the SSL and TLS protocols that are not supported by default are: SSL v2.0, SSL v3.0, TLS v1.0 and TLS v1.1.
 
 You can override MailKit's default set of supported
-[SSL and TLS protocols](https://docs.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols?view=netframework-4.8)
+[SSL and TLS protocols](https://learn.microsoft.com/en-us/dotnet/api/system.security.authentication.sslprotocols)
 by setting the value of the [SslProtocols](https://www.mimekit.net/docs/html/P_MailKit_MailService_SslProtocols.htm)
 property on your SMTP, POP3 or IMAP client.
 
@@ -1121,6 +1121,11 @@ Y3J5cHRlZApibHVyYi4gTW1ta2F5PyBUaGFua3MuCg==
 -----END PGP MESSAGE-----
 ```
 
+**Note:** Starting with MailKit 5.0, OpenPGP support lives in the
+[MimeKit.Cryptography](https://www.nuget.org/packages/MimeKit.Cryptography) package. Add a reference to it
+(or to the [MimeKit](https://www.nuget.org/packages/MimeKit) meta-package) and call
+`CryptographyModule.Initialize ()` once at startup before using any of the APIs below.
+
 To deal with these kinds of messages, I've added a method to OpenPgpContext called `GetDecryptedStream` which
 can be used to get the raw decrypted stream.
 
@@ -1647,8 +1652,8 @@ already do this locking for you.
 
 If you get this exception, it's probably because you thought you had to open the destination folder that you
 passed as an argument to one of the
-[CopyTo](https://www.mimekit.net/docs/html/Overload_MailKit_MailFolder_CopyTo.htm) or
-[MoveTo](https://www.mimekit.net/docs/html/Overload_MailKit_MailFolder_MoveTo.htm) methods. When you opened
+[CopyTo](https://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderCopyExtensions_CopyTo.htm) or
+[MoveTo](https://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderCopyExtensions_MoveTo.htm) methods. When you opened
 that destination folder, you also inadvertently closed the source folder which is why you are getting this
 exception.
 
@@ -1689,7 +1694,7 @@ The way to mark messages as read using the IMAP protocol is to set the `\Seen` f
 To do this using MailKit, you will first need to know either the index(es) or the UID(s) of the messages
 that you would like to set the `\Seen` flag on. Once you have that information, you will want to call
 one of the
-[AddFlags](https://www.mimekit.net/docs/html/Overload_MailKit_MailFolder_AddFlags.htm) methods on the
+[AddFlags](https://www.mimekit.net/docs/html/Overload_MailKit_IMailFolderStoreExtensions_AddFlags.htm) methods on the
 `ImapFolder`. For example:
 
 ```csharp

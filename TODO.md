@@ -1,7 +1,5 @@
 ## TODO
 
-* SASL Authentication
-  * Include code to fetch an OAuth2 token?
 * IMAP4 Client
   * Consolidate MessageFlagsChanged, MessageLabelsChanged, and ModSeqChanged events into a single event?
   * Extensions:

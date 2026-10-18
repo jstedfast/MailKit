@@ -18,7 +18,7 @@
 
 Whether you are writing a Desktop, Mobile or Web Service application, the first thing you'll need to do is register your
 application with Microsoft's Identity Platform. To do this, go to Microsoft's
-[Quickstart guide](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app)
+[Quickstart guide](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app)
 and follow the instructions.
 
 ## Configuring the Correct API Permissions for Your Application
@@ -354,5 +354,5 @@ using (var client = new SmtpClient ()) {
 
 ## Additional Resources
 
-For more information, check out the [Microsoft.Identity.Client](https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.client?view=azure-dotnet)
+For more information, check out the [Microsoft.Identity.Client](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identity.client)
 documentation.

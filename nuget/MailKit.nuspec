@@ -26,22 +26,23 @@ Features include:
     </description>
     <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
     <releaseNotes>
-* Fixed telemetry duration histograms being 100x too large on Linux/macOS. (issue #2020)
-* Bumped MimeKit dependency from 4.18.0 to 4.18.1.
+MailKit 5.0 is a major release containing a number of breaking changes. See https://github.com/jstedfast/MailKit/blob/master/ReleaseNotes.md for the complete list of changes and https://github.com/jstedfast/MailKit/blob/master/PortingGuide.md for migration notes.
+
+* MailKit now depends on MimeKit.Core instead of MimeKit and no longer depends on BouncyCastle. S/MIME, OpenPGP, DKIM and ARC support requires the MimeKit.Cryptography package and a call to CryptographyModule.Initialize (). MailKitLite has been retired; use MailKit instead.
+* Send () and SendAsync () now return a SendResult (with AcceptedRecipients and RejectedRecipients) instead of a string. Per-message SMTP options such as DSN are now configured via SmtpSendRequest.
+* The ImapCapabilities, SmtpCapabilities and Pop3Capabilities flag enums have been replaced by read-only capability sets keyed by the ImapCapability, SmtpCapability and Pop3Capability enums.
+* Message sizes, folder sizes and quota limits are now 64-bit (long) values.
+* Added ImapIdleSession (via ImapClient.CreateIdleSession ()) to simplify monitoring a folder for changes.
     </releaseNotes>
     <copyright>.NET Foundation and Contributors</copyright>
     <language>en-US</language>
-    <tags>smtp pop3 imap mime security arc dkim smime s/mime openpgp pgp mbox mail email parser tnef</tags>
+    <tags>smtp pop3 imap sasl oauth2 mime mail email</tags>
     <readme>docs\README.md</readme>
     <frameworkAssemblies>
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5.2" />
-      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.1" />
-      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6.1" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.6.2" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.6.2" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.6.2" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.6.2" />
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.7" />
       <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.7" />
