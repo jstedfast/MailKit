@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Retrieving-Messages-With-POP3" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        <codeEntityReference>T:MailKit.Net.Pop3.Pop3Client</codeEntityReference> is used to download messages
+        from a POP3 server. POP3 is a simple protocol: the server exposes a single mailbox (a "spool") as a
+        list of messages that can be downloaded and deleted. There are no folders, flags or server-side
+        searching. If you need any of those features, use IMAP instead (see <link xlink:href="Working-With-IMAP"/>).
+      </para>
+      <para>
+        For information about connecting securely, logging and error handling, see
+        <link xlink:href="Connecting-To-A-Server"/>. For information about authenticating, see
+        <link xlink:href="Authentication"/>.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <section address="DownloadingMessages">
+      <title>Downloading messages</title>
+      <content>
+        <para>
+          Once authenticated, <codeEntityReference>P:MailKit.Net.Pop3.Pop3Client.Count</codeEntityReference>
+          contains the number of messages in the spool. Messages are accessed by index, from <literal>0</literal>
+          to <literal>Count - 1</literal>:
+        </para>
+        <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+        <para>
+          If the server supports the <literal>PIPELINING</literal> extension, downloading a batch of messages
+          at once using <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.GetMessages</codeEntityReference>
+          is significantly faster than downloading them one at a time because MailKit can send all of the
+          commands without waiting for each response:
+        </para>
+        <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
+        <para>
+          To download only the headers of messages, use
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.GetMessageHeaders</codeEntityReference>
+          (requires the <literal>TOP</literal> extension).
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.GetMessageSizes</codeEntityReference>
+          returns the size of every message, which can be used to skip unusually large messages.
+        </para>
+        <para>
+          To process very large messages without loading them entirely into memory, use
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.GetStream</codeEntityReference>
+          to get the raw message stream and copy it directly to disk.
+        </para>
+      </content>
+    </section>
+
+    <section address="NewMessages">
+      <title>Downloading only new messages</title>
+      <content>
+        <para>
+          POP3 does not keep track of which messages a client has already seen. Message indexes are only
+          valid for the duration of a session, so to avoid downloading the same messages again, keep track
+          of each message's unique identifier (UID). If the server supports the <literal>UIDL</literal>
+          extension, <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.GetMessageUids</codeEntityReference>
+          returns the UID of each message, which remains the same across sessions:
+        </para>
+        <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadNewMessages"/>
+      </content>
+    </section>
+
+    <section address="DeletingMessages">
+      <title>Deleting messages</title>
+      <content>
+        <para>
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.DeleteMessage</codeEntityReference>,
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.DeleteMessages</codeEntityReference> and
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.DeleteAllMessages</codeEntityReference>
+          only <legacyItalic>mark</legacyItalic> messages for deletion. The messages are not actually removed
+          until the session ends cleanly by calling
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.Disconnect</codeEntityReference>
+          with <codeInline>quit</codeInline> set to <codeInline>true</codeInline>, which sends the
+          <literal>QUIT</literal> command.
+        </para>
+        <para>
+          If the connection is dropped, or if you disconnect without sending <literal>QUIT</literal>, the
+          messages remain in the spool. You can also undo all pending deletions by calling
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Pop3.Pop3Client.Reset</codeEntityReference>.
+        </para>
+        <alert class="note">
+          <para>
+            Some servers (such as Gmail) ignore deletion requests or apply their own policy, depending on
+            the account settings.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="Capabilities">
+      <title>Server capabilities</title>
+      <content>
+        <para>
+          After connecting, the <codeEntityReference>P:MailKit.Net.Pop3.Pop3Client.Capabilities</codeEntityReference>
+          property lists the extensions supported by the server, such as <literal>UIDL</literal>,
+          <literal>TOP</literal>, <literal>PIPELINING</literal> and <literal>UTF8</literal>. Some servers also
+          report an <codeEntityReference>P:MailKit.Net.Pop3.Pop3Client.ExpirePolicy</codeEntityReference>
+          (how long messages are kept after being downloaded) and a
+          <codeEntityReference>P:MailKit.Net.Pop3.Pop3Client.LoginDelay</codeEntityReference>
+          (the minimum number of seconds between logins).
+        </para>
+        <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+      </content>
+    </section>
+
+    <section address="ExceptionHandling">
+      <title>Handling errors</title>
+      <content>
+        <para>
+          When the server rejects a command (for example, a message that no longer exists), a
+          <codeEntityReference>T:MailKit.Net.Pop3.Pop3CommandException</codeEntityReference> is thrown and the
+          connection remains usable. When the server sends an unexpected response, a
+          <codeEntityReference>T:MailKit.Net.Pop3.Pop3ProtocolException</codeEntityReference> is thrown and the
+          client is disconnected.
+        </para>
+        <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Connecting-To-A-Server"/>
+      <link xlink:href="Authentication"/>
+      <link xlink:href="Working-With-IMAP"/>
+      <link xlink:href="Parsing-Messages"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

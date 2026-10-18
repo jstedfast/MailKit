@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Working-With-IMAP" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        <codeEntityReference>T:MailKit.Net.Imap.ImapClient</codeEntityReference> provides access to messages
+        stored on an IMAP server. Unlike POP3, IMAP is designed for leaving messages on the server: it supports
+        multiple folders, message flags and keywords, server-side searching and sorting, partial downloads and
+        notifications of changes made by other clients.
+      </para>
+      <para>
+        For information about connecting securely, logging and error handling, see
+        <link xlink:href="Connecting-To-A-Server"/>. For information about authenticating, see
+        <link xlink:href="Authentication"/>.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <section address="Capabilities">
+      <title>Server capabilities</title>
+      <content>
+        <para>
+          IMAP has a large number of extensions, and servers vary widely in which ones they support. After
+          connecting (and again after authenticating, since many servers advertise additional capabilities
+          once the user has logged in), the <codeEntityReference>P:MailKit.Net.Imap.ImapClient.Capabilities</codeEntityReference>
+          property lists the extensions supported by the server. MailKit uses these extensions automatically
+          where possible, but some features (such as sorting, threading or <literal>QRESYNC</literal>) are only
+          available when the server supports them.
+        </para>
+        <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+        <para>
+          Many folder-level features can also be checked using
+          <codeEntityReference autoUpgrade="true">M:MailKit.IMailFolder.Supports(MailKit.FolderFeature)</codeEntityReference>.
+        </para>
+      </content>
+    </section>
+
+    <section address="Folders">
+      <title>Folders</title>
+      <content>
+        <para>
+          The <codeEntityReference>P:MailKit.Net.Imap.ImapClient.Inbox</codeEntityReference> folder is always
+          available. Other folders live inside one or more namespaces. Most servers have a single personal
+          namespace, but some also have namespaces for folders that are shared with other users or are public:
+        </para>
+        <code language="c#" source="Examples\ImapExamples.cs" region="Namespaces"/>
+        <para>
+          You can list all of the folders in a namespace at once (optionally requesting status information such
+          as the message count for each folder in the same round-trip), or walk the folder hierarchy one level
+          at a time:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="ListFolders"/>
+      </content>
+    </section>
+
+    <section address="SpecialFolders">
+      <title>Special folders</title>
+      <content>
+        <para>
+          Folder names such as "Sent", "Drafts" or "Trash" vary between servers and are often localized. If the
+          server supports the <literal>SPECIAL-USE</literal> (or Gmail's <literal>XLIST</literal>) extension,
+          <codeEntityReference>M:MailKit.IMailStore.GetFolder(MailKit.SpecialFolder)</codeEntityReference> can
+          be used to locate them regardless of their names:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="SpecialFolders"/>
+      </content>
+    </section>
+
+    <section address="ManagingFolders">
+      <title>Creating, renaming and deleting folders</title>
+      <content>
+        <para>
+          Folders can be created, renamed, deleted, subscribed to and unsubscribed from.
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.Status</codeEntityReference> can be
+          used to get information such as the message count or unread count of a folder without opening it:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="ManageFolders"/>
+      </content>
+    </section>
+
+    <section address="OpeningFolders">
+      <title>Opening folders</title>
+      <content>
+        <para>
+          Before you can access the messages in a folder, it must be opened using
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.Open</codeEntityReference>. Only one
+          folder can be open at a time per connection; opening a folder implicitly closes the previously opened
+          folder.
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <codeInline>FolderAccess.ReadOnly</codeInline> opens the folder without allowing changes. Use this
+              when you only need to read messages.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeInline>FolderAccess.ReadWrite</codeInline> is required to change flags, append, expunge or
+              move messages out of the folder.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          Once open, properties such as <codeEntityReference>P:MailKit.IMailFolder.Count</codeEntityReference>,
+          <codeEntityReference>P:MailKit.IMailFolder.UidValidity</codeEntityReference>,
+          <codeEntityReference>P:MailKit.IMailFolder.UidNext</codeEntityReference> and
+          <codeEntityReference>P:MailKit.IMailFolder.PermanentFlags</codeEntityReference> are populated and
+          kept up-to-date as the server sends notifications.
+        </para>
+        <alert class="note">
+          <para>
+            MailKit never implicitly marks messages as <literal>\Seen</literal> when downloading them, even in a
+            folder opened with <codeInline>FolderAccess.ReadWrite</codeInline>. To mark a message as read, add the
+            <literal>\Seen</literal> flag explicitly (see <link xlink:href="#Flags">Flags and keywords</link>).
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="MessageIdentifiers">
+      <title>Indexes and unique identifiers</title>
+      <content>
+        <para>
+          Messages in an open folder can be referred to in two ways:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              By <legacyItalic>index</legacyItalic> (a zero-based sequence number). Indexes shift whenever a
+              message is expunged, so they should only be used briefly and never stored.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              By <legacyItalic>unique identifier</legacyItalic> (a <codeEntityReference>T:MailKit.UniqueId</codeEntityReference>).
+              A message's UID never changes as long as the folder's
+              <codeEntityReference>P:MailKit.IMailFolder.UidValidity</codeEntityReference> stays the same, so
+              UIDs are suitable for persisting between sessions.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          Most APIs have overloads that accept either. Prefer UIDs wherever possible.
+        </para>
+      </content>
+    </section>
+
+    <section address="FetchingSummaries">
+      <title>Fetching message summaries</title>
+      <content>
+        <para>
+          Downloading entire messages just to display a message list is slow and wasteful. Instead, use
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.Fetch</codeEntityReference> to
+          request only the information you need, such as the envelope (subject, addresses, date), flags, size,
+          a short preview of the text or the MIME structure of the message. The results are returned as
+          <codeEntityReference>T:MailKit.IMessageSummary</codeEntityReference> objects:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="FetchSummaries"/>
+      </content>
+    </section>
+
+    <section address="DownloadingMessages">
+      <title>Downloading messages</title>
+      <content>
+        <para>
+          Use <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.GetMessage</codeEntityReference>
+          to download and parse an entire message:
+        </para>
+        <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessagesByUniqueId"/>
+        <para>
+          To save messages to disk without parsing them (or to process very large messages without loading them
+          entirely into memory), use <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.GetStream</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessageStreamsByUniqueId"/>
+        <para>
+          If you have fetched the <codeInline>BodyStructure</codeInline> of a message, you can download
+          individual parts (such as only the text body, or a single attachment) using
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.GetBodyPart</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\ImapBodyPartExamples.cs" region="GetBodyPartsByUniqueId"/>
+      </content>
+    </section>
+
+    <section address="Flags">
+      <title>Flags and keywords</title>
+      <content>
+        <para>
+          Each message has a set of system flags (<codeEntityReference>T:MailKit.MessageFlags</codeEntityReference>,
+          such as <literal>\Seen</literal>, <literal>\Flagged</literal>, <literal>\Answered</literal> and
+          <literal>\Deleted</literal>) and may have any number of user-defined keywords (if the folder's
+          <codeEntityReference>P:MailKit.IMailFolder.PermanentFlags</codeEntityReference> include
+          <codeInline>MessageFlags.UserDefined</codeInline>). Flags can be added, removed or replaced:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="Flags"/>
+      </content>
+    </section>
+
+    <section address="Searching">
+      <title>Searching and sorting</title>
+      <content>
+        <para>
+          Searching is performed on the server using a <codeEntityReference>T:MailKit.Search.SearchQuery</codeEntityReference>,
+          which can be combined using <codeInline>And</codeInline>, <codeInline>Or</codeInline> and
+          <codeInline>Not</codeInline>. The result is a list of UIDs that can then be passed to
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.Fetch</codeEntityReference> or
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.GetMessage</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="Search"/>
+        <para>
+          If the server supports the <literal>SORT</literal> extension, results can also be sorted on the server.
+          Otherwise, fetch the summaries and sort them on the client using
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.MessageSorter.Sort</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="Sort"/>
+      </content>
+    </section>
+
+    <section address="AppendCopyMove">
+      <title>Appending, copying and moving messages</title>
+      <content>
+        <para>
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.Append</codeEntityReference>
+          uploads a message into a folder (for example, to save a copy of a sent message in the Sent folder).
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.CopyTo</codeEntityReference> and
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.MoveTo</codeEntityReference>
+          copy or move messages between folders. If the server supports the <literal>UIDPLUS</literal> extension,
+          these methods return the UIDs of the new messages in the destination folder.
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="AppendCopyMove"/>
+        <alert class="note">
+          <para>
+            If the server does not support the <literal>MOVE</literal> extension, MailKit emulates
+            <codeInline>MoveTo</codeInline> by copying the messages, marking the originals as
+            <literal>\Deleted</literal> and expunging them.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="DeletingMessages">
+      <title>Deleting messages</title>
+      <content>
+        <para>
+          Deleting messages in IMAP is a two-step process: messages are first marked with the
+          <literal>\Deleted</literal> flag and are then permanently removed when the folder is
+          <legacyItalic>expunged</legacyItalic>. Calling
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.Expunge</codeEntityReference>
+          with no arguments removes <legacyItalic>all</legacyItalic> messages marked as deleted, including any that
+          were marked by other clients. If the server supports <literal>UIDPLUS</literal>, you can expunge only
+          specific messages.
+        </para>
+        <code language="c#" source="Examples\ImapFolderExamples.cs" region="DeleteAndExpunge"/>
+        <para>
+          Many clients (and servers such as Gmail) treat "delete" as "move to Trash" instead. In that case, use
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.IMailFolder.MoveTo</codeEntityReference> with the
+          <codeInline>SpecialFolder.Trash</codeInline> folder.
+        </para>
+      </content>
+    </section>
+
+    <section address="Synchronizing">
+      <title>Synchronizing a local cache</title>
+      <content>
+        <para>
+          Applications that display a mailbox (rather than just processing new messages) usually keep a local
+          cache of message summaries so that they do not need to re-download everything each time they connect.
+          Keeping the cache in sync with the server relies on three values:
+        </para>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><para>Value</para></entry>
+              <entry><para>Purpose</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><para><codeEntityReference>P:MailKit.IMailFolder.UidValidity</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                Identifies the "generation" of UIDs in the folder. If it ever changes (for example, because the
+                folder was deleted and re-created), every cached UID is invalid and the cache must be discarded.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para><codeEntityReference>P:MailKit.IMailFolder.UidNext</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                The UID that will be assigned to the next message added to the folder. Any message with a UID
+                greater than or equal to the value saved during the previous sync is new.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para><codeEntityReference>P:MailKit.IMailFolder.HighestModSeq</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                Only available if the server supports <literal>CONDSTORE</literal>. Every change to a message's
+                flags increments the folder's mod-sequence, making it possible to ask for only the messages that
+                have changed since the previous sync.
+              </para>
+            </entry>
+          </row>
+        </table>
+        <para>
+          At a minimum, the cache needs to store these values for each folder along with the UID and any other
+          information you display for each message:
+        </para>
+        <code language="c#" source="Examples\ImapSyncExamples.cs" region="CacheState"/>
+        <para>
+          New messages can be fetched by requesting the range of UIDs starting at the previously saved
+          <literal>UIDNEXT</literal> value:
+        </para>
+        <code language="c#" source="Examples\ImapSyncExamples.cs" region="FetchNewMessages"/>
+        <para>
+          <legacyBold>Basic synchronization.</legacyBold> Without any extensions, the client must check the
+          <literal>UIDVALIDITY</literal>, search for all of the UIDs in the folder to find which cached messages
+          have been expunged, re-fetch the flags for every cached message and then fetch any new messages. This
+          works with every server, but the cost grows with the size of the folder:
+        </para>
+        <code language="c#" source="Examples\ImapSyncExamples.cs" region="BasicSync"/>
+        <para>
+          <legacyBold>CONDSTORE.</legacyBold> If the server supports the <literal>CONDSTORE</literal> extension,
+          the client can use a <codeEntityReference>T:MailKit.FetchRequest</codeEntityReference> with
+          <codeEntityReference>P:MailKit.FetchRequest.ChangedSince</codeEntityReference> set to the previously
+          saved <literal>HIGHESTMODSEQ</literal> so that only the messages whose flags have actually changed are
+          returned:
+        </para>
+        <code language="c#" source="Examples\ImapSyncExamples.cs" region="CondStoreSync"/>
+        <para>
+          <legacyBold>QRESYNC.</legacyBold> The <literal>QRESYNC</literal> extension goes further: by passing the
+          saved <literal>UIDVALIDITY</literal>, <literal>HIGHESTMODSEQ</literal> and known UIDs when opening the
+          folder, the server reports both expunged messages (via the
+          <codeEntityReference>E:MailKit.IMailFolder.MessagesVanished</codeEntityReference> event) and changed
+          flags (via the <codeEntityReference>E:MailKit.IMailFolder.MessageFlagsChanged</codeEntityReference>
+          event) as part of opening the folder, so that no searching is needed. <literal>QRESYNC</literal> must be
+          enabled once per connection using
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Imap.ImapClient.Enable</codeEntityReference>
+          before any folders are opened:
+        </para>
+        <code language="c#" source="Examples\ImapSyncExamples.cs" region="QuickResyncSync"/>
+        <alert class="tip">
+          <para>
+            While a folder is open, keep the cache up-to-date by handling the
+            <codeEntityReference>E:MailKit.IMailFolder.CountChanged</codeEntityReference>,
+            <codeEntityReference>E:MailKit.IMailFolder.MessageExpunged</codeEntityReference> (or
+            <codeEntityReference>E:MailKit.IMailFolder.MessagesVanished</codeEntityReference> when
+            <literal>QRESYNC</literal> is enabled) and
+            <codeEntityReference>E:MailKit.IMailFolder.MessageFlagsChanged</codeEntityReference> events, and save
+            the <literal>UIDNEXT</literal> and <literal>HIGHESTMODSEQ</literal> values when you are done.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="Idle">
+      <title>Receiving notifications with IDLE</title>
+      <content>
+        <para>
+          IMAP servers only send notifications about changes (new messages, expunged messages, flag changes)
+          in response to a command. To be notified immediately, use the <literal>IDLE</literal> extension,
+          which allows the server to push notifications to the client while it waits.
+        </para>
+        <para>
+          <codeEntityReference>M:MailKit.Net.Imap.ImapClient.CreateIdleSession(MailKit.Net.Imap.ImapIdleOptions)</codeEntityReference>
+          creates an <codeEntityReference>T:MailKit.Net.Imap.ImapIdleSession</codeEntityReference> that manages
+          the details for you: it automatically re-issues the <literal>IDLE</literal> command before the server
+          times it out, falls back to polling with <literal>NOOP</literal> if the server does not support
+          <literal>IDLE</literal>, and coalesces bursts of notifications. The following example monitors the
+          Inbox for new messages:
+        </para>
+        <code language="c#" source="Examples\ImapIdleSessionExample.cs"/>
+        <alert class="note">
+          <para>
+            The session ends the <literal>IDLE</literal> command before returning each batch of changes, so the
+            same connection can be used to fetch the new messages before waiting again. However, no other
+            commands can be sent while the session is waiting; use a separate
+            <codeEntityReference>T:MailKit.Net.Imap.ImapClient</codeEntityReference> if you need to perform other
+            operations concurrently.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Connecting-To-A-Server"/>
+      <link xlink:href="Authentication"/>
+      <link xlink:href="Retrieving-Messages-With-POP3"/>
+      <link xlink:href="Parsing-Messages"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

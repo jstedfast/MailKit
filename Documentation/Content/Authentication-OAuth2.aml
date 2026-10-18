@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Authentication-OAuth2" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Many email providers, including Gmail and Microsoft 365 (Exchange Online), have disabled (or are in the
+        process of disabling) password-based authentication for IMAP, POP3 and SMTP. Instead, applications must
+        obtain an OAuth 2.0 access token from the provider and use it to authenticate.
+      </para>
+      <para>
+        MailKit does not obtain access tokens itself. Use the provider's authentication library (such as the
+        Microsoft Authentication Library (MSAL) or the Google APIs client library) to obtain a token, then pass
+        it to MailKit using one of the OAuth SASL mechanisms described below.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <section address="Mechanisms">
+      <title>XOAUTH2 and OAUTHBEARER</title>
+      <content>
+        <para>
+          There are two SASL mechanisms for authenticating with an OAuth 2.0 access token:
+        </para>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><para>Mechanism</para></entry>
+              <entry><para>Class</para></entry>
+              <entry><para>Description</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><para>OAUTHBEARER</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismOAuthBearer</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                The standard mechanism, defined in
+                <externalLink>
+                  <linkText>rfc7628</linkText>
+                  <linkUri>https://tools.ietf.org/html/rfc7628</linkUri>
+                  <linkTarget>_blank</linkTarget>
+                </externalLink>.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>XOAUTH2</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismOAuth2</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                A proprietary mechanism created by Google that predates <literal>OAUTHBEARER</literal>. It is still
+                the most widely supported, including by Gmail and Microsoft 365.
+              </para>
+            </entry>
+          </row>
+        </table>
+        <para>
+          Both take the user name (usually the email address) and the access token. Since neither mechanism is
+          chosen automatically, check <codeEntityReference>P:MailKit.IMailService.AuthenticationMechanisms</codeEntityReference>
+          and prefer <literal>OAUTHBEARER</literal> when the server advertises it:
+        </para>
+        <code language="c#">
+SaslMechanism oauth2;
+
+if (client.AuthenticationMechanisms.Contains ("OAUTHBEARER"))
+    oauth2 = new SaslMechanismOAuthBearer (username, accessToken);
+else
+    oauth2 = new SaslMechanismOAuth2 (username, accessToken);
+
+client.Authenticate (oauth2);
+        </code>
+      </content>
+    </section>
+
+    <section address="MicrosoftExchange">
+      <title>Microsoft 365 / Exchange Online</title>
+      <content>
+        <para>
+          For Exchange Online, register your application in Microsoft Entra ID, grant it the
+          <literal>IMAP.AccessAsUser.All</literal>, <literal>POP.AccessAsUser.All</literal> and/or
+          <literal>SMTP.Send</literal> permissions and use MSAL to acquire a token. The following example uses a
+          <literal>PublicClientApplication</literal> for a desktop application:
+        </para>
+        <code language="c#" source="Examples\OAuth2ExchangeExample.cs"/>
+        <para>
+          Web applications and background services (daemons) require a different flow, and services also require
+          additional configuration in Exchange Online. See
+          <externalLink>
+            <linkText>Using OAuth2 With Exchange (IMAP, POP3 or SMTP)</linkText>
+            <linkUri>https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+          for complete step-by-step instructions.
+        </para>
+      </content>
+    </section>
+
+    <section address="Gmail">
+      <title>Gmail</title>
+      <content>
+        <para>
+          For Gmail, create an OAuth client ID in the Google Cloud Console, request the
+          <literal>https://mail.google.com/</literal> scope and use the Google APIs client library to acquire a
+          token:
+        </para>
+        <code language="c#" source="Examples\OAuth2GMailExample.cs"/>
+        <para>
+          See
+          <externalLink>
+            <linkText>Using OAuth2 With GMail (IMAP, POP3 or SMTP)</linkText>
+            <linkUri>https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+          for complete step-by-step instructions, including how to authenticate from an ASP.NET web application.
+        </para>
+      </content>
+    </section>
+
+    <section address="TokenLifetime">
+      <title>Token lifetime</title>
+      <content>
+        <para>
+          Access tokens are short-lived (typically about an hour). Rather than storing an access token, store the
+          refresh token (or let the authentication library cache it for you) and request a fresh access token
+          each time you connect. Both of the examples above do this, using <literal>AcquireTokenSilent</literal>
+          and <literal>RefreshTokenAsync</literal> respectively.
+        </para>
+        <para>
+          If the token has expired or does not have the required scopes, authentication fails with an
+          <codeEntityReference>T:MailKit.Security.AuthenticationException</codeEntityReference>. The most common
+          causes are requesting the wrong scope (for example, a Microsoft Graph scope instead of an
+          <literal>outlook.office.com</literal> scope), using the wrong user name, or IMAP/POP3/SMTP AUTH being
+          disabled for the mailbox by an administrator.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Authentication"/>
+      <link xlink:href="Authentication-NTLM-Kerberos"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

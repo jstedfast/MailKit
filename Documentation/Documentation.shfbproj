@@ -112,6 +112,13 @@
     <Folder Include="Examples" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Content\Authentication.aml" />
+    <None Include="Content\Authentication-NTLM-Kerberos.aml" />
+    <None Include="Content\Authentication-OAuth2.aml" />
+    <None Include="Content\Connecting-To-A-Server.aml" />
+    <None Include="Content\Retrieving-Messages-With-POP3.aml" />
+    <None Include="Content\Sending-Messages-With-SMTP.aml" />
+    <None Include="Content\Working-With-IMAP.aml" />
     <None Include="Content\Creating-Messages.aml" />
     <None Include="Content\Frequently-Asked-Questions.aml" />
     <None Include="Content\Getting-Started.aml" />
@@ -121,6 +128,11 @@
     <None Include="Content\Working-With-Messages.aml" />
     <None Include="Content\Working-With-OpenPGP.aml" />
     <None Include="Content\Working-With-SMime.aml" />
+    <None Include="Examples\AuthenticationExamples.cs" />
+    <None Include="Examples\ConnectionExamples.cs" />
+    <None Include="Examples\ImapFolderExamples.cs" />
+    <None Include="Examples\ImapSyncExamples.cs" />
+    <None Include="Examples\SmtpSendResultExamples.cs" />
     <None Include="Examples\BodyBuilder.cs" />
     <None Include="Examples\CreateMultipartAlternative.cs" />
     <None Include="Examples\CreateMultipartMixed.cs" />

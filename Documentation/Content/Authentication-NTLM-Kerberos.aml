@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Authentication-NTLM-Kerberos" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        Microsoft Exchange (on-premises) and other servers in Windows domain environments often support Windows
+        authentication using the <literal>NTLM</literal> and/or <literal>GSSAPI</literal> (Kerberos) SASL
+        mechanisms. These allow an application to authenticate using domain credentials, or as the currently
+        logged-in user without needing to know the user's password at all.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <section address="Ntlm">
+      <title>NTLM</title>
+      <content>
+        <para>
+          MailKit includes two implementations of the <literal>NTLM</literal> mechanism:
+        </para>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><para>Class</para></entry>
+              <entry><para>Description</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismNtlm</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                A fully managed implementation that is available on all target frameworks and platforms. It
+                requires an explicit user name and password.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismNtlmNative</codeEntityReference></para></entry>
+            <entry>
+              <para>
+                Uses the operating system's implementation via
+                <codeEntityReference>T:System.Net.Security.NegotiateAuthentication</codeEntityReference>. Only
+                available on .NET 8 and later, and only on platforms where NTLM is supported (Windows, or
+                Linux/macOS with the appropriate GSSAPI libraries installed). It can authenticate as the
+                currently logged-in user.
+              </para>
+            </entry>
+          </row>
+        </table>
+        <para>
+          When MailKit selects <literal>NTLM</literal> automatically (see <link xlink:href="Authentication"/>),
+          it uses <codeEntityReference>T:MailKit.Security.SaslMechanismNtlmNative</codeEntityReference> if it is
+          supported on the current platform and falls back to
+          <codeEntityReference>T:MailKit.Security.SaslMechanismNtlm</codeEntityReference> otherwise.
+        </para>
+        <para>
+          To use the managed implementation explicitly, pass the domain as part of the
+          <codeEntityReference>T:System.Net.NetworkCredential</codeEntityReference>. Setting the
+          <codeEntityReference>P:MailKit.Security.SaslMechanismNtlm.ServicePrincipalName</codeEntityReference>
+          and enabling <codeEntityReference>P:MailKit.Security.SaslMechanismNtlm.AllowChannelBinding</codeEntityReference>
+          help protect against relay and man-in-the-middle attacks:
+        </para>
+        <code language="c#" source="Examples\AuthenticationExamples.cs" region="AuthenticateWithNtlm"/>
+        <para>
+          To authenticate as the currently logged-in user with the native implementation, use the default
+          constructor, which uses <codeEntityReference>P:System.Net.CredentialCache.DefaultNetworkCredentials</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\AuthenticationExamples.cs" region="AuthenticateWithNtlmNative"/>
+        <alert class="warning">
+          <para>
+            NTLM is an old protocol with known weaknesses: it is vulnerable to relay attacks, and the cryptography
+            it uses (HMAC-MD5 for NTLMv2) is weak by modern standards. Only use NTLM over a TLS connection, and
+            prefer Kerberos (<literal>GSSAPI</literal>) or OAuth 2.0 (see <link xlink:href="Authentication-OAuth2"/>)
+            whenever the server supports them. Microsoft has deprecated NTLM in favor of Kerberos.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="Gssapi">
+      <title>Kerberos (GSSAPI)</title>
+      <content>
+        <para>
+          <codeEntityReference>T:MailKit.Security.SaslMechanismGssapi</codeEntityReference> implements the
+          <literal>GSSAPI</literal> mechanism using Kerberos via
+          <codeEntityReference>T:System.Net.Security.NegotiateAuthentication</codeEntityReference>. It is only
+          available on .NET 8 and later; use
+          <codeEntityReference>M:MailKit.Security.SaslMechanism.IsSupported(System.String)</codeEntityReference>
+          to check whether the current platform supports it. On Linux and macOS, the system's GSSAPI libraries
+          must be installed and the user must have a valid Kerberos ticket (for example, obtained using
+          <literal>kinit</literal>).
+        </para>
+        <para>
+          Kerberos authenticates to a specific service, identified by a <legacyItalic>service principal name</legacyItalic>
+          (SPN). If <codeEntityReference>P:MailKit.Security.SaslMechanismNegotiateBase.ServicePrincipalName</codeEntityReference>
+          is not set, MailKit uses <literal>SMTPSVC/&lt;host&gt;</literal>, which is only correct for SMTP. For IMAP
+          and POP3, set it explicitly (usually <literal>imap/&lt;host&gt;</literal> or
+          <literal>pop/&lt;host&gt;</literal>, but this depends on how the server is configured):
+        </para>
+        <code language="c#" source="Examples\AuthenticationExamples.cs" region="AuthenticateWithGssapi"/>
+        <alert class="note">
+          <para>
+            The host name used in the SPN must be the server's fully qualified host name as known to the Kerberos
+            realm. Connecting via an IP address or an alias (CNAME) commonly causes Kerberos authentication to fail.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="ChannelBinding">
+      <title>Channel binding</title>
+      <content>
+        <para>
+          For both <codeEntityReference>T:MailKit.Security.SaslMechanismNtlmNative</codeEntityReference> and
+          <codeEntityReference>T:MailKit.Security.SaslMechanismGssapi</codeEntityReference>, set
+          <codeEntityReference>P:MailKit.Security.SaslMechanismNegotiateBase.DesiredChannelBinding</codeEntityReference>
+          (for example, to <codeInline>ChannelBindingKind.Endpoint</codeInline>) to bind the authentication to the TLS
+          session. After authenticating,
+          <codeEntityReference>P:MailKit.Security.SaslMechanism.NegotiatedChannelBinding</codeEntityReference>
+          indicates whether channel binding was used. Servers that enforce Extended Protection for Authentication
+          (EPA) require channel binding.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Authentication"/>
+      <link xlink:href="Authentication-OAuth2"/>
+      <link xlink:href="Connecting-To-A-Server"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

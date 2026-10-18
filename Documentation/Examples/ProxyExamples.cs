@@ -1,4 +1,4 @@
-//
+﻿//
 // ProxyExamples.cs
 //
 // Author: Jeffrey Stedfast <jestedfa@microsoft.com>
@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Net;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -42,7 +43,7 @@ namespace MailKit.Examples {
 		public static void SendMessageViaProxy (MimeMessage message)
 		{
 			using (var client = new SmtpClient ()) {
-				client.ProxyClient = new Socks5Proxy ("socks5.proxy.com", 1080, new NetworkCredentials ("proxyUserName", "proxyPassword"));
+				client.ProxyClient = new Socks5Client ("socks5.proxy.com", 1080, new NetworkCredential ("proxyUserName", "proxyPassword"));
 				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 				client.Authenticate ("username", "password");
 

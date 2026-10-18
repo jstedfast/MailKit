@@ -8,6 +8,14 @@
     <Topic id="Working-With-Messages" visible="True" title="Working with messages" />
     <Topic id="Working-With-OpenPGP" visible="True" title="Working with OpenPGP" />
     <Topic id="Working-With-SMime" visible="True" isSelected="true" title="Working with S/MIME" />
+    <Topic id="Connecting-To-A-Server" visible="True" title="Connecting to a server" />
+    <Topic id="Sending-Messages-With-SMTP" visible="True" title="Sending messages with SMTP" />
+    <Topic id="Retrieving-Messages-With-POP3" visible="True" title="Retrieving messages with POP3" />
+    <Topic id="Working-With-IMAP" visible="True" title="Working with IMAP" />
+  </Topic>
+  <Topic id="Authentication" visible="True" isExpanded="true" title="Authentication">
+    <Topic id="Authentication-OAuth2" visible="True" title="OAuth 2.0" />
+    <Topic id="Authentication-NTLM-Kerberos" visible="True" title="NTLM and Kerberos" />
   </Topic>
   <Topic id="Frequently-Asked-Questions" visible="True" title="Frequently Asked Questions" />
 </Topics>

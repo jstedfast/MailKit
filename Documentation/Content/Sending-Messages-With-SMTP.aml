@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Sending-Messages-With-SMTP" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        <codeEntityReference>T:MailKit.Net.Smtp.SmtpClient</codeEntityReference> is used to send messages
+        created with MimeKit. This topic covers sending messages, controlling the envelope, handling
+        rejected recipients, requesting delivery status notifications and other SMTP features.
+      </para>
+      <para>
+        For information about connecting securely, logging and error handling, see
+        <link xlink:href="Connecting-To-A-Server"/>. For information about authenticating, see
+        <link xlink:href="Authentication"/>.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <section address="SendingMessages">
+      <title>Sending a message</title>
+      <content>
+        <para>
+          The typical workflow is to connect, authenticate, send one or more messages and then disconnect:
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+        <para>
+          Connecting and authenticating is relatively expensive, so if you have multiple messages to send,
+          reuse the same connection for all of them rather than connecting once per message:
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
+        <alert class="note">
+          <para>
+            <codeEntityReference>T:MailKit.Net.Smtp.SmtpClient</codeEntityReference> is not thread-safe. To send
+            messages concurrently, use one <codeEntityReference>T:MailKit.Net.Smtp.SmtpClient</codeEntityReference>
+            per thread (or a pool of clients).
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="Envelope">
+      <title>Senders and recipients</title>
+      <content>
+        <para>
+          Unless you specify otherwise, the SMTP envelope is derived from the message headers:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              The envelope sender (<literal>MAIL FROM</literal>) is the <literal>Resent-Sender</literal> or
+              first <literal>Resent-From</literal> mailbox if the message has been resent, otherwise the
+              <literal>Sender</literal> or first <literal>From</literal> mailbox.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              The envelope recipients (<literal>RCPT TO</literal>) are the mailboxes in the
+              <literal>Resent-To</literal>, <literal>Resent-Cc</literal> and <literal>Resent-Bcc</literal> headers
+              if the message has been resent, otherwise the mailboxes in the <literal>To</literal>,
+              <literal>Cc</literal> and <literal>Bcc</literal> headers.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          The <literal>Bcc</literal> and <literal>Resent-Bcc</literal> headers are never transmitted, so
+          the other recipients cannot see them.
+        </para>
+        <para>
+          To use a different envelope (for example, to send a message to a different list of recipients
+          than the ones listed in the headers), pass the sender and recipients explicitly using a
+          <codeEntityReference>T:MailKit.SendRequest</codeEntityReference> or
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpSendRequest</codeEntityReference>:
+        </para>
+        <code language="c#">
+var request = new SmtpSendRequest (message, sender, recipients);
+
+client.Send (request);
+        </code>
+        <para>
+          If the server supports the <literal>SMTPUTF8</literal> extension, you can send messages that
+          contain international (non-ASCII) email addresses and headers by enabling
+          <codeEntityReference>P:MimeKit.FormatOptions.International</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+      </content>
+    </section>
+
+    <section address="SendResults">
+      <title>Examining the result</title>
+      <content>
+        <para>
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Net.Smtp.SmtpClient.Send</codeEntityReference>
+          returns a <codeEntityReference>T:MailKit.SendResult</codeEntityReference> (an
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpSendResult</codeEntityReference> when using
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpClient</codeEntityReference>) containing the server's
+          final response along with the lists of accepted and rejected recipients. Many servers include
+          a queue identifier in the response text, which can be useful for tracking the message in the
+          server's logs.
+        </para>
+        <code language="c#" source="Examples\SmtpSendResultExamples.cs" region="SendResult"/>
+      </content>
+    </section>
+
+    <section address="RejectedRecipients">
+      <title>Handling rejected recipients</title>
+      <content>
+        <para>
+          By default, if the server rejects any of the recipients, an
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpCommandException</codeEntityReference> is thrown with an
+          <codeEntityReference>P:MailKit.Net.Smtp.SmtpCommandException.ErrorCode</codeEntityReference> of
+          <codeInline>RecipientNotAccepted</codeInline> and the message is not sent to anyone. The
+          <codeEntityReference>P:MailKit.Net.Smtp.SmtpCommandException.Mailbox</codeEntityReference> property
+          identifies the rejected recipient.
+        </para>
+        <para>
+          To deliver the message to the remaining recipients instead, subclass
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpSendRequest</codeEntityReference> and override
+          <codeEntityReference>M:MailKit.Net.Smtp.SmtpSendRequest.OnRecipientNotAccepted(MimeKit.MailboxAddress,MailKit.Net.Smtp.SmtpResponse)</codeEntityReference>
+          so that it does not throw. Rejected recipients are then listed in
+          <codeEntityReference>P:MailKit.SendResult.RejectedRecipients</codeEntityReference>.
+        </para>
+        <code language="c#" source="Examples\SmtpSendResultExamples.cs" region="LenientSendRequest"/>
+        <para>
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpSendRequest</codeEntityReference> also has
+          <codeEntityReference>M:MailKit.Net.Smtp.SmtpSendRequest.OnSenderAccepted(MimeKit.MailboxAddress,MailKit.Net.Smtp.SmtpResponse)</codeEntityReference>,
+          <codeEntityReference>M:MailKit.Net.Smtp.SmtpSendRequest.OnSenderNotAccepted(MimeKit.MailboxAddress,MailKit.Net.Smtp.SmtpResponse)</codeEntityReference>,
+          <codeEntityReference>M:MailKit.Net.Smtp.SmtpSendRequest.OnRecipientAccepted(MimeKit.MailboxAddress,MailKit.Net.Smtp.SmtpResponse)</codeEntityReference> and
+          <codeEntityReference>M:MailKit.Net.Smtp.SmtpSendRequest.OnNoRecipientsAccepted</codeEntityReference>
+          methods that can be overridden to observe each step of the transaction.
+        </para>
+      </content>
+    </section>
+
+    <section address="DeliveryStatusNotifications">
+      <title>Delivery status notifications</title>
+      <content>
+        <para>
+          If the server supports the <literal>DSN</literal> extension, you can ask it to notify the sender
+          when a message is delivered, delayed or fails to be delivered to each recipient. Set the
+          <codeEntityReference>P:MailKit.Net.Smtp.SmtpSendRequest.DeliveryStatusNotifications</codeEntityReference>
+          property (or override
+          <codeEntityReference>M:MailKit.Net.Smtp.SmtpSendRequest.GetDeliveryStatusNotifications(MimeKit.MailboxAddress)</codeEntityReference>
+          to choose per recipient) and optionally an
+          <codeEntityReference>P:MailKit.Net.Smtp.SmtpSendRequest.EnvelopeId</codeEntityReference> that will be
+          included in the notifications so that you can correlate them with the original message:
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+        <para>
+          Delivery status notifications arrive as ordinary messages in the sender's mailbox. See
+          <codeEntityReference>T:MimeKit.MessageDeliveryStatus</codeEntityReference> for parsing them:
+        </para>
+        <code language="c#" source="Examples\MessageDeliveryStatusExamples.cs" region="ProcessDeliveryStatusNotification"/>
+      </content>
+    </section>
+
+    <section address="Capabilities">
+      <title>Server capabilities</title>
+      <content>
+        <para>
+          After connecting, the <codeEntityReference>P:MailKit.Net.Smtp.SmtpClient.Capabilities</codeEntityReference>
+          property lists the SMTP extensions supported by the server. MailKit automatically takes advantage
+          of extensions such as <literal>PIPELINING</literal>, <literal>8BITMIME</literal>,
+          <literal>BINARYMIME</literal> and <literal>CHUNKING</literal> when they are available.
+          <codeEntityReference>P:MailKit.Net.Smtp.SmtpClient.MaxSize</codeEntityReference> reports the
+          maximum message size accepted by the server, if advertised.
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
+        <para>
+          Some servers also support the <literal>VRFY</literal> and <literal>EXPN</literal> commands, which can
+          be used to verify an address or expand a mailing list. Most public servers disable these commands
+          to prevent address harvesting.
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="VerifyAddress"/>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="ExpandAlias"/>
+      </content>
+    </section>
+
+    <section address="PickupDirectory">
+      <title>Saving messages to a pickup directory</title>
+      <content>
+        <para>
+          Some servers (such as IIS) pick up messages from a directory on disk rather than accepting them
+          over the network. Messages written to a pickup directory must be "byte-stuffed" in the same way
+          that they would be when sent using the <literal>DATA</literal> command. The
+          <codeEntityReference>T:MailKit.Net.Smtp.SmtpDataFilter</codeEntityReference> can be used to do this:
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="SaveToPickupDirectory"/>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="LoadFromPickupDirectory"/>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Connecting-To-A-Server"/>
+      <link xlink:href="Authentication"/>
+      <link xlink:href="Creating-Messages"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

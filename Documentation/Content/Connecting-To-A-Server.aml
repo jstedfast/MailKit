@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Connecting-To-A-Server" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        <codeEntityReference>T:MailKit.Net.Smtp.SmtpClient</codeEntityReference>,
+        <codeEntityReference>T:MailKit.Net.Pop3.Pop3Client</codeEntityReference> and
+        <codeEntityReference>T:MailKit.Net.Imap.ImapClient</codeEntityReference> all derive from
+        <codeEntityReference>T:MailKit.MailService</codeEntityReference>, so connecting, securing the
+        connection, authenticating, logging and error handling work the same way regardless of which
+        protocol you are using. This topic covers those common features.
+      </para>
+      <alert class="tip">
+        <para>
+          Every method that performs network I/O has an <literal>Async</literal> counterpart (for example,
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.MailService.ConnectAsync</codeEntityReference>).
+          The examples in this documentation mostly use the synchronous methods for brevity, but the
+          asynchronous methods are recommended for UI and server applications.
+        </para>
+      </alert>
+      <autoOutline />
+    </introduction>
+
+    <section address="SecureSocketOptions">
+      <title>Choosing how to secure the connection</title>
+      <content>
+        <para>
+          The <codeEntityReference>T:MailKit.Security.SecureSocketOptions</codeEntityReference> argument passed to
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.MailService.Connect</codeEntityReference>
+          determines whether and how the connection is encrypted using SSL/TLS:
+        </para>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><para>Value</para></entry>
+              <entry><para>Behavior</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><para><codeInline>None</codeInline></para></entry>
+            <entry><para>No SSL/TLS is used. Credentials are sent in the clear unless the SASL mechanism protects them.</para></entry>
+          </row>
+          <row>
+            <entry><para><codeInline>SslOnConnect</codeInline></para></entry>
+            <entry><para>The connection is encrypted immediately (implicit TLS). Used with the SMTPS (465), IMAPS (993) and POP3S (995) ports.</para></entry>
+          </row>
+          <row>
+            <entry><para><codeInline>StartTls</codeInline></para></entry>
+            <entry><para>
+              Connects in plain text and then upgrades the connection using the STARTTLS (or STLS) command.
+              An exception is thrown if the server does not support it. Typically used with ports 587, 143 and 110.
+            </para></entry>
+          </row>
+          <row>
+            <entry><para><codeInline>StartTlsWhenAvailable</codeInline></para></entry>
+            <entry><para>
+              Like <codeInline>StartTls</codeInline>, but silently continues unencrypted if the server
+              does not support STARTTLS. This is vulnerable to downgrade attacks.
+            </para></entry>
+          </row>
+          <row>
+            <entry><para><codeInline>Auto</codeInline></para></entry>
+            <entry><para>
+              Uses <codeInline>SslOnConnect</codeInline> for the well-known SSL ports (465, 993 and 995)
+              and <codeInline>StartTlsWhenAvailable</codeInline> for any other port.
+            </para></entry>
+          </row>
+        </table>
+        <alert class="warning">
+          <para>
+            When you know which ports and security options your server supports, prefer
+            <codeInline>SslOnConnect</codeInline> or <codeInline>StartTls</codeInline> over
+            <codeInline>Auto</codeInline> or <codeInline>StartTlsWhenAvailable</codeInline> so that a
+            man-in-the-middle cannot silently downgrade the connection to plain text.
+          </para>
+        </alert>
+        <code language="c#" source="Examples\ConnectionExamples.cs" region="ConnectWithStartTls"/>
+        <para>
+          After connecting, the <codeEntityReference>P:MailKit.MailService.IsSecure</codeEntityReference>,
+          <codeEntityReference>P:MailKit.MailService.SslProtocol</codeEntityReference> and
+          <codeEntityReference>P:MailKit.MailService.SslCipherSuite</codeEntityReference> properties
+          describe the negotiated TLS session:
+        </para>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="SslConnectionInformation"/>
+      </content>
+    </section>
+
+    <section address="TlsSettings">
+      <title>Configuring SSL/TLS</title>
+      <content>
+        <para>
+          The following properties can be set before connecting to customize the TLS handshake:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <codeEntityReference>P:MailKit.MailService.SslProtocols</codeEntityReference>: the SSL/TLS
+              protocol versions that are allowed. On .NET (Core), the default (<codeInline>SslProtocols.None</codeInline>)
+              lets the operating system choose the best available version, which is usually what you want.
+              On .NET Framework, the default is the value of <codeInline>ServicePointManager.SecurityProtocol</codeInline>.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>P:MailKit.MailService.CheckCertificateRevocation</codeEntityReference>:
+              whether the server certificate's revocation status should be checked (the default is
+              <codeInline>true</codeInline>).
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>P:MailKit.MailService.ClientCertificates</codeEntityReference>: client
+              certificates to present to servers that require mutual TLS.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>P:MailKit.MailService.SslCipherSuitesPolicy</codeEntityReference>: restricts the
+              cipher suites that may be negotiated (only supported on some platforms).
+            </para>
+          </listItem>
+        </list>
+        <code language="c#" source="Examples\ConnectionExamples.cs" region="ConfigureTls"/>
+      </content>
+    </section>
+
+    <section address="CertificateValidation">
+      <title>Validating server certificates</title>
+      <content>
+        <para>
+          By default, MailKit validates the server's certificate using the operating system's certificate
+          store, just like a web browser. If validation fails, an
+          <codeEntityReference>T:MailKit.Security.SslHandshakeException</codeEntityReference> is thrown whose
+          message explains why the certificate was rejected.
+        </para>
+        <para>
+          To customize validation (for example, to accept a self-signed certificate for a specific
+          internal server), set the
+          <codeEntityReference>P:MailKit.MailService.ServerCertificateValidationCallback</codeEntityReference>
+          property before connecting. Be careful to only accept the specific certificate that you expect:
+        </para>
+        <code language="c#" source="Examples\SslCertificateValidation.cs"/>
+        <alert class="warning">
+          <para>
+            Never use a callback that simply returns <codeInline>true</codeInline> in production code. Doing
+            so disables all protection against man-in-the-middle attacks.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="Proxies">
+      <title>Connecting through a proxy</title>
+      <content>
+        <para>
+          To connect through a proxy server, set the
+          <codeEntityReference>P:MailKit.MailService.ProxyClient</codeEntityReference> property to one of
+          the proxy clients in the <codeEntityReference>N:MailKit.Net.Proxy</codeEntityReference> namespace:
+          <codeEntityReference>T:MailKit.Net.Proxy.HttpProxyClient</codeEntityReference>,
+          <codeEntityReference>T:MailKit.Net.Proxy.HttpsProxyClient</codeEntityReference>,
+          <codeEntityReference>T:MailKit.Net.Proxy.Socks4Client</codeEntityReference>,
+          <codeEntityReference>T:MailKit.Net.Proxy.Socks4aClient</codeEntityReference>,
+          <codeEntityReference>T:MailKit.Net.Proxy.Socks5Client</codeEntityReference> or
+          <codeEntityReference>T:MailKit.Net.Proxy.WebProxyClient</codeEntityReference>
+          (which wraps a <codeEntityReference>T:System.Net.IWebProxy</codeEntityReference>).
+        </para>
+        <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient"/>
+        <para>
+          The <codeEntityReference>P:MailKit.MailService.LocalEndPoint</codeEntityReference> property can be used
+          to bind the connection to a specific local IP address and/or port.
+        </para>
+      </content>
+    </section>
+
+    <section address="Timeouts">
+      <title>Timeouts and cancellation</title>
+      <content>
+        <para>
+          The <codeEntityReference>P:MailKit.MailService.Timeout</codeEntityReference> property (2 minutes by
+          default) limits how long any single network read or write may take. It does not limit the total
+          duration of an operation; to do that, pass a <codeEntityReference>T:System.Threading.CancellationToken</codeEntityReference>.
+        </para>
+        <code language="c#" source="Examples\ConnectionExamples.cs" region="TimeoutsAndCancellation"/>
+        <alert class="note">
+          <para>
+            Canceling a command that is in progress usually leaves the connection in an unknown state, so
+            MailKit will disconnect. You will need to reconnect and re-authenticate before you can continue.
+          </para>
+        </alert>
+      </content>
+    </section>
+
+    <section address="ProtocolLogging">
+      <title>Logging the protocol</title>
+      <content>
+        <para>
+          When something goes wrong, a protocol log is the most useful diagnostic tool available. Pass a
+          <codeEntityReference>T:MailKit.ProtocolLogger</codeEntityReference> to the client's constructor to
+          log all of the commands and responses exchanged with the server:
+        </para>
+        <code language="c#" source="Examples\ImapExamples.cs" region="ProtocolLogger"/>
+        <para>
+          By default, <codeEntityReference>P:MailKit.ProtocolLogger.RedactSecrets</codeEntityReference> is
+          <codeInline>true</codeInline>, so passwords and authentication tokens are replaced with
+          <literal>********</literal> in the log. Message contents are <legacyItalic>not</legacyItalic>
+          redacted, so be careful when sharing logs. You can also implement
+          <codeEntityReference>T:MailKit.IProtocolLogger</codeEntityReference> yourself to route the output
+          to your own logging framework.
+        </para>
+      </content>
+    </section>
+
+    <section address="Telemetry">
+      <title>Metrics and tracing</title>
+      <content>
+        <para>
+          On .NET 8 and later, MailKit can emit metrics and traces using
+          <codeEntityReference>T:System.Diagnostics.Metrics.Meter</codeEntityReference> and
+          <codeEntityReference>T:System.Diagnostics.ActivitySource</codeEntityReference>, which can be collected
+          with OpenTelemetry. Enable them once at startup using the
+          <codeEntityReference>T:MailKit.Telemetry</codeEntityReference> class:
+        </para>
+        <code language="c#">
+Telemetry.SmtpClient.Configure ();
+Telemetry.Pop3Client.Configure ();
+Telemetry.ImapClient.Configure ();
+        </code>
+        <para>
+          See
+          <externalLink>
+            <linkText>Telemetry.md</linkText>
+            <linkUri>https://github.com/jstedfast/MailKit/blob/master/Telemetry.md</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+          for the list of available metrics and traces.
+        </para>
+      </content>
+    </section>
+
+    <section address="Exceptions">
+      <title>Handling errors</title>
+      <content>
+        <para>
+          The most common exceptions thrown by MailKit are:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <codeEntityReference>T:System.Net.Sockets.SocketException</codeEntityReference>: the host name
+              could not be resolved or the connection was refused.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:MailKit.Security.SslHandshakeException</codeEntityReference>: the TLS
+              handshake failed, usually because the server certificate could not be validated or because
+              the client and server have no SSL/TLS protocol version in common.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:MailKit.Security.AuthenticationException</codeEntityReference>: the
+              credentials were rejected.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:MailKit.CommandException</codeEntityReference> (and the protocol-specific
+              subclasses <codeEntityReference>T:MailKit.Net.Smtp.SmtpCommandException</codeEntityReference>,
+              <codeEntityReference>T:MailKit.Net.Pop3.Pop3CommandException</codeEntityReference> and
+              <codeEntityReference>T:MailKit.Net.Imap.ImapCommandException</codeEntityReference>): the server
+              rejected a command. The connection is still usable.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:MailKit.ProtocolException</codeEntityReference> (and subclasses): the
+              server sent an unexpected response or the connection was dropped. The client will have been
+              disconnected and must reconnect.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <codeEntityReference>T:System.IO.IOException</codeEntityReference>: a network error occurred,
+              including when the <codeEntityReference>P:MailKit.MailService.Timeout</codeEntityReference>
+              elapses during a synchronous operation (asynchronous operations throw a
+              <codeEntityReference>T:System.TimeoutException</codeEntityReference> instead). The client will
+              have been disconnected.
+            </para>
+          </listItem>
+        </list>
+        <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Authentication"/>
+      <link xlink:href="Sending-Messages-With-SMTP"/>
+      <link xlink:href="Retrieving-Messages-With-POP3"/>
+      <link xlink:href="Working-With-IMAP"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

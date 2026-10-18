@@ -48,7 +48,7 @@ namespace MailKit.Examples {
 					var message = client.GetMessage (i);
 
 					// write the message to a file
-					message.WriteTo (string.Format ("{0}.msg", i));
+					message.WriteTo (string.Format ("{0}.eml", i));
 
 					// mark the message for deletion
 					client.DeleteMessage (i);
@@ -111,7 +111,7 @@ namespace MailKit.Examples {
 					var message = client.GetMessage (i);
 
 					// write the message to a file
-					message.WriteTo (string.Format ("{0}.msg", i));
+					message.WriteTo (string.Format ("{0}.eml", i));
 
 					// mark the message for deletion
 					client.DeleteMessage (i);
@@ -130,11 +130,13 @@ namespace MailKit.Examples {
 
 				client.Authenticate ("username", "password");
 
-				var messages = client.DownloadMessages (0, count);
+				int count = client.Count;
 
-				foreach (var message in messages) {
+				var messages = client.GetMessages (0, count);
+
+				for (int i = 0; i < messages.Count; i++) {
 					// write the message to a file
-					message.WriteTo (string.Format ("{0}.msg", i));
+					messages[i].WriteTo (string.Format ("{0}.eml", i));
 				}
 
 				client.DeleteMessages (0, count);
@@ -166,7 +168,7 @@ namespace MailKit.Examples {
 					var message = client.GetMessage (i);
 
 					// write the message to a file
-					message.WriteTo (string.Format ("{0}.msg", uids[i]));
+					message.WriteTo (string.Format ("{0}.eml", uids[i]));
 
 					// add the message uid to our list of downloaded uids
 					previouslyDownloadedUids.Add (uids[i]);
@@ -238,12 +240,12 @@ namespace MailKit.Examples {
 
 						// write the message to a file
 						if (uids != null) {
-							message.WriteTo (string.Format ("{0}.msg", uids[i]));
+							message.WriteTo (string.Format ("{0}.eml", uids[i]));
 
 							// keep track of our downloaded message uids so we can skip downloading them next time
 							previouslyDownloadedUids.Add (uids[i]);
 						} else {
-							message.WriteTo (string.Format ("{0}.msg", i));
+							message.WriteTo (string.Format ("{0}.eml", i));
 						}
 					} catch (Pop3CommandException ex) {
 						Console.WriteLine ("Error downloading message {0}: {1}", i, ex.Message);

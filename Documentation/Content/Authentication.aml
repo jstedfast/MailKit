@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="Authentication" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <introduction>
+      <para>
+        <codeEntityReference>T:MailKit.Net.Smtp.SmtpClient</codeEntityReference>,
+        <codeEntityReference>T:MailKit.Net.Pop3.Pop3Client</codeEntityReference> and
+        <codeEntityReference>T:MailKit.Net.Imap.ImapClient</codeEntityReference> all authenticate using
+        <externalLink>
+          <linkText>SASL</linkText>
+          <linkUri>https://tools.ietf.org/html/rfc4422</linkUri>
+          <linkTarget>_blank</linkTarget>
+        </externalLink>
+        (Simple Authentication and Security Layer) mechanisms. This topic explains how MailKit chooses a
+        mechanism and how to choose one yourself.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <section address="Credentials">
+      <title>Authenticating with a user name and password</title>
+      <content>
+        <para>
+          After connecting, the <codeEntityReference>P:MailKit.IMailService.AuthenticationMechanisms</codeEntityReference>
+          property contains the list of SASL mechanisms advertised by the server. When you call
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.MailService.Authenticate</codeEntityReference>
+          with a user name and password (or an <codeEntityReference>T:System.Net.ICredentials</codeEntityReference>),
+          MailKit picks the strongest mechanism that is supported by both the client and the server:
+        </para>
+        <code language="c#" source="Examples\AuthenticationExamples.cs" region="AuthenticateWithCredentials"/>
+        <para>
+          MailKit chooses from the mechanisms advertised by the server in the following order of preference:
+        </para>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><para>Mechanism</para></entry>
+              <entry><para>Notes</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><para>SCRAM-SHA-512(-PLUS), SCRAM-SHA-256(-PLUS), SCRAM-SHA-1(-PLUS)</para></entry>
+            <entry>
+              <para>
+                The password is never sent to the server. The <literal>-PLUS</literal> variants are preferred
+                when the server advertises them because they bind the authentication to the TLS session (see
+                <link xlink:href="#ChannelBinding">Channel binding</link>).
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>NTLM</para></entry>
+            <entry>
+              <para>
+                See <link xlink:href="Authentication-NTLM-Kerberos"/>.
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>DIGEST-MD5, CRAM-MD5</para></entry>
+            <entry>
+              <para>
+                Legacy challenge-response mechanisms based on MD5. Skipped on platforms where MD5 is
+                unavailable (such as when FIPS mode is enforced).
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>PLAIN, LOGIN</para></entry>
+            <entry>
+              <para>
+                The password is sent to the server (base64-encoded, not encrypted), so these should only be used
+                over a TLS connection.
+              </para>
+            </entry>
+          </row>
+        </table>
+        <para>
+          If none of these mechanisms are available, <codeEntityReference>T:MailKit.Net.Imap.ImapClient</codeEntityReference>
+          falls back to the IMAP <literal>LOGIN</literal> command (unless the server advertises
+          <literal>LOGINDISABLED</literal>) and <codeEntityReference>T:MailKit.Net.Pop3.Pop3Client</codeEntityReference>
+          falls back to the <literal>USER</literal>/<literal>PASS</literal> commands.
+          <codeEntityReference>T:MailKit.Net.Pop3.Pop3Client</codeEntityReference> also uses the
+          <literal>APOP</literal> command, in preference to SASL, if the server supports it.
+        </para>
+        <para>
+          Mechanisms that require something other than a password, such as <literal>XOAUTH2</literal>,
+          <literal>OAUTHBEARER</literal>, <literal>GSSAPI</literal> and <literal>ANONYMOUS</literal>, are never
+          chosen automatically. To use them, see <link xlink:href="#SaslMechanisms">Choosing a mechanism</link>.
+        </para>
+        <para>
+          If authentication fails, an <codeEntityReference>T:MailKit.Security.AuthenticationException</codeEntityReference>
+          is thrown and the client remains connected so that you can try again.
+        </para>
+      </content>
+    </section>
+
+    <section address="RemovingMechanisms">
+      <title>Preventing MailKit from using a mechanism</title>
+      <content>
+        <para>
+          Some servers advertise mechanisms that do not work correctly (or that are not enabled for a particular
+          account), and a few servers will drop the connection or lock the account after a failed attempt. To
+          prevent MailKit from trying a mechanism, remove it from
+          <codeEntityReference>P:MailKit.IMailService.AuthenticationMechanisms</codeEntityReference> after
+          connecting and before authenticating:
+        </para>
+        <code language="c#" source="Examples\AuthenticationExamples.cs" region="RemoveAuthenticationMechanisms"/>
+      </content>
+    </section>
+
+    <section address="SaslMechanisms">
+      <title>Choosing a mechanism</title>
+      <content>
+        <para>
+          To use a specific mechanism, create an instance of the corresponding
+          <codeEntityReference>T:MailKit.Security.SaslMechanism</codeEntityReference> subclass and pass it to
+          <codeEntityReference autoUpgrade="true">M:MailKit.MailService.Authenticate(MailKit.Security.SaslMechanism,System.Threading.CancellationToken)</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\AuthenticationExamples.cs" region="AuthenticateWithSaslMechanism"/>
+        <para>
+          The following mechanisms are available:
+        </para>
+        <table>
+          <tableHeader>
+            <row>
+              <entry><para>Mechanism</para></entry>
+              <entry><para>Class</para></entry>
+            </row>
+          </tableHeader>
+          <row>
+            <entry><para>ANONYMOUS</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismAnonymous</codeEntityReference></para></entry>
+          </row>
+          <row>
+            <entry><para>CRAM-MD5</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismCramMd5</codeEntityReference></para></entry>
+          </row>
+          <row>
+            <entry><para>DIGEST-MD5</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismDigestMd5</codeEntityReference></para></entry>
+          </row>
+          <row>
+            <entry><para>GSSAPI (Kerberos)</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismGssapi</codeEntityReference> (.NET 8 and later)</para></entry>
+          </row>
+          <row>
+            <entry><para>LOGIN</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismLogin</codeEntityReference></para></entry>
+          </row>
+          <row>
+            <entry><para>NTLM</para></entry>
+            <entry>
+              <para>
+                <codeEntityReference>T:MailKit.Security.SaslMechanismNtlm</codeEntityReference> (managed) or
+                <codeEntityReference>T:MailKit.Security.SaslMechanismNtlmNative</codeEntityReference> (.NET 8 and later)
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>OAUTHBEARER</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismOAuthBearer</codeEntityReference></para></entry>
+          </row>
+          <row>
+            <entry><para>PLAIN</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismPlain</codeEntityReference></para></entry>
+          </row>
+          <row>
+            <entry><para>SCRAM-SHA-1(-PLUS)</para></entry>
+            <entry>
+              <para>
+                <codeEntityReference>T:MailKit.Security.SaslMechanismScramSha1</codeEntityReference>,
+                <codeEntityReference>T:MailKit.Security.SaslMechanismScramSha1Plus</codeEntityReference>
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>SCRAM-SHA-256(-PLUS)</para></entry>
+            <entry>
+              <para>
+                <codeEntityReference>T:MailKit.Security.SaslMechanismScramSha256</codeEntityReference>,
+                <codeEntityReference>T:MailKit.Security.SaslMechanismScramSha256Plus</codeEntityReference>
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>SCRAM-SHA-512(-PLUS)</para></entry>
+            <entry>
+              <para>
+                <codeEntityReference>T:MailKit.Security.SaslMechanismScramSha512</codeEntityReference>,
+                <codeEntityReference>T:MailKit.Security.SaslMechanismScramSha512Plus</codeEntityReference>
+              </para>
+            </entry>
+          </row>
+          <row>
+            <entry><para>XOAUTH2</para></entry>
+            <entry><para><codeEntityReference>T:MailKit.Security.SaslMechanismOAuth2</codeEntityReference></para></entry>
+          </row>
+        </table>
+        <para>
+          <codeEntityReference autoUpgrade="true">Overload:MailKit.Security.SaslMechanism.Create</codeEntityReference>
+          and <codeEntityReference autoUpgrade="true">Overload:MailKit.Security.SaslMechanism.TryCreate</codeEntityReference>
+          can be used to create a mechanism by name, and
+          <codeEntityReference>M:MailKit.Security.SaslMechanism.IsSupported(System.String)</codeEntityReference>
+          checks whether MailKit supports a mechanism on the current platform.
+        </para>
+      </content>
+    </section>
+
+    <section address="ChannelBinding">
+      <title>Channel binding</title>
+      <content>
+        <para>
+          Channel binding ties the authentication exchange to the underlying TLS session. Even if an attacker
+          manages to intercept the TLS connection (for example, by using a fraudulent certificate), the server
+          will reject the authentication because the TLS session the client sees is different from the one the
+          server sees.
+        </para>
+        <para>
+          The <literal>SCRAM-*-PLUS</literal> mechanisms always use channel binding, and the NTLM and GSSAPI
+          mechanisms can optionally use it. After authenticating, the
+          <codeEntityReference>P:MailKit.Security.SaslMechanism.NegotiatedChannelBinding</codeEntityReference>
+          property indicates whether channel binding was used.
+        </para>
+      </content>
+    </section>
+
+    <section address="OtherTopics">
+      <title>OAuth 2.0, NTLM and Kerberos</title>
+      <content>
+        <para>
+          Many providers (including Gmail and Microsoft 365) no longer allow password authentication and
+          require OAuth 2.0 instead; see <link xlink:href="Authentication-OAuth2"/>. For authenticating
+          to Microsoft Exchange and other servers that use Windows authentication, see
+          <link xlink:href="Authentication-NTLM-Kerberos"/>.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="Authentication-OAuth2"/>
+      <link xlink:href="Authentication-NTLM-Kerberos"/>
+      <link xlink:href="Connecting-To-A-Server"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>
