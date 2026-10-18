@@ -1,0 +1,866 @@
+﻿/* Theme colors */
+:root[data-theme="light"] {
+    --theme-text: #4a4a4a;
+    --theme-text-literal: #cc0000;
+    --theme-text-missing: #dc143c;
+    --theme-border: #dbdbdb;
+    --theme-code-bg: #f5f5f5;
+    --theme-code-text: #000066;
+    --theme-code-keyword: #0000ff;
+    --theme-header-bg: #333333;
+    --theme-header-text: #d0d0d0;
+    --theme-table-header-bg: #ededed;
+    --theme-hover-bg: #fafafa;
+    --theme-glossary-group-header: #808080;
+    --theme-hljs-background: #ffffff;
+    --theme-hljs-text: #000000;
+    --theme-hljs-code: #808080;
+    --theme-hljs-built-in: #0000ff;
+    --theme-hljs-type: #5e0f5c;
+    --theme-hljs-title: #a31515;
+    --theme-hljs-attr: #d00000;
+    --theme-hljs-comment: #008000;
+    --theme-hljs-string: #a31515;
+    --theme-hljs-name: #0000ff;
+    --theme-hljs-subst: #24292e;
+    --theme-hljs-section: #005cc5;
+    --theme-hljs-bullet: #735c0f;
+    --theme-hljs-addition-background: #f0fff4;
+    --theme-hljs-addition-text: #22863a;
+    --theme-hljs-deletion-background: #ffeef0;
+    --theme-hljs-deletion-text: #b31d28;
+    --theme-scrollbar-track: #f0f0f0;
+    --theme-scrollbar-thumb: #c0c0c0;
+    --theme-scrollbar-thumb-hover: #a0a0a0;
+}
+
+:root[data-theme="dark"] {
+    --theme-text: #d0d0d0;
+    --theme-text-literal: #995500;
+    --theme-text-missing: #aa143c;
+    --theme-border: #3a3a3a;
+    --theme-code-bg: #2a2a2a;
+    --theme-code-text: #9cdcfe;
+    --theme-code-keyword: #9977ff;
+    --theme-header-bg: #1f1f1f;
+    --theme-header-text: #d0d0d0;
+    --theme-table-header-bg: #2a2a2a;
+    --theme-hover-bg: #2a2a2a;
+    --theme-glossary-group-header: #808080;
+    --theme-hljs-background: #1e1e1e;
+    --theme-hljs-text: #dcdcdc;
+    --theme-hljs-code: #608b4e;
+    --theme-hljs-built-in: #569cd6;
+    --theme-hljs-type: #91428f;
+    --theme-hljs-title: #d2a8ff;
+    --theme-hljs-attr: #9cdcfe;
+    --theme-hljs-comment: #57a64a;
+    --theme-hljs-string: #d69d85;
+    --theme-hljs-name: #d7ba7d;
+    --theme-hljs-subst: #c9d1d9;
+    --theme-hljs-section: #1f6feb;
+    --theme-hljs-bullet: #f2cc60;
+    --theme-hljs-addition-background: #033a16;
+    --theme-hljs-addition-text: #aff5b4;
+    --theme-hljs-deletion-background: #67060c;
+    --theme-hljs-deletion-text: #ffdcd7;
+    --theme-scrollbar-track: #2a2a2a;
+    --theme-scrollbar-thumb: #4a4a4a;
+    --theme-scrollbar-thumb-hover: #5a5a5a;
+}
+
+/* Scrollbar styles */
+* {
+    scrollbar-color: var(--theme-scrollbar-thumb) var(--theme-scrollbar-track);
+}
+
+/* WebKit/Blink scrollbar styles */
+*::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--theme-scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--theme-scrollbar-thumb);
+    border-radius: 6px;
+    border: 2px solid var(--theme-scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--theme-scrollbar-thumb-hover);
+}
+
+*::-webkit-scrollbar-corner {
+    background: var(--theme-scrollbar-track);
+}
+
+/* Hide the TOC and In This Article columns when printed */
+@media print {
+    #ShowHideTOCColumn, #TOCColumn, #InThisArticleColumn {
+        display: none;
+    }
+
+    #TopicContent {
+        flex: none;
+        width: 100%;
+    }
+}
+
+/* Additional styles for SHFB documentation websites */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+    body > header {
+        border-block-end: 1px solid;
+        border-color: var(--theme-border);
+    }
+
+    body > main {
+        display: flex;
+        flex: 1;
+    }
+
+        body > main > article {
+            width: 100%;
+        }
+
+@media (min-width: 768px) {
+    body > header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+}
+
+ul#InThisArticleMenu {
+    font-size: .9rem;
+}
+
+div#ProjectLink a {
+    color: var(--theme-header-text);
+}
+
+.sticky {
+    position: sticky;
+    top: 10px;
+}
+
+@media (min-width: 768px) {
+    body {
+        --header-height: 60px; /* Adjusted to actual height in presentationStyle.js */
+    }
+
+    .sticky {
+        top: calc(var(--header-height) + 10px);
+    }
+}
+
+.border-top {
+    border-block-start: 1px solid;
+    border-color: var(--theme-border);
+}
+
+.border-bottom {
+    border-block-end: 1px solid;
+    border-color: var(--theme-border);
+    padding-bottom: 10px;
+}
+
+.pageHeader {
+    color: var(--theme-header-text);
+    background-color: var(--theme-header-bg);
+}
+
+.menu-list a.is-active-quickLink {
+    border-left: 5px solid;
+    border-color: var(--theme-border);
+}
+
+/* Shrink the margin on the header just below the notes div */
+.content div#Notes + h2:not(:first-child) {
+    margin-top: 5px;
+}
+
+/* Add a top margin when there is no title in a section */
+.noTitle {
+    margin-top: 1em;
+}
+
+/* Allow centering of basic div elements */
+div.is-centered {
+    display: flex;
+    justify-content: center;
+}
+
+/* Fix spacing on non-clickable breadcrumb items without a link */
+.breadcrumb p {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    padding: 0 0.75em;
+}
+
+/* Underline content, footer, and breadcrumb anchors when hovered */
+.content a:hover, .footer a:hover, .breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* Add an outer border to tables */
+.content table {
+    border: 1px solid;
+    border-color: var(--theme-border);
+}
+
+/* Header styles */
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6 {
+    font-weight: 600;
+}
+
+.content h4, .content h5, .content h6 {
+    margin-top: 0.8em;
+    margin-bottom: .5em;
+}
+
+.content #seeAlsoSection h4 {
+    margin-bottom: 0;
+}
+
+/* MAML and XML comments element styles */
+.content hr {
+    background-color: var(--theme-border);
+}
+
+.content div.caption {
+    font-style: italic;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+}
+
+.content dt, .container dt {
+    font-weight: 600;
+}
+
+.content dd, .container dd {
+    margin-bottom: 1em;
+}
+
+.content q {
+    font-style: italic;
+}
+
+.content .mediaInline {
+    padding-left: .25em;
+    padding-right: .25em;
+    vertical-align: top;
+}
+
+.content .mediaNear {
+    text-align: left;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.content .mediaCenter {
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.content .mediaFar {
+    text-align: right;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+code, span.code, span.command, span.parameter {
+    font-family: Consolas, Courier, monospace;
+    font-size: 1em;
+    background-color: var(--theme-code-bg);
+    color: var(--theme-code-text);
+    border-radius: 0;
+    padding: 0;
+}
+
+.content span.selflink {
+    font-family: Consolas, Courier, monospace;
+    color: var(--theme-code-text);
+}
+
+span.keyword {
+    font-family: Consolas, Courier, monospace;
+    color: var(--theme-code-keyword);
+}
+
+.content span.literal {
+    color: var(--theme-text-literal);
+}
+
+.content ul.noBullet {
+    list-style-type: none;
+    margin-left: 1em;
+}
+
+.content ul ul.noBullet {
+    list-style-type: none;
+    margin-left: 1em;
+}
+
+.content ul ul ul.noBullet {
+    list-style-type: none;
+    margin-left: 1em;
+}
+
+.content li ul {
+    margin-bottom: 1em;
+}
+
+.content thead th {
+    background-color: var(--theme-table-header-bg);
+    text-align: left;
+}
+
+.missing {
+    color: var(--theme-text-missing);
+    font-weight: bold;
+}
+
+/* Inheritance hierarchy styles */
+.inheritanceHierarchy, .implementsList {
+    display: flex;
+    margin-bottom: 1em;
+}
+
+    .inheritanceHierarchy dd, .implementsList dd {
+        margin-left: 1em;
+        margin-bottom: 0;
+    }
+
+/* Code block styles */
+.codeHeader {
+    background-color: var(--theme-table-header-bg);
+    box-sizing: content-box;
+    display: flex;
+    flex-direction: row;
+    margin-top: 1em;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    padding-right: 0.2em;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+}
+
+    .codeHeader a:hover {
+        text-decoration: none;
+    }
+
+    .codeHeader .button {
+        padding-top: 0.1em;
+        padding-bottom: 0.1em;
+    }
+
+.codeHeaderTitle {
+    font-weight: 600;
+    margin: .3em;
+    margin-left: 1em;
+    flex-grow: 2;
+}
+
+.codePanel {
+    border: 1px solid;
+    border-color: var(--theme-border);
+    padding: 0;
+    margin-bottom: 1em;
+    flex: 1;
+}
+
+    .codePanel pre {
+        padding: 0em;
+        line-height: 1.37;
+    }
+
+.codeWithNumbers {
+    display: flex;
+}
+
+    .codeWithNumbers .lineNumbers {
+        border: 1px solid;
+        border-color: var(--theme-border);
+        flex-shrink: 1;
+        text-align: right;
+        margin-bottom: 1em;
+    }
+
+        .codeWithNumbers .lineNumbers pre {
+            background: transparent;
+            padding-left: 0.50em;
+            padding-right: 0.50em;
+            line-height: 1.37
+        }
+
+    .codeWithNumbers .numbered {
+        flex: 1;
+        overflow-x: auto;
+    }
+
+/* Glossary styles */
+div.glossaryDiv {
+}
+
+div.glossaryLetterBar {
+}
+
+hr.glossaryRule {
+}
+
+h3.glossaryGroupHeading {
+    color: var(--theme-glossary-group-header);
+}
+
+div.glossaryGroup {
+}
+
+dl.glossaryGroupList {
+    margin: 0;
+    color: Black;
+}
+
+dt.glossaryEntry {
+    margin-left: 2em;
+}
+
+dd.glossaryEntry {
+    margin-left: 2em;
+    margin-bottom: 2em;
+}
+
+div.relatedEntry {
+    margin-bottom: 4px;
+}
+
+/* Bibliography styles */
+span.bibliographyAuthor {
+    font-weight: bold;
+}
+
+span.bibliographyTitle {
+    font-style: italic;
+}
+
+span.bibliographyPublisher {
+}
+
+sup.citation a:link a:visited a:active {
+    text-decoration: none;
+}
+
+/* Expand/collapse toggles */
+.toggle {
+    transition: transform .35s ease;
+    transform-origin: center;
+    cursor: pointer;
+}
+
+.toggleSection {
+    transition: transform .35s ease;
+    transform-origin: center;
+    margin-right: 0.25em;
+    cursor: pointer;
+}
+
+.toggleExpanded {
+    transform: rotate(90deg)
+}
+
+.toggleCollapsed {
+    transform: rotate(-90deg)
+}
+
+/* Table of contents styles */
+.toc {
+    font-size: .9rem;
+}
+
+.toc-menu {
+    line-height: 2em;
+}
+
+    .toc-menu a {
+        border-radius: 2px;
+        color: var(--theme-text);
+        display: block;
+        padding-left: 0.75em;
+    }
+
+        .toc-menu a:hover {
+            background-color: var(--theme-hover-bg);
+        }
+
+        .toc-menu a.is-active {
+            font-weight: bold;
+        }
+
+    .toc-menu li ul {
+        padding-left: 1em;
+    }
+
+    .toc-menu li a.has-submenu {
+        margin-left: -1.75em;
+    }
+
+/* Resizable TOC styles */
+.toc-resizable {
+    flex-basis: initial;
+    flex-grow: 0.25;
+}
+
+.toc-resizer {
+    cursor: ew-resize;
+    width: 5px;
+    background: var(--theme-border);
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+
+.toc-resizable-content {
+    flex-grow: 1;
+}
+
+/* Theme switcher button styling */
+#ThemeSwitcher {
+    cursor: pointer;
+}
+
+    #ThemeSwitcher .theme-icon-dark {
+        display: inline-block;
+    }
+
+    #ThemeSwitcher .theme-icon-light {
+        display: none;
+    }
+
+:root[data-theme="dark"] #ThemeSwitcher .theme-icon-dark {
+    display: none;
+}
+
+:root[data-theme="dark"] #ThemeSwitcher .theme-icon-light {
+    display: inline-block;
+}
+
+/* HighlightJS styles */
+pre code.hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 1em
+}
+
+code.hljs {
+    padding: 3px 5px
+}
+
+.hljs {
+    background: var(--theme-hljs-background);
+    color: var(--theme-hljs-text);
+}
+
+.hljs-code,
+.hljs-doctag,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-variable.language_ {
+    color: var(--theme-hljs-code);
+}
+
+.hljs-built_in,
+.hljs-keyword,
+.hljs-symbol {
+    color: var(--theme-hljs-built-in);
+}
+
+.hljs-type {
+    color: var(--theme-hljs-type);
+}
+
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+    color: var(--theme-hljs-title);
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+    color: var(--theme-hljs-attr);
+}
+
+.hljs-comment,
+.hljs-quote {
+    color: var(--theme-hljs-comment);
+}
+
+.hljs-formula,
+.hljs-regexp,
+.hljs-string {
+    color: var(--theme-hljs-string);
+}
+
+.hljs-name,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+    color: var(--theme-hljs-name);
+}
+
+.hljs-subst {
+    color: var(--theme-hljs-subst);
+}
+
+.hljs-section {
+    color: var(--theme-hljs-section);
+    font-weight: bold
+}
+
+.hljs-bullet {
+    color: var(--theme-hljs-bullet);
+}
+
+.hljs-emphasis {
+    font-style: italic
+}
+
+.hljs-strong {
+    font-weight: 700
+}
+
+.hljs-addition {
+    background-color: var(--theme-hljs-addition-background);
+    color: var(--theme-hljs-addition-text);
+}
+
+.hljs-deletion {
+    background-color: var(--theme-hljs-deletion-background);
+    color: var(--theme-hljs-deletion-text);
+}
+
+.hljs-char.escape_,
+.hljs-link,
+.hljs-params,
+.hljs-property,
+.hljs-punctuation,
+.hljs-tag {
+}
+
+/* ==========================================================================================================
+   mimekit.net branding
+
+   Everything above this comment is a verbatim copy of the Themed2026 presentationStyle.css that ships with
+   the Sandcastle Help File Builder.  The overrides below make the generated documentation match the
+   mimekit.net landing page (palette, fonts, header and code blocks).  When upgrading SHFB, re-copy the
+   stock stylesheet and re-append this block.
+   ========================================================================================================== */
+:root[data-theme="light"] {
+    --site-bg: #ffffff;
+    --site-bg-alt: #f5f7fa;
+    --site-border: #dde3ea;
+    --site-text: #1f2933;
+    --site-text-muted: #52606d;
+    --site-accent: #2563eb;
+    --site-accent-hover: #1d4ed8;
+    --site-header-bg: rgba(255, 255, 255, 0.85);
+    --theme-text: var(--site-text);
+    --theme-text-literal: #b42318;
+    --theme-border: var(--site-border);
+    --theme-code-bg: var(--site-bg-alt);
+    --theme-code-text: #1f2933;
+    --theme-code-keyword: var(--site-accent);
+    --theme-header-bg: var(--site-header-bg);
+    --theme-header-text: var(--site-text);
+    --theme-table-header-bg: var(--site-bg-alt);
+    --theme-hover-bg: var(--site-bg-alt);
+    --theme-scrollbar-track: var(--site-bg-alt);
+    --theme-scrollbar-thumb: #c3ccd6;
+    --theme-scrollbar-thumb-hover: #9aa8b6;
+    --bulma-scheme-h: 213;
+    --bulma-scheme-s: 25%;
+    --bulma-body-color: var(--site-text);
+    --bulma-link-text: var(--site-accent);
+    --bulma-link-text-hover: var(--site-accent-hover);
+}
+
+:root[data-theme="dark"] {
+    --site-bg: #0f141a;
+    --site-bg-alt: #151c24;
+    --site-border: #2a3644;
+    --site-text: #e4e9ef;
+    --site-text-muted: #9aa8b6;
+    --site-accent: #6ea8fe;
+    --site-accent-hover: #9ec5fe;
+    --site-header-bg: rgba(15, 20, 26, 0.85);
+    --theme-text: var(--site-text);
+    --theme-text-literal: #f78c6c;
+    --theme-border: var(--site-border);
+    --theme-code-bg: #1a222c;
+    --theme-code-text: #e2e8f0;
+    --theme-code-keyword: #c792ea;
+    --theme-header-bg: var(--site-header-bg);
+    --theme-header-text: var(--site-text);
+    --theme-table-header-bg: var(--site-bg-alt);
+    --theme-hover-bg: #1a222c;
+    --theme-scrollbar-track: var(--site-bg-alt);
+    --theme-scrollbar-thumb: #2a3644;
+    --theme-scrollbar-thumb-hover: #3a4a5c;
+    --bulma-scheme-h: 213;
+    --bulma-scheme-s: 27%;
+    --bulma-body-color: var(--site-text);
+    --bulma-link-text: var(--site-accent);
+    --bulma-link-text-hover: var(--site-accent-hover);
+}
+
+/* Code blocks use the same dark palette as the landing page in both themes */
+:root[data-theme="light"], :root[data-theme="dark"] {
+    --theme-hljs-background: #0f1720;
+    --theme-hljs-text: #e2e8f0;
+    --theme-hljs-code: #7f8c98;
+    --theme-hljs-built-in: #c792ea;
+    --theme-hljs-type: #82cfff;
+    --theme-hljs-title: #82cfff;
+    --theme-hljs-attr: #f78c6c;
+    --theme-hljs-comment: #7f8c98;
+    --theme-hljs-string: #c3e88d;
+    --theme-hljs-name: #c792ea;
+    --theme-hljs-subst: #e2e8f0;
+    --theme-hljs-section: #82cfff;
+    --theme-hljs-bullet: #f78c6c;
+    --theme-hljs-addition-background: #033a16;
+    --theme-hljs-addition-text: #aff5b4;
+    --theme-hljs-deletion-background: #67060c;
+    --theme-hljs-deletion-text: #ffdcd7;
+    --site-radius: 10px;
+    --bulma-family-primary: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --bulma-family-code: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+html, body {
+    background-color: var(--site-bg);
+}
+
+body {
+    font-family: var(--bulma-family-primary);
+}
+
+code, pre, span.code, span.command, span.parameter, .content span.selflink, span.keyword {
+    font-family: var(--bulma-family-code);
+}
+
+/* Inline code */
+code:not(.hljs), span.code, span.command, span.parameter {
+    border-radius: 4px;
+    padding: 0.1em 0.3em;
+    font-size: 0.9em;
+}
+
+/* Header: translucent bar with an envelope brand, like the landing page */
+body > header.pageHeader {
+    background-color: var(--theme-header-bg);
+    border-color: var(--site-border);
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    backdrop-filter: saturate(180%) blur(10px);
+}
+
+#DocumentationTitle {
+    color: var(--site-text);
+    font-size: 1.2rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+    #DocumentationTitle::before {
+        content: "\f0e0";
+        font: var(--fa-font-solid);
+        color: var(--site-accent);
+        margin-right: 0.5rem;
+    }
+
+#ThemeSwitcher, div#ProjectLink a {
+    color: var(--site-text-muted);
+}
+
+    #ThemeSwitcher:hover, div#ProjectLink a:hover {
+        color: var(--site-accent);
+    }
+
+/* Table of contents */
+.toc-menu a.is-active {
+    color: var(--site-accent);
+}
+
+.menu-list a.is-active-quickLink {
+    border-color: var(--site-accent);
+}
+
+/* Code panels */
+.codeHeader {
+    color: #e2e8f0;
+    background-color: #151e29;
+    border-bottom: 1px solid #2a3644;
+    border-top-left-radius: var(--site-radius);
+    border-top-right-radius: var(--site-radius);
+}
+
+    .codeHeader .button {
+        color: #c3ccd6;
+        background-color: transparent;
+        border-color: #2a3644;
+    }
+
+        .codeHeader .button:hover {
+            color: #ffffff;
+            border-color: #52606d;
+        }
+
+.codePanel {
+    border-color: var(--site-border);
+    border-bottom-left-radius: var(--site-radius);
+    border-bottom-right-radius: var(--site-radius);
+    overflow: hidden;
+}
+
+    .codePanel pre {
+        background-color: var(--theme-hljs-background);
+    }
+
+.content table {
+    border-radius: var(--site-radius);
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
+}
+
+/* Footer */
+#PageFooter {
+    color: var(--site-text-muted);
+    background-color: var(--site-bg-alt);
+    border-top: 1px solid var(--site-border);
+}
+
+#FooterContent .site-footer-links a {
+    margin-right: 1.25rem;
+}

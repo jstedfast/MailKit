@@ -20,13 +20,17 @@
     <TransformComponentArguments>
       <Argument Key="RobotsMetadata" Value="" />
       <Argument Key="BibliographyDataFile" Value="" />
-      <Argument Key="LogoFile" Value="Help.png" />
+      <Argument Key="LogoFile" Value="" />
       <Argument Key="LogoHeight" Value="" />
       <Argument Key="LogoWidth" Value="" />
-      <Argument Key="LogoAltText" Value="MimeKit" />
+      <Argument Key="LogoAltText" Value="" />
       <Argument Key="LogoPlacement" Value="left" />
       <Argument Key="LogoAlignment" Value="left" />
       <Argument Key="LogoUrl" Value="" />
+      <Argument Key="ProjectUrl" Value="https://github.com/jstedfast/MailKit" />
+      <Argument Key="RootBreadcrumbTitleText" Value="MailKit" />
+      <Argument Key="ResizableTocColumn" Value="True" />
+      <Argument Key="AlwaysShowTopLevelAutoOutline" Value="False" />
       <Argument Key="MaxVersionParts" Value="3" />
       <Argument Key="DefaultLanguage" Value="cs" />
       <Argument Key="IncludeEnumValues" Value="true" />
@@ -48,7 +52,7 @@
     <SyntaxFilters>C#</SyntaxFilters>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <RootNamespaceContainer>True</RootNamespaceContainer>
-    <PresentationStyle>VS2013</PresentationStyle>
+    <PresentationStyle>Themed2026</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
     <HelpTitle>MailKit Documentation</HelpTitle>
@@ -81,15 +85,7 @@
     </NamespaceSummaries>
     <CopyrightText>Copyright &amp;#169%3b 2013-2026 Jeffrey Stedfast</CopyrightText>
     <WorkingPath>obj\</WorkingPath>
-    <FooterText>&amp;lt%3b!-- Global site tag %28gtag.js%29 - Google Analytics --&amp;gt%3b
-&amp;lt%3bscript src=&amp;quot%3bhttps://www.googletagmanager.com/gtag/js%3fid=UA-63841238-1&amp;quot%3b&amp;gt%3b&amp;lt%3b/script&amp;gt%3b
-&amp;lt%3bscript&amp;gt%3b
-  window.dataLayer = window.dataLayer || []%3b
-  function gtag%28%29{{dataLayer.push%28arguments%29%3b}}
-  gtag%28&amp;#39%3bjs&amp;#39%3b, new Date%28%29%29%3b
-
-  gtag%28&amp;#39%3bconfig&amp;#39%3b, &amp;#39%3bUA-63841238-1&amp;#39%3b%29%3b
-&amp;lt%3b/script&amp;gt%3b</FooterText>
+    <FooterText>&amp;lt%3bp class=&amp;quot%3bsite-footer-links&amp;quot%3b&amp;gt%3b&amp;lt%3ba href=&amp;quot%3bhttps://mimekit.net/&amp;quot%3b&amp;gt%3bHome&amp;lt%3b/a&amp;gt%3b &amp;lt%3ba href=&amp;quot%3bhttps://github.com/jstedfast/MimeKit&amp;quot%3b&amp;gt%3bMimeKit on GitHub&amp;lt%3b/a&amp;gt%3b &amp;lt%3ba href=&amp;quot%3bhttps://github.com/jstedfast/MailKit&amp;quot%3b&amp;gt%3bMailKit on GitHub&amp;lt%3b/a&amp;gt%3b &amp;lt%3ba href=&amp;quot%3bhttps://github.com/sponsors/jstedfast&amp;quot%3b&amp;gt%3b    Sponsor&amp;lt%3b/a&amp;gt%3b&amp;lt%3b/p&amp;gt%3b</FooterText>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <HelpFileVersion>1.0.0.0</HelpFileVersion>
     <FeedbackEMailLinkText>Jeffrey Stedfast</FeedbackEMailLinkText>
@@ -107,7 +103,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Content" />
+    <Folder Include="css" />
     <Folder Include="icons" />
+    <Folder Include="scripts" />
     <Folder Include="media" />
     <Folder Include="Examples" />
   </ItemGroup>
@@ -182,7 +180,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Examples\InlinePGPExample.txt" />
-    <Content Include="icons\Help.png" />
+    <Content Include="css\presentationStyle.css" />
+    <Content Include="icons\favicon.ico" />
+    <Content Include="scripts\themeSwitcher.js" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="media\clone.png">
