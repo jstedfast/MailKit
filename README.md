@@ -24,6 +24,9 @@
 
 MailKit is a cross-platform mail client library built on top of [MimeKit](https://github.com/jstedfast/MimeKit).
 
+**Supported platforms:** .NET 8.0 and later, .NET Framework 4.6.2 and later, and any platform that implements
+.NET Standard 2.0 or 2.1 (such as Mono, .NET MAUI and Unity).
+
 **Upgrading from MailKit 4.x?** MailKit 5.0 contains a number of breaking changes. See the
 [Porting Guide](https://github.com/jstedfast/MailKit/blob/master/PortingGuide.md) for step-by-step migration instructions and the [Release Notes](https://github.com/jstedfast/MailKit/blob/master/ReleaseNotes.md)
 for the complete list of changes.
@@ -35,16 +38,26 @@ for the complete list of changes.
 * [Goals](#goals)
 * [License Information](#license-information)
 * [Installing via NuGet](#installing-via-nuget)
+  * [Cryptography Support (S/MIME, OpenPGP, DKIM and ARC)](#cryptography-support-smime-openpgp-dkim-and-arc)
 * [Getting the Source Code](#getting-the-source-code)
 * [Building](#building)
 * [Using MailKit](#using-mailkit)
+  * [Connecting Securely](#connecting-securely)
+  * [Authenticating with OAuth2](#authenticating-with-oauth2)
+  * [Logging and Diagnostics](#logging-and-diagnostics)
   * [Sending Messages](#sending-messages)
 * [Retrieving Messages (via Pop3)](#retrieving-messages-via-pop3)
 * [Using IMAP](#using-imap)
+  * [Fetching Information About the Messages in an IMAP Folder](#fetching-information-about-the-messages-in-an-imap-folder)
+  * [Setting Message Flags in IMAP](#setting-message-flags-in-imap)
+  * [Deleting Messages in IMAP](#deleting-messages-in-imap)
+  * [Searching an IMAP Folder](#searching-an-imap-folder)
+  * [Navigating Folders in IMAP](#navigating-folders-in-imap)
   * [Monitoring an IMAP Folder for Changes](#monitoring-an-imap-folder-for-changes)
 * [Contributing](#contributing)
 * [Reporting Bugs](#reporting-bugs)
 * [Documentation](#documentation)
+  * [Further Reading](#further-reading)
 * [.NET Foundation](#net-foundation)
 
 ## Donate
@@ -255,21 +268,88 @@ Note: The **Release** build will generate the xml API documentation, but the **D
 
 ## Using MailKit
 
+Every MailKit API that performs network I/O has both a synchronous and an asynchronous (`*Async`) variant. The
+samples below use the async APIs, which are recommended for most applications (especially UI and server
+applications), but the synchronous APIs work the same way.
+
+### Connecting Securely
+
+The `Connect` and `ConnectAsync` methods take a
+[SecureSocketOptions](https://www.mimekit.net/docs/html/T_MailKit_Security_SecureSocketOptions.htm) value that
+controls how SSL/TLS is used:
+
+| Option | Description | Typical Ports |
+|:-------|:------------|:--------------|
+| `SslOnConnect` | Use SSL/TLS immediately upon connecting. | SMTP: 465, POP3: 995, IMAP: 993 |
+| `StartTls` | Connect in plain text, then upgrade the connection using STARTTLS (fails if the server doesn't support it). | SMTP: 587, POP3: 110, IMAP: 143 |
+| `StartTlsWhenAvailable` | Like `StartTls`, but continues unencrypted if the server doesn't support STARTTLS. **Not recommended.** | SMTP: 25/587, POP3: 110, IMAP: 143 |
+| `Auto` | Choose `SslOnConnect` or `StartTlsWhenAvailable` based on the port. | Any |
+| `None` | No SSL/TLS. **Not recommended.** | Any |
+
+```csharp
+await client.ConnectAsync ("smtp.friends.com", 587, SecureSocketOptions.StartTls);
+```
+
+By default, MailKit rejects server certificates that fail validation. If you need to customize this (for example,
+to trust a self-signed certificate used by your own server), set the client's
+[ServerCertificateValidationCallback](https://www.mimekit.net/docs/html/P_MailKit_MailService_ServerCertificateValidationCallback.htm)
+property before connecting. Please don't simply `return true`, as that disables protection against
+man-in-the-middle attacks. See the [FAQ](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ssl-handshake-exception)
+for more details.
+
+### Authenticating with OAuth2
+
+Many mail providers, including Microsoft 365/Exchange Online and GMail, require (or strongly encourage) OAuth2
+instead of passwords. Once you have obtained an access token for the user, authenticate using
+[SaslMechanismOAuth2](https://www.mimekit.net/docs/html/T_MailKit_Security_SaslMechanismOAuth2.htm):
+
+```csharp
+using MailKit.Security;
+
+var oauth2 = new SaslMechanismOAuth2 (emailAddress, accessToken);
+
+await client.AuthenticateAsync (oauth2);
+```
+
+For step-by-step instructions on obtaining an access token, see:
+
+* [Using OAuth2 With Exchange (IMAP, POP3 or SMTP)](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md)
+* [Using OAuth2 With GMail (IMAP, POP3 or SMTP)](https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md)
+
+### Logging and Diagnostics
+
+When something isn't working, the first thing to look at is the protocol log. Pass a
+[ProtocolLogger](https://www.mimekit.net/docs/html/T_MailKit_ProtocolLogger.htm) to the client's constructor to
+record the conversation between the client and the server:
+
+```csharp
+using var client = new SmtpClient (new ProtocolLogger ("smtp.log"));
+```
+
+Authentication secrets are redacted from the log by default, which makes it safe to include in bug reports.
+
+On .NET 8.0 and later, MailKit also supports metrics and tracing via `System.Diagnostics`, so it integrates with
+OpenTelemetry. Call `Telemetry.SmtpClient.Configure ()` (or the equivalent for `Socket`, `Pop3Client` or
+`ImapClient`) to enable the meters. For a list of the available metrics and activities, see
+[Telemetry.md](https://github.com/jstedfast/MailKit/blob/master/Telemetry.md).
+
 ### Sending Messages
 
 One of the more common operations that MailKit is meant for is sending email messages.
 
 ```csharp
 using System;
+using System.Threading.Tasks;
 
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MailKit;
 using MimeKit;
 
 namespace TestClient {
     class Program
     {
-        public static void Main (string[] args)
+        public static async Task Main (string[] args)
         {
             var message = new MimeMessage ();
             message.From.Add (new MailboxAddress ("Joey Tribbiani", "joey@friends.com"));
@@ -285,22 +365,22 @@ I just wanted to let you know that Monica and I were going to go play some paint
             };
 
             using (var client = new SmtpClient ()) {
-                client.Connect ("smtp.friends.com", 587, false);
+                await client.ConnectAsync ("smtp.friends.com", 587, SecureSocketOptions.StartTls);
 
                 // Note: only needed if the SMTP server requires authentication
-                client.Authenticate ("joey", "password");
+                await client.AuthenticateAsync ("joey", "password");
 
-                var result = client.Send (message);
+                var result = await client.SendAsync (message);
                 Console.WriteLine ("The server accepted the message: {0}", result.ResponseText);
 
-                client.Disconnect (true);
+                await client.DisconnectAsync (true);
             }
         }
     }
 }
 ```
 
-`Send ()` returns a [SendResult](https://www.mimekit.net/docs/html/T_MailKit_SendResult.htm) that contains the
+`SendAsync ()` returns a [SendResult](https://www.mimekit.net/docs/html/T_MailKit_SendResult.htm) that contains the
 server's response along with the lists of accepted and rejected recipients.
 
 By default, `SmtpClient` throws an `SmtpCommandException` if the server rejects any of the recipients. To deliver
@@ -321,7 +401,7 @@ class LenientSendRequest : SmtpSendRequest
 
 // ...
 
-var result = client.Send (new LenientSendRequest (message));
+var result = await client.SendAsync (new LenientSendRequest (message));
 
 foreach (var recipient in result.RejectedRecipients)
     Console.WriteLine ("Rejected: {0}", recipient);
@@ -335,27 +415,29 @@ One of the other main uses of MailKit is retrieving messages from pop3 servers.
 
 ```csharp
 using System;
+using System.Threading.Tasks;
 
 using MailKit.Net.Pop3;
+using MailKit.Security;
 using MailKit;
 using MimeKit;
 
 namespace TestClient {
     class Program
     {
-        public static void Main (string[] args)
+        public static async Task Main (string[] args)
         {
             using (var client = new Pop3Client ()) {
-                client.Connect ("pop.friends.com", 110, false);
+                await client.ConnectAsync ("pop.friends.com", 995, SecureSocketOptions.SslOnConnect);
 
-                client.Authenticate ("joey", "password");
+                await client.AuthenticateAsync ("joey", "password");
 
                 for (int i = 0; i < client.Count; i++) {
-                    var message = client.GetMessage (i);
+                    var message = await client.GetMessageAsync (i);
                     Console.WriteLine ("Subject: {0}", message.Subject);
                 }
 
-                client.Disconnect (true);
+                await client.DisconnectAsync (true);
             }
         }
     }
@@ -368,35 +450,37 @@ More important than POP3 support is the IMAP support. Here's a simple use-case o
 
 ```csharp
 using System;
+using System.Threading.Tasks;
 
 using MimeKit;
 using MailKit;
 using MailKit.Search;
+using MailKit.Security;
 using MailKit.Net.Imap;
 
 namespace TestClient {
     class Program
     {
-        public static void Main (string[] args)
+        public static async Task Main (string[] args)
         {
             using (var client = new ImapClient ()) {
-                client.Connect ("imap.friends.com", 993, true);
+                await client.ConnectAsync ("imap.friends.com", 993, SecureSocketOptions.SslOnConnect);
 
-                client.Authenticate ("joey", "password");
+                await client.AuthenticateAsync ("joey", "password");
 
                 // The Inbox folder is always available on all IMAP servers...
                 var inbox = client.Inbox;
-                inbox.Open (FolderAccess.ReadOnly);
+                await inbox.OpenAsync (FolderAccess.ReadOnly);
 
                 Console.WriteLine ("Total messages: {0}", inbox.Count);
                 Console.WriteLine ("Recent messages: {0}", inbox.Recent);
 
                 for (int i = 0; i < inbox.Count; i++) {
-                    var message = inbox.GetMessage (i);
+                    var message = await inbox.GetMessageAsync (i);
                     Console.WriteLine ("Subject: {0}", message.Subject);
                 }
 
-                client.Disconnect (true);
+                await client.DisconnectAsync (true);
             }
         }
     }
@@ -414,8 +498,9 @@ Using the [Fetch](https://www.mimekit.net/docs/html/Overload_MailKit_Net_Imap_Im
 it's possible to obtain any subset of summary information for any range of messages in a given folder.
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Envelope)) {
+foreach (var summary in await inbox.FetchAsync (0, -1, MessageSummaryItems.Envelope)) {
     Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
+}
 ```
 
 It's also possible to use Fetch/FetchAsync APIs that take an [IFetchRequest](https://www.mimekit.net/docs/html/T_MailKit_IFetchRequest.htm)
@@ -429,23 +514,24 @@ var request = new FetchRequest {
     }
 };
 
-foreach (var summary in inbox.Fetch (0, -1, request)) {
+foreach (var summary in await inbox.FetchAsync (0, -1, request)) {
     Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Headers[HeaderId.Subject]);
+}
 ```
 
 The results of a Fetch method can also be used to download individual MIME parts rather
 than downloading the entire message. For example:
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure)) {
+foreach (var summary in await inbox.FetchAsync (0, -1, MessageSummaryItems.UniqueId | MessageSummaryItems.BodyStructure)) {
     if (summary.TextBody != null) {
         // this will download *just* the text/plain part
-        var text = inbox.GetBodyPart (summary.UniqueId, summary.TextBody);
+        var text = await inbox.GetBodyPartAsync (summary.UniqueId, summary.TextBody);
     }
 
     if (summary.HtmlBody != null) {
         // this will download *just* the text/html part
-        var html = inbox.GetBodyPart (summary.UniqueId, summary.HtmlBody);
+        var html = await inbox.GetBodyPartAsync (summary.UniqueId, summary.HtmlBody);
     }
 
     // if you'd rather grab, say, an image attachment... it might look something like this:
@@ -455,7 +541,7 @@ foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.UniqueId | Messa
         var attachment = multipart.BodyParts.OfType<BodyPartBasic> ().FirstOrDefault (x => x.FileName == "logo.jpg");
         if (attachment != null) {
             // this will download *just* the attachment
-            var part = inbox.GetBodyPart (summary.UniqueId, attachment);
+            var part = await inbox.GetBodyPartAsync (summary.UniqueId, attachment);
         }
     }
 }
@@ -470,7 +556,7 @@ An obvious reason to want to update message flags is to mark a message as "read"
 message and read it.
 
 ```csharp
-folder.Store (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Seen) { Silent = true });
+await folder.StoreAsync (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Seen) { Silent = true });
 ```
 
 ### Deleting Messages in IMAP
@@ -480,8 +566,8 @@ Deleting messages in IMAP involves setting a `\Deleted` flag on a message and, o
 The way to mark a message as `\Deleted` works the same way as marking a message as `\Seen`.
 
 ```csharp
-folder.Store (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true });
-folder.Expunge ();
+await folder.StoreAsync (uid, new StoreFlagsRequest (StoreAction.Add, MessageFlags.Deleted) { Silent = true });
+await folder.ExpungeAsync ();
 ```
 
 ### Searching an IMAP Folder
@@ -493,23 +579,23 @@ You may also be interested in sorting and searching...
 var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
     .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
 
-foreach (var uid in inbox.Search (query)) {
-    var message = inbox.GetMessage (uid);
+foreach (var uid in await inbox.SearchAsync (query)) {
+    var message = await inbox.GetMessageAsync (uid);
     Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 
 // let's do the same search, but this time sort them in reverse arrival order
 var orderBy = new [] { OrderBy.ReverseArrival };
-foreach (var uid in inbox.Sort (query, orderBy)) {
-    var message = inbox.GetMessage (uid);
+foreach (var uid in await inbox.SortAsync (query, orderBy)) {
+    var message = await inbox.GetMessageAsync (uid);
     Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 
 // you'll notice that the orderBy argument is an array... this is because you
 // can actually sort the search results based on multiple columns:
 orderBy = new [] { OrderBy.ReverseArrival, OrderBy.Subject };
-foreach (var uid in inbox.Sort (query, orderBy)) {
-    var message = inbox.GetMessage (uid);
+foreach (var uid in await inbox.SortAsync (query, orderBy)) {
+    var message = await inbox.GetMessageAsync (uid);
     Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 ```
@@ -524,7 +610,7 @@ How about navigating folders? MailKit can do that, too:
 ```csharp
 // Get the first personal namespace and list the toplevel folders under it.
 var personal = client.GetFolder (client.PersonalNamespaces[0]);
-foreach (var folder in personal.GetSubfolders (false))
+foreach (var folder in await personal.GetSubfoldersAsync (false))
     Console.WriteLine ("[folder] {0}", folder.Name);
 ```
 
@@ -546,11 +632,11 @@ might use logic similar to this:
 ```csharp
 static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messages", /* maybe add some translated names */ };
 
-static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
+static async Task<IMailFolder?> GetSentFolderAsync (ImapClient client, CancellationToken cancellationToken)
 {
     var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
-    foreach (var folder in personal.GetSubfolders (false, cancellationToken)) {
+    foreach (var folder in await personal.GetSubfoldersAsync (false, cancellationToken)) {
         foreach (var name in CommonSentFolderNames) {
             if (folder.Name == name)
                 return folder;
@@ -566,11 +652,13 @@ Using LINQ, you could simplify this down to something more like this:
 ```csharp
 static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", "Sent Messages", /* maybe add some translated names */ };
 
-static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
+static async Task<IMailFolder?> GetSentFolderAsync (ImapClient client, CancellationToken cancellationToken)
 {
     var personal = client.GetFolder (client.PersonalNamespaces[0]);
 
-    return personal.GetSubfolders (false, cancellationToken).FirstOrDefault (x => CommonSentFolderNames.Contains (x.Name));
+    var folders = await personal.GetSubfoldersAsync (false, cancellationToken);
+
+    return folders.FirstOrDefault (x => CommonSentFolderNames.Contains (x.Name));
 }
 ```
 
@@ -610,9 +698,10 @@ other commands (such as fetching the new messages) while processing them. For a 
 The first thing you'll need to do is fork MailKit to your own GitHub repository. For instructions on how to
 clone it, see the section titled **Getting the Source Code**.
 
-If you use [Visual Studio for Mac](https://visualstudio.microsoft.com/vs/mac/) or [MonoDevelop](https://monodevelop.com),
-all of the solution files are configured with the coding style used by MailKit. If you use Visual Studio on Windows
-or some other editor, please try to maintain the existing coding style as best as you can.
+MailKit uses an [`.editorconfig`](https://github.com/jstedfast/MailKit/blob/master/.editorconfig) file to describe
+its coding style (tabs for indentation and a space before the opening parenthesis of method calls and
+declarations), which is supported by Visual Studio, Visual Studio Code, Rider and most other editors. Please try
+to follow the existing coding style as best as you can.
 
 Once you've got some changes that you'd like to submit upstream to the official MailKit repository,
 send me a **Pull Request** and I will try to review your changes in a timely manner.
@@ -633,7 +722,7 @@ to avoid submitting duplicates. It may also be worth checking the
 have had.
 
 If MailKit does not work with your mail server, please include a [protocol
-log](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog) in your bug report, otherwise
+log](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#protocol-log) in your bug report, otherwise
 there is nothing I can do to fix the problem.
 
 If you are getting an exception from somewhere within MailKit, don't just provide the `Exception.Message`
@@ -648,6 +737,17 @@ Some example snippets can be found in the [`Documentation/Examples`](https://git
 Sample applications can be found in the [`samples`](https://github.com/jstedfast/MailKit/tree/master/samples) directory.
 
 A copy of the XML-formatted API reference documentation is also included in the NuGet package.
+
+### Further Reading
+
+* [Frequently Asked Questions](https://github.com/jstedfast/MailKit/blob/master/FAQ.md)
+* [Porting Guide (MailKit 4.x to 5.0)](https://github.com/jstedfast/MailKit/blob/master/PortingGuide.md)
+* [Release Notes](https://github.com/jstedfast/MailKit/blob/master/ReleaseNotes.md)
+* [Using OAuth2 With Exchange](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md)
+* [Using OAuth2 With GMail](https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md)
+* [Telemetry (Metrics and Tracing)](https://github.com/jstedfast/MailKit/blob/master/Telemetry.md)
+* [Supported RFCs](https://github.com/jstedfast/MailKit/blob/master/RFCs.md)
+* [Security Policy](https://github.com/jstedfast/MailKit/blob/master/SECURITY.md)
 
 ## .NET Foundation
 
