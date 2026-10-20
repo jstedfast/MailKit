@@ -42,7 +42,7 @@
     </TransformComponentArguments>
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>Website</HelpFileFormat>
-    <IndentHtml>False</IndentHtml>
+    <IndentHtml>True</IndentHtml>
     <KeepLogFile>False</KeepLogFile>
     <DisableCodeBlockComponent>False</DisableCodeBlockComponent>
     <CppCommentsFixup>False</CppCommentsFixup>
@@ -218,4 +218,45 @@
   </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
+  <!-- The presentation style's page template cannot be overridden, so insert the Google Analytics tag
+       immediately after the <head> tag of every generated page once the help build has finished. -->
+  <UsingTask TaskName="InsertHeadSnippet" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Files ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+      <SnippetFile ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var snippet = File.ReadAllText (SnippetFile).Trim ();
+        int count = 0;
+
+        foreach (var item in Files) {
+          var path = item.GetMetadata ("FullPath");
+          var bytes = File.ReadAllBytes (path);
+          bool bom = bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF;
+          var html = new UTF8Encoding (false).GetString (bytes, bom ? 3 : 0, bytes.Length - (bom ? 3 : 0));
+          int index = html.IndexOf ("<head>", StringComparison.OrdinalIgnoreCase);
+
+          if (index == -1 || html.Contains (snippet))
+            continue;
+
+          index += "<head>".Length;
+          html = html.Substring (0, index) + snippet + html.Substring (index);
+          File.WriteAllText (path, html, new UTF8Encoding (bom));
+          count++;
+        }
+
+        Log.LogMessage (MessageImportance.High, "Inserted the Google Analytics tag into {0} pages.", count);
+      ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="AfterBuildHelp">
+    <ItemGroup>
+      <GeneratedHtmlFiles Include="$(OutputPath)**\*.htm;$(OutputPath)**\*.html" />
+    </ItemGroup>
+    <InsertHeadSnippet Files="@(GeneratedHtmlFiles)" SnippetFile="$(MSBuildProjectDirectory)\GoogleAnalytics.html" />
+  </Target>
 </Project>
