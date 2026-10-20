@@ -36,7 +36,8 @@ namespace MailKit.Net.Smtp {
 	/// <remarks>
 	/// <para>The exception that is thrown by <see cref="SmtpClient"/> when a message is about to be sent
 	/// using the <a href="https://tools.ietf.org/html/rfc6531">SMTPUTF8</a> extension and the sender or one
-	/// of the recipients fails validation by <see cref="SmtpUtf8AddressValidator"/>.</para>
+	/// of the recipients fails validation by <see cref="SmtpUtf8AddressValidator"/>. Only internationalized
+	/// addresses (see <see cref="MailboxAddress.IsInternational"/>) are validated.</para>
 	/// <para>The addresses are validated before any commands are sent to the server, so no part of the
 	/// message will have been sent when this exception is thrown and the <see cref="SmtpClient"/> remains
 	/// connected.</para>

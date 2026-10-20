@@ -3482,7 +3482,7 @@ namespace UnitTests.Net.Smtp {
 
 					Assert.That (client.IsConnected, Is.True, "Expected the client to remain connected.");
 
-					// The null reverse-path and the domain-less Postmaster address are exempt from validation.
+					// Only internationalized addresses are validated, so the null reverse-path and Postmaster are sent as-is.
 					client.Send (message, sender, new MailboxAddress[] { valid, postmaster });
 				}
 
@@ -3509,9 +3509,87 @@ namespace UnitTests.Net.Smtp {
 
 					Assert.That (client.IsConnected, Is.True, "Expected the client to remain connected.");
 
-					// The null reverse-path and the domain-less Postmaster address are exempt from validation.
+					// Only internationalized addresses are validated, so the null reverse-path and Postmaster are sent as-is.
 					await client.SendAsync (message, sender, new MailboxAddress[] { valid, postmaster });
 				}
+
+				await client.DisconnectAsync (true);
+			}
+		}
+
+		static List<SmtpReplayCommand> CreateIdnEncodedSmtpUtf8AddressCommands ()
+		{
+			return new List<SmtpReplayCommand> {
+				new SmtpReplayCommand ("", "comcast-greeting.txt"),
+				new SmtpReplayCommand ($"EHLO {SmtpClient.DefaultLocalDomain}\r\n", "comcast-ehlo+smtputf8.txt"),
+				new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"),
+
+				// An IDN-encoded domain does not require SMTPUTF8 and is sent as-is.
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<user@xn--bcher-kva.example>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+
+				// With SMTPUTF8, an IDN-encoded domain is neither decoded nor rejected, and the IDN-encoded and Unicode
+				// forms of the same address are only sent once.
+				new SmtpReplayCommand ("MAIL FROM:<sender@example.com> SMTPUTF8 BODY=8BITMIME\r\n", "comcast-mail-from.txt"),
+				new SmtpReplayCommand ("RCPT TO:<user@bücher.example>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("RCPT TO:<other@xn--bcher-kva.example>\r\n", "comcast-rcpt-to.txt"),
+				new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"),
+				new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"),
+				new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt")
+			};
+		}
+
+		static MimeMessage CreateIdnEncodedSmtpUtf8Message ()
+		{
+			var message = CreateEightBitMessage ();
+
+			message.To.Clear ();
+			message.To.Add (MailboxAddress.Parse ("user@bücher.example"));
+			message.Cc.Add (MailboxAddress.Parse ("user@xn--bcher-kva.example"));
+			message.Cc.Add (MailboxAddress.Parse ("other@xn--bcher-kva.example"));
+
+			return message;
+		}
+
+		[Test]
+		public void TestIdnEncodedSmtpUtf8Addresses ()
+		{
+			var commands = CreateIdnEncodedSmtpUtf8AddressCommands ();
+			var sender = new MailboxAddress (string.Empty, "sender@example.com");
+			var alabel = MailboxAddress.Parse ("user@xn--bcher-kva.example");
+
+			using (var client = new SmtpClient ()) {
+				client.Connect (new SmtpReplayStream (commands, false), "localhost", 25, SecureSocketOptions.None);
+				client.Authenticate ("username", "password");
+
+				using (var message = CreateEightBitMessage ())
+					client.Send (message, sender, new MailboxAddress[] { alabel });
+
+				using (var message = CreateIdnEncodedSmtpUtf8Message ())
+					client.Send (message);
+
+				client.Disconnect (true);
+			}
+		}
+
+		[Test]
+		public async Task TestIdnEncodedSmtpUtf8AddressesAsync ()
+		{
+			var commands = CreateIdnEncodedSmtpUtf8AddressCommands ();
+			var sender = new MailboxAddress (string.Empty, "sender@example.com");
+			var alabel = MailboxAddress.Parse ("user@xn--bcher-kva.example");
+
+			using (var client = new SmtpClient ()) {
+				await client.ConnectAsync (new SmtpReplayStream (commands, true), "localhost", 25, SecureSocketOptions.None);
+				await client.AuthenticateAsync ("username", "password");
+
+				using (var message = CreateEightBitMessage ())
+					await client.SendAsync (message, sender, new MailboxAddress[] { alabel });
+
+				using (var message = CreateIdnEncodedSmtpUtf8Message ())
+					await client.SendAsync (message);
 
 				await client.DisconnectAsync (true);
 			}

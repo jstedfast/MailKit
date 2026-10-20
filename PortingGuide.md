@@ -470,8 +470,9 @@ These changes don't cause build errors. Search for the patterns below and review
      or rebuild the cache.
 7. **`SmtpClient` validates addresses when sending with `SMTPUTF8`.** If the server supports
    `SMTPUTF8` and the message requires it (an internationalized sender or recipient address, or
-   `FormatOptions.International`), every sender and recipient address is checked with
-   `SmtpUtf8AddressValidator`. An invalid address (e.g. one that mixes scripts or contains disallowed
+   `FormatOptions.International`), every internationalized sender and recipient address is checked
+   with `SmtpUtf8AddressValidator`. ASCII addresses, including IDN-encoded (`xn--`) domains, are not
+   validated and are sent as-is. An invalid address (e.g. one that mixes scripts or contains disallowed
    code points) causes `Send`/`SendAsync` to throw `SmtpUtf8AddressException` before any SMTP commands
    are sent. The client stays connected.
    * **Detect:** Code that sends to internationalized addresses that the server previously accepted.

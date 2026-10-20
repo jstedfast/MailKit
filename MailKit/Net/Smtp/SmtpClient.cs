@@ -1839,7 +1839,8 @@ namespace MailKit.Net.Smtp {
 		static void AddUnique (List<MailboxAddress> recipients, HashSet<string> unique, IEnumerable<MailboxAddress> mailboxes)
 		{
 			foreach (var mailbox in mailboxes) {
-				if (unique.Add (mailbox.Address))
+				// Note: Compare the IDN-encoded form so that an IDN-encoded domain and its Unicode form are treated as equal.
+				if (unique.Add (mailbox.GetAddress (true)))
 					recipients.Add (mailbox);
 			}
 		}
@@ -1870,6 +1871,7 @@ namespace MailKit.Net.Smtp {
 			public readonly ISmtpSendRequest? SmtpRequest;
 			public readonly MailboxAddress Sender;
 			public readonly ISendRequest Request;
+			public bool Utf8;
 
 			public SendState (ISendRequest request, MailboxAddress sender, IList<MailboxAddress> recipients)
 			{
@@ -1981,16 +1983,21 @@ namespace MailKit.Net.Smtp {
 			UTF8 = 1 << 2,
 		}
 
+		// Note: When SMTPUTF8 is in use, the address is sent exactly as it was parsed or set (so an IDN-encoded domain
+		// is not decoded). Otherwise, any internationalized domain must be IDN-encoded.
+		static string GetEnvelopeAddress (SendState state, MailboxAddress mailbox)
+		{
+			return state.Utf8 ? mailbox.Address : mailbox.GetAddress (true);
+		}
+
 		string CreateMailFromCommand (FormatOptions options, SendState state, SmtpExtensions extensions, long size)
 		{
-			var idnEncode = (extensions & SmtpExtensions.UTF8) == 0;
 			var builder = new StringBuilder ("MAIL FROM:<");
 
-			var addrspec = state.Sender.GetAddress (idnEncode);
-			builder.Append (addrspec);
+			builder.Append (GetEnvelopeAddress (state, state.Sender));
 			builder.Append ('>');
 
-			if (!idnEncode)
+			if ((extensions & SmtpExtensions.UTF8) != 0)
 				builder.Append (" SMTPUTF8");
 
 			if (Capabilities.Contains (SmtpCapability.Size) && size != -1) {
@@ -2070,15 +2077,14 @@ namespace MailKit.Net.Smtp {
 		/// address. Likewise, when a mailing list submits a message via SMTP to be distributed to the list subscribers, the address returned by
 		/// this method MUST match the new RCPT TO address of each recipient, not the address specified by the original sender of the message.)</para>
 		/// </remarks>
+		/// <param name="state">The send state.</param>
 		/// <param name="mailbox">The recipient mailbox.</param>
 		/// <param name="addrType">The original recipient address type.</param>
 		/// <param name="address">The original recipient address.</param>
-		void GetOriginalRecipientAddress (MailboxAddress mailbox, out string addrType, out string address)
+		static void GetOriginalRecipientAddress (SendState state, MailboxAddress mailbox, out string addrType, out string address)
 		{
-			var idnEncode = !Capabilities.Contains (SmtpCapability.UTF8);
-
 			addrType = "rfc822";
-			address = mailbox.GetAddress (idnEncode);
+			address = GetEnvelopeAddress (state, mailbox);
 		}
 
 		static string GetNotifyString (DeliveryStatusNotification notify)
@@ -2102,10 +2108,9 @@ namespace MailKit.Net.Smtp {
 
 		string CreateRcptToCommand (FormatOptions options, SendState state, MailboxAddress mailbox)
 		{
-			var idnEncode = !Capabilities.Contains (SmtpCapability.UTF8);
 			var command = new StringBuilder ("RCPT TO:<");
 
-			command.Append (mailbox.GetAddress (idnEncode));
+			command.Append (GetEnvelopeAddress (state, mailbox));
 			command.Append ('>');
 
 			if (capabilities.Contains (SmtpCapability.Dsn)) {
@@ -2115,7 +2120,7 @@ namespace MailKit.Net.Smtp {
 					command.Append (" NOTIFY=");
 					command.Append (GetNotifyString (notify.Value));
 
-					GetOriginalRecipientAddress (mailbox, out var addrType, out var address);
+					GetOriginalRecipientAddress (state, mailbox, out var addrType, out var address);
 					command.Append (" ORCPT=");
 					command.Append (addrType);
 					command.Append (';');
@@ -2363,6 +2368,8 @@ namespace MailKit.Net.Smtp {
 			if (utf8)
 				ValidateSmtpUtf8Addresses (state);
 
+			state.Utf8 = utf8;
+
 			EncodingConstraint constraint;
 
 			if (Capabilities.Contains (SmtpCapability.BinaryMime))
@@ -2408,23 +2415,21 @@ namespace MailKit.Net.Smtp {
 
 		static void ValidateSmtpUtf8Address (MailboxAddress mailbox)
 		{
+			// Note: Only internationalized addresses are validated. ASCII addresses (including those with an IDN-encoded
+			// domain, the null reverse-path used for bounces and the domain-less "Postmaster" address) are sent as-is.
+			if (!mailbox.IsInternational)
+				return;
+
 			if (!SmtpUtf8AddressValidator.TryValidate (mailbox, SmtpUtf8AddressValidationOptions.None, out var error))
 				throw new SmtpUtf8AddressException (mailbox, error);
 		}
 
 		static void ValidateSmtpUtf8Addresses (SendState state)
 		{
-			// Note: An empty sender address is the null reverse-path (MAIL FROM:<>) used for bounces.
-			if (state.Sender.Address.Length > 0)
-				ValidateSmtpUtf8Address (state.Sender);
+			ValidateSmtpUtf8Address (state.Sender);
 
-			foreach (var recipient in state.Recipients) {
-				// Note: rfc5321 allows the domain-less "Postmaster" address in the RCPT TO command.
-				if (recipient.Address.Equals ("postmaster", StringComparison.OrdinalIgnoreCase))
-					continue;
-
+			foreach (var recipient in state.Recipients)
 				ValidateSmtpUtf8Address (recipient);
-			}
 		}
 
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]

@@ -299,7 +299,12 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
   `SmtpUtf8AddressValidator` whenever a message is sent using the `SMTPUTF8` extension. If an address
   is not valid, the new `SmtpUtf8AddressException` (which derives from `ArgumentException`) is thrown
   before any commands are sent. The exception's `Mailbox` and `Error` properties identify the address
-  and why it was rejected. The null reverse-path (`MAIL FROM:<>`) and `Postmaster` are exempt.
+  and why it was rejected. Only internationalized addresses are validated; ASCII addresses (including
+  IDN-encoded `xn--` domains, the null reverse-path and `Postmaster`) are sent as-is.
+* When sending with `SMTPUTF8`, `SmtpClient` now sends addresses exactly as parsed or set (IDN-encoded
+  domains are no longer decoded). Without `SMTPUTF8`, domains are IDN-encoded. The `RCPT TO` and
+  `ORCPT` addresses now follow the same per-message decision as `MAIL FROM`, and duplicate recipients
+  are detected by comparing their IDN-encoded forms.
 
 ### Telemetry changes
 
