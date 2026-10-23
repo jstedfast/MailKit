@@ -315,7 +315,7 @@ namespace MailKit.Examples {
 						ContentEncoding encoding;
 
 						if (string.IsNullOrEmpty (attachment.ContentTransferEncoding) || !MimeUtils.TryParse (attachment.ContentTransferEncoding, out encoding))
-							encoding = ContentEncoding.Default;
+							encoding = ContentEncoding.Unspecified;
 
 						// if all we want is the content (rather than the entire MIME part including the headers), then
 						// we want the ".TEXT" section of the part

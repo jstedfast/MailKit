@@ -984,7 +984,7 @@ namespace MailKit.Net.Imap
 				ContentEncoding encoding;
 
 				if (string.IsNullOrEmpty (body.ContentTransferEncoding) || !MimeUtils.TryParse (body.ContentTransferEncoding, out encoding))
-					encoding = ContentEncoding.Default;
+					encoding = ContentEncoding.Unspecified;
 
 				using (var memory = new MemoryStream ()) {
 					var content = new MimeContent (section.Stream, encoding);
