@@ -131,10 +131,10 @@ namespace MailKit.Net.Proxy
 		internal static void ValidateHttpResponse (string response, string host, int port)
 		{
 			// Verify that the response starts with something like "HTTP/1.1 200 ..."
-			if (response.Length >= 15 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
+			if (response.Length >= 13 && response.StartsWith ("HTTP/1.", StringComparison.OrdinalIgnoreCase) &&
 				(response[7] == '1' || response[7] == '0') && response[8] == ' ' &&
 				response[9] == '2' && response[10] == '0' && response[11] == '0' &&
-				response[12] == ' ') {
+				(response[12] == ' ' || response[12] == '\r' || response[12] == '\n')) {
 				return;
 			}
 

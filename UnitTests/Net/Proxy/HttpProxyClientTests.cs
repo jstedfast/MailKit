@@ -34,6 +34,26 @@ namespace UnitTests.Net.Proxy {
 	{
 		const int ConnectTimeout = 5 * 1000; // 5 seconds
 
+		[TestCase ("HTTP/1.1 200 Connection established\r\n\r\n")]
+		[TestCase ("HTTP/1.0 200 OK\r\n\r\n")]
+		[TestCase ("HTTP/1.1 200 \r\n\r\n")]
+		[TestCase ("HTTP/1.1 200\r\n\r\n")]
+		[TestCase ("HTTP/1.1 200\n\n")]
+		public void TestValidateHttpResponseSuccess (string response)
+		{
+			Assert.DoesNotThrow (() => HttpProxyClient.ValidateHttpResponse (response, "www.example.com", 25));
+		}
+
+		[TestCase ("HTTP/1.1 200")]
+		[TestCase ("HTTP/1.1 2000\r\n\r\n")]
+		[TestCase ("HTTP/1.1 201 Created\r\n\r\n")]
+		[TestCase ("HTTP/1.1 405 Method Not Allowed\r\n\r\n")]
+		[TestCase ("HTTP/2.0 200 OK\r\n\r\n")]
+		public void TestValidateHttpResponseFailure (string response)
+		{
+			Assert.Throws<ProxyProtocolException> (() => HttpProxyClient.ValidateHttpResponse (response, "www.example.com", 25));
+		}
+
 		[Test]
 		public void TestArgumentExceptions ()
 		{
