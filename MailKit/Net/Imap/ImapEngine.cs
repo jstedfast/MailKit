@@ -4355,52 +4355,52 @@ namespace MailKit.Net.Imap {
 		}
 
 		[MemberNotNull (nameof (parser))]
-		void InitializeParser (Stream stream, bool persistent)
+		void InitializeParser (Stream stream, MimeContentStorage storage)
 		{
 			if (parser == null)
-				parser = new MimeParser (ParserOptions.Default, stream, persistent);
+				parser = new MimeParser (ParserOptions.Default, stream, storage);
 			else
-				parser.SetStream (stream, persistent);
+				parser.SetStream (stream, storage);
 		}
 
 		public HeaderList ParseHeaders (Stream stream, CancellationToken cancellationToken)
 		{
-			InitializeParser (stream, false);
+			InitializeParser (stream, MimeContentStorage.Memory);
 
 			return parser.ParseHeaders (cancellationToken);
 		}
 
 		public Task<HeaderList> ParseHeadersAsync (Stream stream, CancellationToken cancellationToken)
 		{
-			InitializeParser (stream, false);
+			InitializeParser (stream, MimeContentStorage.Memory);
 
 			return parser.ParseHeadersAsync (cancellationToken);
 		}
 
-		public MimeMessage ParseMessage (Stream stream, bool persistent, CancellationToken cancellationToken)
+		public MimeMessage ParseMessage (Stream stream, MimeContentStorage storage, CancellationToken cancellationToken)
 		{
-			InitializeParser (stream, persistent);
+			InitializeParser (stream, storage);
 
 			return parser.ParseMessage (cancellationToken);
 		}
 
-		public Task<MimeMessage> ParseMessageAsync (Stream stream, bool persistent, CancellationToken cancellationToken)
+		public Task<MimeMessage> ParseMessageAsync (Stream stream, MimeContentStorage storage, CancellationToken cancellationToken)
 		{
-			InitializeParser (stream, persistent);
+			InitializeParser (stream, storage);
 
 			return parser.ParseMessageAsync (cancellationToken);
 		}
 
-		public MimeEntity ParseEntity (Stream stream, bool persistent, CancellationToken cancellationToken)
+		public MimeEntity ParseEntity (Stream stream, MimeContentStorage storage, CancellationToken cancellationToken)
 		{
-			InitializeParser (stream, persistent);
+			InitializeParser (stream, storage);
 
 			return parser.ParseEntity (cancellationToken);
 		}
 
-		public Task<MimeEntity> ParseEntityAsync (Stream stream, bool persistent, CancellationToken cancellationToken)
+		public Task<MimeEntity> ParseEntityAsync (Stream stream, MimeContentStorage storage, CancellationToken cancellationToken)
 		{
-			InitializeParser (stream, persistent);
+			InitializeParser (stream, storage);
 
 			return parser.ParseEntityAsync (cancellationToken);
 		}

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Text;
 
 using MimeKit;
 
@@ -16,28 +18,26 @@ namespace Examples {
 		#endregion
 
 		#region ParseMultipartFormDataComplex
-		MimeEntity ParseMultipartFormData (HttpWebResponse response)
+		MimeEntity ParseMultipartFormData (HttpWebResponse response, Stream stream)
 		{
-			// create a temporary file to store our large HTTP data stream
-			var tmp = Path.GetTempFileName ();
+			// The caller supplies an empty, readable, writable, seekable temporary-file stream
+			// and keeps it open and unchanged until the returned entity is no longer needed.
 
-			using (var stream = File.Open (tmp, FileMode.Open, FileAccess.ReadWrite)) {
-				// create a header for the multipart/form-data MIME entity based on the Content-Type value of the HTTP
-				// response
-				var header = Encoding.UTF8.GetBytes (string.Format ("Content-Type: {0}\r\n\r\n", response.ContentType));
+			// create a header for the multipart/form-data MIME entity based on the Content-Type value of the HTTP
+			// response
+			var header = Encoding.UTF8.GetBytes (string.Format ("Content-Type: {0}\r\n\r\n", response.ContentType));
 
-				// write the header to the stream
-				stream.Write (header, 0, header.Length);
+			// write the header to the stream
+			stream.Write (header, 0, header.Length);
 
-				// copy the content of the HTTP response to our temporary stream
-				response.GetResponseStream ().CopyTo (stream);
+			// copy the content of the HTTP response to our temporary stream
+			response.GetResponseStream ().CopyTo (stream);
 
-				// reset the stream back to the beginning
-				stream.Position = 0;
+			// reset the stream back to the beginning
+			stream.Position = 0;
 
-				// parse the MIME entity with persistent = true, telling the parser not to load the content into memory
-				return MimeEntity.Load (stream, persistent: true);
-			}
+			// reference the source stream instead of loading the content into memory
+			return MimeEntity.Load (stream, storage: MimeContentStorage.Source);
 		}
 		#endregion
 	}

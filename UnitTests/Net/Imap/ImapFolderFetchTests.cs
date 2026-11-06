@@ -38,6 +38,131 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapFolderFetchTests
 	{
+		class StorageTestStream : MemoryStream
+		{
+			public bool Seekable { get; set; } = true;
+			public bool IsDisposed { get; private set; }
+			public override bool CanSeek => Seekable && base.CanSeek;
+
+			protected override void Dispose (bool disposing)
+			{
+				IsDisposed = true;
+				base.Dispose (disposing);
+			}
+		}
+
+		class StorageTestFolder : ImapFolder
+		{
+			readonly StorageTestClient client;
+
+			public StorageTestFolder (ImapFolderConstructorArgs args, StorageTestClient client) : base (args)
+			{
+				this.client = client;
+			}
+
+			protected override Stream CreateStream (UniqueId? uid, string section, long offset, long length)
+			{
+				var stream = new StorageTestStream ();
+				client.Streams.Add (stream);
+				return stream;
+			}
+
+			protected override Stream CommitStream (Stream stream, UniqueId uid, string section, long offset, long length)
+			{
+				// Keep the headers seekable to exercise a chain with mixed stream capabilities.
+				((StorageTestStream) stream).Seekable = section == "1.MIME" || client.Seekable;
+				return stream;
+			}
+		}
+
+		class StorageTestClient : ImapClient
+		{
+			public readonly List<StorageTestStream> Streams = new List<StorageTestStream> ();
+			public bool Seekable { get; set; }
+
+			protected override ImapFolder CreateImapFolder (ImapFolderConstructorArgs args)
+			{
+				return new StorageTestFolder (args, this);
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				if (disposing) {
+					foreach (var stream in Streams)
+						stream.Dispose ();
+				}
+
+				base.Dispose (disposing);
+			}
+		}
+
+		static List<ImapReplayCommand> CreateContentStorageCommands (bool byUid)
+		{
+			const string headers = "Content-Type: text/plain\r\n\r\n";
+			const string body = "Hello world!\r\n";
+			var message = headers + body;
+			var fetch = byUid ? "UID FETCH 1" : "FETCH 1";
+
+			return new List<ImapReplayCommand> {
+				new ImapReplayCommand ("", "dovecot.greeting.txt"),
+				new ImapReplayCommand ("A00000000 LOGIN username password\r\n", "dovecot.authenticate+gmail-capabilities.txt"),
+				new ImapReplayCommand ("A00000001 NAMESPACE\r\n", "dovecot.namespace.txt"),
+				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
+				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
+				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE)\r\n", "common.select-inbox.txt"),
+				new ImapReplayCommand ($"A00000005 {fetch} (BODY.PEEK[])\r\n", Encoding.ASCII.GetBytes (
+					$"* 1 FETCH (UID 1 BODY[] {{{message.Length}}}\r\n{message})\r\nA00000005 OK FETCH completed.\r\n")),
+				new ImapReplayCommand ($"A00000006 {fetch} (BODY.PEEK[1.MIME] BODY.PEEK[1])\r\n", Encoding.ASCII.GetBytes (
+					$"* 1 FETCH (UID 1 BODY[1.MIME] {{{headers.Length}}}\r\n{headers} BODY[1] {{{body.Length}}}\r\n{body})\r\nA00000006 OK FETCH completed.\r\n"))
+			};
+		}
+
+		static void AssertContentStorage (StorageTestClient client, TextPart part, int count)
+		{
+			Assert.That (client.Streams, Has.Count.EqualTo (count));
+			foreach (var stream in client.Streams)
+				Assert.That (stream.IsDisposed, Is.EqualTo (!client.Seekable), "Copied input must be disposed; referenced input must remain open.");
+			Assert.That (part.Text, Is.EqualTo ("Hello world!\r\n"));
+		}
+
+		[Test]
+		public void TestContentStorageDisposal ([Values (false, true)] bool seekable, [Values (false, true)] bool byUid)
+		{
+			using (var client = new StorageTestClient { TagPrefix = 'A', Seekable = seekable }) {
+				client.Connect (new ImapReplayStream (CreateContentStorageCommands (byUid), false), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				client.Authenticate ("username", "password");
+				var inbox = (ImapFolder) client.Inbox;
+				inbox.Open (FolderAccess.ReadWrite);
+
+				using (var message = byUid ? inbox.GetMessage (new UniqueId (1)) : inbox.GetMessage (0))
+					AssertContentStorage (client, (TextPart) message.Body, 1);
+				using (var part = byUid ? inbox.GetBodyPart (new UniqueId (1), "1") : inbox.GetBodyPart (0, "1"))
+					AssertContentStorage (client, (TextPart) part, 3);
+
+				client.Disconnect (false);
+			}
+		}
+
+		[Test]
+		public async Task TestContentStorageDisposalAsync ([Values (false, true)] bool seekable, [Values (false, true)] bool byUid)
+		{
+			using (var client = new StorageTestClient { TagPrefix = 'A', Seekable = seekable }) {
+				await client.ConnectAsync (new ImapReplayStream (CreateContentStorageCommands (byUid), true), "localhost", 143, SecureSocketOptions.None);
+				client.AuthenticationMechanisms.Clear ();
+				await client.AuthenticateAsync ("username", "password");
+				var inbox = (ImapFolder) client.Inbox;
+				await inbox.OpenAsync (FolderAccess.ReadWrite);
+
+				using (var message = byUid ? await inbox.GetMessageAsync (new UniqueId (1)) : await inbox.GetMessageAsync (0))
+					AssertContentStorage (client, (TextPart) message.Body, 1);
+				using (var part = byUid ? await inbox.GetBodyPartAsync (new UniqueId (1), "1") : await inbox.GetBodyPartAsync (0, "1"))
+					AssertContentStorage (client, (TextPart) part, 3);
+
+				await client.DisconnectAsync (false);
+			}
+		}
+
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
 			switch (special) {

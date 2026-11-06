@@ -1905,46 +1905,54 @@ namespace MailKit.Net.Imap
 			}
 		}
 
+		static MimeContentStorage GetContentStorage (Stream stream)
+		{
+			if (stream.CanSeek && (stream is MemoryStream || stream is MemoryBlockStream))
+				return MimeContentStorage.Source;
+
+			return MimeContentStorage.Memory;
+		}
+
 		MimeMessage ParseMessage (Stream stream, CancellationToken cancellationToken)
 		{
-			bool dispose = !(stream is MemoryStream || stream is MemoryBlockStream);
+			var storage = GetContentStorage (stream);
 
 			try {
-				return Engine.ParseMessage (stream, !dispose, cancellationToken);
+				return Engine.ParseMessage (stream, storage, cancellationToken);
 			} finally {
-				if (dispose)
+				if (storage == MimeContentStorage.Memory)
 					stream.Dispose ();
 			}
 		}
 
 		async Task<MimeMessage> ParseMessageAsync (Stream stream, CancellationToken cancellationToken)
 		{
-			bool dispose = !(stream is MemoryStream || stream is MemoryBlockStream);
+			var storage = GetContentStorage (stream);
 
 			try {
-				return await Engine.ParseMessageAsync (stream, !dispose, cancellationToken).ConfigureAwait (false);
+				return await Engine.ParseMessageAsync (stream, storage, cancellationToken).ConfigureAwait (false);
 			} finally {
-				if (dispose)
+				if (storage == MimeContentStorage.Memory)
 					stream.Dispose ();
 			}
 		}
 
-		MimeEntity ParseEntity (Stream stream, bool dispose, CancellationToken cancellationToken)
+		MimeEntity ParseEntity (Stream stream, MimeContentStorage storage, CancellationToken cancellationToken)
 		{
 			try {
-				return Engine.ParseEntity (stream, !dispose, cancellationToken);
+				return Engine.ParseEntity (stream, storage, cancellationToken);
 			} finally {
-				if (dispose)
+				if (storage == MimeContentStorage.Memory)
 					stream.Dispose ();
 			}
 		}
 
-		async Task<MimeEntity> ParseEntityAsync (Stream stream, bool dispose, CancellationToken cancellationToken)
+		async Task<MimeEntity> ParseEntityAsync (Stream stream, MimeContentStorage storage, CancellationToken cancellationToken)
 		{
 			try {
-				return await Engine.ParseEntityAsync (stream, !dispose, cancellationToken).ConfigureAwait (false);
+				return await Engine.ParseEntityAsync (stream, storage, cancellationToken).ConfigureAwait (false);
 			} finally {
-				if (dispose)
+				if (storage == MimeContentStorage.Memory)
 					stream.Dispose ();
 			}
 		}
@@ -3693,20 +3701,20 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, out ChainedStream chained, out bool dispose)
+		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, UniqueId uid, string[] tags, out ChainedStream chained, out MimeContentStorage storage)
 		{
 			ProcessFetchResponse (ic);
 
 			chained = new ChainedStream ();
-			dispose = false;
+			storage = MimeContentStorage.Source;
 
 			try {
 				foreach (var tag in tags) {
 					if (!ctx.TryGetSection (uid, tag, out var section, true))
 						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
-					if (!(section.Stream is MemoryStream || section.Stream is MemoryBlockStream))
-						dispose = true;
+					if (GetContentStorage (section.Stream) == MimeContentStorage.Memory)
+						storage = MimeContentStorage.Memory;
 
 					chained.Add (section.Stream);
 				}
@@ -3779,17 +3787,17 @@ namespace MailKit.Net.Imap
 		{
 			var ic = QueueGetBodyPartCommand (uid, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
-			bool dispose;
+			MimeContentStorage storage;
 
 			try {
 				Engine.Run (ic);
 
-				ProcessGetBodyPartResponse (ic, ctx, uid, tags, out chained, out dispose);
+				ProcessGetBodyPartResponse (ic, ctx, uid, tags, out chained, out storage);
 			} finally {
 				ctx.Dispose ();
 			}
 
-			var entity = ParseEntity (chained, dispose, cancellationToken);
+			var entity = ParseEntity (chained, storage, cancellationToken);
 
 			if (partSpecifier.Length == 0)
 				RemoveMessageHeaders (entity);
@@ -3850,17 +3858,17 @@ namespace MailKit.Net.Imap
 		{
 			var ic = QueueGetBodyPartCommand (uid, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
-			bool dispose;
+			MimeContentStorage storage;
 
 			try {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
-				ProcessGetBodyPartResponse (ic, ctx, uid, tags, out chained, out dispose);
+				ProcessGetBodyPartResponse (ic, ctx, uid, tags, out chained, out storage);
 			} finally {
 				ctx.Dispose ();
 			}
 
-			var entity = await ParseEntityAsync (chained, dispose, cancellationToken).ConfigureAwait (false);
+			var entity = await ParseEntityAsync (chained, storage, cancellationToken).ConfigureAwait (false);
 
 			if (partSpecifier.Length == 0)
 				RemoveMessageHeaders (entity);
@@ -4005,20 +4013,20 @@ namespace MailKit.Net.Imap
 			return ic;
 		}
 
-		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, out ChainedStream chained, out bool dispose)
+		void ProcessGetBodyPartResponse (ImapCommand ic, FetchStreamContext ctx, int index, string[] tags, out ChainedStream chained, out MimeContentStorage storage)
 		{
 			ProcessFetchResponse (ic);
 
 			chained = new ChainedStream ();
-			dispose = false;
+			storage = MimeContentStorage.Source;
 
 			try {
 				foreach (var tag in tags) {
 					if (!ctx.TryGetSection (index, tag, out var section, true))
 						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
-					if (!(section.Stream is MemoryStream || section.Stream is MemoryBlockStream))
-						dispose = true;
+					if (GetContentStorage (section.Stream) == MimeContentStorage.Memory)
+						storage = MimeContentStorage.Memory;
 
 					chained.Add (section.Stream);
 				}
@@ -4078,17 +4086,17 @@ namespace MailKit.Net.Imap
 		{
 			var ic = QueueGetBodyPartCommand (index, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
-			bool dispose;
+			MimeContentStorage storage;
 
 			try {
 				Engine.Run (ic);
 
-				ProcessGetBodyPartResponse (ic, ctx, index, tags, out chained, out dispose);
+				ProcessGetBodyPartResponse (ic, ctx, index, tags, out chained, out storage);
 			} finally {
 				ctx.Dispose ();
 			}
 
-			var entity = ParseEntity (chained, dispose, cancellationToken);
+			var entity = ParseEntity (chained, storage, cancellationToken);
 
 			if (partSpecifier.Length == 0)
 				RemoveMessageHeaders (entity);
@@ -4146,17 +4154,17 @@ namespace MailKit.Net.Imap
 		{
 			var ic = QueueGetBodyPartCommand (index, partSpecifier, cancellationToken, progress, out var ctx, out var tags);
 			ChainedStream chained;
-			bool dispose;
+			MimeContentStorage storage;
 
 			try {
 				await Engine.RunAsync (ic).ConfigureAwait (false);
 
-				ProcessGetBodyPartResponse (ic, ctx, index, tags, out chained, out dispose);
+				ProcessGetBodyPartResponse (ic, ctx, index, tags, out chained, out storage);
 			} finally {
 				ctx.Dispose ();
 			}
 
-			var entity = await ParseEntityAsync (chained, dispose, cancellationToken).ConfigureAwait (false);
+			var entity = await ParseEntityAsync (chained, storage, cancellationToken).ConfigureAwait (false);
 
 			if (partSpecifier.Length == 0)
 				RemoveMessageHeaders (entity);

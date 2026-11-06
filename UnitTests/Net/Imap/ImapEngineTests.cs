@@ -27,6 +27,9 @@
 using System.Text;
 using System.Globalization;
 
+using MimeKit;
+using MimeKit.IO;
+
 using MailKit;
 using MailKit.Net.Imap;
 
@@ -34,6 +37,68 @@ namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapEngineTests
 	{
+		static MemoryStream CreateParserStream ()
+		{
+			var data = Encoding.ASCII.GetBytes ("Subject: Storage test\r\nContent-Type: text/plain\r\n\r\nHello world!\r\n");
+			return new MemoryStream (data);
+		}
+
+		static void AssertContentStorage (TextPart part, Stream stream, bool source)
+		{
+			if (source) {
+				Assert.That (part.Content.Stream, Is.InstanceOf<BoundedStream> ());
+			} else {
+				Assert.That (part.Content.Stream, Is.Not.InstanceOf<BoundedStream> ());
+				stream.Dispose ();
+			}
+
+			Assert.That (part.Text, Is.EqualTo ("Hello world!\r\n"));
+		}
+
+		[Test]
+		public void TestParserContentStorage ([Values] MimeContentStorage storage, [Values (false, true)] bool entity)
+		{
+			using (var engine = new ImapEngine (null)) {
+				var alternate = storage == MimeContentStorage.Source ? MimeContentStorage.Memory : MimeContentStorage.Source;
+				foreach (var selected in new[] { storage, alternate, storage }) {
+					using (var stream = CreateParserStream ()) {
+						if (entity) {
+							using (var part = engine.ParseEntity (stream, selected, CancellationToken.None))
+								AssertContentStorage ((TextPart) part, stream, selected == MimeContentStorage.Source);
+						} else {
+							using (var message = engine.ParseMessage (stream, selected, CancellationToken.None))
+								AssertContentStorage ((TextPart) message.Body, stream, selected == MimeContentStorage.Source);
+						}
+
+						if (selected == MimeContentStorage.Source)
+							Assert.That (stream.CanRead, Is.True, "The caller owns the source stream.");
+					}
+				}
+			}
+		}
+
+		[Test]
+		public async Task TestParserContentStorageAsync ([Values] MimeContentStorage storage, [Values (false, true)] bool entity)
+		{
+			using (var engine = new ImapEngine (null)) {
+				var alternate = storage == MimeContentStorage.Source ? MimeContentStorage.Memory : MimeContentStorage.Source;
+				foreach (var selected in new[] { storage, alternate, storage }) {
+					using (var stream = CreateParserStream ()) {
+						if (entity) {
+							using (var part = await engine.ParseEntityAsync (stream, selected, CancellationToken.None))
+								AssertContentStorage ((TextPart) part, stream, selected == MimeContentStorage.Source);
+						} else {
+							using (var message = await engine.ParseMessageAsync (stream, selected, CancellationToken.None))
+								AssertContentStorage ((TextPart) message.Body, stream, selected == MimeContentStorage.Source);
+						}
+
+						if (selected == MimeContentStorage.Source)
+							Assert.That (stream.CanRead, Is.True, "The caller owns the source stream.");
+					}
+				}
+			}
+		}
+
 		[TestCase ('*', (int) ImapTokenType.Asterisk, (int) ImapTokenType.Atom)]
 		[TestCase ("ATOM", (int) ImapTokenType.Atom, (int) ImapTokenType.Asterisk)]
 		[TestCase ("\\Flagged", (int) ImapTokenType.Flag, (int) ImapTokenType.QString)]
