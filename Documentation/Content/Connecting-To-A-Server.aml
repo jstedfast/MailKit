@@ -162,10 +162,8 @@
           <codeEntityReference>T:MailKit.Net.Proxy.HttpProxyClient</codeEntityReference>,
           <codeEntityReference>T:MailKit.Net.Proxy.HttpsProxyClient</codeEntityReference>,
           <codeEntityReference>T:MailKit.Net.Proxy.Socks4Client</codeEntityReference>,
-          <codeEntityReference>T:MailKit.Net.Proxy.Socks4aClient</codeEntityReference>,
-          <codeEntityReference>T:MailKit.Net.Proxy.Socks5Client</codeEntityReference> or
-          <codeEntityReference>T:MailKit.Net.Proxy.WebProxyClient</codeEntityReference>
-          (which wraps a <codeEntityReference>T:System.Net.IWebProxy</codeEntityReference>).
+          <codeEntityReference>T:MailKit.Net.Proxy.Socks4aClient</codeEntityReference> or
+          <codeEntityReference>T:MailKit.Net.Proxy.Socks5Client</codeEntityReference>.
         </para>
         <code language="c#" source="Examples\ProxyExamples.cs" region="ProxyClient"/>
         <para>
