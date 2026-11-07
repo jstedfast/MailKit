@@ -1,141 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4E163AA3-C326-4BFC-B37D-04757280AE76}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImapClientDemo</RootNamespace>
-    <AssemblyName>ImapClientDemo</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <LangVersion>8</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- Provider sign-in is opt-in. See OAuthSignIn.cs and ..\README.md for registration/setup. -->
+    <EnableGoogleOAuth Condition="'$(EnableGoogleOAuth)' == ''">false</EnableGoogleOAuth>
+    <EnableMicrosoftOAuth Condition="'$(EnableMicrosoftOAuth)' == ''">false</EnableMicrosoftOAuth>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup Condition="'$(EnableGoogleOAuth)' == 'true'">
+    <DefineConstants>$(DefineConstants);GOOGLE_OAUTH</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup Condition="'$(EnableMicrosoftOAuth)' == 'true'">
+    <DefineConstants>$(DefineConstants);MICROSOFT_OAUTH</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+  <ItemGroup Condition="'$(EnableGoogleOAuth)' == 'true'">
+    <PackageReference Include="Google.Apis.Auth" Version="1.78.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableMicrosoftOAuth)' == 'true'">
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.92.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="5.0.0" />
+    <ProjectReference Include="..\..\..\MailKit\MailKit.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AuthenticationFailedEventArgs.cs" />
-    <Compile Include="ClientCommand.cs" />
-    <Compile Include="ClientConnections.cs" />
-    <Compile Include="ClientConnection.cs" />
-    <Compile Include="ConnectionFailedEventArgs.cs" />
-    <Compile Include="CustomTaskScheduler.cs" />
-    <Compile Include="FolderNameComparer.cs" />
-    <Compile Include="FolderSelectedEventArgs.cs" />
-    <Compile Include="FolderTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="ClientCommandPipeline.cs" />
-    <Compile Include="LoginWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoginWindow.Designer.cs">
-      <DependentUpon>LoginWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MessageInfo.cs" />
-    <Compile Include="MessageList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MessageSelectedEventArgs.cs" />
-    <Compile Include="CommandFailedEventArgs.cs" />
-    <Compile Include="MultipartRelatedImageContext.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="LoginWindow.resx">
-      <DependentUpon>LoginWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\archive.png" />
-    <EmbeddedResource Include="Resources\attach.png" />
-    <EmbeddedResource Include="Resources\trash-empty.png" />
-    <EmbeddedResource Include="Resources\flag.png" />
-    <EmbeddedResource Include="Resources\trash-full.png" />
-    <EmbeddedResource Include="Resources\important.png" />
-    <EmbeddedResource Include="Resources\inbox.png" />
-    <EmbeddedResource Include="Resources\junk.png" />
-    <EmbeddedResource Include="Resources\envelope.png" />
-    <EmbeddedResource Include="Resources\paper-plane.png" />
-    <EmbeddedResource Include="Resources\pencil.png" />
-    <EmbeddedResource Include="Resources\sign-in-with-google.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\folder.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

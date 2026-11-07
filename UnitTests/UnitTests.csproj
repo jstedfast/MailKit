@@ -51,6 +51,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\samples\ImapClientDemo\ImapClientDemo\ImapSession.cs" Link="Samples\ImapSession.cs" />
+    <Compile Include="..\samples\ImapClientDemo\ImapClientDemo\MailboxPage.cs" Link="Samples\MailboxPage.cs" />
+    <Compile Include="..\samples\ImapClientDemo\ImapClientDemo\OAuthSignIn.cs" Link="Samples\OAuthSignIn.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Net\Imap\Resources\**\*.*" />
     <None Remove="Net\Pop3\Resources\**\*.*" />
     <None Remove="Net\Smtp\Resources\**\*.*" />

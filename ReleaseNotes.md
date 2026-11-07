@@ -189,6 +189,10 @@ See [PortingGuide.md](PortingGuide.md) for step-by-step instructions on porting 
 
 ### New Features
 
+* Replaced the Windows Forms IMAP demo with a .NET 10 WPF sample featuring asynchronous,
+  serialized IMAP access, paged message lists, text-only previews, live folder updates, and
+  opt-in Google and Microsoft 365 OAuth sign-in using your own app registrations.
+
 * `MailService` (and therefore `ImapClient`, `Pop3Client` and `SmtpClient`) now implements
   `IAsyncDisposable`, so clients can be used with `await using`. Like `Dispose ()`, `DisposeAsync ()`
   does not send `LOGOUT`/`QUIT`; call `DisconnectAsync (true)` first to disconnect cleanly. Subclasses

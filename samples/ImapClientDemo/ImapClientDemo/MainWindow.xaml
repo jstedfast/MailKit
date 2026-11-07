@@ -1,0 +1,152 @@
+<Window x:Class="ImapClientDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:ImapClientDemo"
+        Title="MailKit - IMAP Explorer" Width="1200" Height="800"
+        MinWidth="960" MinHeight="600" Background="#F4F6F8"
+        Closing="OnClosing">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="White" Padding="16" CornerRadius="6" BorderBrush="#D5DBE1" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="IMAP Explorer" FontSize="24" FontWeight="SemiBold"/>
+                <TextBlock Text="A read-only MailKit sample. Credentials are not saved." Margin="0,4,0,12" Foreground="#475569"/>
+                <Grid IsEnabled="{Binding CanConnect}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="0,0,12,0">
+                        <Label Content="_Server" Target="{Binding ElementName=Server}" Padding="0,0,0,4"/>
+                        <TextBox x:Name="Server" Text="imap.gmail.com" AutomationProperties.Name="Server"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                        <Label Content="_Port" Target="{Binding ElementName=Port}" Padding="0,0,0,4"/>
+                        <TextBox x:Name="Port" Text="993" AutomationProperties.Name="Port"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="0,0,12,0">
+                        <Label Content="_Encryption" Target="{Binding ElementName=Encryption}" Padding="0,0,0,4"/>
+                        <ComboBox x:Name="Encryption" SelectedIndex="0" SelectionChanged="OnEncryptionChanged" AutomationProperties.Name="Encryption">
+                            <ComboBoxItem Content="TLS on connect"/>
+                            <ComboBoxItem Content="STARTTLS (required)"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3">
+                        <Label Content="_User name" Target="{Binding ElementName=UserName}" Padding="0,0,0,4"/>
+                        <TextBox x:Name="UserName" AutomationProperties.Name="User name"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel IsEnabled="{Binding CanConnect}" Margin="0,0,12,0">
+                        <Label Content="_Authentication" Target="{Binding ElementName=Authentication}" Padding="0,0,0,4"/>
+                        <ComboBox x:Name="Authentication" SelectedIndex="0" SelectedValuePath="Tag"
+                                  SelectionChanged="OnAuthenticationChanged" AutomationProperties.Name="Authentication">
+                            <ComboBoxItem Content="Password / app password" Tag="{x:Static local:AuthenticationKind.Password}"/>
+                            <ComboBoxItem Content="OAuth2 access token" Tag="{x:Static local:AuthenticationKind.AccessToken}"/>
+                            <ComboBoxItem Content="Google (browser)" Tag="{x:Static local:AuthenticationKind.Google}"
+                                          IsEnabled="{Binding GoogleOAuthEnabled}" ToolTipService.ShowOnDisabled="True"
+                                          ToolTip="Requires your app registration and EnableGoogleOAuth=true. See OAuthSignIn.cs."/>
+                            <ComboBoxItem Content="Microsoft 365 (browser)" Tag="{x:Static local:AuthenticationKind.Microsoft365}"
+                                          IsEnabled="{Binding MicrosoftOAuthEnabled}" ToolTipService.ShowOnDisabled="True"
+                                          ToolTip="Requires your app registration and EnableMicrosoftOAuth=true. See OAuthSignIn.cs."/>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" IsEnabled="{Binding CanConnect}" Margin="0,0,12,0">
+                        <Label Content="Password or access _token" Target="{Binding ElementName=Secret}" Padding="0,0,0,4"/>
+                        <PasswordBox x:Name="Secret" Padding="6" AutomationProperties.Name="Password or access token"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom">
+                        <Button Content="_Connect" IsEnabled="{Binding CanConnect}" Click="OnConnect"/>
+                        <Button Content="_Disconnect / cancel" IsEnabled="{Binding CanDisconnect}" Click="OnDisconnect" Margin="0"/>
+                    </StackPanel>
+                </Grid>
+                <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" Foreground="#475569"
+                           Text="Use an app password or IMAP access token. Browser sign-in is disabled until you configure your own app registration (see the sample README)."/>
+            </StackPanel>
+        </Border>
+
+        <TextBox Grid.Row="1" Text="{Binding Error, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"
+                 BorderThickness="0" Background="Transparent" Foreground="#A2191F"
+                 AutomationProperties.Name="Error" Margin="0,4"/>
+
+        <Grid Grid.Row="2" IsEnabled="{Binding IsConnected}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220" MinWidth="140"/>
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="*" MinWidth="400"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Background="White">
+                <TextBlock DockPanel.Dock="Top" Text="Folders" FontWeight="SemiBold" Margin="10"/>
+                <ListBox ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder, Mode=OneWay}"
+                         SelectionChanged="OnFolderSelected" DisplayMemberPath="FullName"
+                         BorderThickness="0" AutomationProperties.Name="Folders"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+            </DockPanel>
+            <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch" Background="Transparent"/>
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" MinHeight="100"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="*" MinHeight="100"/>
+                </Grid.RowDefinitions>
+                <DockPanel Margin="8,0,0,8">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button Content="_Refresh" IsEnabled="{Binding CanRefresh}" Click="OnRefresh"/>
+                        <Button Content="_Newer" IsEnabled="{Binding CanGoNewer}" Click="OnNewer"/>
+                        <Button Content="_Older" IsEnabled="{Binding CanGoOlder}" Click="OnOlder" Margin="0"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding PageDescription}" VerticalAlignment="Center"/>
+                </DockPanel>
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage, Mode=OneWay}"
+                          SelectionChanged="OnMessageSelected" AutoGenerateColumns="False" IsReadOnly="True"
+                          SelectionMode="Single" SelectionUnit="FullRow" CanUserAddRows="False" CanUserDeleteRows="False"
+                          CanUserSortColumns="False" HeadersVisibility="Column" GridLinesVisibility="None"
+                          EnableRowVirtualization="True" AutomationProperties.Name="Messages">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsUnread}" Value="True">
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="From" Binding="{Binding From}" Width="2*"/>
+                        <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="3*"/>
+                        <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="145"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <GridSplitter Grid.Row="2" Height="6" HorizontalAlignment="Stretch" Background="Transparent"/>
+                <DockPanel Grid.Row="3" Background="White">
+                    <StackPanel DockPanel.Dock="Top" Margin="12,8">
+                        <TextBlock Text="{Binding SelectedMessage.Subject}" FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding SelectedMessage.From}" TextWrapping="Wrap" Margin="0,4"/>
+                        <TextBlock Text="Text-only preview - attachments and remote content are not loaded." Foreground="#475569" FontSize="11"/>
+                    </StackPanel>
+                    <TextBox Text="{Binding Preview, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" BorderThickness="0" Padding="12"
+                             AutomationProperties.Name="Message preview"/>
+                </DockPanel>
+            </Grid>
+        </Grid>
+        <DockPanel Grid.Row="3" Margin="0,10,0,0">
+            <ProgressBar DockPanel.Dock="Right" Width="100" Height="4" IsIndeterminate="{Binding IsBusy}"/>
+            <TextBlock Text="{Binding Status}" Foreground="#475569" AutomationProperties.Name="Status"/>
+        </DockPanel>
+    </Grid>
+</Window>

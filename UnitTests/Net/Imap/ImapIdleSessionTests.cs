@@ -40,7 +40,7 @@ namespace UnitTests.Net.Imap {
 		// A scripted IMAP server stream whose reads block until the client has sent the next
 		// expected command (or until the test pushes unsolicited data), which allows testing
 		// time-based behavior such as IDLE refreshing, coalescing and cancellation.
-		sealed class ScriptedImapStream : Stream
+		internal sealed class ScriptedImapStream : Stream
 		{
 			static readonly TimeSpan ReadTimeoutSpan = TimeSpan.FromSeconds (10);
 
@@ -60,6 +60,10 @@ namespace UnitTests.Net.Imap {
 
 			public bool Completed {
 				get { lock (sync) return index == script.Count; }
+			}
+
+			public int CommandCount {
+				get { lock (sync) return index; }
 			}
 
 			public override bool CanRead => true;
