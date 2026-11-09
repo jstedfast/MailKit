@@ -1176,6 +1176,19 @@ namespace MailKit.Net.Imap {
 			return false;
 		}
 
+		static bool IsMimeToken (string value)
+		{
+			if (value.Length == 0)
+				return false;
+
+			for (int i = 0; i < value.Length; i++) {
+				if (value[i] > 127 || !((byte) value[i]).IsToken ())
+					return false;
+			}
+
+			return true;
+		}
+
 		static ContentType ParseContentType (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var type = ReadNStringToken (engine, format, false, cancellationToken);
@@ -1211,6 +1224,13 @@ namespace MailKit.Net.Imap {
 			} else {
 				type ??= "application";
 				subtype = ReadStringToken (engine, format, cancellationToken);
+			}
+
+			if (!IsMimeToken (type) || !IsMimeToken (subtype)) {
+				bool isText = type.Equals ("text", StringComparison.OrdinalIgnoreCase);
+
+				type = isText ? "text" : "application";
+				subtype = isText ? "plain" : "octet-stream";
 			}
 
 			token = engine.ReadToken (cancellationToken);
@@ -1268,6 +1288,13 @@ namespace MailKit.Net.Imap {
 			} else {
 				type ??= "application";
 				subtype = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
+			}
+
+			if (!IsMimeToken (type) || !IsMimeToken (subtype)) {
+				bool isText = type.Equals ("text", StringComparison.OrdinalIgnoreCase);
+
+				type = isText ? "text" : "application";
+				subtype = isText ? "plain" : "octet-stream";
 			}
 
 			token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -1573,7 +1600,7 @@ namespace MailKit.Net.Imap {
 		static void ParseMultipart (ImapEngine engine, string format, BodyPartMultipart body, CancellationToken cancellationToken)
 		{
 			var subtype = ReadStringToken (engine, format, cancellationToken);
-			var contentType = new ContentType ("multipart", subtype);
+			var contentType = new ContentType ("multipart", IsMimeToken (subtype) ? subtype : "mixed");
 
 			body.ContentType = contentType;
 
@@ -1636,7 +1663,7 @@ namespace MailKit.Net.Imap {
 		static async Task ParseMultipartAsync (ImapEngine engine, string format, BodyPartMultipart body, CancellationToken cancellationToken)
 		{
 			var subtype = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
-			var contentType = new ContentType ("multipart", subtype);
+			var contentType = new ContentType ("multipart", IsMimeToken (subtype) ? subtype : "mixed");
 
 			body.ContentType = contentType;
 

@@ -2877,11 +2877,13 @@ namespace UnitTests.Net.Imap {
 
 						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
-						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5A54730AD4A54730AD4A54730AD4A54730AD42KOS_\""), "ContentType.MediaType does not match for first child.");
+						Assert.That (basic.ContentType.MimeType, Is.EqualTo ("application/octet-stream"));
+						Assert.That (basic.ContentType.Name, Is.EqualTo ("test.dat"));
 
 						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[1];
-						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5D3ABEC4E85A03EAD527CA5474B3D0AF9E6EXMBXSVR02KOS_\""), "ContentType.MediaType does not match for second child.");
+						Assert.That (basic.ContentType.MimeType, Is.EqualTo ("application/octet-stream"));
+						Assert.That (basic.ContentType.Name, Is.EqualTo ("test.dat"));
 					}
 				}
 			}
@@ -2921,14 +2923,157 @@ namespace UnitTests.Net.Imap {
 
 						Assert.That (multipart.BodyParts[0], Is.InstanceOf<BodyPartBasic> (), "The type of the first child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[0];
-						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5A54730AD4A54730AD4A54730AD4A54730AD42KOS_\""), "ContentType.MediaType does not match for first child.");
+						Assert.That (basic.ContentType.MimeType, Is.EqualTo ("application/octet-stream"));
+						Assert.That (basic.ContentType.Name, Is.EqualTo ("test.dat"));
 
 						Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartBasic> (), "The type of the second child does not match.");
 						basic = (BodyPartBasic) multipart.BodyParts[1];
-						Assert.That (basic.ContentType.MediaType, Is.EqualTo ("MOUNDARY=\"_006_5DBB50A5D3ABEC4E85A03EAD527CA5474B3D0AF9E6EXMBXSVR02KOS_\""), "ContentType.MediaType does not match for second child.");
+						Assert.That (basic.ContentType.MimeType, Is.EqualTo ("application/octet-stream"));
+						Assert.That (basic.ContentType.Name, Is.EqualTo ("test.dat"));
 					}
 				}
 			}
+		}
+
+		static string CreateBodyStructureWithInvalidContentType (string type, string subtype, bool parameters)
+		{
+			var fields = parameters ? "(\"name*0*\" \"utf-8''test%20\" \"name*1*\" \"file.dat\")" : "NIL";
+			var lines = type.Equals ("text", StringComparison.OrdinalIgnoreCase) ? " 7" : string.Empty;
+
+			return "((" + MimeUtils.Quote (type) + " " + MimeUtils.Quote (subtype) + " " + fields +
+				" \"id\" \"description\" \"7BIT\" 12" + lines + " \"md5\" (\"attachment\" (\"filename\" \"test.dat\")) (\"en\") \"part.dat\")" +
+				NestedTextBody + " \"mixed\")\r\n";
+		}
+
+		static void AssertNormalizedContentType (BodyPart body, string type, bool parameters)
+		{
+			bool isText = type.Equals ("text", StringComparison.OrdinalIgnoreCase);
+
+			Assert.That (body, Is.InstanceOf<BodyPartMultipart> ());
+			var multipart = (BodyPartMultipart) body;
+
+			Assert.That (multipart.BodyParts, Has.Count.EqualTo (2));
+			var basic = (BodyPartBasic) multipart.BodyParts[0];
+			Assert.That (basic.ContentType.MimeType, Is.EqualTo (isText ? "text/plain" : "application/octet-stream"));
+			Assert.That (basic.ContentType.Name, Is.EqualTo (parameters ? "test file.dat" : null));
+			Assert.That (basic.ContentId, Is.EqualTo ("id"));
+			Assert.That (basic.ContentMd5, Is.EqualTo ("md5"));
+			Assert.That (basic.ContentDisposition.FileName, Is.EqualTo ("test.dat"));
+			Assert.That (basic.ContentLanguage, Is.EqualTo (new[] { "en" }));
+			Assert.That (basic.ContentLocation.OriginalString, Is.EqualTo ("part.dat"));
+
+			if (isText) {
+				Assert.That (basic, Is.InstanceOf<BodyPartText> ());
+				Assert.That (((BodyPartText) basic).Lines, Is.EqualTo (7));
+			}
+
+			Assert.That (multipart.BodyParts[1].ContentType.MimeType, Is.EqualTo ("text/plain").IgnoreCase);
+			Assert.That (multipart.BodyParts[1].PartSpecifier, Is.EqualTo ("2"));
+		}
+
+		[TestCase ("bad/type", "octet-stream", false)]
+		[TestCase ("bad/type", "octet-stream", true)]
+		[TestCase ("application", "bad/subtype", false)]
+		[TestCase ("application", "bad/subtype", true)]
+		[TestCase ("", "octet-stream", false)]
+		[TestCase ("application", "", true)]
+		[TestCase ("applicati\u00f3n", "octet-stream", true)]
+		[TestCase ("TeXt", "plain; charset=us-ascii", true)]
+		[TestCase ("text", "", false)]
+		public void TestParseBodyStructureWithInvalidContentType (string type, string subtype, bool parameters)
+		{
+			var text = CreateBodyStructureWithInvalidContentType (type, subtype, parameters);
+			using var memory = new MemoryStream (Encoding.UTF8.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+			AssertNormalizedContentType (body, type, parameters);
+			Assert.That (engine.ReadToken (CancellationToken.None).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
+		[TestCase ("bad/type", "octet-stream", false)]
+		[TestCase ("bad/type", "octet-stream", true)]
+		[TestCase ("application", "bad/subtype", false)]
+		[TestCase ("application", "bad/subtype", true)]
+		[TestCase ("", "octet-stream", false)]
+		[TestCase ("application", "", true)]
+		[TestCase ("applicati\u00f3n", "octet-stream", true)]
+		[TestCase ("TeXt", "plain; charset=us-ascii", true)]
+		[TestCase ("text", "", false)]
+		public async Task TestParseBodyStructureWithInvalidContentTypeAsync (string type, string subtype, bool parameters)
+		{
+			var text = CreateBodyStructureWithInvalidContentType (type, subtype, parameters);
+			using var memory = new MemoryStream (Encoding.UTF8.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+			AssertNormalizedContentType (body, type, parameters);
+			Assert.That ((await engine.ReadTokenAsync (CancellationToken.None)).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
+		static string CreateBodyStructureWithInvalidMultipartSubtype (string subtype, bool parameters)
+		{
+			return "(" + NestedTextBody + " " + MimeUtils.Quote (subtype) +
+				(parameters ? " (\"boundary\" \"b\") (\"inline\" NIL) (\"en\") \"container\"" : string.Empty) + ")\r\n";
+		}
+
+		static void AssertNormalizedMultipartSubtype (BodyPart body, bool parameters)
+		{
+			Assert.That (body, Is.InstanceOf<BodyPartMultipart> ());
+			var multipart = (BodyPartMultipart) body;
+
+			Assert.That (multipart.ContentType.MimeType, Is.EqualTo ("multipart/mixed"));
+			Assert.That (multipart.ContentType.Boundary, Is.EqualTo (parameters ? "b" : null));
+			Assert.That (multipart.BodyParts, Has.Count.EqualTo (1));
+			Assert.That (multipart.BodyParts[0].ContentType.MimeType, Is.EqualTo ("text/plain").IgnoreCase);
+
+			if (parameters) {
+				Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"));
+				Assert.That (multipart.ContentLanguage, Is.EqualTo (new[] { "en" }));
+				Assert.That (multipart.ContentLocation.OriginalString, Is.EqualTo ("container"));
+			}
+		}
+
+		[TestCase ("", false)]
+		[TestCase ("bad/subtype", true)]
+		[TestCase ("mix\u00e9d", true)]
+		[TestCase ("mixed; boundary=x", false)]
+		public void TestParseBodyStructureWithInvalidMultipartSubtype (string subtype, bool parameters)
+		{
+			var text = CreateBodyStructureWithInvalidMultipartSubtype (subtype, parameters);
+			using var memory = new MemoryStream (Encoding.UTF8.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+			AssertNormalizedMultipartSubtype (body, parameters);
+			Assert.That (engine.ReadToken (CancellationToken.None).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
+		[TestCase ("", false)]
+		[TestCase ("bad/subtype", true)]
+		[TestCase ("mix\u00e9d", true)]
+		[TestCase ("mixed; boundary=x", false)]
+		public async Task TestParseBodyStructureWithInvalidMultipartSubtypeAsync (string subtype, bool parameters)
+		{
+			var text = CreateBodyStructureWithInvalidMultipartSubtype (subtype, parameters);
+			using var memory = new MemoryStream (Encoding.UTF8.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+			AssertNormalizedMultipartSubtype (body, parameters);
+			Assert.That ((await engine.ReadTokenAsync (CancellationToken.None)).Type, Is.EqualTo (ImapTokenType.Eoln));
 		}
 
 		[Test]

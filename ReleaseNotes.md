@@ -341,6 +341,9 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 
 ### Bug Fixes
 
+* Normalize invalid MIME types in IMAP body structures to `application/octet-stream`, using
+  `text/plain` for text parts and `multipart/mixed` for multipart containers, while retaining
+  parseable parameters.
 * Made IMAP `BODY` and `BODYSTRUCTURE` parsing non-recursive to prevent stack overflows from
   deeply nested multipart bodies, embedded messages, and body-extension lists.
   `BodyPart.TryParse ()` and `BodyPart.ToString ()` also use non-recursive parsing and serialization
