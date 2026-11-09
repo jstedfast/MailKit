@@ -112,6 +112,21 @@ namespace MailKit {
 			visitor.VisitBodyPartMessage (this);
 		}
 
+		internal void EncodePrefix (StringBuilder builder)
+		{
+			base.Encode (builder);
+
+			builder.Append (' ');
+			Encode (builder, Envelope);
+			builder.Append (' ');
+		}
+
+		internal void EncodeSuffix (StringBuilder builder)
+		{
+			builder.Append (' ');
+			Encode (builder, Lines);
+		}
+
 		/// <summary>
 		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
 		/// </summary>
@@ -121,14 +136,9 @@ namespace MailKit {
 		/// <param name="builder">The string builder.</param>
 		protected override void Encode (StringBuilder builder)
 		{
-			base.Encode (builder);
-
-			builder.Append (' ');
-			Encode (builder, Envelope);
-			builder.Append (' ');
+			EncodePrefix (builder);
 			Encode (builder, Body);
-			builder.Append (' ');
-			Encode (builder, Lines);
+			EncodeSuffix (builder);
 		}
 	}
 }

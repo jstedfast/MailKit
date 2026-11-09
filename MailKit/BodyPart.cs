@@ -231,14 +231,62 @@ namespace MailKit {
 
 		internal static void Encode (StringBuilder builder, BodyPart? body)
 		{
-			if (body == null) {
-				builder.Append ("NIL");
-				return;
-			}
+			var parents = new Stack<(BodyPart Part, int Index)> ();
 
-			builder.Append ('(');
-			body.Encode (builder);
-			builder.Append (')');
+			while (true) {
+				if (body == null) {
+					builder.Append ("NIL");
+				} else {
+					builder.Append ('(');
+
+					// Only bypass Encode for built-in types; subclasses may override it.
+					if (body.GetType () == typeof (BodyPartMultipart)) {
+						var multipart = (BodyPartMultipart) body;
+
+						if (multipart.BodyParts.Count > 0) {
+							parents.Push ((multipart, 1));
+							body = multipart.BodyParts[0];
+							continue;
+						}
+
+						builder.Append ("NIL");
+						multipart.EncodeFields (builder);
+					} else if (body.GetType () == typeof (BodyPartMessage)) {
+						var message = (BodyPartMessage) body;
+
+						message.EncodePrefix (builder);
+						parents.Push ((message, 0));
+						body = message.Body;
+						continue;
+					} else {
+						body.Encode (builder);
+					}
+
+					builder.Append (')');
+				}
+
+				while (true) {
+					if (parents.Count == 0)
+						return;
+
+					var parent = parents.Pop ();
+
+					if (parent.Part is BodyPartMultipart multipart) {
+						if (parent.Index < multipart.BodyParts.Count) {
+							builder.Append (' ');
+							parents.Push ((multipart, parent.Index + 1));
+							body = multipart.BodyParts[parent.Index];
+							break;
+						}
+
+						multipart.EncodeFields (builder);
+					} else {
+						((BodyPartMessage) parent.Part).EncodeSuffix (builder);
+					}
+
+					builder.Append (')');
+				}
+			}
 		}
 
 		/// <summary>
@@ -263,9 +311,7 @@ namespace MailKit {
 		{
 			var builder = new StringBuilder ();
 
-			builder.Append ('(');
-			Encode (builder);
-			builder.Append (')');
+			Encode (builder, this);
 
 			return builder.ToString ();
 		}
@@ -572,40 +618,37 @@ namespace MailKit {
 			return TryAddParameters (contentType.Parameters, parameters);
 		}
 
-		static bool TryParse (string text, ref int index, string prefix, [NotNullWhen (true)] out BodyPartCollection? bodyParts)
+		static bool TryParseMultipart (string text, ref int index, BodyPartMultipart multipart)
 		{
-			string path;
-			int id = 1;
-
-			bodyParts = null;
-
-			if (index >= text.Length)
+			if (!TryParse (text, ref index, true, out var contentType))
 				return false;
 
-			bodyParts = new BodyPartCollection ();
+			multipart.ContentType = contentType;
 
-			do {
-				if (text[index] != '(')
-					break;
+			if (!TryParse (text, ref index, out ContentDisposition? disposition))
+				return false;
 
-				path = prefix + id;
+			multipart.ContentDisposition = disposition;
 
-				if (!TryParse (text, ref index, path, out BodyPart? part))
-					return false;
+			if (!TryParse (text, ref index, out string[]? languages))
+				return false;
 
-				while (index < text.Length && text[index] == ' ')
-					index++;
+			multipart.ContentLanguage = languages;
 
-				if (part != null)
-					bodyParts.Add (part);
+			if (!TryParse (text, ref index, out Uri? location))
+				return false;
 
-				id++;
-			} while (index < text.Length);
+			multipart.ContentLocation = location;
 
-			return index < text.Length;
+			if (index >= text.Length || text[index] != ')')
+				return false;
+
+			index++;
+
+			return true;
 		}
 
-		static bool TryParse (string text, ref int index, string path, out BodyPart? part)
+		static bool TryParseBodyPart (string text, ref int index, string path, out BodyPart? part, out bool hasChildren)
 		{
 			ContentDisposition? disposition;
 			ContentType? contentType;
@@ -613,6 +656,7 @@ namespace MailKit {
 			Uri? location;
 
 			part = null;
+			hasChildren = false;
 
 			while (index < text.Length && text[index] == ' ')
 				index++;
@@ -632,37 +676,19 @@ namespace MailKit {
 				return false;
 
 			if (text[index] == '(' || IsNIL (text, index)) {
-				var prefix = path.Length > 0 ? path + "." : string.Empty;
-				BodyPartCollection? bodyParts = null;
-
-				if (text[index] == '(') {
-					if (!TryParse (text, ref index, prefix, out bodyParts))
-						return false;
-				} else {
-					index += "NIL".Length;
-				}
-
-				if (!TryParse (text, ref index, true, out contentType))
-					return false;
-
-				var multipart = new BodyPartMultipart (contentType, path, bodyParts ?? new BodyPartCollection ());
-
-				if (!TryParse (text, ref index, out disposition))
-					return false;
-
-				multipart.ContentDisposition = disposition;
-
-				if (!TryParse (text, ref index, out array))
-					return false;
-
-				multipart.ContentLanguage = array;
-
-				if (!TryParse (text, ref index, out location))
-					return false;
-
-				multipart.ContentLocation = location;
+				// The subtype is stored after the children and is set by TryParseMultipart.
+				var multipart = new BodyPartMultipart (new ContentType ("multipart", "mixed"), path);
 
 				part = multipart;
+
+				if (text[index] == '(') {
+					hasChildren = true;
+					return true;
+				}
+
+				index += "NIL".Length;
+
+				return TryParseMultipart (text, ref index, multipart);
 			} else {
 				string? id, description, encoding, md5;
 
@@ -714,17 +740,11 @@ namespace MailKit {
 					if (!Envelope.TryParse (text, ref index, out Envelope? envelope))
 						return false;
 
-					if (!TryParse (text, ref index, path, out BodyPart? body))
-						return false;
-
-					if (!TryParse (text, ref index, out long lines))
-						return false;
-
 					basic = new BodyPartMessage (contentType, path) {
-						Envelope = envelope,
-						Body = body,
-						Lines = lines
+						Envelope = envelope
 					};
+
+					hasChildren = true;
 				}
 
 				basic.ContentId = id;
@@ -739,12 +759,89 @@ namespace MailKit {
 				part = basic;
 			}
 
+			if (hasChildren)
+				return true;
+
 			if (index >= text.Length || text[index] != ')')
 				return false;
 
 			index++;
 
 			return true;
+		}
+
+		internal string GetChildPartSpecifier (int index)
+		{
+			// Embedded message bodies keep the message's path; only multipart children add a level.
+			if (this is BodyPartMessage)
+				return PartSpecifier;
+
+			var prefix = PartSpecifier.Length > 0 ? PartSpecifier + "." : string.Empty;
+
+			return prefix + index.ToString (CultureInfo.InvariantCulture);
+		}
+
+		static bool TryParse (string text, ref int index, string path, out BodyPart? part)
+		{
+			var parents = new Stack<(BodyPart Part, int Index)> ();
+
+			part = null;
+
+			do {
+				if (!TryParseBodyPart (text, ref index, path, out var body, out bool hasChildren))
+					return false;
+
+				if (hasChildren && body != null) {
+					parents.Push ((body, 1));
+					path = body.GetChildPartSpecifier (1);
+					continue;
+				}
+
+				do {
+					if (parents.Count == 0) {
+						part = body;
+						return true;
+					}
+
+					var (parent, childIndex) = parents.Pop ();
+
+					if (parent is BodyPartMultipart multipart) {
+						if (body != null)
+							multipart.BodyParts.Add (body);
+
+						while (index < text.Length && text[index] == ' ')
+							index++;
+
+						if (index >= text.Length)
+							return false;
+
+						if (text[index] == '(') {
+							parents.Push ((parent, childIndex + 1));
+							path = parent.GetChildPartSpecifier (childIndex + 1);
+							break;
+						}
+
+						if (!TryParseMultipart (text, ref index, multipart))
+							return false;
+					} else {
+						var message = (BodyPartMessage) parent;
+
+						message.Body = body;
+
+						if (!TryParse (text, ref index, out long lines))
+							return false;
+
+						message.Lines = lines;
+
+						if (index >= text.Length || text[index] != ')')
+							return false;
+
+						index++;
+					}
+
+					body = parent;
+				} while (true);
+			} while (true);
 		}
 
 		/// <summary>

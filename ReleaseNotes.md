@@ -341,6 +341,10 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 
 ### Bug Fixes
 
+* Made IMAP `BODY` and `BODYSTRUCTURE` parsing non-recursive to prevent stack overflows from
+  deeply nested multipart bodies, embedded messages, and body-extension lists.
+  `BodyPart.TryParse ()` and `BodyPart.ToString ()` also use non-recursive parsing and serialization
+  for built-in body structures.
 * Fixed `ImapStream.Flush ()` to always flush the underlying stream when data had been written to it.
   Previously, if `Write ()` had drained its internal buffer directly to the underlying stream,
   `Flush ()` would return without flushing the underlying stream, which could deadlock when the

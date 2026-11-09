@@ -316,6 +316,177 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		const string NestedTextBody = "(\"TEXT\" \"PLAIN\" NIL NIL NIL \"7BIT\" 12 1)";
+		const string NestedMessagePrefix = "(\"MESSAGE\" \"RFC822\" NIL \"message-id\" \"description\" \"7BIT\" 12 (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL) ";
+		const string NestedMessageSuffix = " 7 \"md5\" (\"attachment\" NIL) (\"en\") \"message.eml\")";
+
+		static bool IsNestedMultipart (string kind, int level)
+		{
+			return kind == "multipart" || (kind == "mixed" && level % 2 == 0);
+		}
+
+		static string CreateNestedBodyStructure (string kind, int depth)
+		{
+			var builder = new StringBuilder ();
+
+			for (int i = 0; i < depth; i++)
+				builder.Append (IsNestedMultipart (kind, i) ? "(() " : NestedMessagePrefix);
+
+			builder.Append (NestedTextBody);
+
+			for (int i = depth - 1; i >= 0; i--) {
+				if (IsNestedMultipart (kind, i)) {
+					builder.Append (' ').Append (NestedTextBody);
+					builder.Append (" \"mixed\" (\"boundary\" \"b\") (\"inline\" NIL) (\"en\") \"container\")");
+				} else {
+					builder.Append (NestedMessageSuffix);
+				}
+			}
+
+			return builder.Append ("\r\n").ToString ();
+		}
+
+		static void AssertNestedBodyStructure (BodyPart body, string kind, int depth)
+		{
+			string path = string.Empty;
+
+			// Traverse iteratively as well, so the assertion itself cannot overflow the stack.
+			for (int i = 0; i < depth; i++) {
+				Assert.That (body.PartSpecifier, Is.EqualTo (path), $"Part specifier at level {i}");
+
+				if (IsNestedMultipart (kind, i)) {
+					Assert.That (body, Is.InstanceOf<BodyPartMultipart> ());
+					var multipart = (BodyPartMultipart) body;
+					var prefix = path.Length > 0 ? path + "." : string.Empty;
+
+					Assert.That (multipart.BodyParts, Has.Count.EqualTo (2));
+					Assert.That (multipart.ContentType.MimeType, Is.EqualTo ("multipart/mixed"));
+					Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("b"));
+					Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"));
+					Assert.That (multipart.ContentLanguage, Is.EqualTo (new[] { "en" }));
+					Assert.That (multipart.ContentLocation.OriginalString, Is.EqualTo ("container"));
+					Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> ());
+					Assert.That (multipart.BodyParts[1].PartSpecifier, Is.EqualTo (prefix + "3"));
+
+					// The skipped empty child occupies part 1, even though it isn't in BodyParts.
+					path = prefix + "2";
+					body = multipart.BodyParts[0];
+				} else {
+					Assert.That (body, Is.InstanceOf<BodyPartMessage> ());
+					var message = (BodyPartMessage) body;
+
+					Assert.That (message.Envelope, Is.Not.Null);
+					Assert.That (message.ContentId, Is.EqualTo ("message-id"));
+					Assert.That (message.ContentDescription, Is.EqualTo ("description"));
+					Assert.That (message.ContentTransferEncoding, Is.EqualTo ("7BIT"));
+					Assert.That (message.Octets, Is.EqualTo (12));
+					Assert.That (message.Lines, Is.EqualTo (7));
+					Assert.That (message.ContentMd5, Is.EqualTo ("md5"));
+					Assert.That (message.ContentDisposition.Disposition, Is.EqualTo ("attachment"));
+					Assert.That (message.ContentLanguage, Is.EqualTo (new[] { "en" }));
+					Assert.That (message.ContentLocation.OriginalString, Is.EqualTo ("message.eml"));
+
+					body = message.Body;
+				}
+			}
+
+			Assert.That (body, Is.InstanceOf<BodyPartText> ());
+			Assert.That (body.PartSpecifier, Is.EqualTo (path));
+			Assert.That (((BodyPartText) body).Lines, Is.EqualTo (1));
+		}
+
+		[TestCase ("multipart", 4096)]
+		[TestCase ("message", 8192)]
+		[TestCase ("mixed", 4096)]
+		public void TestParseDeeplyNestedBodyStructure (string kind, int depth)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (CreateNestedBodyStructure (kind, depth)), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+			Assert.That (engine.ReadToken (CancellationToken.None).Type, Is.EqualTo (ImapTokenType.Eoln));
+			AssertNestedBodyStructure (body, kind, depth);
+		}
+
+		[TestCase ("multipart", 4096)]
+		[TestCase ("message", 8192)]
+		[TestCase ("mixed", 4096)]
+		public async Task TestParseDeeplyNestedBodyStructureAsync (string kind, int depth)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (CreateNestedBodyStructure (kind, depth)), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+			Assert.That ((await engine.ReadTokenAsync (CancellationToken.None)).Type, Is.EqualTo (ImapTokenType.Eoln));
+			AssertNestedBodyStructure (body, kind, depth);
+		}
+
+		static string CreateBodyStructureWithNestedExtensions (bool multipart, bool malformed)
+		{
+			var builder = new StringBuilder ();
+
+			if (multipart)
+				builder.Append ('(').Append (NestedTextBody).Append (" \"mixed\"");
+			else
+				builder.Append (NestedTextBody, 0, NestedTextBody.Length - 1);
+
+			builder.Append (" NIL NIL NIL NIL ");
+			builder.Append ('(', 20000);
+			// Parentheses inside quoted strings and literals must not change the nesting depth.
+			builder.Append ("NIL 123 \"()\" {4}\r\n)()( ()");
+			builder.Append (')', malformed ? 19999 : 20000);
+
+			return builder.Append (malformed ? "\r\n" : " NIL \"next\")\r\n").ToString ();
+		}
+
+		[TestCase (false, false)]
+		[TestCase (true, false)]
+		[TestCase (false, true)]
+		[TestCase (true, true)]
+		public void TestParseBodyStructureWithDeeplyNestedExtensions (bool multipart, bool malformed)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (CreateBodyStructureWithNestedExtensions (multipart, malformed)), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			if (malformed) {
+				Assert.Throws<ImapProtocolException> (() => ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None));
+			} else {
+				var body = ImapUtils.ParseBody (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+				Assert.That (body.ContentType.MimeType, Is.EqualTo (multipart ? "multipart/mixed" : "text/plain").IgnoreCase);
+				Assert.That (engine.ReadToken (CancellationToken.None).Type, Is.EqualTo (ImapTokenType.Eoln));
+			}
+		}
+
+		[TestCase (false, false)]
+		[TestCase (true, false)]
+		[TestCase (false, true)]
+		[TestCase (true, true)]
+		public async Task TestParseBodyStructureWithDeeplyNestedExtensionsAsync (bool multipart, bool malformed)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (CreateBodyStructureWithNestedExtensions (multipart, malformed)), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			if (malformed) {
+				Assert.ThrowsAsync<ImapProtocolException> (async () => await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None));
+			} else {
+				var body = await ImapUtils.ParseBodyAsync (engine, "Unexpected token: {0}", string.Empty, CancellationToken.None);
+
+				Assert.That (body.ContentType.MimeType, Is.EqualTo (multipart ? "multipart/mixed" : "text/plain").IgnoreCase);
+				Assert.That ((await engine.ReadTokenAsync (CancellationToken.None)).Type, Is.EqualTo (ImapTokenType.Eoln));
+			}
+		}
+
 		const string LargeLinesBodyStructure = "(\"MESSAGE\" \"RFC822\" NIL NIL NIL \"7BIT\" 3028 (NIL NIL NIL NIL NIL NIL NIL NIL NIL NIL) (\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 9223372036854775807) 4294967296)\r\n";
 
 		static void AssertLargeLinesBodyStructure (BodyPart body)

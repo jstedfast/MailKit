@@ -1510,98 +1510,74 @@ namespace MailKit.Net.Imap {
 
 		static void SkipBodyExtension (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var token = engine.ReadToken (cancellationToken);
+			int depth = 0;
 
-			switch (token.Type) {
-			case ImapTokenType.OpenParen:
-				do {
-					token = engine.PeekToken (cancellationToken);
+			do {
+				var token = engine.ReadToken (cancellationToken);
 
-					if (token.Type == ImapTokenType.CloseParen)
-						break;
-
-					SkipBodyExtension (engine, format, cancellationToken);
-				} while (true);
-
-				// read the ')'
-				engine.ReadToken (cancellationToken);
-				break;
-			case ImapTokenType.Literal:
-				engine.ReadLiteral (cancellationToken);
-				break;
-			case ImapTokenType.QString:
-			case ImapTokenType.Atom:
-			case ImapTokenType.Nil:
-				break;
-			default:
-				throw ImapEngine.UnexpectedToken (format, token);
-			}
+				switch (token.Type) {
+				case ImapTokenType.OpenParen:
+					if (depth == int.MaxValue)
+						throw new ImapProtocolException ("The body extension is too deeply nested.");
+					depth++;
+					break;
+				case ImapTokenType.CloseParen:
+					if (depth == 0)
+						throw ImapEngine.UnexpectedToken (format, token);
+					depth--;
+					break;
+				case ImapTokenType.Literal:
+					engine.ReadLiteral (cancellationToken);
+					break;
+				case ImapTokenType.QString:
+				case ImapTokenType.Atom:
+				case ImapTokenType.Nil:
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (format, token);
+				}
+			} while (depth > 0);
 		}
 
 		static async Task SkipBodyExtensionAsync (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			int depth = 0;
 
-			switch (token.Type) {
-			case ImapTokenType.OpenParen:
-				do {
-					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+			do {
+				var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-					if (token.Type == ImapTokenType.CloseParen)
-						break;
-
-					await SkipBodyExtensionAsync (engine, format, cancellationToken).ConfigureAwait (false);
-				} while (true);
-
-				// read the ')'
-				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-				break;
-			case ImapTokenType.Literal:
-				await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
-				break;
-			case ImapTokenType.QString:
-			case ImapTokenType.Atom:
-			case ImapTokenType.Nil:
-				break;
-			default:
-				throw ImapEngine.UnexpectedToken (format, token);
-			}
+				switch (token.Type) {
+				case ImapTokenType.OpenParen:
+					if (depth == int.MaxValue)
+						throw new ImapProtocolException ("The body extension is too deeply nested.");
+					depth++;
+					break;
+				case ImapTokenType.CloseParen:
+					if (depth == 0)
+						throw ImapEngine.UnexpectedToken (format, token);
+					depth--;
+					break;
+				case ImapTokenType.Literal:
+					await engine.ReadLiteralAsync (cancellationToken).ConfigureAwait (false);
+					break;
+				case ImapTokenType.QString:
+				case ImapTokenType.Atom:
+				case ImapTokenType.Nil:
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (format, token);
+				}
+			} while (depth > 0);
 		}
 
-		static BodyPart ParseMultipart (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		static void ParseMultipart (ImapEngine engine, string format, BodyPartMultipart body, CancellationToken cancellationToken)
 		{
-			var prefix = path.Length > 0 ? path + "." : string.Empty;
-			var bodyParts = new BodyPartCollection ();
-			ImapToken token;
-			int index = 1;
-
-			token = engine.PeekToken (cancellationToken);
-
-			if (token.Type != ImapTokenType.Nil) {
-				do {
-					var part = ParseBody (engine, format, prefix + index, cancellationToken);
-
-					if (part != null)
-						bodyParts.Add (part);
-
-					token = engine.PeekToken (cancellationToken);
-					index++;
-				} while (token.Type == ImapTokenType.OpenParen);
-			} else {
-				// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
-				// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
-				// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
-				// This suggests that the NIL represents an empty list of children.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
-				engine.ReadToken (cancellationToken);
-			}
-
 			var subtype = ReadStringToken (engine, format, cancellationToken);
 			var contentType = new ContentType ("multipart", subtype);
-			var body = new BodyPartMultipart (contentType, path, bodyParts);
 
-			token = engine.PeekToken (cancellationToken);
+			body.ContentType = contentType;
+
+			var token = engine.PeekToken (cancellationToken);
 
 			if (token.Type != ImapTokenType.CloseParen) {
 				token = engine.ReadToken (cancellationToken);
@@ -1655,44 +1631,16 @@ namespace MailKit.Net.Imap {
 
 			// read the ')'
 			engine.ReadToken (cancellationToken);
-
-			return body;
 		}
 
-		static async Task<BodyPart> ParseMultipartAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		static async Task ParseMultipartAsync (ImapEngine engine, string format, BodyPartMultipart body, CancellationToken cancellationToken)
 		{
-			var prefix = path.Length > 0 ? path + "." : string.Empty;
-			var bodyParts = new BodyPartCollection ();
-			ImapToken token;
-			int index = 1;
-
-			token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
-
-			if (token.Type != ImapTokenType.Nil) {
-				do {
-					var part = await ParseBodyAsync (engine, format, prefix + index, cancellationToken).ConfigureAwait (false);
-
-					if (part != null)
-						bodyParts.Add (part);
-
-					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
-					index++;
-				} while (token.Type == ImapTokenType.OpenParen);
-			} else {
-				// Note: Sometimes, when a multipart contains no children, IMAP servers (even Dovecot!)
-				// will reply with a BODYSTRUCTURE that looks like (NIL "alternative" ("boundary" "...
-				// Obviously, this is not a body-type-1part because "alternative" is a multipart subtype.
-				// This suggests that the NIL represents an empty list of children.
-				//
-				// See https://github.com/jstedfast/MailKit/issues/1393 for more details.
-				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-			}
-
 			var subtype = await ReadStringTokenAsync (engine, format, cancellationToken).ConfigureAwait (false);
 			var contentType = new ContentType ("multipart", subtype);
-			var body = new BodyPartMultipart (contentType, path, bodyParts);
 
-			token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+			body.ContentType = contentType;
+
+			var token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			if (token.Type != ImapTokenType.CloseParen) {
 				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -1746,8 +1694,6 @@ namespace MailKit.Net.Imap {
 
 			// read the ')'
 			await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-
-			return body;
 		}
 
 		static bool ShouldParseMultipart (ImapEngine engine, CancellationToken cancellationToken)
@@ -1930,12 +1876,12 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		public static BodyPart? ParseBody (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		static (BodyPart? Body, bool HasChildren) ParseBodyPart (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
 			if (token.Type == ImapTokenType.Nil)
-				return null;
+				return (null, false);
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
@@ -1946,11 +1892,22 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/944 for details.
 			if (token.Type == ImapTokenType.CloseParen) {
 				engine.ReadToken (cancellationToken);
-				return null;
+				return (null, false);
 			}
 
-			if (ShouldParseMultipart (engine, cancellationToken))
-				return ParseMultipart (engine, format, path, cancellationToken);
+			if (ShouldParseMultipart (engine, cancellationToken)) {
+				// The actual subtype follows the children and is set by ParseMultipart.
+				var multipart = new BodyPartMultipart (new ContentType ("multipart", "mixed"), path);
+
+				token = engine.PeekToken (cancellationToken);
+				if (token.Type != ImapTokenType.Nil)
+					return (multipart, true);
+
+				// Some servers use NIL for an empty list of children (issue #1393).
+				engine.ReadToken (cancellationToken);
+				ParseMultipart (engine, format, multipart, cancellationToken);
+				return (multipart, false);
+			}
 
 			var type = ParseContentType (engine, format, cancellationToken);
 			var id = ReadNStringToken (engine, format, false, cancellationToken);
@@ -1958,12 +1915,24 @@ namespace MailKit.Net.Imap {
 			// Note: technically, body-fld-enc, is not allowed to be NIL, but we need to deal with broken servers...
 			var enc = ReadNStringToken (engine, format, false, cancellationToken);
 			var octets = ReadNumber (engine, format, cancellationToken);
-			var isMultipart = false;
 			BodyPartBasic body;
 
 			if (type.IsMimeType ("message", "rfc822")) {
-				var rfc822 = new BodyPartMessage (type, path);
+				body = new BodyPartMessage (type, path);
+			} else if (type.IsMimeType ("text", "*")) {
+				body = new BodyPartText (type, path) {
+					Lines = ReadNumber64 (engine, format, cancellationToken)
+				};
+			} else {
+				body = new BodyPartBasic (type, path);
+			}
 
+			body.ContentTransferEncoding = enc;
+			body.ContentDescription = desc;
+			body.ContentId = id;
+			body.Octets = octets;
+
+			if (body is BodyPartMessage rfc822) {
 				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
 				// expressions instead of body-part-msg expressions when they encounter
 				// message/rfc822 MIME parts that are illegally encoded using base64 (or
@@ -1981,30 +1950,21 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenParen) {
 					rfc822.Envelope = ParseEnvelope (engine, cancellationToken);
-					rfc822.Body = ParseBody (engine, format, path, cancellationToken);
-					rfc822.Lines = ReadNumber64 (engine, format, cancellationToken);
+					return (rfc822, true);
 				}
-
-				body = rfc822;
-			} else if (type.IsMimeType ("text", "*")) {
-				var text = new BodyPartText (type, path) {
-					Lines = ReadNumber64 (engine, format, cancellationToken)
-				};
-				body = text;
-			} else {
-				isMultipart = type.IsMimeType ("multipart", "*");
-				body = new BodyPartBasic (type, path);
 			}
 
-			body.ContentTransferEncoding = enc;
-			body.ContentDescription = desc;
-			body.ContentId = id;
-			body.Octets = octets;
+			ParseBodyFields (engine, format, body, cancellationToken);
 
+			return (body, false);
+		}
+
+		static void ParseBodyFields (ImapEngine engine, string format, BodyPartBasic body, CancellationToken cancellationToken)
+		{
 			// if we are parsing a BODYSTRUCTURE, we may get some more tokens before the ')'
-			token = engine.PeekToken (cancellationToken);
+			var token = engine.PeekToken (cancellationToken);
 
-			if (!isMultipart) {
+			if (!body.ContentType.IsMimeType ("multipart", "*")) {
 				if (token.Type != ImapTokenType.CloseParen) {
 					body.ContentMd5 = ReadNStringToken (engine, format, false, cancellationToken);
 					token = engine.PeekToken (cancellationToken);
@@ -2033,16 +1993,14 @@ namespace MailKit.Net.Imap {
 
 			// read the ')'
 			engine.ReadToken (cancellationToken);
-
-			return body;
 		}
 
-		public static async Task<BodyPart?> ParseBodyAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		static async Task<(BodyPart? Body, bool HasChildren)> ParseBodyPartAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
 		{
 			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
 			if (token.Type == ImapTokenType.Nil)
-				return null;
+				return (null, false);
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
@@ -2053,11 +2011,22 @@ namespace MailKit.Net.Imap {
 			// See https://github.com/jstedfast/MailKit/issues/944 for details.
 			if (token.Type == ImapTokenType.CloseParen) {
 				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-				return null;
+				return (null, false);
 			}
 
-			if (await ShouldParseMultipartAsync (engine, cancellationToken).ConfigureAwait (false))
-				return await ParseMultipartAsync (engine, format, path, cancellationToken).ConfigureAwait (false);
+			if (await ShouldParseMultipartAsync (engine, cancellationToken).ConfigureAwait (false)) {
+				// The actual subtype follows the children and is set by ParseMultipartAsync.
+				var multipart = new BodyPartMultipart (new ContentType ("multipart", "mixed"), path);
+
+				token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+				if (token.Type != ImapTokenType.Nil)
+					return (multipart, true);
+
+				// Some servers use NIL for an empty list of children (issue #1393).
+				await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+				await ParseMultipartAsync (engine, format, multipart, cancellationToken).ConfigureAwait (false);
+				return (multipart, false);
+			}
 
 			var type = await ParseContentTypeAsync (engine, format, cancellationToken).ConfigureAwait (false);
 			var id = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
@@ -2065,12 +2034,24 @@ namespace MailKit.Net.Imap {
 			// Note: technically, body-fld-enc, is not allowed to be NIL, but we need to deal with broken servers...
 			var enc = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 			var octets = await ReadNumberAsync (engine, format, cancellationToken).ConfigureAwait (false);
-			var isMultipart = false;
 			BodyPartBasic body;
 
 			if (type.IsMimeType ("message", "rfc822")) {
-				var rfc822 = new BodyPartMessage (type, path);
+				body = new BodyPartMessage (type, path);
+			} else if (type.IsMimeType ("text", "*")) {
+				body = new BodyPartText (type, path) {
+					Lines = await ReadNumber64Async (engine, format, cancellationToken).ConfigureAwait (false)
+				};
+			} else {
+				body = new BodyPartBasic (type, path);
+			}
 
+			body.ContentTransferEncoding = enc;
+			body.ContentDescription = desc;
+			body.ContentId = id;
+			body.Octets = octets;
+
+			if (body is BodyPartMessage rfc822) {
 				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
 				// expressions instead of body-part-msg expressions when they encounter
 				// message/rfc822 MIME parts that are illegally encoded using base64 (or
@@ -2088,30 +2069,21 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenParen) {
 					rfc822.Envelope = await ParseEnvelopeAsync (engine, cancellationToken).ConfigureAwait (false);
-					rfc822.Body = await ParseBodyAsync (engine, format, path, cancellationToken).ConfigureAwait (false);
-					rfc822.Lines = await ReadNumber64Async (engine, format, cancellationToken).ConfigureAwait (false);
+					return (rfc822, true);
 				}
-
-				body = rfc822;
-			} else if (type.IsMimeType ("text", "*")) {
-				var text = new BodyPartText (type, path) {
-					Lines = await ReadNumber64Async (engine, format, cancellationToken).ConfigureAwait (false)
-				};
-				body = text;
-			} else {
-				isMultipart = type.IsMimeType ("multipart", "*");
-				body = new BodyPartBasic (type, path);
 			}
 
-			body.ContentTransferEncoding = enc;
-			body.ContentDescription = desc;
-			body.ContentId = id;
-			body.Octets = octets;
+			await ParseBodyFieldsAsync (engine, format, body, cancellationToken).ConfigureAwait (false);
 
+			return (body, false);
+		}
+
+		static async Task ParseBodyFieldsAsync (ImapEngine engine, string format, BodyPartBasic body, CancellationToken cancellationToken)
+		{
 			// if we are parsing a BODYSTRUCTURE, we may get some more tokens before the ')'
-			token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+			var token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
 
-			if (!isMultipart) {
+			if (!body.ContentType.IsMimeType ("multipart", "*")) {
 				if (token.Type != ImapTokenType.CloseParen) {
 					body.ContentMd5 = await ReadNStringTokenAsync (engine, format, false, cancellationToken).ConfigureAwait (false);
 					token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2140,8 +2112,100 @@ namespace MailKit.Net.Imap {
 
 			// read the ')'
 			await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+		}
 
-			return body;
+		public static BodyPart? ParseBody (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		{
+			// Suspend parents on the heap while parsing children. Neither descending into
+			// a child nor finishing its ancestors may recurse on server-controlled input.
+			var parents = new Stack<(BodyPart Body, int Index)> ();
+
+			do {
+				var (body, hasChildren) = ParseBodyPart (engine, format, path, cancellationToken);
+
+				if (hasChildren && body != null) {
+					parents.Push ((body, 1));
+					path = body.GetChildPartSpecifier (1);
+					continue;
+				}
+
+				do {
+					if (parents.Count == 0)
+						return body;
+
+					var (parent, index) = parents.Pop ();
+
+					if (parent is BodyPartMultipart multipart) {
+						if (body != null)
+							multipart.BodyParts.Add (body);
+
+						var token = engine.PeekToken (cancellationToken);
+						if (token.Type == ImapTokenType.OpenParen) {
+							// Empty () children still occupy a part number.
+							parents.Push ((parent, index + 1));
+							path = parent.GetChildPartSpecifier (index + 1);
+							break;
+						}
+
+						ParseMultipart (engine, format, multipart, cancellationToken);
+					} else {
+						var message = (BodyPartMessage) parent;
+
+						message.Body = body;
+						message.Lines = ReadNumber64 (engine, format, cancellationToken);
+						ParseBodyFields (engine, format, message, cancellationToken);
+					}
+
+					body = parent;
+				} while (true);
+			} while (true);
+		}
+
+		public static async Task<BodyPart?> ParseBodyAsync (ImapEngine engine, string format, string path, CancellationToken cancellationToken)
+		{
+			// Awaited token reads can complete synchronously, so async parsing needs the
+			// same explicit stack as synchronous parsing.
+			var parents = new Stack<(BodyPart Body, int Index)> ();
+
+			do {
+				var (body, hasChildren) = await ParseBodyPartAsync (engine, format, path, cancellationToken).ConfigureAwait (false);
+
+				if (hasChildren && body != null) {
+					parents.Push ((body, 1));
+					path = body.GetChildPartSpecifier (1);
+					continue;
+				}
+
+				do {
+					if (parents.Count == 0)
+						return body;
+
+					var (parent, index) = parents.Pop ();
+
+					if (parent is BodyPartMultipart multipart) {
+						if (body != null)
+							multipart.BodyParts.Add (body);
+
+						var token = await engine.PeekTokenAsync (cancellationToken).ConfigureAwait (false);
+						if (token.Type == ImapTokenType.OpenParen) {
+							// Empty () children still occupy a part number.
+							parents.Push ((parent, index + 1));
+							path = parent.GetChildPartSpecifier (index + 1);
+							break;
+						}
+
+						await ParseMultipartAsync (engine, format, multipart, cancellationToken).ConfigureAwait (false);
+					} else {
+						var message = (BodyPartMessage) parent;
+
+						message.Body = body;
+						message.Lines = await ReadNumber64Async (engine, format, cancellationToken).ConfigureAwait (false);
+						await ParseBodyFieldsAsync (engine, format, message, cancellationToken).ConfigureAwait (false);
+					}
+
+					body = parent;
+				} while (true);
+			} while (true);
 		}
 
 		readonly struct EnvelopeAddress

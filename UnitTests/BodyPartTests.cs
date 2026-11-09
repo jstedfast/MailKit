@@ -71,6 +71,168 @@ namespace UnitTests {
 			Assert.That (parsed.ToString (), Is.EqualTo (expected));
 		}
 
+		const string NestedTextPart = "(\"text\" \"plain\" NIL NIL NIL \"7bit\" 12 NIL NIL NIL NIL 1)";
+		const string NestedMessagePart = "(\"message\" \"rfc822\" NIL \"id\" \"description\" \"7bit\" 12 \"md5\" (\"attachment\" NIL) (\"en\") \"message.eml\" NIL ";
+
+		static bool IsNestedMultipart (string kind, int level)
+		{
+			return kind == "multipart" || (kind == "mixed" && level % 2 == 0);
+		}
+
+		static string CreateDeeplyNestedBodyPart (string kind, int depth)
+		{
+			var builder = new StringBuilder ();
+
+			// Build the expected serialized form independently of the encoder.
+			for (int i = 0; i < depth; i++)
+				builder.Append (IsNestedMultipart (kind, i) ? "(" : NestedMessagePart);
+
+			builder.Append (NestedTextPart);
+
+			for (int i = depth - 1; i >= 0; i--) {
+				if (IsNestedMultipart (kind, i)) {
+					builder.Append (' ').Append (NestedTextPart);
+					builder.Append (" \"alternative\" (\"boundary\" \"b\") (\"inline\" NIL) (\"en\") \"container\")");
+				} else {
+					builder.Append (" 7)");
+				}
+			}
+
+			return builder.ToString ();
+		}
+
+		[TestCase ("multipart", 4096)]
+		[TestCase ("message", 32768)]
+		[TestCase ("mixed", 4096)]
+		public void TestToStringDeeplyNestedBodyPart (string kind, int depth)
+		{
+			var expected = CreateDeeplyNestedBodyPart (kind, depth);
+
+			Assert.That (BodyPart.TryParse (expected, out var body), Is.True);
+
+			var serialized = body.ToString ();
+
+			Assert.That (serialized, Is.EqualTo (expected));
+			Assert.That (BodyPart.TryParse (serialized, out var parsed), Is.True);
+			Assert.That (parsed.ToString (), Is.EqualTo (expected));
+		}
+
+		class CustomBodyPartText : BodyPartText
+		{
+			public CustomBodyPartText () : base (new ContentType ("text", "plain"), string.Empty)
+			{
+			}
+
+			protected override void Encode (StringBuilder builder)
+			{
+				builder.Append ("text-before ");
+				base.Encode (builder);
+				builder.Append (" text-after");
+			}
+		}
+
+		class CustomBodyPartMessage : BodyPartMessage
+		{
+			public CustomBodyPartMessage () : base (new ContentType ("message", "rfc822"), string.Empty)
+			{
+			}
+
+			protected override void Encode (StringBuilder builder)
+			{
+				builder.Append ("message-before ");
+				base.Encode (builder);
+				builder.Append (" message-after");
+			}
+		}
+
+		class CustomBodyPartMultipart : BodyPartMultipart
+		{
+			public CustomBodyPartMultipart () : base (new ContentType ("multipart", "mixed"), string.Empty)
+			{
+			}
+
+			protected override void Encode (StringBuilder builder)
+			{
+				builder.Append ("multipart-before ");
+				base.Encode (builder);
+				builder.Append (" multipart-after");
+			}
+		}
+
+		[TestCase (false)]
+		[TestCase (true)]
+		public void TestToStringEncodeOverrides (bool nested)
+		{
+			var multipart = new CustomBodyPartMultipart ();
+			multipart.BodyParts.Add (new CustomBodyPartMessage { Body = new CustomBodyPartText () });
+			BodyPart body = multipart;
+			string expected = "(multipart-before (message-before \"message\" \"rfc822\" NIL NIL NIL NIL 0 NIL NIL NIL NIL NIL (text-before \"text\" \"plain\" NIL NIL NIL NIL 0 NIL NIL NIL NIL 0 text-after) 0 message-after) \"mixed\" NIL NIL NIL NIL multipart-after)";
+
+			if (nested) {
+				var parent = new BodyPartMultipart (new ContentType ("multipart", "mixed"), string.Empty);
+				parent.BodyParts.Add (new BodyPartMessage (new ContentType ("message", "rfc822"), string.Empty) { Body = body });
+				body = parent;
+				expected = "((\"message\" \"rfc822\" NIL NIL NIL NIL 0 NIL NIL NIL NIL NIL " + expected + " 0) \"mixed\" NIL NIL NIL NIL)";
+			}
+
+			Assert.That (body.ToString (), Is.EqualTo (expected));
+		}
+
+		[TestCase ("multipart", 4096)]
+		[TestCase ("message", 8192)]
+		[TestCase ("mixed", 4096)]
+		public void TestTryParseDeeplyNestedBodyPart (string kind, int depth)
+		{
+			var serialized = CreateDeeplyNestedBodyPart (kind, depth);
+
+			Assert.That (BodyPart.TryParse (serialized, out var body), Is.True);
+
+			string path = string.Empty;
+
+			for (int i = 0; i < depth; i++) {
+				Assert.That (body.PartSpecifier, Is.EqualTo (path), $"Part specifier at level {i}");
+
+				if (IsNestedMultipart (kind, i)) {
+					Assert.That (body, Is.InstanceOf<BodyPartMultipart> ());
+					var multipart = (BodyPartMultipart) body;
+					var prefix = path.Length > 0 ? path + "." : string.Empty;
+
+					Assert.That (multipart.BodyParts, Has.Count.EqualTo (2));
+					Assert.That (multipart.ContentType.MimeType, Is.EqualTo ("multipart/alternative"));
+					Assert.That (multipart.ContentType.Boundary, Is.EqualTo ("b"));
+					Assert.That (multipart.ContentDisposition.Disposition, Is.EqualTo ("inline"));
+					Assert.That (multipart.ContentLanguage, Is.EqualTo (new[] { "en" }));
+					Assert.That (multipart.ContentLocation.OriginalString, Is.EqualTo ("container"));
+					Assert.That (multipart.BodyParts[1], Is.InstanceOf<BodyPartText> ());
+					Assert.That (multipart.BodyParts[1].PartSpecifier, Is.EqualTo (prefix + "2"));
+
+					path = prefix + "1";
+					body = multipart.BodyParts[0];
+				} else {
+					Assert.That (body, Is.InstanceOf<BodyPartMessage> ());
+					var message = (BodyPartMessage) body;
+
+					Assert.That (message.Envelope, Is.Null);
+					Assert.That (message.ContentId, Is.EqualTo ("id"));
+					Assert.That (message.ContentDescription, Is.EqualTo ("description"));
+					Assert.That (message.ContentTransferEncoding, Is.EqualTo ("7bit"));
+					Assert.That (message.Octets, Is.EqualTo (12));
+					Assert.That (message.ContentMd5, Is.EqualTo ("md5"));
+					Assert.That (message.ContentDisposition.Disposition, Is.EqualTo ("attachment"));
+					Assert.That (message.ContentLanguage, Is.EqualTo (new[] { "en" }));
+					Assert.That (message.ContentLocation.OriginalString, Is.EqualTo ("message.eml"));
+					Assert.That (message.Lines, Is.EqualTo (7));
+
+					body = message.Body;
+				}
+			}
+
+			Assert.That (body, Is.InstanceOf<BodyPartText> ());
+			Assert.That (body.PartSpecifier, Is.EqualTo (path));
+			Assert.That (((BodyPartText) body).Lines, Is.EqualTo (1));
+			Assert.That (BodyPart.TryParse (serialized.Substring (0, serialized.Length - 1), out _), Is.False);
+		}
+
 		[Test]
 		public void TestNilSerialization ()
 		{

@@ -147,16 +147,8 @@ namespace MailKit {
 			visitor.VisitBodyPartMultipart (this);
 		}
 
-		/// <summary>
-		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
-		/// </summary>
-		/// <remarks>
-		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
-		/// </remarks>
-		/// <param name="builder">The string builder.</param>
-		protected override void Encode (StringBuilder builder)
+		internal void EncodeFields (StringBuilder builder)
 		{
-			Encode (builder, BodyParts);
 			builder.Append (' ');
 			Encode (builder, ContentType.MediaSubtype);
 			builder.Append (' ');
@@ -167,6 +159,19 @@ namespace MailKit {
 			Encode (builder, ContentLanguage);
 			builder.Append (' ');
 			Encode (builder, ContentLocation);
+		}
+
+		/// <summary>
+		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
+		/// </summary>
+		/// <remarks>
+		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
+		/// </remarks>
+		/// <param name="builder">The string builder.</param>
+		protected override void Encode (StringBuilder builder)
+		{
+			Encode (builder, BodyParts);
+			EncodeFields (builder);
 		}
 	}
 }
