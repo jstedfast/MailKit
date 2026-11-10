@@ -341,6 +341,8 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 
 ### Bug Fixes
 
+* Made client-side `MessageThreader` pruning and result construction non-recursive to prevent
+  stack overflows from deeply nested message reference chains.
 * Made IMAP `THREAD` parsing and `MessageSummary` body lookup and enumeration non-recursive
   to prevent stack overflows from deeply nested server responses.
 * Flatten nested address groups into their outermost group when parsing IMAP envelopes and

@@ -232,13 +232,24 @@ namespace MailKit {
 
 		static void PruneEmptyContainers (ThreadableNode root)
 		{
-			for (int i = 0; i < root.Children.Count; i++) {
+			var parents = new Stack<(ThreadableNode Root, int Index)> ();
+			int i = 0;
+
+			while (true) {
+				if (i == root.Children.Count) {
+					if (parents.Count == 0)
+						return;
+
+					(root, i) = parents.Pop ();
+					continue;
+				}
+
 				var node = root.Children[i];
 
 				if (node.Message == null && node.Children.Count == 0) {
 					// this is an empty container with no children, nuke it.
 					root.Children.RemoveAt (i);
-					i--;
+					continue;
 				} else if (node.Message == null && node.HasChildren && (node.HasParent || node.Children.Count == 1)) {
 					// If the Container has no Message, but does have children, remove this container but promote
 					// its children to this level (that is, splice them in to the current child list.)
@@ -253,10 +264,15 @@ namespace MailKit {
 					}
 
 					node.Children.Clear ();
-					i--;
+					continue;
 				} else if (node.HasChildren) {
-					PruneEmptyContainers (node);
+					parents.Push ((root, i + 1));
+					root = node;
+					i = 0;
+					continue;
 				}
+
+				i++;
 			}
 		}
 
@@ -344,14 +360,29 @@ namespace MailKit {
 
 		static void GetThreads (ThreadableNode root, IList<MessageThread> threads, IList<OrderBy> orderBy)
 		{
+			var parents = new Stack<(ThreadableNode Root, IList<MessageThread> Threads, int Index)> ();
+			int i = 0;
+
 			root.Children.Sort (orderBy);
 
-			for (int i = 0; i < root.Children.Count; i++) {
-				var message = root.Children[i].Message;
-				var thread = new MessageThread (message);
+			while (true) {
+				if (i == root.Children.Count) {
+					if (parents.Count == 0)
+						return;
 
-				GetThreads (root.Children[i], thread.Children, orderBy);
+					(root, threads, i) = parents.Pop ();
+					continue;
+				}
+
+				var node = root.Children[i++];
+				var thread = new MessageThread (node.Message);
+
 				threads.Add (thread);
+				parents.Push ((root, threads, i));
+				root = node;
+				threads = thread.Children;
+				i = 0;
+				root.Children.Sort (orderBy);
 			}
 		}
 

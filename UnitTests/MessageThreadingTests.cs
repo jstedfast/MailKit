@@ -111,6 +111,79 @@ namespace UnitTests {
 			return summary;
 		}
 
+		[TestCase (false)]
+		[TestCase (true)]
+		public void TestThreadDeepReferences (bool missingAncestors)
+		{
+			const string date = "01 Jan 1997 12:00:00 -0400";
+			const int depth = 32768;
+			var messages = new List<MessageSummary> ();
+			var chain = new MessageSummary[depth];
+			var branches = new Dictionary<int, MessageSummary> ();
+			int index = 0;
+
+			for (int i = 0; i < depth; i++) {
+				string references;
+
+				if (i == 0)
+					references = missingAncestors ? "<missing-root>" : null;
+				else
+					references = missingAncestors ? $"<{i - 1}@example.com> <missing-{i}>" : $"<{i - 1}@example.com>";
+
+				chain[i] = MakeThreadable (ref index, i == 0 ? "Thread" : "Re: Thread", $"<{i}@example.com>", date, references);
+				messages.Add (chain[i]);
+			}
+
+			foreach (int parent in new[] { 0, depth / 2, depth - 2 }) {
+				var references = missingAncestors ? $"<{parent}@example.com> <missing-{parent + 1}>" : $"<{parent}@example.com>";
+				var branch = MakeThreadable (ref index, "Re: Thread", $"<branch-{parent}>", date, references);
+				branches.Add (parent, branch);
+				messages.Add (branch);
+			}
+
+			MessageSummary rootSibling = null;
+			if (missingAncestors) {
+				rootSibling = MakeThreadable (ref index, "Re: Thread", "<root-sibling>", date, "<missing-root>");
+				messages.Add (rootSibling);
+			}
+
+			var unrelated = MakeThreadable (ref index, "Unrelated", "<unrelated>", date, null);
+			messages.Add (unrelated);
+
+			var threads = messages.Thread (ThreadingAlgorithm.References, new[] { OrderBy.ReverseArrival });
+
+			Assert.That (threads, Has.Count.EqualTo (2));
+			Assert.That (threads[0].Message, Is.SameAs (unrelated));
+			Assert.That (threads[0].Children, Is.Empty);
+			var thread = threads[1];
+
+			if (missingAncestors) {
+				Assert.That (thread.Message, Is.Null);
+				Assert.That (thread.UniqueId, Is.Null);
+				Assert.That (thread.Children, Has.Count.EqualTo (2));
+				Assert.That (thread.Children[0].Message, Is.SameAs (rootSibling));
+				Assert.That (thread.Children[0].Children, Is.Empty);
+				thread = thread.Children[1];
+			}
+
+			for (int i = 0; i < depth; i++) {
+				Assert.That (thread.Message, Is.SameAs (chain[i]));
+				Assert.That (thread.UniqueId, Is.EqualTo (chain[i].UniqueId));
+
+				if (branches.TryGetValue (i, out var branch)) {
+					Assert.That (thread.Children, Has.Count.EqualTo (2));
+					Assert.That (thread.Children[0].Message, Is.SameAs (branch));
+					Assert.That (thread.Children[0].Children, Is.Empty);
+					thread = thread.Children[1];
+				} else if (i + 1 < depth) {
+					Assert.That (thread.Children, Has.Count.EqualTo (1));
+					thread = thread.Children[0];
+				} else {
+					Assert.That (thread.Children, Is.Empty);
+				}
+			}
+		}
+
 		static void WriteMessageThread (StringBuilder builder, IList<MessageSummary> messages, MessageThread thread, int depth)
 		{
 			builder.Append (new string (' ', depth * 3));
