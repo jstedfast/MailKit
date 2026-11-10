@@ -122,6 +122,66 @@ namespace UnitTests {
 			return text;
 		}
 
+		[TestCase ("mixed")]
+		[TestCase ("related")]
+		[TestCase ("alternative")]
+		public void TestDeeplyNestedBodyLookup (string subtype)
+		{
+			var plain = CreateText ("text", "plain", "1", false);
+			var html = CreateText ("text", "html", "2", false);
+			BodyPart body = CreateMultipart ("multipart", "alternative", "", plain, html);
+
+			for (int i = 0; i < 32768; i++)
+				body = CreateMultipart ("multipart", subtype, "", body);
+
+			var summary = new MessageSummary (0) { Body = body };
+
+			Assert.That (summary.TextBody, Is.SameAs (plain));
+			Assert.That (summary.HtmlBody, Is.SameAs (html));
+		}
+
+		[Test]
+		public void TestDeeplyNestedAlternativeFallback ()
+		{
+			var plain = CreateText ("text", "plain", "1", false);
+			BodyPart body = CreateMultipart ("multipart", "alternative", "");
+
+			for (int i = 0; i < 32768; i++)
+				body = CreateMultipart ("multipart", "alternative", "", body);
+
+			var summary = new MessageSummary (0) {
+				Body = CreateMultipart ("multipart", "alternative", "", plain, body)
+			};
+
+			Assert.That (summary.TextBody, Is.SameAs (plain));
+			Assert.That (summary.HtmlBody, Is.Null);
+		}
+
+		[Test]
+		public void TestDeeplyNestedBodyEnumeration ()
+		{
+			const int depth = 32768;
+			var plain = CreateText ("text", "plain", "1", false);
+			var attachment = CreateBasic ("application", "octet-stream", "2", true);
+			var message = CreateMessage ("message", "rfc822", "3", plain, true);
+			BodyPart body = CreateMultipart ("multipart", "mixed", "", plain, message);
+
+			for (int i = 0; i < depth; i++)
+				body = CreateMultipart ("multipart", "mixed", "", body, attachment);
+
+			var summary = new MessageSummary (0) { Body = body };
+			var parts = summary.BodyParts.ToList ();
+			var attachments = summary.Attachments.ToList ();
+
+			Assert.That (parts, Has.Count.EqualTo (depth + 2));
+			Assert.That (parts[0], Is.SameAs (plain));
+			Assert.That (parts[1], Is.SameAs (message));
+			Assert.That (parts.Skip (2), Is.All.SameAs (attachment));
+			Assert.That (attachments, Has.Count.EqualTo (depth + 1));
+			Assert.That (attachments[0], Is.SameAs (message));
+			Assert.That (attachments.Skip (1), Is.All.SameAs (attachment));
+		}
+
 		[Test]
 		public void TestTextPlainBody ()
 		{

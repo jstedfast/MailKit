@@ -2411,18 +2411,20 @@ namespace MailKit.Net.Imap {
 			return new EnvelopeAddress (values);
 		}
 
-		static void AddEnvelopeAddress (ImapEngine engine, List<InternetAddressList> stack, ref int sp, EnvelopeAddress address)
+		static void AddEnvelopeAddress (ImapEngine engine, InternetAddressList list, ref GroupAddress? group, ref int depth, EnvelopeAddress address)
 		{
 			if (address.IsGroupStart && engine.QuirksMode != ImapQuirksMode.GMail) {
-				var group = address.ToGroupAddress (engine);
-				stack[sp].Add (group);
-				stack.Add (group.Members);
-				sp++;
-			} else if (address.IsGroupEnd) {
-				if (sp > 0) {
-					stack.RemoveAt (sp);
-					sp--;
+				if (depth == int.MaxValue)
+					throw new ImapProtocolException ("Too many nested address groups.");
+
+				// Flatten nested groups before attaching members to avoid recursive change notifications.
+				if (depth++ == 0) {
+					group = address.ToGroupAddress (engine);
+					list.Add (group);
 				}
+			} else if (address.IsGroupEnd) {
+				if (depth > 0 && --depth == 0)
+					group = null;
 			} else {
 				try {
 					// Note: We need to do a try/catch around ToMailboxAddress() because some addresses
@@ -2430,7 +2432,7 @@ namespace MailKit.Net.Imap {
 					// second error report in https://github.com/jstedfast/MailKit/issues/494 where one
 					// of the addresses in the ENVELOPE has the name and address tokens flipped.
 					var mailbox = address.ToMailboxAddress (engine);
-					stack[sp].Add (mailbox);
+					(group?.Members ?? list).Add (mailbox);
 				} catch {
 					return;
 				}
@@ -2446,10 +2448,8 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
-			var stack = new List<InternetAddressList> ();
-			int sp = 0;
-
-			stack.Add (list);
+			GroupAddress? group = null;
+			int depth = 0;
 
 			do {
 				token = engine.ReadToken (cancellationToken);
@@ -2466,7 +2466,7 @@ namespace MailKit.Net.Imap {
 
 				var address = ParseEnvelopeAddress (engine, format, cancellationToken);
 
-				AddEnvelopeAddress (engine, stack, ref sp, address);
+				AddEnvelopeAddress (engine, list, ref group, ref depth, address);
 			} while (true);
 		}
 
@@ -2479,10 +2479,8 @@ namespace MailKit.Net.Imap {
 
 			ImapEngine.AssertToken (token, ImapTokenType.OpenParen, format, token);
 
-			var stack = new List<InternetAddressList> ();
-			int sp = 0;
-
-			stack.Add (list);
+			GroupAddress? group = null;
+			int depth = 0;
 
 			do {
 				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
@@ -2499,7 +2497,7 @@ namespace MailKit.Net.Imap {
 
 				var address = await ParseEnvelopeAddressAsync (engine, format, cancellationToken).ConfigureAwait (false);
 
-				AddEnvelopeAddress (engine, stack, ref sp, address);
+				AddEnvelopeAddress (engine, list, ref group, ref depth, address);
 			} while (true);
 		}
 
@@ -2974,88 +2972,98 @@ namespace MailKit.Net.Imap {
 			return new ReadOnlyCollection<string> (labels);
 		}
 
-		static MessageThread ParseThread (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
+		static MessageThread ParseThreadNode (ImapEngine engine, uint uidValidity, Stack<(MessageThread Thread, MessageThread Node)> parents, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
-			MessageThread thread, node, child;
-			uint uid;
 
-			if (token.Type == ImapTokenType.OpenParen) {
-				thread = new MessageThread ((UniqueId?) null /*UniqueId.Invalid*/);
-
-				do {
-					child = ParseThread (engine, uidValidity, cancellationToken);
-					thread.Children.Add (child);
-
-					token = engine.ReadToken (cancellationToken);
-				} while (token.Type != ImapTokenType.CloseParen);
-
-				return thread;
+			while (token.Type == ImapTokenType.OpenParen) {
+				var dummy = new MessageThread ((UniqueId?) null);
+				parents.Push ((dummy, dummy));
+				token = engine.ReadToken (cancellationToken);
 			}
 
-			uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
-			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
+			var uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
 
-			do {
-				token = engine.ReadToken (cancellationToken);
+			return new MessageThread (new UniqueId (uidValidity, uid));
+		}
 
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
+		static MessageThread ParseThread (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
+		{
+			var parents = new Stack<(MessageThread Thread, MessageThread Node)> ();
+			var thread = ParseThreadNode (engine, uidValidity, parents, cancellationToken);
+			var node = thread;
 
-				if (token.Type == ImapTokenType.OpenParen) {
-					child = ParseThread (engine, uidValidity, cancellationToken);
-					node.Children.Add (child);
+			while (true) {
+				var token = engine.ReadToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen) {
+					if (parents.Count == 0)
+						return thread;
+
+					var parent = parents.Pop ();
+					parent.Node.Children.Add (thread);
+					thread = parent.Thread;
+					node = parent.Node;
+				} else if (token.Type == ImapTokenType.OpenParen) {
+					parents.Push ((thread, node));
+					node = thread = ParseThreadNode (engine, uidValidity, parents, cancellationToken);
 				} else {
-					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
-					child = new MessageThread (new UniqueId (uidValidity, uid));
+					if (!thread.UniqueId.HasValue)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+
+					var uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+					var child = new MessageThread (new UniqueId (uidValidity, uid));
 					node.Children.Add (child);
 					node = child;
 				}
-			} while (true);
+			}
+		}
 
-			return thread;
+		static async Task<MessageThread> ParseThreadNodeAsync (ImapEngine engine, uint uidValidity, Stack<(MessageThread Thread, MessageThread Node)> parents, CancellationToken cancellationToken)
+		{
+			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+
+			while (token.Type == ImapTokenType.OpenParen) {
+				var dummy = new MessageThread ((UniqueId?) null);
+				parents.Push ((dummy, dummy));
+				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
+			}
+
+			var uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+
+			return new MessageThread (new UniqueId (uidValidity, uid));
 		}
 
 		static async Task<MessageThread> ParseThreadAsync (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
 		{
-			var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-			MessageThread thread, node, child;
-			uint uid;
+			var parents = new Stack<(MessageThread Thread, MessageThread Node)> ();
+			var thread = await ParseThreadNodeAsync (engine, uidValidity, parents, cancellationToken).ConfigureAwait (false);
+			var node = thread;
 
-			if (token.Type == ImapTokenType.OpenParen) {
-				thread = new MessageThread ((UniqueId?) null /*UniqueId.Invalid*/);
+			while (true) {
+				var token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
-				do {
-					child = await ParseThreadAsync (engine, uidValidity, cancellationToken).ConfigureAwait (false);
-					thread.Children.Add (child);
+				if (token.Type == ImapTokenType.CloseParen) {
+					if (parents.Count == 0)
+						return thread;
 
-					token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-				} while (token.Type != ImapTokenType.CloseParen);
-
-				return thread;
-			}
-
-			uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
-			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
-
-			do {
-				token = await engine.ReadTokenAsync (cancellationToken).ConfigureAwait (false);
-
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				if (token.Type == ImapTokenType.OpenParen) {
-					child = await ParseThreadAsync (engine, uidValidity, cancellationToken).ConfigureAwait (false);
-					node.Children.Add (child);
+					var parent = parents.Pop ();
+					parent.Node.Children.Add (thread);
+					thread = parent.Thread;
+					node = parent.Node;
+				} else if (token.Type == ImapTokenType.OpenParen) {
+					parents.Push ((thread, node));
+					node = thread = await ParseThreadNodeAsync (engine, uidValidity, parents, cancellationToken).ConfigureAwait (false);
 				} else {
-					uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
-					child = new MessageThread (new UniqueId (uidValidity, uid));
+					if (!thread.UniqueId.HasValue)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+
+					var uid = ImapEngine.ParseNumber (token, true, ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "THREAD", token);
+					var child = new MessageThread (new UniqueId (uidValidity, uid));
 					node.Children.Add (child);
 					node = child;
 				}
-			} while (true);
-
-			return thread;
+			}
 		}
 
 		/// <summary>

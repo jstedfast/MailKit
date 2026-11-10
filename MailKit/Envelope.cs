@@ -227,7 +227,31 @@ namespace MailKit {
 			builder.Append ("(NIL NIL ");
 			MimeUtils.AppendQuoted (builder, group.Name ?? string.Empty);
 			builder.Append (" NIL)");
-			EncodeInternetAddressListAddresses (builder, group.Members);
+
+			var parents = new Stack<(InternetAddressList Members, int Index)> ();
+			var members = group.Members;
+			int index = 0;
+
+			// Nested groups are not valid address syntax; emit their mailboxes in the outer group.
+			while (true) {
+				if (index == members.Count) {
+					if (parents.Count == 0)
+						break;
+
+					(members, index) = parents.Pop ();
+					continue;
+				}
+
+				var address = members[index++];
+				if (address is MailboxAddress mailbox) {
+					EncodeMailbox (builder, mailbox);
+				} else if (address is GroupAddress nested) {
+					parents.Push ((members, index));
+					members = nested.Members;
+					index = 0;
+				}
+			}
+
 			builder.Append ("(NIL NIL NIL NIL)");
 		}
 
@@ -348,6 +372,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>The returned string can be parsed by <see cref="TryParse(string,out Envelope)"/>.</para>
+		/// <para>Nested address groups are flattened into their outermost group.</para>
 		/// <note type="warning">The syntax of the string returned, while similar to IMAP's ENVELOPE syntax,
 		/// is not completely compatible.</note>
 		/// </remarks>
@@ -486,10 +511,8 @@ namespace MailKit {
 				return false;
 
 			list = new InternetAddressList ();
-			var stack = new List<InternetAddressList> ();
-			int sp = 0;
-
-			stack.Add (list);
+			GroupAddress? group = null;
+			int depth = 0;
 
 			do {
 				if (text[index] == ')')
@@ -498,25 +521,25 @@ namespace MailKit {
 				if (!TryParse (text, ref index, out InternetAddress? addr))
 					return false;
 
-				if (addr != null) {
-					stack[sp].Add (addr);
+				if (addr is GroupAddress nested) {
+					if (depth == int.MaxValue)
+						return false;
 
-					if (addr is GroupAddress group) {
-						stack.Add (group.Members);
-						sp++;
+					if (depth++ == 0) {
+						group = nested;
+						list.Add (group);
 					}
-				} else if (sp > 0) {
-					stack.RemoveAt (sp);
-					sp--;
+				} else if (addr != null) {
+					(group?.Members ?? list).Add (addr);
+				} else if (depth > 0 && --depth == 0) {
+					group = null;
 				}
 
 				while (index < text.Length && text[index] == ' ')
 					index++;
 			} while (index < text.Length);
 
-			// Note: technically, we should check that sp == 0 as well, since all groups should
-			// be popped off the stack, but in the interest of being liberal in what we accept,
-			// we'll ignore that.
+			// Tolerate unclosed groups, as we do when parsing IMAP envelopes.
 			if (index >= text.Length)
 				return false;
 
@@ -608,6 +631,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Parses an Envelope value from the specified text.</para>
+		/// <para>Nested address groups are flattened into their outermost group.</para>
 		/// <note type="warning">This syntax, while similar to IMAP's ENVELOPE syntax, is not
 		/// completely compatible.</note>
 		/// </remarks>

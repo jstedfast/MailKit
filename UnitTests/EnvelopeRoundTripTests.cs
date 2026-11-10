@@ -210,11 +210,6 @@ namespace UnitTests {
 			yield return Case ("Route", e => e.From.Add (new MailboxAddress ("X", new[] { "a.com", "b.com" }, "user@c.com")));
 			yield return Case ("EmptyGroup", e => e.To.Add (new GroupAddress ("Undisclosed recipients")));
 			yield return Case ("GroupWithEmptyName", e => e.To.Add (new GroupAddress (string.Empty, new[] { new MailboxAddress ("A", "a@example.com") })));
-			yield return Case ("NestedGroups", e => e.To.Add (new GroupAddress ("Outer", new InternetAddress[] {
-				new MailboxAddress ("A", "a@example.com"),
-				new GroupAddress ("Inner", new[] { new MailboxAddress ("B", "b@example.com") }),
-				new MailboxAddress ("C", "c@example.com")
-			})));
 			yield return Case ("SubjectSpecials", e => e.Subject = "a \"quoted\" \\back\\ \r\n tab\t NIL () ü 😀");
 			yield return Case ("SubjectNIL", e => e.Subject = "NIL");
 			yield return Case ("SubjectEmpty", e => e.Subject = string.Empty);

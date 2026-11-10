@@ -341,6 +341,11 @@ See [Telemetry.md](Telemetry.md) for the full list of `error.type` values.
 
 ### Bug Fixes
 
+* Made IMAP `THREAD` parsing and `MessageSummary` body lookup and enumeration non-recursive
+  to prevent stack overflows from deeply nested server responses.
+* Flatten nested address groups into their outermost group when parsing IMAP envelopes and
+  when using `Envelope.TryParse ()` or `Envelope.ToString ()`, avoiding recursive group
+  notifications and serialization.
 * Normalize invalid MIME types in IMAP body structures to `application/octet-stream`, using
   `text/plain` for text parts and `multipart/mixed` for multipart containers, while retaining
   parseable parameters.

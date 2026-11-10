@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System.Text;
+
 using MimeKit;
 using MimeKit.Utils;
 
@@ -152,17 +154,91 @@ namespace UnitTests {
 		[Test]
 		public void TestNestedGroupAddresses ()
 		{
-			const string expected = "(NIL NIL NIL NIL NIL ((NIL NIL \"Agents of Shield\" NIL)(NIL NIL \"Mutants\" NIL)(\"Skye\" NIL \"skye\" \"shield.gov\")(NIL NIL NIL NIL)(\"Leo Fitz\" NIL \"fitz\" \"shield.gov\")(\"Melinda May\" NIL \"may\" \"shield.gov\")(NIL NIL NIL NIL)) NIL NIL NIL NIL)";
+			const string nested = "(NIL NIL NIL NIL NIL ((NIL NIL \"Agents of Shield\" NIL)(NIL NIL \"Mutants\" NIL)(\"Skye\" NIL \"skye\" \"shield.gov\")(NIL NIL NIL NIL)(\"Leo Fitz\" NIL \"fitz\" \"shield.gov\")(\"Melinda May\" NIL \"may\" \"shield.gov\")(NIL NIL NIL NIL)) NIL NIL NIL NIL)";
+			const string expected = "(NIL NIL NIL NIL NIL ((NIL NIL \"Agents of Shield\" NIL)(\"Skye\" NIL \"skye\" \"shield.gov\")(\"Leo Fitz\" NIL \"fitz\" \"shield.gov\")(\"Melinda May\" NIL \"may\" \"shield.gov\")(NIL NIL NIL NIL)) NIL NIL NIL NIL)";
 			var group = GroupAddress.Parse ("Agents of Shield: Mutants: Skye <skye@shield.gov>;, Leo Fitz <fitz@shield.gov>, Melinda May <may@shield.gov>;");
 			var envelope = new Envelope ();
 
 			envelope.To.Add (group);
 
 			Assert.That (envelope.ToString (), Is.EqualTo (expected));
+			Assert.That (Envelope.TryParse (nested, out envelope), Is.True);
+			Assert.That (envelope.ToString (), Is.EqualTo (expected));
 			Assert.That (Envelope.TryParse (expected, out envelope), Is.True);
 			Assert.That (envelope.ToString (), Is.EqualTo (expected));
 			Assert.That (envelope.To, Has.Count.EqualTo (1));
-			Assert.That (envelope.To[0].ToString (), Is.EqualTo (group.ToString ()));
+			Assert.That (((GroupAddress) envelope.To[0]).Members, Has.Count.EqualTo (3));
+			Assert.That (((GroupAddress) envelope.To[0]).Members, Is.All.InstanceOf<MailboxAddress> ());
+		}
+
+		internal static string CreateNestedGroupEnvelope (int depth)
+		{
+			var builder = new StringBuilder ("(NIL NIL NIL NIL NIL ((NIL NIL \"outer\" NIL)(\"Before\" NIL \"before\" \"example.com\")");
+
+			for (int i = 0; i < depth; i++)
+				builder.Append ("(NIL NIL \"inner\" NIL)");
+
+			builder.Append ("(\"Inner\" NIL \"inner\" \"example.com\")");
+
+			for (int i = 0; i < depth; i++)
+				builder.Append ("(NIL NIL NIL NIL)");
+
+			builder.Append ("(\"After\" NIL \"after\" \"example.com\")(NIL NIL NIL NIL)");
+			builder.Append ("(\"Outside\" NIL \"outside\" \"example.com\")(NIL NIL \"empty\" NIL)(NIL NIL NIL NIL)) NIL NIL NIL NIL)");
+
+			return builder.ToString ();
+		}
+
+		internal static void AssertFlattenedGroups (Envelope envelope)
+		{
+			Assert.That (envelope.To, Has.Count.EqualTo (3));
+			Assert.That (envelope.To[0], Is.InstanceOf<GroupAddress> ());
+			var group = (GroupAddress) envelope.To[0];
+			Assert.That (group.Name, Is.EqualTo ("outer"));
+			Assert.That (group.Members, Has.Count.EqualTo (3));
+			Assert.That (group.Members, Is.All.InstanceOf<MailboxAddress> ());
+			Assert.That (group.Members.Cast<MailboxAddress> ().Select (mailbox => mailbox.Address),
+				Is.EqualTo (new[] { "before@example.com", "inner@example.com", "after@example.com" }));
+			Assert.That (envelope.To[1], Is.InstanceOf<MailboxAddress> ());
+			Assert.That (((MailboxAddress) envelope.To[1]).Address, Is.EqualTo ("outside@example.com"));
+			Assert.That (envelope.To[2], Is.InstanceOf<GroupAddress> ());
+			Assert.That (envelope.To[2].Name, Is.EqualTo ("empty"));
+			Assert.That (((GroupAddress) envelope.To[2]).Members, Is.Empty);
+		}
+
+		[TestCase (2)]
+		[TestCase (32768)]
+		public void TestParseNestedGroups (int depth)
+		{
+			Assert.That (Envelope.TryParse (CreateNestedGroupEnvelope (depth), out var envelope), Is.True);
+			AssertFlattenedGroups (envelope);
+			Assert.That (envelope.ToString (), Is.EqualTo (CreateNestedGroupEnvelope (0)));
+		}
+
+		[TestCase (2)]
+		[TestCase (32768)]
+		public void TestSerializeNestedGroups (int depth)
+		{
+			InternetAddress inner = new MailboxAddress ("Inner", "inner@example.com");
+
+			// Build from the inside out so construction does not notify a chain of parent groups.
+			for (int i = 0; i < depth; i++)
+				inner = new GroupAddress ("inner", new[] { inner });
+
+			var envelope = new Envelope ();
+			envelope.To.Add (new GroupAddress ("outer", new[] {
+				new MailboxAddress ("Before", "before@example.com"),
+				inner,
+				new MailboxAddress ("After", "after@example.com")
+			}));
+			envelope.To.Add (new MailboxAddress ("Outside", "outside@example.com"));
+			envelope.To.Add (new GroupAddress ("empty"));
+
+			var text = envelope.ToString ();
+
+			Assert.That (text, Is.EqualTo (CreateNestedGroupEnvelope (0)));
+			Assert.That (Envelope.TryParse (text, out var parsed), Is.True);
+			AssertFlattenedGroups (parsed);
 		}
 	}
 }

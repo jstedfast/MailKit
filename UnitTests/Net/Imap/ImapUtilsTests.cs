@@ -4237,6 +4237,141 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static string CreateDeeplyNestedThread (bool dummy, int depth)
+		{
+			var builder = new StringBuilder ();
+
+			for (int i = 0; i < depth; i++)
+				builder.Append (dummy ? "(" : "(1 2 ");
+
+			builder.Append ("(3 4)");
+
+			for (int i = 0; i < depth; i++)
+				builder.Append ("(5))");
+
+			return builder.Append ("(6)\r\n").ToString ();
+		}
+
+		static void AssertDeeplyNestedThread (IList<MessageThread> threads, bool dummy, int depth)
+		{
+			Assert.That (threads, Has.Count.EqualTo (2));
+			Assert.That (threads[1].UniqueId, Is.EqualTo (new UniqueId (123, 6)));
+			var thread = threads[0];
+
+			for (int i = 0; i < depth; i++) {
+				if (dummy) {
+					Assert.That (thread.UniqueId, Is.Null);
+				} else {
+					Assert.That (thread.UniqueId, Is.EqualTo (new UniqueId (123, 1)));
+					Assert.That (thread.Children, Has.Count.EqualTo (1));
+					thread = thread.Children[0];
+					Assert.That (thread.UniqueId, Is.EqualTo (new UniqueId (123, 2)));
+				}
+
+				Assert.That (thread.Children, Has.Count.EqualTo (2));
+				Assert.That (thread.Children[1].UniqueId, Is.EqualTo (new UniqueId (123, 5)));
+				Assert.That (thread.Children[1].Children, Is.Empty);
+				thread = thread.Children[0];
+			}
+
+			Assert.That (thread.UniqueId, Is.EqualTo (new UniqueId (123, 3)));
+			Assert.That (thread.Children, Has.Count.EqualTo (1));
+			Assert.That (thread.Children[0].UniqueId, Is.EqualTo (new UniqueId (123, 4)));
+			Assert.That (thread.Children[0].Children, Is.Empty);
+		}
+
+		[TestCase (false)]
+		[TestCase (true)]
+		public void TestParseDeeplyNestedThread (bool dummy)
+		{
+			const int depth = 32768;
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (CreateDeeplyNestedThread (dummy, depth)), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+			var threads = new List<MessageThread> ();
+
+			ImapUtils.ParseThreads (engine, 123, threads, CancellationToken.None);
+
+			AssertDeeplyNestedThread (threads, dummy, depth);
+			Assert.That (engine.ReadToken (CancellationToken.None).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
+		[TestCase (false)]
+		[TestCase (true)]
+		public async Task TestParseDeeplyNestedThreadAsync (bool dummy)
+		{
+			const int depth = 32768;
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (CreateDeeplyNestedThread (dummy, depth)), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+			var threads = new List<MessageThread> ();
+
+			await ImapUtils.ParseThreadsAsync (engine, 123, threads, CancellationToken.None);
+
+			AssertDeeplyNestedThread (threads, dummy, depth);
+			Assert.That ((await engine.ReadTokenAsync (CancellationToken.None)).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
+		[TestCase ("()\r\n")]
+		[TestCase ("(1 (2)\r\n")]
+		[TestCase ("((1) 2)\r\n")]
+		public void TestParseMalformedThread (string text)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			Assert.Throws<ImapProtocolException> (() => ImapUtils.ParseThreads (engine, 0, new List<MessageThread> (), CancellationToken.None));
+		}
+
+		[TestCase ("()\r\n")]
+		[TestCase ("(1 (2)\r\n")]
+		[TestCase ("((1) 2)\r\n")]
+		public void TestParseMalformedThreadAsync (string text)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			Assert.ThrowsAsync<ImapProtocolException> (() => ImapUtils.ParseThreadsAsync (engine, 0, new List<MessageThread> (), CancellationToken.None));
+		}
+
+		[TestCase (2)]
+		[TestCase (32768)]
+		public void TestParseEnvelopeWithNestedGroups (int depth)
+		{
+			var text = EnvelopeTests.CreateNestedGroupEnvelope (depth) + "\r\n";
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None);
+
+			EnvelopeTests.AssertFlattenedGroups (envelope);
+			Assert.That (engine.ReadToken (CancellationToken.None).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
+		[TestCase (2)]
+		[TestCase (32768)]
+		public async Task TestParseEnvelopeWithNestedGroupsAsync (int depth)
+		{
+			var text = EnvelopeTests.CreateNestedGroupEnvelope (depth) + "\r\n";
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false);
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+			engine.SetStream (tokenizer);
+
+			var envelope = await ImapUtils.ParseEnvelopeAsync (engine, CancellationToken.None);
+
+			EnvelopeTests.AssertFlattenedGroups (envelope);
+			Assert.That ((await engine.ReadTokenAsync (CancellationToken.None)).Type, Is.EqualTo (ImapTokenType.Eoln));
+		}
+
 		[Test]
 		public void TestParseExampleThreads ()
 		{
