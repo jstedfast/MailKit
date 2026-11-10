@@ -1,6 +1,6 @@
 # Release Notes
 
-## MailKit 5.0.0 (unreleased)
+## MailKit 5.0.0 (2026-11-10)
 
 MailKit 5.0 is a major release containing a number of breaking changes. The headline change is that
 MailKit no longer depends on BouncyCastle, allowing it to depend on the new `MimeKit.Core` package
