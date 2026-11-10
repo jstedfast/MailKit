@@ -122,7 +122,7 @@ namespace UnitTests.Net.Imap {
 			Assert.That (client.Streams, Has.Count.EqualTo (count));
 			foreach (var stream in client.Streams)
 				Assert.That (stream.IsDisposed, Is.EqualTo (!client.Seekable), "Copied input must be disposed; referenced input must remain open.");
-			Assert.That (part.Text, Is.EqualTo ("Hello world!\r\n"));
+			Assert.That (part.Text, Is.EqualTo ("Hello world!" + Environment.NewLine));
 		}
 
 		[Test]

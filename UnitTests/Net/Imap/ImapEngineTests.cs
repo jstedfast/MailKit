@@ -52,7 +52,7 @@ namespace UnitTests.Net.Imap {
 				stream.Dispose ();
 			}
 
-			Assert.That (part.Text, Is.EqualTo ("Hello world!\r\n"));
+			Assert.That (part.Text, Is.EqualTo ("Hello world!" + Environment.NewLine));
 		}
 
 		[Test]
