@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>$(SmokeFrameworks)</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <OutputType Condition="$(TargetFramework.StartsWith('netstandard'))">Library</OutputType>
+    <LangVersion>12</LangVersion>
+    <DefineConstants Condition="'$(WithCryptography)' == 'true'">$(DefineConstants);WITH_CRYPTOGRAPHY</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="[$(MailKitVersion)]" />
+    <PackageReference Include="MimeKit.Cryptography" Version="[$(CryptographyVersion)]" Condition="'$(WithCryptography)' == 'true'" />
+    <Compile Remove="CryptographySmokeTest.cs" Condition="'$(WithCryptography)' != 'true'" />
+  </ItemGroup>
+</Project>

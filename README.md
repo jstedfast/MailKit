@@ -266,6 +266,28 @@ choose the **Debug** or **Release** build configuration and then build.
 
 Note: The **Release** build will generate the xml API documentation, but the **Debug** build will not.
 
+### Package smoke tests
+
+Run `pwsh -File scripts\test-packages.ps1` on Windows to build and pack MailKit, MimeKit.Core and
+MimeKit.Cryptography, then test fresh consumers outside the checkout. This requires PowerShell 7,
+NuGet CLI, the .NET 10 SDK, .NET 8/10 runtimes and the platform's
+[Native AOT prerequisites](https://learn.microsoft.com/dotnet/core/deploying/native-aot/).
+Initialize the MimeKit submodule before running it.
+If Windows Native AOT tool discovery fails, ensure the Visual Studio Installer directory
+(containing `vswhere.exe`) is on `PATH`.
+
+The script checks package contents, compiles all seven supported frameworks, runs MIME and loopback
+SMTP probes on .NET 8/10, verifies S/MIME signing and module registration, and publishes/runs a
+package-based Native AOT probe. Restores use fresh caches and source mapping; MailKit and MimeKit
+must come from the local packages, and the core dependency graph must not include BouncyCastle.
+No packages are published, no external mail server is used, and no certificates are installed.
+
+Use `-KeepArtifacts` to retain the packages and consumers (failures retain them automatically).
+To test the same packages on Linux, copy the retained `feed` directory and run the script from
+the matching checkout with `-PackageDirectory <feed-directory>` on a host with the required SDK,
+runtimes and AOT toolchain. `-DependencySource <url>` selects a NuGet mirror for third-party
+dependencies. `-SkipCryptography` and `-SkipAot` explicitly omit those checks for a partial run.
+
 ## Using MailKit
 
 Every MailKit API that performs network I/O has both a synchronous and an asynchronous (`*Async`) variant. The
