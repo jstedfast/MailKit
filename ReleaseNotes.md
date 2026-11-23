@@ -1,5 +1,12 @@
 # Release Notes
 
+## MailKit 5.1.0 (unreleased)
+
+* MailKit now uses the low 32 bits of oversized IMAP `UIDVALIDITY` values sent by some servers
+  ([#2038](https://github.com/jstedfast/MailKit/issues/2038)). Values that differ only in their
+  high bits are indistinguishable to a message cache. When QRESYNC is enabled, MailKit still
+  rejects oversized values; reconnect without enabling QRESYNC to use these mailboxes.
+
 ## MailKit 5.0.0 (2026-11-10)
 
 MailKit 5.0 is a major release containing a number of breaking changes. The headline change is that

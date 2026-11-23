@@ -154,6 +154,36 @@ namespace UnitTests.Net.Imap {
 			}
 		}
 
+		static async Task<ImapResponseCode> ParseNumericResponseCode (string response, bool qresync, bool doAsync)
+		{
+			using var memory = new MemoryStream (Encoding.ASCII.GetBytes (response + "] Done\r\n"));
+			using var tokenizer = new ImapStream (memory, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null) { QResyncEnabled = qresync };
+			engine.SetStream (tokenizer);
+
+			return doAsync ? await engine.ParseResponseCodeAsync (true, CancellationToken.None) : engine.ParseResponseCode (true, CancellationToken.None);
+		}
+
+		[TestCase (false)]
+		[TestCase (true)]
+		public async Task TestOversizedUidValidity (bool doAsync)
+		{
+			var validity = (UidValidityResponseCode) await ParseNumericResponseCode ("UIDVALIDITY 42166101432558023", false, doAsync);
+			Assert.That (validity.UidValidity, Is.EqualTo (2306040263u));
+
+			var append = (AppendUidResponseCode) await ParseNumericResponseCode ("APPENDUID 4294967296 1", false, doAsync);
+			Assert.That (append.UidValidity, Is.Zero);
+			Assert.That (append.UidSet[0].Validity, Is.Zero);
+
+			var copy = (CopyUidResponseCode) await ParseNumericResponseCode ("COPYUID 22720728023 1 2", false, doAsync);
+			Assert.That (copy.UidValidity, Is.EqualTo (1245891543u));
+			Assert.That (copy.DestinationUidSet[0].Validity, Is.EqualTo (1245891543u));
+
+			Assert.ThrowsAsync<ImapProtocolException> (async () => await ParseNumericResponseCode ("UIDVALIDITY 4294967296", true, doAsync));
+			Assert.ThrowsAsync<ImapProtocolException> (async () => await ParseNumericResponseCode ("UIDVALIDITY 18446744073709551616", false, doAsync));
+			Assert.ThrowsAsync<ImapProtocolException> (async () => await ParseNumericResponseCode ("UIDNEXT 4294967296", false, doAsync));
+		}
+
 		[Test]
 		public void TestParseNumber64 ()
 		{
@@ -671,6 +701,24 @@ namespace UnitTests.Net.Imap {
 					}
 				}
 			}
+		}
+
+		[TestCase ("IMAP4rev1 ca21.cms.usa.net 985292 f08ccm3k008 server ready", true, false)]
+		[TestCase ("IMAP4REV1 CA99.CMS.USA.NET 123 other server ready", true, true)]
+		[TestCase ("IMAP4rev1 ca21.cms.usa.net.example.org server ready", false, false)]
+		[TestCase ("IMAP4rev1 server ca21.cms.usa.net ready", true, true)]
+		public async Task TestUSANetGreetingDetection (string greeting, bool matches, bool doAsync)
+		{
+			using var input = new MemoryStream (Encoding.ASCII.GetBytes ("* OK " + greeting + "\r\n"));
+			using var tokenizer = new ImapStream (input, new NullProtocolLogger ());
+			using var engine = new ImapEngine (null);
+
+			if (doAsync)
+				await engine.ConnectAsync (tokenizer, CancellationToken.None);
+			else
+				engine.Connect (tokenizer, CancellationToken.None);
+
+			Assert.That (engine.QuirksMode, Is.EqualTo (matches ? ImapQuirksMode.USANet : ImapQuirksMode.None));
 		}
 
 		[Test]

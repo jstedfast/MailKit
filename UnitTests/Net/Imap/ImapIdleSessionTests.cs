@@ -751,7 +751,7 @@ namespace UnitTests.Net.Imap {
 		public async Task TestFolderStatusChanged ()
 		{
 			var stream = new ScriptedImapStream (IdleCapabilities, Script (IdleCapabilities,
-				("A00000004 IDLE\r\n", "+ idling\r\n* STATUS INBOX (MESSAGES 3 UNSEEN 2 UIDNEXT 10 UIDVALIDITY 2 HIGHESTMODSEQ 5 SIZE 100 MAILBOXID (abc) DELETED 1)\r\n"),
+				("A00000004 IDLE\r\n", "+ idling\r\n* STATUS INBOX (MESSAGES 3 UNSEEN 2 UIDNEXT 10 UIDVALIDITY 22720728023 HIGHESTMODSEQ 5 SIZE 100 MAILBOXID (abc) DELETED 1)\r\n"),
 				("DONE\r\n", "A00000004 OK Idle completed.\r\n")));
 
 			using (var client = await ConnectAsync (stream)) {
@@ -763,6 +763,7 @@ namespace UnitTests.Net.Imap {
 					items.Add (((FolderStatusChangedIdleEvent) e).Item);
 
 				Assert.That (items, Is.EquivalentTo (new StatusItems[] { StatusItems.Unread, StatusItems.UidNext, StatusItems.UidValidity, StatusItems.HighestModSeq, StatusItems.Size, StatusItems.MailboxId, StatusItems.Deleted }), "Items");
+				Assert.That (client.Inbox.UidValidity, Is.EqualTo (1245891543u));
 				Assert.That (changes.MessagesArrived, Is.False, "MessagesArrived");
 			}
 		}

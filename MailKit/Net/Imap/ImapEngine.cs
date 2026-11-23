@@ -107,6 +107,7 @@ namespace MailKit.Net.Imap {
 		ProtonMail,
 		QQMail,
 		SmarterMail,
+		USANet,
 		UW,
 		Yahoo,
 		Yandex,
@@ -653,6 +654,16 @@ namespace MailKit.Net.Imap {
 			return value;
 		}
 
+		uint ParseUidValidity (ImapToken token, string format, params object[] args)
+		{
+			// Some servers send 64-bit UIDVALIDITY values (#2038). QRESYNC needs the original
+			// value on the wire, so do not truncate if it has been enabled.
+			if (!QResyncEnabled && token.Type == ImapTokenType.Atom && TryParseNumber64 (token, out var value))
+				return unchecked ((uint) value);
+
+			return ParseNumber (token, false, format, args);
+		}
+
 		internal static long ParseNumber63 (ImapToken token, bool nonZero, string format, params object[] args)
 		{
 			AssertToken (token, ImapTokenType.Atom, format, args);
@@ -784,6 +795,8 @@ namespace MailKit.Net.Imap {
 				QuirksMode = ImapQuirksMode.UW;
 			else if (text.Contains ("SmarterMail"))
 				QuirksMode = ImapQuirksMode.SmarterMail;
+			else if (text.IndexOf (".cms.usa.net ", StringComparison.OrdinalIgnoreCase) >= 0)
+				QuirksMode = ImapQuirksMode.USANet;
 			else if (text.Contains ("Yandex "))
 				QuirksMode = ImapQuirksMode.Yandex;
 			else if (text.Contains ("Zoho Mail "))
@@ -2057,7 +2070,7 @@ namespace MailKit.Net.Imap {
 				// initialized.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
-				uidvalidity.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
+				uidvalidity.UidValidity = ParseUidValidity (token, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
 				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Unseen:
@@ -2097,7 +2110,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.AppendUid:
 				var append = (AppendUidResponseCode) code;
 
-				append.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
+				append.UidValidity = ParseUidValidity (token, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 
 				token = ReadToken (cancellationToken);
 
@@ -2109,7 +2122,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
 
-				copy.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+				copy.UidValidity = ParseUidValidity (token, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 
 				token = ReadToken (cancellationToken);
 
@@ -2407,7 +2420,7 @@ namespace MailKit.Net.Imap {
 				// initialized.
 				//
 				// See https://github.com/jstedfast/MailKit/issues/150 for an example.
-				uidvalidity.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
+				uidvalidity.UidValidity = ParseUidValidity (token, GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 				break;
 			case ImapResponseCodeType.Unseen:
@@ -2447,7 +2460,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.AppendUid:
 				var append = (AppendUidResponseCode) code;
 
-				append.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
+				append.UidValidity = ParseUidValidity (token, GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -2459,7 +2472,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
 
-				copy.UidValidity = ParseNumber (token, false, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
+				copy.UidValidity = ParseUidValidity (token, GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 
 				token = await ReadTokenAsync (cancellationToken).ConfigureAwait (false);
 
@@ -2676,7 +2689,7 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		static bool UpdateSimpleStatusValue (ImapFolder? folder, string atom, ImapToken token)
+		bool UpdateSimpleStatusValue (ImapFolder? folder, string atom, ImapToken token)
 		{
 			uint count, uid;
 			ulong modseq;
@@ -2708,7 +2721,7 @@ namespace MailKit.Net.Imap {
 			} else if (atom.Equals ("UIDVALIDITY", StringComparison.OrdinalIgnoreCase)) {
 				AssertToken (token, ImapTokenType.Atom, GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
-				uid = ParseNumber (token, false, GenericItemSyntaxErrorFormat, atom, token);
+				uid = ParseUidValidity (token, GenericItemSyntaxErrorFormat, atom, token);
 
 				folder?.UpdateUidValidity (uid);
 			} else if (atom.Equals ("UNSEEN", StringComparison.OrdinalIgnoreCase)) {
