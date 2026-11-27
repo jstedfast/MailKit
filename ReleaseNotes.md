@@ -2,6 +2,9 @@
 
 ## MailKit 5.1.0 (unreleased)
 
+* Validate header field names and encode header and annotation names as IMAP
+  arguments so punctuation in a name is not interpreted as command syntax.
+
 * MailKit now uses the low 32 bits of oversized IMAP `UIDVALIDITY` values sent by some servers
   ([#2038](https://github.com/jstedfast/MailKit/issues/2038)). Values that differ only in their
   high bits are indistinguishable to a message cache. When QRESYNC is enabled, MailKit still

@@ -279,11 +279,9 @@ namespace MailKit.Net.Imap {
 			for (int i = 0; i < format.Length; i++) {
 				if (format[i] == '%') {
 					switch (format[++i]) {
-					//case '%': // a literal %
-						// Note: This is commented out because %% is only ever used in some LIST commands which never need
-						// to split the split the command to keep it under the max line length.
-						//length++;
-						//break;
+					case '%': // a literal %
+						length++;
+						break;
 					//case 'd': // an integer
 						// Note: This is commented out because %d is only ever used for some REPLACE and GetMessage/GetHeaders/GetBodyPart
 						// commands which never need to split the command to keep it under the max line length.

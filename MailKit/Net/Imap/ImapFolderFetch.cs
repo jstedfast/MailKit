@@ -807,6 +807,18 @@ namespace MailKit.Net.Imap
 			return headers.Exclude && (headers.Count == 0 || (headers.Count == 1 && requestReferences && headers.Contains ("REFERENCES")));
 		}
 
+		static string FormatHeaderField (string field)
+		{
+			foreach (char c in field) {
+				if (!ImapCommand.IsAtom (c)) {
+					// HeaderSet guarantees printable ASCII. Escape '%' for the enclosing command format.
+					return MimeUtils.Quote (field).Replace ("%", "%%");
+				}
+			}
+
+			return field;
+		}
+
 		internal static string FormatSummaryItems (ImapEngine engine, IFetchRequest request, out bool previewText, bool isNotify = false)
 		{
 			var items = request.Items;
@@ -912,7 +924,7 @@ namespace MailKit.Net.Imap
 						if (requestReferences && header.Equals ("REFERENCES", StringComparison.Ordinal))
 							continue;
 
-						headerFields.Append (header);
+						headerFields.Append (FormatHeaderField (header));
 						headerFields.Append (' ');
 					}
 
@@ -924,7 +936,7 @@ namespace MailKit.Net.Imap
 					var headerFields = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
 
 					foreach (var header in request.Headers) {
-						headerFields.Append (header);
+						headerFields.Append (FormatHeaderField (header));
 						headerFields.Append (' ');
 					}
 

@@ -7201,7 +7201,7 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000006 IDLE\r\n", "dovecot.notify-idle.txt"),
 				new ImapReplayCommand ("A00000006", "DONE\r\n", "dovecot.notify-idle-done.txt"),
 				new ImapReplayCommand ("A00000007 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK),
-				new ImapReplayCommand ("A00000008 NOTIFY SET STATUS (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (REFERENCES)]) MessageExpunge FlagChange)) (MAILBOXES INBOX (MessageNew MessageExpunge MailboxMetadataChange ServerMetadataChange))\r\n", "dovecot.notify.txt"),
+				new ImapReplayCommand ("A00000008 NOTIFY SET STATUS (SELECTED (MessageNew (UID FLAGS ENVELOPE BODYSTRUCTURE MODSEQ BODY.PEEK[HEADER.FIELDS (\"X-RATE%\" REFERENCES)]) MessageExpunge FlagChange)) (MAILBOXES INBOX (MessageNew MessageExpunge MailboxMetadataChange ServerMetadataChange))\r\n", "dovecot.notify.txt"),
 				new ImapReplayCommand ("A00000009 NOTIFY NONE\r\n", ImapReplayCommandResponse.OK),
 				new ImapReplayCommand ("A00000010 LOGOUT\r\n", "gmail.logout.txt")
 			};
@@ -7381,7 +7381,7 @@ namespace UnitTests.Net.Imap {
 
 				client.Notify (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items | MessageSummaryItems.References),
+						new ImapEvent.MessageNew (new FetchRequest (items | MessageSummaryItems.References) { Headers = new HeaderSet (new[] { "X-Rate%" }) }),
 						ImapEvent.MessageExpunge,
 						ImapEvent.FlagChange
 					}),
@@ -7573,7 +7573,7 @@ namespace UnitTests.Net.Imap {
 
 				await client.NotifyAsync (true, new List<ImapEventGroup> {
 					new ImapEventGroup (ImapMailboxFilter.Selected, new List<ImapEvent> {
-						new ImapEvent.MessageNew (items | MessageSummaryItems.References),
+						new ImapEvent.MessageNew (new FetchRequest (items | MessageSummaryItems.References) { Headers = new HeaderSet (new[] { "X-Rate%" }) }),
 						ImapEvent.MessageExpunge,
 						ImapEvent.FlagChange
 					}),

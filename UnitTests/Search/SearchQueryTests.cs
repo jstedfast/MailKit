@@ -101,6 +101,11 @@ namespace UnitTests.Search {
 			Assert.Throws<ArgumentException> (() => new FilterSearchQuery (MetadataTag.Create ("/dev/null")));
 			Assert.Throws<ArgumentNullException> (() => new HeaderSearchQuery (null, "text"));
 			Assert.Throws<ArgumentException> (() => new HeaderSearchQuery (string.Empty, "text"));
+			foreach (var invalid in new[] { "X:Name", "X Name", "X\r", "X\n", "X\u007f", "X\u00e9" }) {
+				Assert.Throws<ArgumentException> (() => SearchQuery.HeaderContains (invalid, "text"));
+				Assert.Throws<ArgumentException> (() => new HeaderSet (new[] { invalid }));
+			}
+			Assert.That (SearchQuery.HeaderContains ("X-Rate%", "text").Field, Is.EqualTo ("X-Rate%"));
 			Assert.Throws<ArgumentNullException> (() => new HeaderSearchQuery ("name", null));
 			Assert.Throws<ArgumentNullException> (() => new TextSearchQuery (SearchTerm.BodyContains, null));
 			Assert.Throws<ArgumentNullException> (() => new UidSearchQuery (null));

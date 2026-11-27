@@ -217,11 +217,12 @@ namespace MailKit.Net.Imap {
 					continue;
 				}
 
-				command.Append (annotation.Entry);
-				command.Append (" (");
+				command.Append ("%S (");
+				args.Add (annotation.Entry.Entry);
 
 				foreach (var property in annotation.Properties) {
-					command.Append (property.Key);
+					command.Append ("%S");
+					args.Add (property.Key.Specifier);
 
 					if (property.Value != null) {
 						command.Append (" %S ");

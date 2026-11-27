@@ -131,7 +131,7 @@ namespace MailKit {
 			for (int i = 1; i < path.Length; i++) {
 				char c = path[i];
 
-				if (c > 127)
+				if (c == '\0' || c > 127)
 					throw new ArgumentException ($"Invalid character in annotation entry path: '{c}'.", nameof (path));
 
 				if (c >= '0' && c <= '9' && pc == '/')
@@ -259,13 +259,14 @@ namespace MailKit {
 		/// <para><paramref name="path"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="path"/> is invalid.
+		/// The part specifier or <paramref name="path"/> is invalid.
 		/// </exception>
 		public AnnotationEntry (BodyPart part, string path, AnnotationScope scope = AnnotationScope.Both)
 		{
 			if (part == null)
 				throw new ArgumentNullException (nameof (part));
 
+			ValidatePartSpecifier (part.PartSpecifier);
 			ValidatePath (path);
 
 			switch (scope) {
@@ -482,7 +483,7 @@ namespace MailKit {
 
 					if (c == '/')
 						component++;
-				} else if (c > 127) {
+				} else if (c == '\0' || c > 127) {
 					throw new FormatException ($"Invalid character in annotation entry path: '{c}'.");
 				}
 

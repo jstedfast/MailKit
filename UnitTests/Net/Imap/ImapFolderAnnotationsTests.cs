@@ -992,7 +992,7 @@ namespace UnitTests.Net.Imap {
 				new ImapReplayCommand ("A00000002 LIST \"\" \"INBOX\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-inbox.txt"),
 				new ImapReplayCommand ("A00000003 LIST (SPECIAL-USE) \"\" \"*\" RETURN (SUBSCRIBED CHILDREN)\r\n", "dovecot.list-special-use.txt"),
 				new ImapReplayCommand ("A00000004 SELECT INBOX (CONDSTORE ANNOTATE)\r\n", "common.select-inbox-annotate-readonly.txt"),
-				new ImapReplayCommand ("A00000005 UID SORT RETURN (ALL) (ANNOTATION /altsubject value.shared) US-ASCII ALL\r\n", "dovecot.sort-by-strings.txt"),
+				new ImapReplayCommand ("A00000005 UID SORT RETURN (ALL) (ANNOTATION /altsubject value.shared) US-ASCII HEADER \"X-Rate%\" sample\r\n", "dovecot.sort-by-strings.txt"),
 				new ImapReplayCommand ("A00000006 UID SORT RETURN (ALL) (REVERSE ANNOTATION /altsubject value.shared) US-ASCII ALL\r\n", "dovecot.sort-by-strings.txt")
 			};
 		}
@@ -1030,7 +1030,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending);
-				var uids = inbox.Sort (SearchQuery.All, new OrderBy[] { orderBy });
+				var uids = inbox.Sort (SearchQuery.HeaderContains ("X-Rate%", "sample"), new OrderBy[] { orderBy });
 
 				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 
@@ -1081,7 +1081,7 @@ namespace UnitTests.Net.Imap {
 				Assert.That (inbox.MaxAnnotationSize, Is.EqualTo (0), "MaxAnnotationSize");
 
 				var orderBy = new OrderByAnnotation (AnnotationEntry.AltSubject, AnnotationAttribute.SharedValue, SortOrder.Ascending);
-				var uids = await inbox.SortAsync (SearchQuery.All, new OrderBy[] { orderBy });
+				var uids = await inbox.SortAsync (SearchQuery.HeaderContains ("X-Rate%", "sample"), new OrderBy[] { orderBy });
 
 				Assert.That (uids, Has.Count.EqualTo (14), "Unexpected number of UIDs");
 

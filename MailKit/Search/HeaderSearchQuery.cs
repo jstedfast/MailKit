@@ -49,15 +49,15 @@ namespace MailKit.Search {
 		/// <para><paramref name="value"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="field"/> is empty.
+		/// <paramref name="field"/> is not a valid header field name.
 		/// </exception>
 		public HeaderSearchQuery (string field, string value) : base (SearchTerm.HeaderContains)
 		{
 			if (field == null)
 				throw new ArgumentNullException (nameof (field));
 
-			if (field.Length == 0)
-				throw new ArgumentException ("Cannot search an empty header field name.", nameof (field));
+			if (!HeaderSet.IsValid (field))
+				throw new ArgumentException ("Invalid header field name.", nameof (field));
 
 			if (value == null)
 				throw new ArgumentNullException (nameof (value));

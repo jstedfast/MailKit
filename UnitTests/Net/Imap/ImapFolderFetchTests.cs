@@ -3235,6 +3235,22 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		[TestCase (false, "HEADER.FIELDS")]
+		[TestCase (true, "HEADER.FIELDS.NOT")]
+		public void TestFormatFetchHeaderPunctuation (bool exclude, string section)
+		{
+			using (var engine = new ImapEngine (null)) {
+				var request = new FetchRequest () {
+					Headers = new HeaderSet (new[] { "X-Rate%" }) { Exclude = exclude }
+				};
+				var format = ImapFolder.FormatSummaryItems (engine, request, out _);
+				Assert.That (format, Is.EqualTo ($"BODY.PEEK[{section} (\"X-RATE%%\")]"));
+				Assert.That (ImapCommand.EstimateCommandLength (engine, format),
+					Is.EqualTo (ImapCommand.EstimateCommandLength (engine, format.Replace ("%%", "X"))));
+			}
+		}
+
+		[Test]
 		public void TestFormatFetchSummaryItemsExcludeHeaders ()
 		{
 			using (var engine = new ImapEngine (null)) {

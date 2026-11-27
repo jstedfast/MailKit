@@ -664,7 +664,7 @@ namespace MailKit.Search {
 		/// <para><paramref name="text"/> is <see langword="null" />.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="field"/> is empty.
+		/// <paramref name="field"/> is not a valid header field name.
 		/// </exception>
 		public static HeaderSearchQuery HeaderContains (string field, string text)
 		{

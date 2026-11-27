@@ -4648,9 +4648,8 @@ namespace UnitTests.Net.Imap {
 			command.Append ("STORE ");
 			annotations[0].Properties.Add (AnnotationAttribute.SharedValue, "This is an alternate subject.");
 			ImapUtils.FormatAnnotations (command, annotations, args, true);
-			Assert.That (command.ToString (), Is.EqualTo ("STORE ANNOTATION (/altsubject (value.shared %S))"));
-			Assert.That (args, Has.Count.EqualTo (1), "args");
-			Assert.That (args[0], Is.EqualTo ("This is an alternate subject."), "args[0]");
+			Assert.That (command.ToString (), Is.EqualTo ("STORE ANNOTATION (%S (%S %S))"));
+			Assert.That (args, Is.EqualTo (new[] { "/altsubject", "value.shared", "This is an alternate subject." }));
 		}
 
 		[Test]

@@ -39,7 +39,6 @@ namespace MailKit {
 	/// </remarks>
 	public class HeaderSet : ICollection<string>
 	{
-		const string AtomSafeCharacters = "!#$%&'*+-/=?^_`{|}~";
 
 		/// <summary>
 		/// A set of headers that only includes all headers.
@@ -165,18 +164,14 @@ namespace MailKit {
 			get; private set;
 		}
 
-		static bool IsAsciiAtom (char c)
-		{
-			return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || AtomSafeCharacters.IndexOf (c) != -1;
-		}
-
-		static bool IsValid (string header)
+		internal static bool IsValid (string header)
 		{
 			if (header.Length == 0)
 				return false;
 
 			for (int i = 0; i < header.Length; i++) {
-				if (header[i] < 127 && !IsAsciiAtom (header[i]))
+				// RFC 5322 field-name = 1*ftext: printable US-ASCII except colon.
+				if (header[i] < '!' || header[i] > '~' || header[i] == ':')
 					return false;
 			}
 

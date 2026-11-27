@@ -140,11 +140,9 @@ namespace MailKit.Net.Imap
 					throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
 
 				annotation = (AnnotationSearchQuery) query;
-				builder.Append ("ANNOTATION ");
-				builder.Append (annotation.Entry);
-				builder.Append (' ');
-				builder.Append (annotation.Attribute);
-				builder.Append (" %S");
+				builder.Append ("ANNOTATION %S %S %S");
+				args.Add (annotation.Entry.Entry);
+				args.Add (annotation.Attribute.Specifier);
 				args.Add (annotation.Value);
 				break;
 			case SearchTerm.Answered:
@@ -212,9 +210,8 @@ namespace MailKit.Net.Imap
 				break;
 			case SearchTerm.HeaderContains:
 				header = (HeaderSearchQuery) query;
-				builder.Append ("HEADER ");
-				builder.Append (header.Field);
-				builder.Append (' ');
+				builder.Append ("HEADER %S ");
+				args.Add (header.Field);
 				AddTextArgument (builder, args, header.Value, ref charset);
 				break;
 			case SearchTerm.Keyword:
@@ -408,7 +405,7 @@ namespace MailKit.Net.Imap
 			return builder.ToString ();
 		}
 
-		string BuildSortOrder (IList<OrderBy> orderBy)
+		string BuildSortOrder (IList<OrderBy> orderBy, List<object> args)
 		{
 			var builder = new StringBuilder ();
 
@@ -426,10 +423,9 @@ namespace MailKit.Net.Imap
 						throw new NotSupportedException ("The ANNOTATION search term is not supported by the IMAP server.");
 
 					var annotation = (OrderByAnnotation) orderBy[i];
-					builder.Append ("ANNOTATION ");
-					builder.Append (annotation.Entry);
-					builder.Append (' ');
-					builder.Append (annotation.Attribute);
+					builder.Append ("ANNOTATION %S %S");
+					args.Add (annotation.Entry.Entry);
+					args.Add (annotation.Attribute.Specifier);
 					break;
 				case OrderByType.Arrival:     builder.Append ("ARRIVAL"); break;
 				case OrderByType.Cc:          builder.Append ("CC"); break;
@@ -1550,8 +1546,8 @@ namespace MailKit.Net.Imap
 
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var order = BuildSortOrder (orderBy, args);
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var order = BuildSortOrder (orderBy);
 			var command = new StringBuilder ("UID SORT ");
 
 			if (Engine.Capabilities.Contains (ImapCapability.ESort))
@@ -1757,8 +1753,8 @@ namespace MailKit.Net.Imap
 
 			var args = new List<object> ();
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var order = BuildSortOrder (orderBy, args);
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var order = BuildSortOrder (orderBy);
 			var command = new StringBuilder ("UID SORT ");
 
 			if (Engine.Capabilities.Contains (ImapCapability.ESort) || partialRange.HasValue) {
